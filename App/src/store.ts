@@ -1,8 +1,10 @@
 import {configureStore, getDefaultMiddleware, EnhancedStore} from '@reduxjs/toolkit';
+//import devToolsEnhancer from 'remote-redux-devtools';
 
 import rootReducer from './reducers';
 
 export const store: EnhancedStore = configureStore({
+
   reducer: rootReducer,
   middleware: [
     // This adds redux-thunk and development checks
@@ -10,7 +12,8 @@ export const store: EnhancedStore = configureStore({
     ...getDefaultMiddleware({
       serializableCheck: false,
     }),
-  ],
+  ]
+
 });
 
 declare const module: any;
