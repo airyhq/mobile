@@ -23,9 +23,11 @@ const App = () => {
   const logout = () => {
     auth0.webAuth
       .clearSession({federated: false})
-      .then(success => {
+      .then(credentials => {
+        console.log("Logout!");
         setAccessToken(null);
         setUserLoggedOut(true);
+        console.log(credentials);
       })
       .catch(error => {
         console.log('Log out cancelled');

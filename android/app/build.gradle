@@ -131,11 +131,12 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.mobile"
+        applicationId "com.airy.mobile"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [auth0Domain: "airyhq.us.auth0.com", auth0Scheme: "com.airy.mobile"]
     }
     splits {
         abi {
