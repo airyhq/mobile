@@ -1,12 +1,13 @@
 import React, {useState} from 'react';
 import {SafeAreaView, Button} from 'react-native';
-import Auth0 from 'react-native-auth0';
-import {Login} from './components/Auth/Login';
 import {connect} from 'react-redux';
-import {StateModel} from './reducers';
+import Auth0 from 'react-native-auth0';
 
-const credentials = require('./auth0-configuration.ts').default;
-const auth0 = new Auth0(credentials);
+import {Login} from './components/Login';
+import {StateModel} from './reducers';
+import { Auth0Config } from './auth0-configuration';
+
+const auth0 = new Auth0(Auth0Config);
 
 const mapStateToProps = (state: StateModel) => ({
   state
