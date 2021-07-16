@@ -1,63 +1,32 @@
-import React, {useState} from 'react';
-import {SafeAreaView, Button} from 'react-native';
-import {connect} from 'react-redux';
-import Auth0 from 'react-native-auth0';
+import React, {useEffect, useState} from 'react';
+import {SafeAreaView} from 'react-native';
 
 import {Login} from './components/Login';
-import {StateModel} from './reducers';
-import { Auth0Config } from './auth0-configuration';
-
-const auth0 = new Auth0(Auth0Config);
-
-const mapStateToProps = (state: StateModel) => ({
-  state
-});
-
-const mapDispatchToProps = (dispatch:any) => ({
-  dispatch
-});
+import { Logout } from './components/Logout';
+import { UserInfo } from './model/userInfo';
+import { RealmDB } from './storage/realm';
 
 const App = () => {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [userLoggedOut, setUserLoggedOut] = useState(false);
 
-  const logout = () => {
-    auth0.webAuth
-      .clearSession({federated: false})
-      .then(credentials => {
-        console.log("Logout!");
-        setAccessToken(null);
-        setUserLoggedOut(true);
-        console.log(credentials);
-      })
-      .catch(error => {
-        console.log('Log out cancelled');
-      });
-  };
+  const [userInfo, setUserInfo] = useState<UserInfo | undefined>();
 
-  const changeAccessToken = (token: string | null) => {
-    setAccessToken(token);
-  };
+  useEffect(() => {
+    RealmDB.getInstance().objects('UserInfo').addListener(onUserUpdated);
+  }, []);
 
+  const onUserUpdated = (users: any, changes: any) => {
+    if (users.length) {
+      setUserInfo(users[0]);
+    } else {
+      setUserInfo(undefined);
+    }     
+  }
+ 
   return (
-      <SafeAreaView style={{flex: 1}}>
-        {accessToken && (
-          <Button
-            onPress={logout}
-            title="LOG OUT"
-            color="#841584"
-            accessibilityLabel="logout"
-          />
-        )}
-
-        {!accessToken && (
-          <Login
-            changeAccessToken={changeAccessToken}
-            userLoggedOut={userLoggedOut}
-          />
-        )}
+      <SafeAreaView style={{flex: 1, alignItems: 'center'}}>
+        {userInfo ? <Logout userInfo={userInfo} /> : <Login />}        
       </SafeAreaView>
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;
