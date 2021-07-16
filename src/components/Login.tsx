@@ -8,7 +8,7 @@ const auth0 = new Auth0(Auth0Config);
 
 export const Login = () => {
   
-  const lunchAuth0SDK = () => {
+  const launchAuth0SDK = () => {
     auth0.webAuth
       .authorize({
         scope: 'openid profile email',
@@ -27,7 +27,7 @@ export const Login = () => {
 
   return (
     <View style={styles.container}>
-      <Button title='Login' onPress={lunchAuth0SDK} />      
+      <Button title='Login' onPress={launchAuth0SDK} />      
     </View>
   );
 };
