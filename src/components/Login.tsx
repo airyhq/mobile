@@ -2,23 +2,23 @@ import React from 'react';
 import {View, Button, StyleSheet} from 'react-native';
 import Auth0 from 'react-native-auth0';
 import { Auth0Config } from '../auth0-configuration';
+import { RealmDB } from '../storage/realm';
 
 const auth0 = new Auth0(Auth0Config);
 
-type LoginProps = {
-    changeAccessToken: (token: string | null) => void,
-    userLoggedOut: boolean
-}
-
-export const Login = (props: LoginProps) => {
+export const Login = () => {
   
-  const login = () => {
+  const launchAuth0SDK = () => {
     auth0.webAuth
       .authorize({
         scope: 'openid profile email',
       })
-      .then(credentials => {        
-        props.changeAccessToken(credentials.accessToken);
+      .then(credentials => {             
+        RealmDB.getInstance().write(() => {          
+          RealmDB.getInstance().create("UserInfo", {            
+            accessToken: credentials.accessToken,            
+          });                  
+        });        
       })
       .catch(error => {
         console.log(error)
@@ -27,7 +27,7 @@ export const Login = (props: LoginProps) => {
 
   return (
     <View style={styles.container}>
-      <Button title='Login' onPress={login} />      
+      <Button title='Login' onPress={launchAuth0SDK} />      
     </View>
   );
 };
