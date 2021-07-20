@@ -5,6 +5,7 @@ import {Login} from './components/Login';
 import { Logout } from './components/Logout';
 import { UserInfo } from './model/userInfo';
 import { RealmDB } from './storage/realm';
+import ConversationList from './views/inbox/ConversationList';
 
 const App = () => {
 
@@ -24,7 +25,8 @@ const App = () => {
  
   return (
       <SafeAreaView style={{flex: 1, alignItems: 'center'}}>
-        {userInfo ? <Logout userInfo={userInfo} /> : <Login />}        
+        {/* {userInfo ? <Logout userInfo={userInfo} /> : <Login />}         */}
+        {userInfo ? <Logout userInfo={userInfo} /> : <ConversationList />}   
       </SafeAreaView>
   );
 };

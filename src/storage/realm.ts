@@ -1,5 +1,6 @@
 import Realm from "realm";
 import { UserInfoSchema } from "../model/userInfo";
+import { ConversationSchema } from "../model/Conversation";
 
 export class RealmDB {
   private static instance: Realm;
@@ -10,7 +11,7 @@ export class RealmDB {
       if (!RealmDB.instance) {
         RealmDB.instance = new Realm({
           path: "airyRealm",
-          schema: [UserInfoSchema],
+          schema: [UserInfoSchema, ConversationSchema]
         });
       }
       return RealmDB.instance;
