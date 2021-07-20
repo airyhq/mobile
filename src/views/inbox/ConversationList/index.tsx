@@ -1,19 +1,8 @@
-import React, {useEffect, useRef} from 'react';
-import {
-  View,
-  Button,
-  StyleSheet,
-  SectionList,
-  SafeAreaView,
-} from 'react-native';
-import {HttpClient} from '@airyhq/http-client';
+import React, {useEffect, useRef, useState} from 'react';
+import {View, Button, StyleSheet, Text} from 'react-native';
 import {debounce} from 'lodash-es';
-import {
-  Conversation,
-  ConversationSchema,
-  getConversations,
-} from '../../../model/Conversation';
-import ConversationListItem from '../ConversationList';
+import {Conversation} from '../../../model/Conversation';
+import ConversationListItem from '../ConversationListItem';
 import NoConversations from '../NoConversations';
 import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
@@ -27,6 +16,8 @@ type ConversationListProps = {
 };
 
 const ConversationList = (props: ConversationListProps) => {
+  const realm = RealmDB.getInstance();
+
   const {
     currentConversationId,
     filteredConversations,
@@ -35,37 +26,40 @@ const ConversationList = (props: ConversationListProps) => {
     fetchNext,
   } = props;
   const conversationListRef = useRef(null);
+  const [conversations, setConversations] = useState(
+    realm.objects('Conversation'),
+  );
 
-  const items = 'conversations';
+  const items = conversations;
   const paginationData = conversationsPaginationData;
   //   const isLoadingConversation = paginationData.loading;
 
-  const getConversationsList = () => {
-    //   console.log(HttpClientInstance);
+  useEffect(() => {
+    getConversationsList();
+  }, []);
 
-    const client = new HttpClient('http://airy.core');
-    client
-      .listConversations({page_size: 50})
+  console.log('CONVERSATIONS--------------useSTATE: ', conversations.length);
+
+  const getConversationsList = () => {
+    HttpClientInstance.listConversations({page_size: 50})
       .then((response: any) => {
-        console.log('RESPONSE: ', response.data);
-        const realm = RealmDB.getInstance();
+        setConversations(response.data);
         realm.write(() => {
           for (const conversation of response.data) {
-            console.log('CONVERSATION: ', conversation);
+            const isStored = realm.objectForPrimaryKey(
+              'Conversation',
+              conversation.id,
+            );
+            if (isStored) {
+              realm.delete(isStored);
+            }
             realm.create('Conversation', conversation);
           }
         });
-        console.log('STORED-----CONVERSATION: ', getConversations()?.metadata);
       })
       .catch((error: any) => {
-        console.log('error: ', error);
+        console.log('error: GET CONVERSATIONLIST', error);
       });
-
-    // HttpClientInstance.listConversations({page_size: 50, cursor: ''}).then((conversations: Conversation[]) => {
-    //     console.log(conversations);
-    // }).catch((error: any) => {
-    //     console.log('error: ', error);
-    // })
   };
 
   const hasPreviousMessages = () => {
@@ -105,7 +99,14 @@ const ConversationList = (props: ConversationListProps) => {
   return (
     <View ref={conversationListRef}>
       <View style={styles.conversationListPaginationWrapper}>
-        <Button title='POWER' onPress={getConversationsList} />
+        <Button title="POWER" onPress={getConversationsList} />
+        {conversations.map((conversation: any) => (
+          <ConversationListItem
+            key={conversation.id}
+            conversation={conversation}
+            active={conversation.id === currentConversationId}
+          />
+        ))}
         {/* {!items && items.length && !isLoadingConversation ? (
           <NoConversations conversations={conversations.length} />
         ) : (
@@ -135,13 +136,9 @@ const styles = StyleSheet.create({
     // padding:0,
     // margin:0
   },
-  organizationInput: {
-    // borderWidth: 2,
-    // borderColor: '#ccc',
-    // borderRadius: 6,
-    // fontSize: 20,
-    // padding: 10,
-    // marginTop: 5
+  text: {
+    color: 'black',
+    marginTop: 10,
   },
   inputTitle: {
     // fontSize: 20,

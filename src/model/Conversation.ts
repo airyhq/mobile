@@ -23,6 +23,7 @@ export const ConversationSchema = {
     createdAt: 'date?',
     lastMessage: 'Message',
   },
+  primaryKey: "id",
 };
 
 export interface Conversation {

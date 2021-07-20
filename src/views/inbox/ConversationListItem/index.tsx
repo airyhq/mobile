@@ -1,14 +1,14 @@
 import React, {useEffect, useRef} from 'react';
 import {Link} from 'react-router-native';
-import {View, Button, StyleSheet, SectionList, Pressable} from 'react-native';
-import {HttpClient} from '@airyhq/http-client';
+import {View, Button, StyleSheet, Pressable} from 'react-native';
 import {debounce} from 'lodash-es';
 import {Conversation} from '../../../model/Conversation';
 import IconChannel from '../../../components/IconChannel';
-import {Avatar, SourceMessagePreview} from 'render';
+// import {Avatar, SourceMessagePreview} from 'render';
 import {formatTimeOfMessage} from '../../../services/format/date';
 import {ReactComponent as Checkmark} from '../../../assets/images/icons/checkmark-circle.svg';
 import {INBOX_CONVERSATIONS_ROUTE} from '../../../routes/routes';
+import { HttpClientInstance } from '../../../InitializeAiryApi';
 
 type ConversationListItemProps = {
   conversation: Conversation;
@@ -18,13 +18,16 @@ type ConversationListItemProps = {
 const ConversationListItem = (props: ConversationListItemProps) => {
   const {conversation, active} = props;
 
+  console.log("CONVERSATIONLIST");
+  
+
   const participant = conversation.metadata.contact;
   const unread = conversation.metadata.unreadCount > 0;
   const currentConversationState = conversation.metadata.state || 'OPEN';
 
   const eventHandler = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
-    conversationState(conversation.id, newState);
+    // conversationState(conversation.id, newState);
     event.preventDefault();
     event.stopPropagation();
   };
@@ -54,7 +57,7 @@ const ConversationListItem = (props: ConversationListItemProps) => {
 
   const markAsRead = () => {
     if (active && unread) {
-      readConversations(conversation.id);
+      HttpClientInstance.readConversations(conversation.id).then(() => {});
     }
   };
 
@@ -63,6 +66,7 @@ const ConversationListItem = (props: ConversationListItemProps) => {
   }, [active, conversation, currentConversationState]);
 
   return (
+    <View>
     <Pressable style={styles.clickableListItem} onPress={markAsRead}>
       <Link to={`${INBOX_CONVERSATIONS_ROUTE}/${conversation.id}`}>
         <View
@@ -71,7 +75,7 @@ const ConversationListItem = (props: ConversationListItemProps) => {
             unread ? styles.unread : '',
           ]}>
           <View style={styles.profileImage}>
-            <Avatar contact={participant} />
+            {/* <Avatar contact={participant} /> */}
           </View>
           <View style={styles.contactDetails}>
             <View style={styles.topRow}>
@@ -86,7 +90,7 @@ const ConversationListItem = (props: ConversationListItemProps) => {
             </View>
             <View
               style={[styles.contactLastMessage, unread ? styles.unread : '']}>
-              <SourceMessagePreview conversation={conversation} />
+              {/* <SourceMessagePreview conversation={conversation} /> */}
             </View>
             <View style={styles.bottomRow}>
               <View style={styles.source}>
@@ -106,6 +110,7 @@ const ConversationListItem = (props: ConversationListItemProps) => {
         </View>
       </Link>
     </Pressable>
+    </View>
   );
 };
 
@@ -114,7 +119,10 @@ export default ConversationListItem;
 const styles = StyleSheet.create({
   openStateButton: {},
   closedStateButton: {},
-  clickableListItem: {},
+  clickableListItem: {
+    backgroundColor: 'black',
+    color: 'white'
+  },
   containerListItemActive: {},
   containerListItem: {},
   profileImage: {},
