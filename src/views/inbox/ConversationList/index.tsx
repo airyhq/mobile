@@ -40,10 +40,6 @@ const ConversationList = (props: ConversationListProps) => {
   const paginationData = conversationsPaginationData;
   //   const isLoadingConversation = paginationData.loading;
 
-  useEffect(() => {
-    getConversationsList();
-  }, []);
-
   const getConversationsList = () => {
     //   console.log(HttpClientInstance);
 
@@ -51,22 +47,15 @@ const ConversationList = (props: ConversationListProps) => {
     client
       .listConversations({page_size: 50})
       .then((response: any) => {
-        console.log('RESPONSE: ', response);
-        RealmDB.getInstance().write(() => {
+        console.log('RESPONSE: ', response.data);
+        const realm = RealmDB.getInstance();
+        realm.write(() => {
           for (const conversation of response.data) {
-            console.log('createdAt', typeof conversation.createdAt);
-            console.log('channel', typeof conversation.channel);
-            console.log('metadata', typeof conversation.metadata);
-            console.log('lastMessage', typeof conversation.lastMessage);
-            console.log('id', typeof conversation.id);
-
-            RealmDB.getInstance().create('Conversation', {
-              id: conversation.id,
-            });
+            console.log('CONVERSATION: ', conversation);
+            realm.create('Conversation', conversation);
           }
         });
-
-        console.log('CONVERSATIONS: ', getConversations());
+        console.log('STORED-----CONVERSATION: ', getConversations()?.metadata);
       })
       .catch((error: any) => {
         console.log('error: ', error);
@@ -116,6 +105,7 @@ const ConversationList = (props: ConversationListProps) => {
   return (
     <View ref={conversationListRef}>
       <View style={styles.conversationListPaginationWrapper}>
+        <Button title='POWER' onPress={getConversationsList} />
         {/* {!items && items.length && !isLoadingConversation ? (
           <NoConversations conversations={conversations.length} />
         ) : (

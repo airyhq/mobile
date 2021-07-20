@@ -5,3 +5,17 @@ export interface SuggestedReply {
 export interface Suggestions {
   [suggestionId: string]: SuggestedReply;
 }
+
+export const SuggestedReplySchema = {
+  name: 'SuggestedReply',
+  properties: {
+    content: 'Content',
+  },
+};
+
+export const SuggestionsSchema = {
+  name: 'Suggestions',
+  properties: {
+    
+  },
+};

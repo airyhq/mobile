@@ -18,23 +18,26 @@ export const ConversationSchema = {
   name: 'Conversation',
   properties: {
     id: 'string',
-    channel: 'string?',
-    metadata: 'string?',
-    createdAt: 'string?',
-    lastMessage: 'string?',
+    channel: 'Channel',
+    metadata: 'Metadata',
+    createdAt: 'date?',
+    lastMessage: 'Message',
   },
 };
 
 export interface Conversation {
   id: string;
   channel: Channel;
-  metadata: ConversationMetadata;
+  metadata: Metadata;
   createdAt: Date;
   lastMessage: Message;
 }
 
 export const getConversations = (): Conversation | undefined => {
+  console.log("HERERERERERERER");
+  
   const objects: Results<Conversation> =
     RealmDB.getInstance()?.objects('Conversation');
+    console.log("OBJECTs: ", objects)
   if (objects) return objects[0];
 };

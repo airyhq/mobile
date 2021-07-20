@@ -5,6 +5,14 @@ export type ChannelMetadata = Metadata & {
   imageUrl?: string;
 };
 
+export const ChannelMetadataSchema = {
+  name: 'ChannelMetadata',
+  properties: {
+    name: 'string',
+    imageUrl: 'string?'
+  }
+}
+
 export interface Channel {
   id?: string;
   metadata: ChannelMetadata;
@@ -13,3 +21,14 @@ export interface Channel {
   connected: boolean;
   phoneNumber?: string;
 }
+
+export const ChannelSchema = {
+  name: 'Channel',
+  properties: {
+    id: 'string?',
+    metadata: 'ChannelMetadata',
+    source: 'string',
+    sourceChannelId: 'string',
+    connected: 'bool?'
+  },
+};

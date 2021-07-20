@@ -1,19 +1,44 @@
-import Realm from "realm";
-import { UserInfoSchema } from "../model/userInfo";
-import { ConversationSchema } from "../model/Conversation";
+import Realm from 'realm';
+import {UserInfoSchema} from '../model/userInfo';
+import {ConversationSchema} from '../model/Conversation';
+import {
+  ChannelMetadataSchema,
+  ChannelSchema,
+  ContentSchema,
+  MessageMetadataSchema,
+  MessageSchema,
+  MessageTypeSchema,
+  MetadataEventSchema,
+  MetadataSchema,
+  SuggestedReplySchema,
+  SuggestionsSchema
+} from '../model';
 
 export class RealmDB {
   private static instance: Realm;
 
-  private constructor() { }
+  private constructor() {}
 
   public static getInstance(): Realm {
-      if (!RealmDB.instance) {
-        RealmDB.instance = new Realm({
-          path: "airyRealm",
-          schema: [UserInfoSchema, ConversationSchema]
-        });
-      }
-      return RealmDB.instance;
+    if (!RealmDB.instance) {
+      RealmDB.instance = new Realm({
+        path: 'airyRealm',
+        schema: [
+          ConversationSchema,
+          ChannelSchema,
+          ContentSchema,
+          ChannelMetadataSchema,
+          MessageSchema,
+          MetadataSchema,
+          MessageTypeSchema,
+          MetadataEventSchema,
+          MessageMetadataSchema,
+          SuggestedReplySchema,
+          SuggestionsSchema,
+          UserInfoSchema,
+        ],
+      });
+    }
+    return RealmDB.instance;
   }
 }
