@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {View, Button, StyleSheet, Text} from 'react-native';
+import {View, Button, StyleSheet, Text, ScrollView} from 'react-native';
 import {debounce} from 'lodash-es';
 import {Conversation} from '../../../model/Conversation';
 import ConversationListItem from '../ConversationListItem';
@@ -97,8 +97,8 @@ const ConversationList = (props: ConversationListProps) => {
   //   );
 
   return (
-    <View ref={conversationListRef}>
-      <View style={styles.conversationListPaginationWrapper}>
+    <ScrollView style={styles.conversationListPaginationWrapper} ref={conversationListRef}>
+      <View>
         <Button title="POWER" onPress={getConversationsList} />
         {conversations.map((conversation: any) => (
           <ConversationListItem
@@ -122,7 +122,7 @@ const ConversationList = (props: ConversationListProps) => {
           </>
         )} */}
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -130,11 +130,10 @@ export default ConversationList;
 
 const styles = StyleSheet.create({
   conversationListPaginationWrapper: {
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // flex:1,
-    // padding:0,
-    // margin:0
+    display: 'flex',
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'yellow'
   },
   text: {
     color: 'black',
