@@ -69,6 +69,8 @@ const ConversationListItem = (props: ConversationListItemProps) => {
     }
   };
 
+  let number = useRef<number>(0);
+
   useEffect(() => {
     markAsRead();
   }, [active, conversation, currentConversationState]);

@@ -2,8 +2,6 @@ import {Contact} from './Contact';
 import {Message} from './Message';
 import {Metadata} from './Metadata';
 import {Channel} from './Channel';
-import {Results} from 'realm';
-import {RealmDB} from '../storage/realm';
 
 export type ConversationMetadata = Metadata & {
   contact: Contact;
@@ -33,12 +31,3 @@ export interface Conversation {
   createdAt: Date;
   lastMessage: Message;
 }
-
-export const getConversations = (): Conversation | undefined => {
-  console.log("HERERERERERERER");
-  
-  const objects: Results<Conversation> =
-    RealmDB.getInstance()?.objects('Conversation');
-    console.log("OBJECTs: ", objects)
-  if (objects) return objects[0];
-};

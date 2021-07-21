@@ -22,7 +22,7 @@ const App = () => {
       setUserInfo(undefined);
     }     
   }
- 
+  
   return (
       <SafeAreaView style={{flex: 1, alignItems: 'center'}}>
         {/* {userInfo ? <Logout userInfo={userInfo} /> : <Login />}         */}

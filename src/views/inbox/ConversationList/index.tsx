@@ -6,6 +6,9 @@ import ConversationListItem from '../ConversationListItem';
 import NoConversations from '../NoConversations';
 import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
+import {TabBar} from '../../../components/TabBar';
+import {getConversations} from '../../../services/conversation';
+import {getPagination} from '../../../services/Pagination';
 
 type ConversationListProps = {
   currentConversationId?: string;
@@ -17,33 +20,29 @@ type ConversationListProps = {
 
 const ConversationList = (props: ConversationListProps) => {
   const realm = RealmDB.getInstance();
+  const paginationData = getPagination();
 
   const {
     currentConversationId,
     filteredConversations,
     conversationsPaginationData,
     filteredPaginationData,
-    fetchNext,
   } = props;
-  const conversationListRef = useRef(null);
+  const conversationListRef = useRef<any>(null);
   const [conversations, setConversations] = useState(
     realm.objects('Conversation'),
   );
-
-  const items = conversations;
-  const paginationData = conversationsPaginationData;
-  //   const isLoadingConversation = paginationData.loading;
 
   useEffect(() => {
     getConversationsList();
   }, []);
 
-  console.log('CONVERSATIONS--------------useSTATE: ', conversations.length);
+  console.log('CONVERSATIONS LENGTH --------------: ', conversations.length);
 
   const getConversationsList = () => {
     HttpClientInstance.listConversations({page_size: 50})
       .then((response: any) => {
-        setConversations(response.data);
+        // setConversations(response.data);
         realm.write(() => {
           for (const conversation of response.data) {
             const isStored = realm.objectForPrimaryKey(
@@ -53,7 +52,36 @@ const ConversationList = (props: ConversationListProps) => {
             if (isStored) {
               realm.delete(isStored);
             }
+
+            console.log('IS STORED: ', isStored);
             realm.create('Conversation', conversation);
+            realm.create('Pagination', response.paginationData);
+          }
+        });
+      })
+      .catch((error: any) => {
+        console.log('error: GET CONVERSATIONLIST', error);
+      });
+  };
+
+  const getNextConversationList = () => {
+    const cursor = getPagination()?.nextCursor;
+    console.log('CURSOR: ', cursor);
+    HttpClientInstance.listConversations({cursor: cursor})
+      .then((response: any) => {
+        // setConversations((prevState: any) => [...prevState, ...response.data]);
+        realm.write(() => {
+          for (const conversation of response.data) {
+            // const isStored = realm.objectForPrimaryKey(
+            //   'Conversation',
+            //   conversation.id,
+            // );
+            // if (isStored) {
+            //   realm.delete(isStored);
+            // }
+
+            realm.create('Conversation', conversation);
+            realm.create('Pagination', response.paginationData);
           }
         });
       })
@@ -63,51 +91,49 @@ const ConversationList = (props: ConversationListProps) => {
   };
 
   const hasPreviousMessages = () => {
-    return !!(
-      conversationsPaginationData &&
-      conversationsPaginationData &&
-      conversationsPaginationData.nextCursor
-    );
+    return !!(paginationData && paginationData.nextCursor);
   };
 
   const debouncedListPreviousConversations = debounce(() => {
-    fetchNext();
+    getNextConversationList();
   }, 200);
 
-  //   const handleScroll = debounce(
-  //     () => {
-  //       if (!conversationListRef) {
-  //         return;
-  //       }
+  const handleScroll = debounce(
+    () => {
+      if (!conversationListRef) {
+        console.log('NOOOOOOOOT CONVERSATIONLIST');
 
-  //       if (
-  //         hasPreviousMessages() &&
-  //         !isLoadingConversation &&
-  //         conversationListRef &&
-  //         conversationListRef.current &&
-  //         conversationListRef.current.scrollHeight -
-  //           conversationListRef.current.scrollTop ===
-  //           conversationListRef.current.clientHeight
-  //       ) {
-  //         debouncedListPreviousConversations();
-  //       }
-  //     },
-  //     100,
-  //     {leading: true},
-  //   );
+        return;
+      }
+
+      // if (
+      //   hasPreviousMessages()
+      //   // !isLoadingConversation
+      // ) {
+      debouncedListPreviousConversations();
+      // }
+    },
+    100,
+    {leading: true},
+  );
 
   return (
-    <ScrollView style={styles.conversationListPaginationWrapper} ref={conversationListRef}>
-      <View>
-        <Button title="POWER" onPress={getConversationsList} />
-        {conversations.map((conversation: any) => (
-          <ConversationListItem
-            key={conversation.id}
-            conversation={conversation}
-            active={conversation.id === currentConversationId}
-          />
-        ))}
-        {/* {!items && items.length && !isLoadingConversation ? (
+    <>
+      <ScrollView
+        style={styles.conversationListPaginationWrapper}
+        ref={conversationListRef}
+        onScroll={handleScroll}
+        scrollEventThrottle={0}>
+        <View>
+          <Button title="POWER" onPress={getConversationsList} />
+          {conversations.map((conversation: any) => (
+            <ConversationListItem
+              key={conversation.id}
+              conversation={conversation}
+              active={conversation.id === currentConversationId}
+            />
+          ))}
+          {/* {!items && items.length && !isLoadingConversation ? (
           <NoConversations conversations={conversations.length} />
         ) : (
           <>
@@ -121,8 +147,10 @@ const ConversationList = (props: ConversationListProps) => {
               ))}
           </>
         )} */}
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+      <TabBar />
+    </>
   );
 };
 
