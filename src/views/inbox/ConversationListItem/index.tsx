@@ -90,11 +90,39 @@ const ConversationListItem = (props: ConversationListItemProps) => {
           }}
         />
         <View style={styles.contentContainer}>
-          <Text style={styles.name}>Name</Text>
+          <View style={styles.nameStatus}>
+            <Text style={styles.name}>Name</Text>
+            <View
+              style={{
+                height: 20,
+                width: 20,
+                backgroundColor: 'black',
+                borderRadius: 50,
+              }}></View>
+          </View>
           <Text style={styles.message}>Message</Text>
           <View style={styles.channelTimeContainer}>
-          <Text style={styles.channel}>Channel</Text>
-          <Text style={styles.channel}>Time</Text>
+            <View style={styles.iconChannel}>
+              {/* <IconChannel channel={'sdkla'}/> */}
+              <View
+                style={{
+                  height: 20,
+                  width: 20,
+                  backgroundColor: 'black',
+                  borderRadius: 8,
+                }}></View>
+              <Text style={styles.channel}>Channel</Text>
+            </View>
+            <View style={styles.timeIcon}>
+              <Text style={styles.channel}>Time</Text>
+              <View
+                style={{
+                  height: 8,
+                  width: 8,
+                  backgroundColor: 'black',
+                  borderRadius: 8,
+                }}></View>
+            </View>
           </View>
         </View>
         <Button title="" onPress={() => console.log('dajs')}>
@@ -152,43 +180,57 @@ export default ConversationListItem;
 
 const styles = StyleSheet.create({
   clickableListItem: {
-    backgroundColor: 'red',
     height: 100,
-    borderBottomColor: 'green',
-    borderBottomWidth: 1
   },
   contentContainer: {
     display: 'flex',
     marginBottom: 20,
-    paddingLeft: 16
+    paddingLeft: 16,
+    width: 305,
   },
   name: {
-    color: 'white',
+    color: 'black',
     paddingTop: 10,
   },
   message: {
-    color: 'white',
+    color: 'black',
     paddingTop: 10,
+    paddingBottom: 10,
   },
   channel: {
-    color: 'white',
+    color: 'black',
     alignSelf: 'center',
-    paddingTop: 10,
+    marginLeft: 4,
+  },
+  nameStatus: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
   },
   channelTimeContainer: {
     display: 'flex',
     flexDirection: 'row',
-    width: 260,
+    width: 285,
     justifyContent: 'space-between',
-    paddingBottom: 3,
+    paddingBottom: 4,
     borderBottomWidth: 1,
-    borderColor: 'white'
+    borderColor: 'gray',
+    alignItems: 'flex-end',
+  },
+  iconChannel: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  timeIcon: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: 52,
   },
   container: {
     display: 'flex',
     flexDirection: 'row',
-    flexGrow: 3,
-    backgroundColor: 'transparent',
-    height: 150
   },
 });

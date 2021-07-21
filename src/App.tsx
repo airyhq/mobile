@@ -24,7 +24,7 @@ const App = () => {
   }
  
   return (
-      <SafeAreaView style={{flex: 1, alignItems: 'center', backgroundColor: 'green'}}>
+      <SafeAreaView style={{flex: 1, alignItems: 'center'}}>
         {/* {userInfo ? <Logout userInfo={userInfo} /> : <Login />}         */}
         {userInfo ? <Logout userInfo={userInfo} /> : <ConversationList />}   
       </SafeAreaView>
