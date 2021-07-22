@@ -25,10 +25,11 @@ import {Avatar} from '../../../components/Avatar';
 type ConversationListItemProps = {
   conversation: Conversation;
   active: boolean;
+  number: number;
 };
 
 const ConversationListItem = (props: ConversationListItemProps) => {
-  const {conversation, active} = props;
+  const {conversation, active, number} = props;
   const participant = conversation.metadata.contact;
   const unread = conversation.metadata.unreadCount > 0;
   const currentConversationState = conversation.metadata.state || 'OPEN';
@@ -69,8 +70,6 @@ const ConversationListItem = (props: ConversationListItemProps) => {
     }
   };
 
-  let number = useRef<number>(0);
-
   useEffect(() => {
     markAsRead();
   }, [active, conversation, currentConversationState]);
@@ -93,7 +92,7 @@ const ConversationListItem = (props: ConversationListItemProps) => {
         />
         <View style={styles.contentContainer}>
           <View style={styles.nameStatus}>
-            <Text style={styles.name}>Name</Text>
+            <Text style={styles.name}>Name {number}</Text>
             <View
               style={{
                 height: 20,

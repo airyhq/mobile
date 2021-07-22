@@ -14,6 +14,7 @@ export type ConversationMetadata = Metadata & {
 
 export const ConversationSchema = {
   name: 'Conversation',
+  primaryKey: "id",
   properties: {
     id: 'string',
     channel: 'Channel',
@@ -21,7 +22,6 @@ export const ConversationSchema = {
     createdAt: 'date?',
     lastMessage: 'Message',
   },
-  primaryKey: "id",
 };
 
 export interface Conversation {
