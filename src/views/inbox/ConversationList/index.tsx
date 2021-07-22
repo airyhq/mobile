@@ -1,14 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {View, Button, StyleSheet, Text, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import {debounce} from 'lodash-es';
 import {Conversation} from '../../../model/Conversation';
-import {Pagination} from '../../../model/Pagination';
 import ConversationListItem from '../ConversationListItem';
 import NoConversations from '../NoConversations';
 import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {TabBar} from '../../../components/TabBar';
-import {getConversations} from '../../../services/conversation';
 import {getPagination} from '../../../services/Pagination';
 
 type ConversationListProps = {
@@ -22,16 +20,13 @@ type ConversationListProps = {
 const ConversationList = (props: ConversationListProps) => {
   const realm = RealmDB.getInstance();
   const paginationData = getPagination();
-
-  const {
-    currentConversationId,
-    filteredConversations,
-    conversationsPaginationData,
-    filteredPaginationData,
-  } = props;
+  const {currentConversationId} = props;
   const conversationListRef = useRef<any>(null);
-  // const conversations = realm.objects('Conversation');
-  const [conversations, setConversations] = useState<any>(realm.objects('Conversation'))
+  const [conversations, setConversations] = useState<any>(
+    realm.objects('Conversation'),
+  );
+
+  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     getConversationsList();
@@ -40,22 +35,13 @@ const ConversationList = (props: ConversationListProps) => {
   const getConversationsList = () => {
     HttpClientInstance.listConversations({page_size: 50})
       .then((response: any) => {
-        setConversations(response.data)
+        setConversations(response.data);
         realm.write(() => {
           realm.create('Pagination', response.paginationData);
-          console.log('GET PAGINATION: ', getPagination());
 
           for (const conversation of response.data) {
-            // const isStored = realm.objectForPrimaryKey(
-            //   'Conversation',
-            //   conversation.id,
-            // );
-            // if (isStored) {
-            //   realm.delete(isStored);
-            // }
             realm.create('Conversation', conversation);
           }
-          console.log('CONVERSATIONS LENGTH --------', conversations.length);
         });
       })
       .catch((error: any) => {
@@ -63,11 +49,11 @@ const ConversationList = (props: ConversationListProps) => {
       });
   };
 
+  console.log('========================== LEGNTH: ', conversations.length);
+
   const getNextConversationList = () => {
-    // const cursor = pagination
     const cursor = paginationData?.nextCursor;
-    console.log('CURSOR: ', cursor);
-    HttpClientInstance.listConversations({cursor: cursor})
+    HttpClientInstance.listConversations({cursor: cursor, page_size: 50})
       .then((response: any) => {
         realm.write(() => {
           for (const conversation of response.data) {
@@ -90,7 +76,7 @@ const ConversationList = (props: ConversationListProps) => {
           realm.create('Pagination', response.paginationData);
           console.log('nextCursor: ', paginationData?.nextCursor);
         });
-        setConversations(realm.objects('Conversation'))
+        setConversations(realm.objects('Conversation'));
       })
       .catch((error: any) => {
         console.log('error: GET NEXT CONVERSATIONLIST', error);
@@ -105,7 +91,26 @@ const ConversationList = (props: ConversationListProps) => {
     getNextConversationList();
   }, 200);
 
-  const handleScroll = debounce(
+  const isCloseToBottom = (event: any) => {
+    const paddingToBottom = 20;
+    return (
+      event.layoutMeasurement &&
+      event.layoutMeasurement.height + event.contentOffset.y >=
+        event.contentSize.height - paddingToBottom
+    );
+  };
+
+  const handleScroll = (event: any) => {
+    const currentOffset = event.nativeEvent.contentOffset.y;
+    const direction = currentOffset > offset ? 'down' : 'up';
+    setOffset(currentOffset);
+
+    if (direction == 'down' && isCloseToBottom(event.nativeEvent)) {
+      fetchConversationScroll();
+    }
+  };
+
+  const fetchConversationScroll = debounce(
     () => {
       if (!conversationListRef) {
         return;
@@ -118,7 +123,7 @@ const ConversationList = (props: ConversationListProps) => {
       debouncedListPreviousConversations();
       // }
     },
-    100,
+    500,
     {leading: true},
   );
 
@@ -130,7 +135,7 @@ const ConversationList = (props: ConversationListProps) => {
         style={styles.conversationListPaginationWrapper}
         ref={conversationListRef}
         onScroll={handleScroll}
-        scrollEventThrottle={0}>
+        scrollEventThrottle={400}>
         <View>
           {conversations.map((conversation: any) => (
             <ConversationListItem

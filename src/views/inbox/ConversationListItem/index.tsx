@@ -92,7 +92,7 @@ const ConversationListItem = (props: ConversationListItemProps) => {
         />
         <View style={styles.contentContainer}>
           <View style={styles.nameStatus}>
-            <Text style={styles.name}>Name {number}</Text>
+            <Text style={styles.name}>{number}</Text>
             <View
               style={{
                 height: 20,
@@ -234,4 +234,10 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
   },
+  openStateButton: {
+
+  },
+  closedStateButton: {
+
+  }
 });
