@@ -11,7 +11,7 @@ export interface MetadataEvent<T extends Metadata = Metadata> {
 export const MetadataSchema = {
   name: 'Metadata',
   properties: {
-    userData: 'Metadata?',
+    contact: 'Contact'
   },
 };
 

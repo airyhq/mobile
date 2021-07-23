@@ -4,6 +4,7 @@ import {ConversationSchema} from '../model/Conversation';
 import {
   ChannelMetadataSchema,
   ChannelSchema,
+  ContactSchema,
   ContentSchema,
   MessageMetadataSchema,
   MessageSchema,
@@ -25,6 +26,7 @@ export class RealmDB {
       RealmDB.instance = new Realm({
         path: 'airyRealm',
         schema: [
+          ContactSchema,
           ConversationSchema,
           ChannelSchema,
           ContentSchema,

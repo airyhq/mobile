@@ -74,25 +74,22 @@ const ConversationListItem = (props: ConversationListItemProps) => {
     markAsRead();
   }, [active, conversation, currentConversationState]);
 
+  // console.log('parti', participant && participant.displayName);
+  console.log('conve', conversation);
+
   return (
     <Pressable
       style={styles.clickableListItem}
       onPress={() => console.log('PRESSED')}>
       <View style={styles.container}>
-        <Avatar />
-        <View
-          style={{
-            width: 65,
-            height: 65,
-            backgroundColor: 'black',
-            borderRadius: 50,
-            marginLeft: 8,
-            marginTop: 8,
-          }}
-        />
+        <View style={styles.avatar}>
+          <Avatar contact={participant} />
+        </View>
         <View style={styles.contentContainer}>
           <View style={styles.nameStatus}>
-            <Text style={styles.name}>{number}</Text>
+            <Text style={styles.name}>
+              {participant && participant.displayName}
+            </Text>
             <View
               style={{
                 height: 20,
@@ -112,10 +109,14 @@ const ConversationListItem = (props: ConversationListItemProps) => {
                   backgroundColor: 'black',
                   borderRadius: 8,
                 }}></View>
-              <Text style={styles.channel}>Channel</Text>
+              <Text style={styles.channel}>
+                {conversation.channel.sourceChannelId}
+              </Text>
             </View>
             <View style={styles.timeIcon}>
-              <Text style={styles.channel}>Time</Text>
+              <Text style={styles.channel}>
+                {formatTimeOfMessage(conversation.lastMessage)}
+              </Text>
               <View
                 style={{
                   height: 8,
@@ -189,6 +190,10 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     width: 305,
   },
+  avatar: {
+    marginLeft: 8,
+    marginTop: 8,
+  },
   name: {
     color: 'black',
     paddingTop: 10,
@@ -234,10 +239,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
   },
-  openStateButton: {
-
-  },
-  closedStateButton: {
-
-  }
+  openStateButton: {},
+  closedStateButton: {},
 });

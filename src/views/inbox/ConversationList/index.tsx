@@ -45,11 +45,9 @@ const ConversationList = (props: ConversationListProps) => {
         });
       })
       .catch((error: any) => {
-        console.log('error: GET CONVERSATIONLIST', error);
+        console.log('error: ', error);
       });
   };
-
-  console.log('========================== LEGNTH: ', conversations.length);
 
   const getNextConversationList = () => {
     const cursor = paginationData?.nextCursor;
@@ -66,20 +64,17 @@ const ConversationList = (props: ConversationListProps) => {
             }
             realm.create('Conversation', conversation);
           }
+          setConversations(realm.objects('Conversation'));
         });
         realm.write(() => {
           const pagination: any = realm.objects('Pagination')[0];
           pagination.previousCursor = response.paginationData.previousCursor;
           pagination.nextCursor = response.paginationData.nextCursor;
           pagination.total = response.paginationData.total;
-
-          realm.create('Pagination', response.paginationData);
-          console.log('nextCursor: ', paginationData?.nextCursor);
         });
-        setConversations(realm.objects('Conversation'));
       })
       .catch((error: any) => {
-        console.log('error: GET NEXT CONVERSATIONLIST', error);
+        console.log('error: ', error);
       });
   };
 

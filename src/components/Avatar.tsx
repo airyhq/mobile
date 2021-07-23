@@ -1,9 +1,9 @@
-import React, {SyntheticEvent} from 'react';
+import React from 'react';
 import {Contact} from '../model/Contact';
-import { Image, StyleSheet } from 'react-native';
+import {Image, StyleSheet} from 'react-native';
 
 type AvatarProps = {
-  contact?: Contact;
+  contact: Contact;
 };
 
 const fallbackAvatar = 'https://s3.amazonaws.com/assets.airy.co/unknown.png';
@@ -18,15 +18,17 @@ export const Avatar = ({contact}: AvatarProps) => {
     <Image
       style={styles.avatarImage}
       source={{uri: 'https://s3.amazonaws.com/assets.airy.co/unknown.png'}}
-      onError={(event: React.SyntheticEvent<HTMLImageElement, Event>) => fallbackAvatarImage(event)}
+      onError={(event: React.SyntheticEvent<HTMLImageElement, Event>) =>
+        fallbackAvatarImage(event)
+      }
     />
   );
 };
 
 const styles = StyleSheet.create({
-    avatarImage: {
-      display: 'flex',
-      
-      backgroundColor: 'black'
-    },
+  avatarImage: {
+    display: 'flex',
+    height: 60,
+    width: 60,
+  },
 });
