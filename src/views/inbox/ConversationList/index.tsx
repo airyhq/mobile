@@ -136,8 +136,6 @@ const ConversationList = (props: ConversationListProps) => {
             <ConversationListItem
               key={conversation.id}
               conversation={conversation}
-              active={conversation.id === currentConversationId}
-              number={number++}
             />
           ))}
           {/* {!items && items.length && !isLoadingConversation ? (

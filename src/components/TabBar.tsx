@@ -1,20 +1,48 @@
-import React from 'react';
-import {Button, StyleSheet, View} from 'react-native';
+import React, {useState} from 'react';
+import {Button, Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import Inbox from '../assets/images/icons/bubble_icon.svg';
+import Contacts from '../assets/images/icons/users_icon.svg';
+import Settings from '../assets/images/icons/settings_icon.svg';
+import Svg from 'react-native-svg';
 
 export const TabBar = () => {
+  const [isActive, setIsActive] = useState(0);
+
   return (
     <View style={styles.container}>
       <View style={styles.inbox}>
-        <View style={{width: 24, height: 24, backgroundColor: 'black'}} />
-        <Button title="Inbox" onPress={() => console.log('Inbox')}></Button>
+        <Pressable
+          onPress={() => setIsActive(0)}
+          style={{alignItems: 'center'}}>
+          <Inbox
+            width={32}
+            height={32}
+            fill={isActive == 0 ? '#1578d4' : 'gray'}
+          />
+          <Text style={isActive == 0 ? styles.textActive : styles.text}>
+            Inbox
+          </Text>
+        </Pressable>
       </View>
       <View style={styles.contacts}>
-        <View style={{width: 24, height: 24, backgroundColor: 'black'}} />
-        <Button title="Contacts" onPress={() => console.log('Contacts')}></Button>
+        <Pressable
+          onPress={() => setIsActive(1)}
+          style={{alignItems: 'center'}}>
+          <Contacts width={32} height={32} fill={isActive == 1 ? '#1578d4' : 'gray'}/>
+          <Text style={isActive == 1 ? styles.textActive : styles.text}>
+            Contacts
+          </Text>
+        </Pressable>
       </View>
       <View style={styles.settings}>
-        <View style={{width: 24, height: 24, backgroundColor: 'black'}} />
-        <Button title="Settings" onPress={() => console.log('Settings')}></Button>
+        <Pressable
+          onPress={() => setIsActive(2)}
+          style={{alignItems: 'center'}}>
+          <Settings width={32} height={32} fill={isActive == 2 ? '#1578d4' : 'gray'} />
+          <Text style={isActive == 2 ? styles.textActive : styles.text}>
+            Settings
+          </Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -33,24 +61,37 @@ const styles = StyleSheet.create({
   },
   inbox: {
     display: 'flex',
+    flex: 0.33,
     flexDirection: 'column',
     alignItems: 'center',
     height: '100%',
     justifyContent: 'center',
-    marginTop: 20
+    marginTop: 20,
   },
   contacts: {
     display: 'flex',
+    flex: 0.33,
     flexDirection: 'column',
     alignItems: 'center',
     height: '100%',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   settings: {
     display: 'flex',
+    flex: 0.33,
     flexDirection: 'column',
     alignItems: 'center',
     height: '100%',
-    justifyContent: 'center'
+    justifyContent: 'center',
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: 'gray',
+  },
+  textActive: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1578d4',
   },
 });

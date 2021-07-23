@@ -24,84 +24,84 @@ import {Avatar} from '../../../components/Avatar';
 
 type ConversationListItemProps = {
   conversation: Conversation;
-  active: boolean;
-  number: number;
 };
 
 const ConversationListItem = (props: ConversationListItemProps) => {
-  const {conversation, active, number} = props;
+  const {conversation} = props;
   const participant = conversation.metadata.contact;
   const unread = conversation.metadata.unreadCount > 0;
   const currentConversationState = conversation.metadata.state || 'OPEN';
 
-  const eventHandler = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
-    // conversationState(conversation.id, newState);
+  const eventHandler = (event: any) => {
     event.preventDefault();
     event.stopPropagation();
   };
 
+  console.log(conversation.metadata.state);
+  
+
+  const changeState = () => {
+    const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
+    HttpClientInstance.setStateConversation(conversation.id, newState)
+      .then((response: any) => {
+        console.log(response);
+      })
+      .catch((error: any) => {
+        console.log('error: ', error);
+      });
+  };
+
   const OpenStateButton = () => {
-    return (
-      <View style={styles.openStateButton}>
-        <Button
-          title="Set to closed"
-          onPress={(event: any) => eventHandler(event)}
-        />
-      </View>
-    );
+    return <Pressable style={styles.openStateButton} onPress={changeState} />;
   };
 
   const ClosedStateButton = () => {
     return (
-      <View style={styles.closedStateButton}>
-        <Button
-          title="Set to open"
-          onPress={(event: any) => eventHandler(event)}>
-          {/* <Checkmark /> */}
-        </Button>
-      </View>
+      <Pressable style={styles.closedStateButton} onPress={changeState}>
+        {/* <Checkmark /> */}
+      </Pressable>
     );
   };
 
   const markAsRead = () => {
-    if (active && unread) {
-      HttpClientInstance.readConversations(conversation.id).then(() => {});
+    if (unread) {
+      HttpClientInstance.readConversations(conversation.id);
     }
   };
 
   useEffect(() => {
     markAsRead();
-  }, [active, conversation, currentConversationState]);
-
-  // console.log('parti', participant && participant.displayName);
-  console.log('conve', conversation);
+  }, [conversation, currentConversationState]);
 
   return (
-    <Pressable
-      style={styles.clickableListItem}
-      onPress={() => console.log('PRESSED')}>
+    <Pressable style={styles.clickableListItem} onPress={markAsRead}>
       <View style={styles.container}>
         <View style={styles.avatar}>
           <Avatar contact={participant} />
         </View>
         <View style={styles.contentContainer}>
           <View style={styles.nameStatus}>
-            <Text style={styles.name}>
+            <Text style={unread ? styles.name : styles.unreadName}>
               {participant && participant.displayName}
             </Text>
-            <View
+            <OpenStateButton />
+            {/* {currentConversationState ? (
+              <OpenStateButton />
+            ) : (
+              <ClosedStateButton />
+            )} */}
+            {/* <View
               style={{
                 height: 20,
                 width: 20,
                 backgroundColor: 'black',
                 borderRadius: 50,
-              }}></View>
+              }}></View> */}
           </View>
           <Text style={styles.message}>Message</Text>
           <View style={styles.channelTimeContainer}>
             <View style={styles.iconChannel}>
-              {/* <IconChannel channel={'sdkla'}/> */}
+              {/* <IconChannel channel={conversation.channel}/> */}
               <View
                 style={{
                   height: 20,
@@ -180,6 +180,11 @@ const ConversationListItem = (props: ConversationListItemProps) => {
 
 export default ConversationListItem;
 
+const {height, width} = Dimensions.get('window');
+
+console.log('height ', height);
+console.log('width ', width);
+
 const styles = StyleSheet.create({
   clickableListItem: {
     height: 100,
@@ -195,7 +200,14 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   name: {
+    fontSize: 16,
     color: 'black',
+    paddingTop: 10,
+  },
+  unreadName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1578d4',
     paddingTop: 10,
   },
   message: {
@@ -204,6 +216,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   channel: {
+    fontSize: 12,
     color: 'black',
     alignSelf: 'center',
     marginLeft: 4,
@@ -233,12 +246,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: 52,
+    width: 60,
   },
   container: {
     display: 'flex',
     flexDirection: 'row',
   },
-  openStateButton: {},
-  closedStateButton: {},
+  openStateButton: {
+    backgroundColor: 'red',
+    height: 20,
+    width: 20,
+  },
+  closedStateButton: {
+    backgroundColor: 'green',
+    height: 20,
+    width: 20,
+  },
 });

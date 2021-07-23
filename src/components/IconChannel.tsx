@@ -1,7 +1,7 @@
 /* eslint-disable react/display-name */
 import React from 'react';
 import {Channel} from '../model/Channel';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import FacebookIcon from '../assets/images/icons/facebook_rounded.svg';
 import InstagramIcon from '../assets/images/icons/instagram.svg';
@@ -77,13 +77,13 @@ const IconChannel: React.FC<IconChannelProps> = ({
     channel = PlaceholderChannelData;
   }
 
-//   const channelInfo = SOURCE_INFO[channel.source];
+  // const channelInfo = SOURCE_INFO[channel.source];
   const channelInfo = SOURCE_INFO['facebook'];
   const fbFallback = SOURCE_INFO['facebook'];
   const isFromTwilioSource = channel.source === 'twilio.sms' || channel.source === 'twilio.whatsapp';
 
   const ChannelName = () => {
-    return <p>{channel.metadata?.name || (isFromTwilioSource ? channel.sourceChannelId : channel.source)}</p>;
+    return <Text>{channel.metadata?.name || (isFromTwilioSource ? channel.sourceChannelId : channel.source)}</Text>;
   };
 
   if (icon && showName) {
@@ -108,7 +108,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
     return (
       <View style={styles.iconText}>
         {channelInfo.icon()}
-        <p>{channelInfo.text}</p>
+        <Text>{channelInfo.text}</Text>
       </View>
     );
   }
@@ -117,7 +117,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
     return (
       <View style={styles.avatarText}>
         {channelInfo.avatar()}
-        <p>{channelInfo.text}</p>
+        <Text>{channelInfo.text}</Text>
       </View>
     );
   }
@@ -141,7 +141,9 @@ const IconChannel: React.FC<IconChannelProps> = ({
 export default IconChannel;
 
 const styles = StyleSheet.create({
-    iconName: {},
+    iconName: {
+
+    },
     avatarName: {},
     avatarText: {},
     iconText: {},
