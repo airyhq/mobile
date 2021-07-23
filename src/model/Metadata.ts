@@ -11,11 +11,11 @@ export interface MetadataEvent<T extends Metadata = Metadata> {
 export const MetadataSchema = {
   name: 'Metadata',
   properties: {
-    contact: 'Contact',
-    unreadCount: 'int',
-    state: 'string'
+    contact: 'Contact'
   },
 };
+//    state: 'string'
+//    state: 'string'
 
 export const MetadataEventSchema = {
   name: 'MetadataEvent',

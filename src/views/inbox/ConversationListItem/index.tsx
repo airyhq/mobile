@@ -21,6 +21,7 @@ import Hello from '../../../assets/images/icons/checkmark-circle.svg';
 import {INBOX_CONVERSATIONS_ROUTE} from '../../../routes/routes';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {Avatar} from '../../../components/Avatar';
+import {SourceMessagePreview} from '../../../render/SourceMessagePreview';
 
 type ConversationListItemProps = {
   conversation: Conversation;
@@ -37,7 +38,7 @@ const ConversationListItem = (props: ConversationListItemProps) => {
     event.stopPropagation();
   };
 
-  console.log(conversation.metadata.state);
+  //console.log(conversation.metadata.state);
   
 
   const changeState = () => {
@@ -98,7 +99,7 @@ const ConversationListItem = (props: ConversationListItemProps) => {
                 borderRadius: 50,
               }}></View> */}
           </View>
-          <Text style={styles.message}>Message</Text>
+          <View style={styles.message}><SourceMessagePreview conversation={conversation} /></View>
           <View style={styles.channelTimeContainer}>
             <View style={styles.iconChannel}>
               {/* <IconChannel channel={conversation.channel}/> */}

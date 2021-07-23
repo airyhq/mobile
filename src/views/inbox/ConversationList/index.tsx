@@ -9,6 +9,7 @@ import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {TabBar} from '../../../components/TabBar';
 import {getPagination} from '../../../services/Pagination';
 
+
 type ConversationListProps = {
   currentConversationId?: string;
   filteredConversations?: Conversation[];
@@ -51,6 +52,7 @@ const ConversationList = (props: ConversationListProps) => {
 
   const getNextConversationList = () => {
     const cursor = paginationData?.nextCursor;
+    console.log('GET NEXT')
     HttpClientInstance.listConversations({cursor: cursor, page_size: 50})
       .then((response: any) => {
         realm.write(() => {
@@ -72,6 +74,8 @@ const ConversationList = (props: ConversationListProps) => {
           pagination.nextCursor = response.paginationData.nextCursor;
           pagination.total = response.paginationData.total;
         });
+
+        console.log('CONVERSATIONS LENGTH', realm.objects('Conversation').length)
       })
       .catch((error: any) => {
         console.log('error: ', error);
@@ -82,12 +86,12 @@ const ConversationList = (props: ConversationListProps) => {
     return !!(paginationData && paginationData.nextCursor);
   };
 
-  const debouncedListPreviousConversations = debounce(() => {
+  const debouncedListPreviousConversations = () => {
     getNextConversationList();
-  }, 200);
+  }
 
   const isCloseToBottom = (event: any) => {
-    const paddingToBottom = 20;
+    const paddingToBottom = 30;
     return (
       event.layoutMeasurement &&
       event.layoutMeasurement.height + event.contentOffset.y >=
@@ -118,7 +122,7 @@ const ConversationList = (props: ConversationListProps) => {
       debouncedListPreviousConversations();
       // }
     },
-    500,
+    200,
     {leading: true},
   );
 
