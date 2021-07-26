@@ -57,6 +57,9 @@ const ConversationList = (props: ConversationListProps) => {
       .then((response: any) => {
         realm.write(() => {
           for (const conversation of response.data) {
+
+            console.log('conversation last msg LIST', conversation.lastMessage.content)
+
             const isStored = realm.objectForPrimaryKey(
               'Conversation',
               conversation.id,

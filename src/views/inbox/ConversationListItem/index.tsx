@@ -29,6 +29,7 @@ type ConversationListItemProps = {
 
 const ConversationListItem = (props: ConversationListItemProps) => {
   const {conversation} = props;
+
   const participant = conversation.metadata.contact;
   const unread = conversation.metadata.unreadCount > 0;
   const currentConversationState = conversation.metadata.state || 'OPEN';
@@ -38,8 +39,6 @@ const ConversationListItem = (props: ConversationListItemProps) => {
     event.stopPropagation();
   };
 
-  //console.log(conversation.metadata.state);
-  
 
   const changeState = () => {
     const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';

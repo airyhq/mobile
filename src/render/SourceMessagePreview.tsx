@@ -32,6 +32,10 @@ const isImageFromGoogleSource = (messageText: string | undefined) => {
 export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
   const {conversation} = props;
 
+  if (Object.keys(conversation).length === 0){
+    return <View></View>
+  }
+
   const lastMessageIsText = (conversation: Conversation) => {
     const lastMessageContent = conversation.lastMessage.content;
 
@@ -68,7 +72,9 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
   const lastMessageIsIcon = (conversation: Conversation) => {
     const lastMessageContent = conversation.lastMessage.content;
 
-    if (!lastMessageContent.attachment) {
+    //console.log('icon', lastMessageIsIcon)
+
+    if (!lastMessageContent.attachment && lastMessageContent !== {}) {
       if (
         lastMessageContent.message?.attachments?.[0].type === 'image' ||
         isImageFromGoogleSource(lastMessageContent.message?.text)
@@ -82,9 +88,13 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
         return <AttachmentImage />;
       } else if (lastMessageContent.richCard) {
         return <RichCardIcon style={{height: '24', width: '24', margin: '0%'}} />;
-      }
+      } 
+        
     }
+
     return <AttachmentTemplate />;
+
+   
   };
 
   return <>{lastMessageIsText(conversation) || lastMessageIsIcon(conversation)}</>;
