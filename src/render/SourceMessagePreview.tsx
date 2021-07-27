@@ -14,7 +14,7 @@ interface FormattedMessageProps {
 
 const FormattedMessage = ({message}: FormattedMessageProps) => {
   if (message?.content) {
-    return <>{message.content.message?.text || message.content.text}</>;
+    return <>{message.content.text}</>;
   }
   return <View></View>;
 };
@@ -37,10 +37,10 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
   }
 
   const lastMessageIsText = (conversation: Conversation) => {
-    const lastMessageContent = conversation.lastMessage.content;
+    const lastMessageContent:any = conversation.lastMessage.content;
 
     if (typeof lastMessageContent === 'string') {
-      if (lastMessageContent.includes('&Body=' && '&FromCountry=')) {
+      if (typeof lastMessageContent === 'string' && lastMessageContent.includes('&Body=' && '&FromCountry=')) {
         const startText = lastMessageContent.search('&Body=');
         const endText = lastMessageContent.search('&FromCountry=');
         const textLength = endText - startText;
@@ -64,38 +64,41 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       !isImageFromGoogleSource(lastMessageContent.message?.text)
     ) {
       return <Text><FormattedMessage message={conversation.lastMessage} /></Text>;
-    } else if (lastMessageContent.suggestionResponse) {
-      return <Text>{conversation.lastMessage.content.suggestionResponse.text}</Text>;
+    } else {
+      return <Text> Type not supported </Text>;
     }
+
+    // else if (lastMessageContent.suggestionResponse) {
+    //   return <Text>{conversation.lastMessage?.content?.suggestionResponse?.text}</Text>;
   };
 
-  const lastMessageIsIcon = (conversation: Conversation) => {
-    const lastMessageContent = conversation.lastMessage.content;
+  // const lastMessageIsIcon = (conversation: Conversation) => {
+  //   const lastMessageContent = conversation.lastMessage.content;
 
-    //console.log('icon', lastMessageIsIcon)
+  //   //console.log('icon', lastMessageIsIcon)
 
-    if (!lastMessageContent.attachment && lastMessageContent !== {}) {
-      if (
-        lastMessageContent.message?.attachments?.[0].type === 'image' ||
-        isImageFromGoogleSource(lastMessageContent.message?.text)
-      ) {
-        return <AttachmentImage />;
-      } else if (lastMessageContent.message?.attachments?.[0].type === 'video') {
-        return <AttachmentVideo style={{height: '24', width: '24', margin: '0%'}} />;
-      } else if (lastMessageContent.suggestionResponse) {
-        return <>{conversation.lastMessage.content.suggestionResponse.text}</>;
-      } else if (lastMessageContent.image) {
-        return <AttachmentImage />;
-      } else if (lastMessageContent.richCard) {
-        return <RichCardIcon style={{height: '24', width: '24', margin: '0%'}} />;
-      } 
+  //   if (!lastMessageContent.attachment && lastMessageContent !== {}) {
+  //     if (
+  //       lastMessageContent.message?.attachments?.[0].type === 'image' ||
+  //       isImageFromGoogleSource(lastMessageContent.message?.text)
+  //     ) {
+  //       return <AttachmentImage />;
+  //     } else if (lastMessageContent.message?.attachments?.[0].type === 'video') {
+  //       return <AttachmentVideo style={{height: '24', width: '24', margin: '0%'}} />;
+  //     } else if (lastMessageContent.suggestionResponse) {
+  //       return <>{conversation.lastMessage.content.suggestionResponse.text}</>;
+  //     } else if (lastMessageContent.image) {
+  //       return <AttachmentImage />;
+  //     } else if (lastMessageContent.richCard) {
+  //       return <RichCardIcon style={{height: '24', width: '24', margin: '0%'}} />;
+  //     } 
         
-    }
+  //   }
 
-    return <AttachmentTemplate />;
+  //   return <AttachmentTemplate />;
 
    
-  };
+  // };
 
-  return <>{lastMessageIsText(conversation) || lastMessageIsIcon(conversation)}</>;
+  return <>{lastMessageIsText(conversation)}</>;
 };

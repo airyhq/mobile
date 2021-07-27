@@ -1,8 +1,12 @@
-export type Content = any;
+export type Content = {
+  text?: string
+}
+
 
 export const ContentSchema = {
-    name: 'Content',
-    properties: {
-      
-    },
-  };
+  name: 'Content',
+  properties: {
+    text: 'string?'
+    
+  },
+};

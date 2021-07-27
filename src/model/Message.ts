@@ -1,3 +1,4 @@
+
 import {Content} from './Content';
 import {Suggestions} from './SuggestedReply';
 
@@ -24,7 +25,7 @@ export interface Message {
   deliveryState: DeliveryState;
   fromContact: boolean;
   sentAt: Date;
-  metadata?: MessageMetadata;
+  metadata?:MessageMetadata;
 }
 
 export const MessageSchema = {

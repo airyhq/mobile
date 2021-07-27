@@ -11,6 +11,10 @@ const App = () => {
 
   const [userInfo, setUserInfo] = useState<UserInfo | undefined>();
 
+//   Realm.open({}).then(realm => {
+//     console.log("Realm is located at: " + realm.path);
+// });
+
   useEffect(() => {
     RealmDB.getInstance().objects('UserInfo').addListener(onUserUpdated);
   }, []);
