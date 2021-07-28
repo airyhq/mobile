@@ -18,12 +18,14 @@ type ConversationListProps = {
   fetchNext?: any;
 };
 
-const ConversationList = (props: ConversationListProps) => {
+const ConversationList = (props: any) => {
   const realm = RealmDB.getInstance();
   const paginationData = getPagination();
-  const {currentConversationId} = props;
+  const {currentConversationId, match} = props;
   const conversationListRef = useRef<any>(null);
   const [conversations, setConversations] = useState<any>([]);
+
+  console.log('match', match)
 
   useEffect(() => {
 

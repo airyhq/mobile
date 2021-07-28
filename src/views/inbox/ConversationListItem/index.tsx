@@ -27,16 +27,15 @@ type ConversationListItemProps = {
   conversation: Conversation;
 };
 
-const ConversationListItem = (props: ConversationListItemProps) => {
+const ConversationListItem = (props: any) => {
   const {conversation} = props;
+
+//console.log('props ITEM', conversation.id)
 
   const participant = conversation.metadata.contact;
   const unread = conversation.metadata.unreadCount > 0;
   const currentConversationState = conversation.metadata.state || 'OPEN';
   const realm = RealmDB.getInstance();
-
-
-  console.log('currentConversationState', currentConversationState)
 
   const eventHandler = (event: any) => {
     event.preventDefault();
@@ -85,12 +84,16 @@ const ConversationListItem = (props: ConversationListItemProps) => {
     }
   };
 
-  useEffect(() => {
-    markAsRead();
-  }, [conversation, currentConversationState]);
+  // useEffect(() => {
+  //   markAsRead();
+  // }, [conversation, currentConversationState]);
+
+  //onPress={markAsRead}
 
   return (
-    <Pressable style={styles.clickableListItem} onPress={markAsRead}>
+ 
+    <View style={styles.clickableListItem} >
+         <Link to={`/${conversation.id}`}>
       <View style={styles.container}>
         <View style={styles.avatar}>
           <Avatar contact={participant} />
@@ -126,7 +129,9 @@ const ConversationListItem = (props: ConversationListItemProps) => {
           <Hello width={20} height={20} fill={'blue'} />
         </Button>
       </View>
-    </Pressable>
+      </Link>
+    </View>
+ 
 
     //   <Link to={`${INBOX_CONVERSATIONS_ROUTE}/${conversation.id}`}>
     //     <View
