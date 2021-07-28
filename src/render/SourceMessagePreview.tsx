@@ -14,7 +14,6 @@ interface FormattedMessageProps {
 
 const FormattedMessage = ({message}: FormattedMessageProps) => {
 
-  console.log('FormattedMessage', message)
   if (message?.content) {
     return <>{message.content.text}</>;
   }

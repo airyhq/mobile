@@ -11,17 +11,17 @@ import {
   Dimensions,
   SafeAreaView,
 } from 'react-native';
-import {debounce} from 'lodash-es';
 import {Conversation} from '../../../model/Conversation';
 import IconChannel from '../../../components/IconChannel';
 // import {Avatar, SourceMessagePreview} from 'render';
 import {formatTimeOfMessage} from '../../../services/format/date';
-// import {ReactComponent as Checkmark} from '../../../assets/images/icons/checkmark-circle.svg';
+import Checkmark from '../../../assets/images/icons/checkmark-circle.svg';
 import Hello from '../../../assets/images/icons/checkmark-circle.svg';
 import {INBOX_CONVERSATIONS_ROUTE} from '../../../routes/routes';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {Avatar} from '../../../components/Avatar';
 import {SourceMessagePreview} from '../../../render/SourceMessagePreview';
+import {RealmDB} from '../../../storage/realm';
 
 type ConversationListItemProps = {
   conversation: Conversation;
@@ -33,10 +33,10 @@ const ConversationListItem = (props: ConversationListItemProps) => {
   const participant = conversation.metadata.contact;
   const unread = conversation.metadata.unreadCount > 0;
   const currentConversationState = conversation.metadata.state || 'OPEN';
+  const realm = RealmDB.getInstance();
 
-  console.log('last message content', conversation.lastMessage.content)
-  // console.log('lastMessage', conversation.lastMessage)
-  // console.log('conversation', conversation)
+
+  console.log('currentConversationState', currentConversationState)
 
   const eventHandler = (event: any) => {
     event.preventDefault();
@@ -46,12 +46,24 @@ const ConversationListItem = (props: ConversationListItemProps) => {
 
   const changeState = () => {
     const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
-    HttpClientInstance.setStateConversation(conversation.id, newState)
-      .then((response: any) => {
-        console.log(response);
+
+
+    HttpClientInstance.setStateConversation({conversationId: conversation.id, state: newState})
+      .then(() => {
+        realm.write(() => {
+          const changedConversation: any = realm.objectForPrimaryKey(
+            'Conversation',
+            conversation.id,
+          );
+
+          
+          changedConversation.metadata.state = newState;
+
+          console.log('changedConversation', changedConversation.metadata)
+        });
       })
       .catch((error: any) => {
-        console.log('error: ', error);
+        console.log('error: CHANGE STATE ', error);
       });
   };
 
@@ -62,7 +74,7 @@ const ConversationListItem = (props: ConversationListItemProps) => {
   const ClosedStateButton = () => {
     return (
       <Pressable style={styles.closedStateButton} onPress={changeState}>
-        {/* <Checkmark /> */}
+         <Checkmark fill="#0da36b"/> 
       </Pressable>
     );
   };
@@ -88,32 +100,18 @@ const ConversationListItem = (props: ConversationListItemProps) => {
             <Text style={unread ? styles.name : styles.unreadName}>
               {participant && participant.displayName}
             </Text>
-            <OpenStateButton />
-            {/* {currentConversationState ? (
+       
+            {currentConversationState === 'OPEN' ? (
               <OpenStateButton />
             ) : (
               <ClosedStateButton />
-            )} */}
-            {/* <View
-              style={{
-                height: 20,
-                width: 20,
-                backgroundColor: 'black',
-                borderRadius: 50,
-              }}></View> */}
+            )} 
           </View>
           <View style={styles.message}><SourceMessagePreview conversation={conversation} /></View>
           <View style={styles.channelTimeContainer}>
             <View style={styles.iconChannel}>
-              {/* <IconChannel channel={conversation.channel}/> */}
-              <View
-                style={{
-                  height: 20,
-                  width: 20,
-                  backgroundColor: 'black',
-                  borderRadius: 8,
-                }}></View>
-              <Text style={styles.channel}>
+            <IconChannel channel={conversation.channel} showAvatar showName />
+            <Text style={styles.channel}>
                 {conversation.channel.sourceChannelId}
               </Text>
             </View>
@@ -121,13 +119,6 @@ const ConversationListItem = (props: ConversationListItemProps) => {
               <Text style={styles.channel}>
                 {formatTimeOfMessage(conversation.lastMessage)}
               </Text>
-              <View
-                style={{
-                  height: 8,
-                  width: 8,
-                  backgroundColor: 'black',
-                  borderRadius: 8,
-                }}></View>
             </View>
           </View>
         </View>
@@ -257,13 +248,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   openStateButton: {
-    backgroundColor: 'red',
+    borderWidth: 2,
+    borderColor: '#bf1a2f',
     height: 20,
     width: 20,
+    borderRadius: 50
   },
   closedStateButton: {
-    backgroundColor: 'green',
+    borderColor: '#0da36b',
     height: 20,
     width: 20,
+    borderRadius: 50
   },
 });

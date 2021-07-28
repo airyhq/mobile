@@ -33,7 +33,7 @@ const PlaceholderChannelData: Channel = {
   connected: true,
 };
 
-const SOURCE_INFO = {
+const SOURCE_INFO:any = {
   facebook: {
     text: 'Facebook page',
     icon: () => <FacebookIcon />,
@@ -77,8 +77,12 @@ const IconChannel: React.FC<IconChannelProps> = ({
     channel = PlaceholderChannelData;
   }
 
-  // const channelInfo = SOURCE_INFO[channel.source];
-  const channelInfo = SOURCE_INFO['facebook'];
+
+
+
+
+  const channelInfo = SOURCE_INFO[channel.source];
+  //const channelInfo = SOURCE_INFO['facebook'];
   const fbFallback = SOURCE_INFO['facebook'];
   const isFromTwilioSource = channel.source === 'twilio.sms' || channel.source === 'twilio.whatsapp';
 
@@ -99,7 +103,6 @@ const IconChannel: React.FC<IconChannelProps> = ({
     return (
       <View style={styles.avatarName}>
         {channelInfo.avatar()}
-        <ChannelName />
       </View>
     );
   }
@@ -141,10 +144,16 @@ const IconChannel: React.FC<IconChannelProps> = ({
 export default IconChannel;
 
 const styles = StyleSheet.create({
-    iconName: {
+  iconName: {
+    alignItems: 'center',
+    minWidth: 0,
+   
+  },
 
-    },
-    avatarName: {},
+  avatarName: {
+    height: 20,
+    width: 20
+  },
     avatarText: {},
     iconText: {},
   });
