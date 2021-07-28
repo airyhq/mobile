@@ -1,8 +1,8 @@
 import React from 'react';
-import AttachmentTemplate from '../assets/images/icons/attachmentTemplate.svg';
-import AttachmentImage from '../assets/images/icons/attachmentImage.svg';
-import AttachmentVideo from '../assets/images/icons/attachmentVideo.svg';
-import RichCardIcon from '../assets/images/icons/richCardIcon.svg';
+// import AttachmentTemplate from '../assets/images/icons/attachmentTemplate.svg';
+// import AttachmentImage from '../assets/images/icons/attachmentImage.svg';
+// import AttachmentVideo from '../assets/images/icons/attachmentVideo.svg';
+// import RichCardIcon from '../assets/images/icons/richCardIcon.svg';
 import {View, Text} from 'react-native';
 import {Conversation, Message} from '../model';
 interface SourceMessagePreviewProps {
@@ -13,10 +13,12 @@ interface FormattedMessageProps {
 }
 
 const FormattedMessage = ({message}: FormattedMessageProps) => {
+
+  console.log('FormattedMessage', message)
   if (message?.content) {
     return <>{message.content.text}</>;
   }
-  return <View></View>;
+  return <>{message.content.text}</>;
 };
 
 const isImageFromGoogleSource = (messageText: string | undefined) => {
@@ -32,9 +34,6 @@ const isImageFromGoogleSource = (messageText: string | undefined) => {
 export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
   const {conversation} = props;
 
-  if (Object.keys(conversation).length === 0){
-    return <View></View>
-  }
 
   const lastMessageIsText = (conversation: Conversation) => {
     const lastMessageContent:any = conversation.lastMessage.content;

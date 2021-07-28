@@ -1,12 +1,11 @@
 export type Content = {
-  text?: string
+  text: string
 }
 
 
 export const ContentSchema = {
   name: 'Content',
   properties: {
-    text: 'string?'
-    
+    text: 'string'
   },
 };

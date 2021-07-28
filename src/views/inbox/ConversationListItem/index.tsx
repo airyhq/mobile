@@ -34,7 +34,7 @@ const ConversationListItem = (props: ConversationListItemProps) => {
   const unread = conversation.metadata.unreadCount > 0;
   const currentConversationState = conversation.metadata.state || 'OPEN';
 
-  // console.log('last message content', conversation.lastMessage.content)
+  console.log('last message content', conversation.lastMessage.content)
   // console.log('lastMessage', conversation.lastMessage)
   // console.log('conversation', conversation)
 
