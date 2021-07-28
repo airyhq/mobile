@@ -88,11 +88,11 @@ const ConversationListItem = (props: any) => {
   //   markAsRead();
   // }, [conversation, currentConversationState]);
 
-  //onPress={markAsRead}
+  //
 
   return (
  
-    <View style={styles.clickableListItem} >
+    <Pressable style={styles.clickableListItem} onPress={markAsRead}>
          <Link to={`/${conversation.id}`}>
       <View style={styles.container}>
         <View style={styles.avatar}>
@@ -130,7 +130,7 @@ const ConversationListItem = (props: any) => {
         </Button>
       </View>
       </Link>
-    </View>
+    </Pressable>
  
 
     //   <Link to={`${INBOX_CONVERSATIONS_ROUTE}/${conversation.id}`}>
