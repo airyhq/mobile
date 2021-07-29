@@ -1,4 +1,6 @@
 import React, {useState} from 'react';
+import {Link, NativeRouter} from 'react-router-native';
+import {INBOX_ROUTE} from '../routes/routes'
 import {Button, Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import Inbox from '../assets/images/icons/bubble_icon.svg';
 import Contacts from '../assets/images/icons/users_icon.svg';
@@ -14,6 +16,8 @@ export const TabBar = () => {
         <Pressable
           onPress={() => setIsActive(0)}
           style={{alignItems: 'center'}}>
+          <Link to={INBOX_ROUTE}>
+            <>
           <Inbox
             width={32}
             height={32}
@@ -22,26 +26,19 @@ export const TabBar = () => {
           <Text style={isActive == 0 ? styles.textActive : styles.text}>
             Inbox
           </Text>
-        </Pressable>
-      </View>
-      <View style={styles.contacts}>
-        <Pressable
-          onPress={() => setIsActive(1)}
-          style={{alignItems: 'center'}}>
-          <Contacts width={32} height={32} fill={isActive == 1 ? '#1578d4' : 'gray'}/>
-          <Text style={isActive == 1 ? styles.textActive : styles.text}>
-            Contacts
-          </Text>
+          </>
+          </Link>
         </Pressable>
       </View>
       <View style={styles.settings}>
         <Pressable
-          onPress={() => setIsActive(2)}
+          onPress={() => setIsActive(1)}
           style={{alignItems: 'center'}}>
-          <Settings width={32} height={32} fill={isActive == 2 ? '#1578d4' : 'gray'} />
-          <Text style={isActive == 2 ? styles.textActive : styles.text}>
-            Settings
-          </Text>
+          <Link to="/settings">
+            <Text style={isActive == 1 ? styles.textActive : styles.text}>
+              Settings
+            </Text>
+          </Link>
         </Pressable>
       </View>
     </View>
@@ -67,14 +64,6 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     marginTop: 20,
-  },
-  contacts: {
-    display: 'flex',
-    flex: 0.33,
-    flexDirection: 'column',
-    alignItems: 'center',
-    height: '100%',
-    justifyContent: 'center',
   },
   settings: {
     display: 'flex',

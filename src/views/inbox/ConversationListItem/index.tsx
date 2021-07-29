@@ -30,7 +30,7 @@ type ConversationListItemProps = {
 const ConversationListItem = (props: any) => {
   const {conversation} = props;
 
-//console.log('props ITEM', conversation.id)
+  //console.log('props ITEM', conversation.id)
 
   const participant = conversation.metadata.contact;
   const unread = conversation.metadata.unreadCount > 0;
@@ -42,12 +42,13 @@ const ConversationListItem = (props: any) => {
     event.stopPropagation();
   };
 
-
   const changeState = () => {
     const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
 
-
-    HttpClientInstance.setStateConversation({conversationId: conversation.id, state: newState})
+    HttpClientInstance.setStateConversation({
+      conversationId: conversation.id,
+      state: newState,
+    })
       .then(() => {
         realm.write(() => {
           const changedConversation: any = realm.objectForPrimaryKey(
@@ -55,10 +56,9 @@ const ConversationListItem = (props: any) => {
             conversation.id,
           );
 
-          
           changedConversation.metadata.state = newState;
 
-          console.log('changedConversation', changedConversation.metadata)
+          console.log('changedConversation', changedConversation.metadata);
         });
       })
       .catch((error: any) => {
@@ -73,7 +73,7 @@ const ConversationListItem = (props: any) => {
   const ClosedStateButton = () => {
     return (
       <Pressable style={styles.closedStateButton} onPress={changeState}>
-         <Checkmark fill="#0da36b"/> 
+        <Checkmark fill="#0da36b" />
       </Pressable>
     );
   };
@@ -91,47 +91,51 @@ const ConversationListItem = (props: any) => {
   //
 
   return (
- 
     <Pressable style={styles.clickableListItem} onPress={markAsRead}>
-         <Link to={`/${conversation.id}`}>
-      <View style={styles.container}>
-        <View style={styles.avatar}>
-          <Avatar contact={participant} />
-        </View>
-        <View style={styles.contentContainer}>
-          <View style={styles.nameStatus}>
-            <Text style={unread ? styles.name : styles.unreadName}>
-              {participant && participant.displayName}
-            </Text>
-       
-            {currentConversationState === 'OPEN' ? (
-              <OpenStateButton />
-            ) : (
-              <ClosedStateButton />
-            )} 
+      <Link to={`/${conversation.id}`}>
+        <View style={styles.container}>
+          <View style={styles.avatar}>
+            <Avatar contact={participant} />
           </View>
-          <View style={styles.message}><SourceMessagePreview conversation={conversation} /></View>
-          <View style={styles.channelTimeContainer}>
-            <View style={styles.iconChannel}>
-            <IconChannel channel={conversation.channel} showAvatar showName />
-            <Text style={styles.channel}>
-                {conversation.channel.sourceChannelId}
+          <View style={styles.contentContainer}>
+            <View style={styles.nameStatus}>
+              <Text style={unread ? styles.name : styles.unreadName}>
+                {participant && participant.displayName}
               </Text>
+
+              {currentConversationState === 'OPEN' ? (
+                <OpenStateButton />
+              ) : (
+                <ClosedStateButton />
+              )}
             </View>
-            <View style={styles.timeIcon}>
-              <Text style={styles.channel}>
-                {formatTimeOfMessage(conversation.lastMessage)}
-              </Text>
+            <View style={styles.message}>
+              <SourceMessagePreview conversation={conversation} />
+            </View>
+            <View style={styles.channelTimeContainer}>
+              <View style={styles.iconChannel}>
+                <IconChannel
+                  channel={conversation.channel}
+                  showAvatar
+                  showName
+                />
+                <Text style={styles.channel}>
+                  {conversation.channel.sourceChannelId}
+                </Text>
+              </View>
+              <View style={styles.timeIcon}>
+                <Text style={styles.channel}>
+                  {formatTimeOfMessage(conversation.lastMessage)}
+                </Text>
+              </View>
             </View>
           </View>
+          <Button title="" onPress={() => console.log('dajs')}>
+            <Hello width={20} height={20} fill={'blue'} />
+          </Button>
         </View>
-        <Button title="" onPress={() => console.log('dajs')}>
-          <Hello width={20} height={20} fill={'blue'} />
-        </Button>
-      </View>
       </Link>
     </Pressable>
- 
 
     //   <Link to={`${INBOX_CONVERSATIONS_ROUTE}/${conversation.id}`}>
     //     <View
@@ -257,12 +261,12 @@ const styles = StyleSheet.create({
     borderColor: '#bf1a2f',
     height: 20,
     width: 20,
-    borderRadius: 50
+    borderRadius: 50,
   },
   closedStateButton: {
     borderColor: '#0da36b',
     height: 20,
     width: 20,
-    borderRadius: 50
+    borderRadius: 50,
   },
 });
