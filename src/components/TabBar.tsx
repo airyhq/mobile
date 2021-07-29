@@ -1,13 +1,11 @@
 import React, {useState} from 'react';
-import {Link, NativeRouter} from 'react-router-native';
-import {INBOX_ROUTE} from '../routes/routes'
-import {Button, Image, Pressable, StyleSheet, Text, View} from 'react-native';
+import {Pressable, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import ConversationList from '../views/inbox/ConversationList';
 import Inbox from '../assets/images/icons/bubble_icon.svg';
-import Contacts from '../assets/images/icons/users_icon.svg';
 import Settings from '../assets/images/icons/settings_icon.svg';
-import Svg from 'react-native-svg';
-
-export const TabBar = () => {
+import {Link} from 'react-router-native';
+import {INBOX_ROUTE} from '../routes/routes';
+export const TabBar = (props:any) => {
   const [isActive, setIsActive] = useState(0);
 
   return (
@@ -16,17 +14,17 @@ export const TabBar = () => {
         <Pressable
           onPress={() => setIsActive(0)}
           style={{alignItems: 'center'}}>
-          <Link to={INBOX_ROUTE}>
-            <>
-          <Inbox
-            width={32}
-            height={32}
-            fill={isActive == 0 ? '#1578d4' : 'gray'}
-          />
-          <Text style={isActive == 0 ? styles.textActive : styles.text}>
-            Inbox
-          </Text>
-          </>
+          <Link to={INBOX_ROUTE} component={TouchableOpacity}>
+            <View style={styles.icons}>
+              <Inbox
+                width={32}
+                height={32}
+                fill={isActive == 0 ? '#1578d4' : 'gray'}
+              />
+              <Text style={isActive == 0 ? styles.textActive : styles.text}>
+                Inbox
+              </Text>
+            </View>
           </Link>
         </Pressable>
       </View>
@@ -34,17 +32,21 @@ export const TabBar = () => {
         <Pressable
           onPress={() => setIsActive(1)}
           style={{alignItems: 'center'}}>
-          <Link to="/settings">
-            <Text style={isActive == 1 ? styles.textActive : styles.text}>
-              Settings
-            </Text>
-          </Link>
+            <View style={styles.icons}>
+              <Settings
+                width={32}
+                height={32}
+                fill={isActive == 1 ? '#1578d4' : 'gray'}
+              />
+              <Text style={isActive == 1 ? styles.textActive : styles.text}>
+                Settings
+              </Text>
+            </View>
         </Pressable>
       </View>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
@@ -55,6 +57,11 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     alignItems: 'flex-end',
     justifyContent: 'space-evenly',
+    position: 'absolute',
+    bottom: 0, 
+    left: 0, 
+    right:0, 
+    backgroundColor: 'white'
   },
   inbox: {
     display: 'flex',
@@ -82,5 +89,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#1578d4',
+  },
+  icons: {
+    alignItems: 'center',
   },
 });

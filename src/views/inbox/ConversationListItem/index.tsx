@@ -1,50 +1,32 @@
-import React, {useEffect, useRef} from 'react';
-import {Link} from 'react-router-native';
-import {
-  View,
-  Button,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  Image,
-  Text,
-  Dimensions,
-  SafeAreaView,
-} from 'react-native';
+import React from 'react';
+import {View, StyleSheet, Pressable, Text, Dimensions} from 'react-native';
 import {Conversation} from '../../../model/Conversation';
 import IconChannel from '../../../components/IconChannel';
-// import {Avatar, SourceMessagePreview} from 'render';
 import {formatTimeOfMessage} from '../../../services/format/date';
 import Checkmark from '../../../assets/images/icons/checkmark-circle.svg';
-import Hello from '../../../assets/images/icons/checkmark-circle.svg';
 import {INBOX_CONVERSATIONS_ROUTE} from '../../../routes/routes';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {Avatar} from '../../../components/Avatar';
 import {SourceMessagePreview} from '../../../render/SourceMessagePreview';
 import {RealmDB} from '../../../storage/realm';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
 type ConversationListItemProps = {
   conversation: Conversation;
 };
-
 const ConversationListItem = (props: any) => {
-  const {conversation} = props;
-
-  //console.log('props ITEM', conversation.id)
-
+  const {conversation, navigation} = props;
   const participant = conversation.metadata.contact;
   const unread = conversation.metadata.unreadCount > 0;
   const currentConversationState = conversation.metadata.state || 'OPEN';
   const realm = RealmDB.getInstance();
-
   const eventHandler = (event: any) => {
     event.preventDefault();
     event.stopPropagation();
   };
-
   const changeState = () => {
     const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
-
     HttpClientInstance.setStateConversation({
       conversationId: conversation.id,
       state: newState,
@@ -55,9 +37,7 @@ const ConversationListItem = (props: any) => {
             'Conversation',
             conversation.id,
           );
-
           changedConversation.metadata.state = newState;
-
           console.log('changedConversation', changedConversation.metadata);
         });
       })
@@ -65,34 +45,29 @@ const ConversationListItem = (props: any) => {
         console.log('error: CHANGE STATE ', error);
       });
   };
-
   const OpenStateButton = () => {
     return <Pressable style={styles.openStateButton} onPress={changeState} />;
   };
-
   const ClosedStateButton = () => {
     return (
       <Pressable style={styles.closedStateButton} onPress={changeState}>
-        <Checkmark fill="#0da36b" />
+        <Checkmark height={24} width={24} fill="#0da36b" />
       </Pressable>
     );
   };
-
   const markAsRead = () => {
     if (unread) {
       HttpClientInstance.readConversations(conversation.id);
     }
   };
-
   // useEffect(() => {
   //   markAsRead();
   // }, [conversation, currentConversationState]);
-
   //
-
   return (
-    <Pressable style={styles.clickableListItem} onPress={markAsRead}>
-      <Link to={`/${conversation.id}`}>
+    <Pressable style={styles.clickableListItem} onPress={() =>{
+      navigation.navigate('Details')}
+    }>
         <View style={styles.container}>
           <View style={styles.avatar}>
             <Avatar contact={participant} />
@@ -102,7 +77,6 @@ const ConversationListItem = (props: any) => {
               <Text style={unread ? styles.name : styles.unreadName}>
                 {participant && participant.displayName}
               </Text>
-
               {currentConversationState === 'OPEN' ? (
                 <OpenStateButton />
               ) : (
@@ -130,13 +104,8 @@ const ConversationListItem = (props: any) => {
               </View>
             </View>
           </View>
-          <Button title="" onPress={() => console.log('dajs')}>
-            <Hello width={20} height={20} fill={'blue'} />
-          </Button>
         </View>
-      </Link>
     </Pressable>
-
     //   <Link to={`${INBOX_CONVERSATIONS_ROUTE}/${conversation.id}`}>
     //     <View
     //       style={[
@@ -181,17 +150,15 @@ const ConversationListItem = (props: any) => {
     // </Pressable>
   );
 };
-
 export default ConversationListItem;
-
 const {height, width} = Dimensions.get('window');
-
 console.log('height ', height);
 console.log('width ', width);
-
 const styles = StyleSheet.create({
   clickableListItem: {
     height: 100,
+    width: width,
+    flex:1
   },
   contentContainer: {
     display: 'flex',
@@ -262,11 +229,14 @@ const styles = StyleSheet.create({
     height: 20,
     width: 20,
     borderRadius: 50,
+    marginRight: 10
   },
   closedStateButton: {
     borderColor: '#0da36b',
-    height: 20,
-    width: 20,
+    height: 24,
+    width: 24,
     borderRadius: 50,
+    marginRight: 8,
+    paddingTop: 2,
   },
 });

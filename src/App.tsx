@@ -1,25 +1,27 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, SafeAreaView, Text, View} from 'react-native';
-import {Switch, Route, NativeRouter, Link, Redirect} from 'react-router-native';
-import {Settings} from './components/Settings';
-
+import {SafeAreaView, Dimensions} from 'react-native';
 import {Login} from './components/Login';
-import { Logout } from './components/Logout';
-import { UserInfo } from './model/userInfo';
-import { RealmDB } from './storage/realm';
+import {Settings} from './components/Settings';
+import {Logout} from './components/Logout';
+import {UserInfo} from './model/userInfo';
+import {RealmDB} from './storage/realm';
 import ConversationList from './views/inbox/ConversationList';
-import ConversationListItem from './views/inbox/ConversationListItem';
 import {MessageList} from './views/inbox/MessageList';
+import ConversationListItem from './views/inbox/ConversationListItem';
 import {INBOX_ROUTE, INBOX_CONVERSATIONS_ROUTE} from './routes/routes';
-import { TabBar } from './components/TabBar';
+import {TabBar} from './components/TabBar';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 
 const App = () => {
-
   const [userInfo, setUserInfo] = useState<UserInfo | undefined>();
+  //   Realm.open({}).then(realm => {
+  //     console.log("Realm is located at: " + realm.path);
+  // });
 
-//   Realm.open({}).then(realm => {
-//     console.log("Realm is located at: " + realm.path);
-// });
+  const Stack = createStackNavigator();
 
   useEffect(() => {
     RealmDB.getInstance().objects('UserInfo').addListener(onUserUpdated);
@@ -30,78 +32,30 @@ const App = () => {
       setUserInfo(users[0]);
     } else {
       setUserInfo(undefined);
-    }     
-  }
+    }
+  };
 
-  // <Route path="/:conversationId" component={MessageList} />
+  //{userInfo ? <Logout userInfo={userInfo} /> :   <Stack.Screen name="ConversationList" component={ConversationList} />} 
+  const {height, width} = Dimensions.get('window');
+  console.log('height ', height);
+  console.log('width ', width);
   
-  // return (
-  //     <SafeAreaView style={{flex: 1, alignItems: 'center'}}>
-  //       {/* {userInfo ? <Logout userInfo={userInfo} /> : <Login />}         */}
-  //       <NativeRouter>
-  //         <Route path={INBOX_ROUTE} component={ConversationList} />
-         
-  //         <Route path="/settings" component={MessageList} />
 
-  //         <Link to="/settings">
-
-  //         <Text >
-  //           Settings
-  //         </Text>
-  //         </Link>
-
-  //       </NativeRouter>
-
-  //       {userInfo ? <Logout userInfo={userInfo} /> : <ConversationList />}   
-  //     </SafeAreaView>
-  // );
-  // <Link to="/topics" underlayColor="#f0f4f7" style={styles.navItem}>
-  //           <Text>Topics</Text>
-  //         </Link>
-
-  //
-
-  return(
-    <NativeRouter>
-      
-      <SafeAreaView style={styles.container}>
-        {userInfo ? <Logout userInfo={userInfo} /> :  <Redirect to={{ pathname: INBOX_ROUTE}}/>}  
-        </SafeAreaView>
-   
-   
-        <Route path={INBOX_ROUTE} component={ConversationList} />
-        <Route path="/:conversationId" component={MessageList} />
-        <Route path="/settings" component={Settings} />
+  return (
+    <>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="ConversationList">
+          <Stack.Screen name="ConversationList" component={ConversationList} options={{ headerShown: false }}/>
+          <Stack.Screen name="Settings" component={Settings} />
+          <Stack.Screen name="MessageList" component={MessageList} />
 
 
-    </NativeRouter>
-  )
+        </Stack.Navigator>
+      </NavigationContainer>
+      </SafeAreaProvider>
+
+      </>
+  );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 25,
-    padding: 10
-  },
-  header: {
-    fontSize: 20
-  },
-  nav: {
-    flexDirection: "row",
-    justifyContent: "space-around"
-  },
-  navItem: {
-    flex: 1,
-    alignItems: "center",
-    padding: 10
-  },
-  subNavItem: {
-    padding: 5
-  },
-  topic: {
-    textAlign: "center",
-    fontSize: 15
-  }
-});
-
 export default App;

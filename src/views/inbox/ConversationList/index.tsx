@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView, Dimensions, SafeAreaView} from 'react-native';
 import {debounce} from 'lodash-es';
 import {Conversation} from '../../../model/Conversation';
 import ConversationListItem from '../ConversationListItem';
@@ -158,7 +158,7 @@ const ConversationList = (props: any) => {
   let number = 0;
 
   return (
-    <>
+     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView
         style={styles.conversationListPaginationWrapper}
         ref={conversationListRef}
@@ -187,18 +187,22 @@ const ConversationList = (props: any) => {
         )} */}
         </View>
       </ScrollView>
-      <TabBar />
-    </>
+      </SafeAreaView>
   );
 };
 
 export default ConversationList;
+const {height, width} = Dimensions.get('window');
+console.log('height ', height);
+console.log('width ', width);
 
 const styles = StyleSheet.create({
   conversationListPaginationWrapper: {
     display: 'flex',
-    width: '100%',
-    height: '100%',
+    flex:1,
+    width: width,
+    height: height,
+    backgroundColor: 'white'
   },
   text: {
     color: 'black',

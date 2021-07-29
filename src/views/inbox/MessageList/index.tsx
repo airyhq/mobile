@@ -8,6 +8,6 @@ export const MessageList = (props:any) => {
 
 
     return(
-        <Text>{props.match.params.conversationId}</Text>
+        <Text>MESSAGE LIST {props.match.params.conversationId}</Text>
     )
 }
