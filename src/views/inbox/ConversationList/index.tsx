@@ -158,7 +158,7 @@ const ConversationList = (props: any) => {
   let number = 0;
 
   return (
-     <SafeAreaView style={{ flex: 1 }}>
+     <SafeAreaView style={{ flex: 1, justifyContent: 'center', backgroundColor: 'white' }}>
       <ScrollView
         style={styles.conversationListPaginationWrapper}
         ref={conversationListRef}
