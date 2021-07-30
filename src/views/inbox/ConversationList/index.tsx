@@ -1,5 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {View, StyleSheet, ScrollView, Dimensions, SafeAreaView} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Dimensions,
+  SafeAreaView,
+  FlatList,
+} from 'react-native';
 import {debounce} from 'lodash-es';
 import {Conversation} from '../../../model/Conversation';
 import ConversationListItem from '../ConversationListItem';
@@ -8,7 +15,6 @@ import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {TabBar} from '../../../components/TabBar';
 import {getPagination} from '../../../services/Pagination';
-
 
 type ConversationListProps = {
   currentConversationId?: string;
@@ -25,35 +31,28 @@ const ConversationList = (props: any) => {
   const conversationListRef = useRef<any>(null);
   const [conversations, setConversations] = useState<any>([]);
 
-  console.log('match', match)
+  console.log('match', match);
 
   useEffect(() => {
-
-    const databaseConversations = realm.objects('Conversation')
+    const databaseConversations = realm.objects('Conversation');
 
     databaseConversations.addListener(() => {
-      console.log('listener')
-      setConversations([...databaseConversations])
-    })
+      console.log('listener');
+      setConversations([...databaseConversations]);
+    });
 
     getConversationsList();
 
     return () => {
-      const databaseConversations = realm.objects('Conversation')
+      const databaseConversations = realm.objects('Conversation');
       // Remember to remove the listener when you're done!
       databaseConversations.removeAllListeners();
       // Call the close() method when done with a realm instance to avoid memory leaks.
       //realm.close();
     };
-  }, [])
-
-
-
-  
+  }, []);
 
   const [offset, setOffset] = useState(0);
-
-
 
   const getConversationsList = () => {
     HttpClientInstance.listConversations({page_size: 50})
@@ -63,8 +62,6 @@ const ConversationList = (props: any) => {
           realm.create('Pagination', response.paginationData);
 
           for (const conversation of response.data) {
-
-
             realm.create('Conversation', conversation);
           }
         });
@@ -76,15 +73,14 @@ const ConversationList = (props: any) => {
 
   const getNextConversationList = () => {
     const cursor = paginationData?.nextCursor;
-    console.log('GET NEXT')
+    console.log('GET NEXT');
     HttpClientInstance.listConversations({cursor: cursor, page_size: 50})
       .then((response: any) => {
         realm.write(() => {
           for (const conversation of response.data) {
-
             //console.log('conversation last msg LIST', conversation.lastMessage.content)
 
-            const isStored:any = realm.objectForPrimaryKey(
+            const isStored: any = realm.objectForPrimaryKey(
               'Conversation',
               conversation.id,
             );
@@ -93,10 +89,10 @@ const ConversationList = (props: any) => {
               realm.delete(isStored);
             }
 
-            realm.create('Conversation', conversation)
+            realm.create('Conversation', conversation);
           }
-        })
-          
+        });
+
         realm.write(() => {
           const pagination: any = realm.objects('Pagination')[0];
           pagination.previousCursor = response.paginationData.previousCursor;
@@ -104,7 +100,10 @@ const ConversationList = (props: any) => {
           pagination.total = response.paginationData.total;
         });
 
-        console.log('CONVERSATIONS LENGTH', realm.objects('Conversation').length)
+        console.log(
+          'CONVERSATIONS LENGTH',
+          realm.objects('Conversation').length,
+        );
       })
       .catch((error: any) => {
         console.log('error: fetch next ', error);
@@ -117,7 +116,7 @@ const ConversationList = (props: any) => {
 
   const debouncedListPreviousConversations = () => {
     getNextConversationList();
-  }
+  };
 
   const isCloseToBottom = (event: any) => {
     const paddingToBottom = 30;
@@ -158,19 +157,21 @@ const ConversationList = (props: any) => {
   let number = 0;
 
   return (
-     <SafeAreaView style={{ flex: 1, justifyContent: 'center', backgroundColor: 'white' }}>
-      <ScrollView
-        style={styles.conversationListPaginationWrapper}
-        ref={conversationListRef}
-        onScroll={handleScroll}
-        scrollEventThrottle={400}>
-        <View>
-          {conversations.map((conversation: any) => (
-            <ConversationListItem
-              key={conversation.id}
-              conversation={conversation}
-            />
-          ))}
+    <SafeAreaView
+      style={{flex: 1, justifyContent: 'center', backgroundColor: 'white'}}>
+    
+          <FlatList
+            data={conversations}
+            onScroll={handleScroll}
+            renderItem={({item}) => {
+              return <ConversationListItem key={item.id}
+              conversation={item} />;
+            }}
+            
+            
+            
+          />
+
           {/* {!items && items.length && !isLoadingConversation ? (
           <NoConversations conversations={conversations.length} />
         ) : (
@@ -185,9 +186,9 @@ const ConversationList = (props: any) => {
               ))}
           </>
         )} */}
-        </View>
-      </ScrollView>
-      </SafeAreaView>
+
+  
+    </SafeAreaView>
   );
 };
 
@@ -199,10 +200,10 @@ console.log('width ', width);
 const styles = StyleSheet.create({
   conversationListPaginationWrapper: {
     display: 'flex',
-    flex:1,
+    flex: 1,
     width: width,
     height: height,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   text: {
     color: 'black',

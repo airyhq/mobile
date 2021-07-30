@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, Pressable, Text, Dimensions} from 'react-native';
+import {View, StyleSheet, Pressable, Text, Dimensions, TouchableOpacity, Animated} from 'react-native';
 import {Conversation} from '../../../model/Conversation';
 import IconChannel from '../../../components/IconChannel';
 import {formatTimeOfMessage} from '../../../services/format/date';
@@ -11,6 +11,7 @@ import {SourceMessagePreview} from '../../../render/SourceMessagePreview';
 import {RealmDB} from '../../../storage/realm';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 type ConversationListItemProps = {
   conversation: Conversation;
@@ -25,6 +26,33 @@ const ConversationListItem = (props: any) => {
     event.preventDefault();
     event.stopPropagation();
   };
+
+  const LeftSwipe = (dragX:any) => {
+    // const scale = dragX.interpolate({
+    //   inputRange: [0, 100],
+    //   outputRange: [1, 0],
+    //   extrapolate: 'clamp',
+    // });
+    const scale = dragX.interpolate({
+      inputRange: [0, 100],
+      //outputRange: [0, 100],
+      // inputRange: [0, 50, 100, 101],
+      // outputRange: [-20, 0, 0, 1],
+      extrapolate: 'clamp',
+      outputRange: [0.7, 0]
+
+    });
+    return (
+      <TouchableOpacity onPress={changeState} activeOpacity={0.6} >
+        <View style={[styles.toggleStateBox, currentConversationState === 'OPEN' ? styles.closed : styles.open]}>
+          <Animated.Text style={{transform: [{translateX: scale}], color: '#cad5db', textAlign: 'center'}}>
+            {currentConversationState === 'OPEN' ? 'SET TO CLOSED' : 'SET TO OPEN'}
+          </Animated.Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   const changeState = () => {
     const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
     HttpClientInstance.setStateConversation({
@@ -46,13 +74,13 @@ const ConversationListItem = (props: any) => {
       });
   };
   const OpenStateButton = () => {
-    return <Pressable style={styles.openStateButton} onPress={changeState} />;
+    return <View style={styles.openStateButton} />;
   };
   const ClosedStateButton = () => {
     return (
-      <Pressable style={styles.closedStateButton} onPress={changeState}>
+      <View style={styles.closedStateButton} >
         <Checkmark height={24} width={24} fill="#0da36b" />
-      </Pressable>
+      </View>
     );
   };
   const markAsRead = () => {
@@ -60,13 +88,18 @@ const ConversationListItem = (props: any) => {
       HttpClientInstance.readConversations(conversation.id);
     }
   };
+
+ 
   // useEffect(() => {
   //   markAsRead();
   // }, [conversation, currentConversationState]);
   //
 
   //onPress={() =>{ navigation.navigate('MessageList')}}
+
+
   return (
+    <Swipeable  renderRightActions={LeftSwipe} overshootRight={true} >
     <Pressable style={styles.clickableListItem}>
         <View style={styles.container}>
           <View style={styles.avatar}>
@@ -106,48 +139,8 @@ const ConversationListItem = (props: any) => {
           </View>
         </View>
     </Pressable>
-    //   <Link to={`${INBOX_CONVERSATIONS_ROUTE}/${conversation.id}`}>
-    //     <View
-    //       style={[
-    //         active ? styles.containerListItemActive : styles.containerListItem,
-    //         unread ? styles.unread : '',
-    //       ]}>
-    //       <View style={styles.profileImage}>
-    //         {/* <Avatar contact={participant} /> */}
-    //       </View>
-    //       <View style={styles.contactDetails}>
-    //         <View style={styles.topRow}>
-    //           <View style={[styles.profileName, unread ? styles.unread : '']}>
-    //             <Text>{participant && participant.displayName}</Text>
-    //           </View>
-    //           {currentConversationState === 'OPEN' ? (
-    //             <OpenStateButton />
-    //           ) : (
-    //             <ClosedStateButton />
-    //           )}
-    //         </View>
-    //         <View
-    //           style={[styles.contactLastMessage, unread ? styles.unread : '']}>
-    //           {/* <SourceMessagePreview conversation={conversation} /> */}
-    //         </View>
-    //         <View style={styles.bottomRow}>
-    //           <View style={styles.source}>
-    //             {conversation.channel && (
-    //               <IconChannel
-    //                 channel={conversation.channel}
-    //                 showAvatar
-    //                 showName
-    //               />
-    //             )}
-    //           </View>
-    //           <View style={styles.contactLastMessageDate}>
-    //             <Text>{formatTimeOfMessage(conversation.lastMessage)}</Text>
-    //           </View>
-    //         </View>
-    //       </View>
-    //     </View>
-    //   </Link>
-    // </Pressable>
+    </Swipeable>
+
   );
 };
 export default ConversationListItem;
@@ -158,7 +151,8 @@ const styles = StyleSheet.create({
   clickableListItem: {
     height: 100,
     width: width,
-    flex:1
+    flex:1,
+    backgroundColor: 'white'
   },
   contentContainer: {
     display: 'flex',
@@ -217,7 +211,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: 80,
+    
   },
   container: {
     display: 'flex',
@@ -239,4 +233,17 @@ const styles = StyleSheet.create({
     marginRight: 8,
     paddingTop: 2,
   },
+  toggleStateBox: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: width * 0.2,
+    height: 92,
+    textAlign: 'center'
+  }, 
+  open: {
+    backgroundColor: '#bf1a2f'
+  }, 
+  closed: {
+    backgroundColor: '#0da36b'
+  }
 });

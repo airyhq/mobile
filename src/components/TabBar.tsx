@@ -16,7 +16,7 @@ export const TabBar = () => {
   return (
     <Tab.Navigator
     screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
+        tabBarIcon: ({ focused}) => {
           let iconColor;
 
           console.log('route.name', route.name)
@@ -25,11 +25,11 @@ export const TabBar = () => {
 
 
           if (route.name === 'Settings') {
-            return <SettingsIcon height={24} width={24} fill={iconColor} />;
+            return <SettingsIcon height={32} width={32} fill={iconColor} />;
           } 
 
           if (route.name === 'Inbox') {
-            return <InboxIcon height={24} width={24} fill={iconColor} />;
+            return <InboxIcon height={32} width={32} fill={iconColor} />;
             //return <Inbox height={30} width={30} fill={iconColor} />;
           }
 
@@ -40,8 +40,11 @@ export const TabBar = () => {
       tabBarOptions={{
         activeTintColor: airyBlue,
         inactiveTintColor: textGray,
+        labelStyle: {
+          fontSize: 12,
+        }
       }}>
-      <Tab.Screen name="Inbox" component={ConversationList} />
+      <Tab.Screen name="Inbox" component={ConversationList}/>
       <Tab.Screen name="Settings" component={Settings} />
     </Tab.Navigator>
   );
