@@ -1,5 +1,4 @@
 import React from 'react';
-import {Route, withRouter, Redirect} from 'react-router-native';
 import ConversationList from '../ConversationList';
 import MessengerContainer from './MessengerContainer';
 import { StyleSheet, View } from 'react-native';

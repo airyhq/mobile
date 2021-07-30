@@ -1,11 +1,10 @@
 import React, {useEffect} from 'react';
-import {RouteComponentProps} from 'react-router-native';
 import {User} from '../../model';
 import Messenger from './Messenger';
 import {setPageTitle} from '../../services/PageTitle';
 
 
-export type ConversationRouteProps = RouteComponentProps<{conversationId: string}>;
+export type ConversationRouteProps = any;
 
 interface InboxProps {
   user: User;

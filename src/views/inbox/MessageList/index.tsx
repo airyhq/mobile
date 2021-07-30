@@ -1,13 +1,13 @@
 import React from 'react';
-import {Text} from 'react-native';
+import {Text, SafeAreaView} from 'react-native';
 
 
 export const MessageList = (props:any) => {
 
-    console.log('props.match', props)
-
 
     return(
-        <Text>MESSAGE LIST {props.match.params.conversationId}</Text>
+        <SafeAreaView>
+        <Text>MESSAGE LIST</Text>
+        </SafeAreaView>
     )
 }

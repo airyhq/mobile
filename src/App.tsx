@@ -36,10 +36,6 @@ const App = () => {
     }
   };
 
-  //{userInfo ? <Logout userInfo={userInfo} /> :   <Stack.Screen name="ConversationList" component={ConversationList} />}
-
- 
-
   return (
     <>
       <SafeAreaProvider>

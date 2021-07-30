@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {RouteComponentProps, withRouter} from 'react-router-native';
 
 //import MessageList from '../MessageList';
 //import EmptyStateImage from '../assets/images/empty-state/inbox-empty-state.svg';
@@ -7,7 +6,6 @@ import {RouteComponentProps, withRouter} from 'react-router-native';
 // import ConversationMetadata from '../ConversationMetadata';
 // import ConversationHeader from '../ConversationHeader';
 // import MessageInput from '../../MessageInput';
-import {Source, Suggestions} from '../../../model';
 import { View } from 'react-native';
 
 type MessengerContainerProps = any

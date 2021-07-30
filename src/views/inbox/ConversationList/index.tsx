@@ -13,7 +13,6 @@ import ConversationListItem from '../ConversationListItem';
 import NoConversations from '../NoConversations';
 import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
-import {TabBar} from '../../../components/TabBar';
 import {getPagination} from '../../../services/Pagination';
 
 type ConversationListProps = {
