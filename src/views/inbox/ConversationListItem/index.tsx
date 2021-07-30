@@ -64,10 +64,10 @@ const ConversationListItem = (props: any) => {
   //   markAsRead();
   // }, [conversation, currentConversationState]);
   //
+
+  //onPress={() =>{ navigation.navigate('MessageList')}}
   return (
-    <Pressable style={styles.clickableListItem} onPress={() =>{
-      navigation.navigate('Details')}
-    }>
+    <Pressable style={styles.clickableListItem}>
         <View style={styles.container}>
           <View style={styles.avatar}>
             <Avatar contact={participant} />

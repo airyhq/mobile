@@ -44,9 +44,9 @@ const App = () => {
     <>
       <SafeAreaProvider>
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="ConversationList">
+          <Stack.Navigator initialRouteName="Inbox">
             <Stack.Screen
-              name="ConversationList"
+              name="Inbox"
               component={TabBar}
               options={{headerShown: false}}
             />
