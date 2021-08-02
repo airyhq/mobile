@@ -1,52 +1,62 @@
-import React from 'react';
-import {View, StyleSheet, Pressable, Text, Dimensions, TouchableOpacity, Animated} from 'react-native';
+import React, { useRef } from 'react';
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  Text,
+  Dimensions,
+  TouchableOpacity,
+  Animated,
+} from 'react-native';
 import {Conversation} from '../../../model/Conversation';
 import IconChannel from '../../../components/IconChannel';
 import {formatTimeOfMessage} from '../../../services/format/date';
 import Checkmark from '../../../assets/images/icons/checkmark-circle.svg';
-import {INBOX_CONVERSATIONS_ROUTE} from '../../../routes/routes';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {Avatar} from '../../../components/Avatar';
 import {SourceMessagePreview} from '../../../render/SourceMessagePreview';
 import {RealmDB} from '../../../storage/realm';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { getUserInfo } from '../../../model/userInfo';
 
 type ConversationListItemProps = {
   conversation: Conversation;
+  navigation?: any;
 };
-const ConversationListItem = (props: any) => {
+
+export const ConversationListItem = (props: ConversationListItemProps) => {
   const {conversation, navigation} = props;
   const participant = conversation.metadata.contact;
   const unread = conversation.metadata.unreadCount > 0;
   const currentConversationState = conversation.metadata.state || 'OPEN';
   const realm = RealmDB.getInstance();
-  const eventHandler = (event: any) => {
-    event.preventDefault();
-    event.stopPropagation();
-  };
+  const swipeableRef = useRef<Swipeable | null>(null);
 
-  const LeftSwipe = (dragX:any) => {
-    // const scale = dragX.interpolate({
-    //   inputRange: [0, 100],
-    //   outputRange: [1, 0],
-    //   extrapolate: 'clamp',
-    // });
+  console.log('USER: ', getUserInfo());
+  
+
+  const LeftSwipe = (dragX: any) => {
     const scale = dragX.interpolate({
       inputRange: [0, 100],
-      //outputRange: [0, 100],
-      // inputRange: [0, 50, 100, 101],
-      // outputRange: [-20, 0, 0, 1],
+      outputRange: [0.7, 0],
       extrapolate: 'clamp',
-      outputRange: [0.7, 0]
-
     });
     return (
-      <TouchableOpacity onPress={changeState} activeOpacity={0.6} >
-        <View style={[styles.toggleStateBox, currentConversationState === 'OPEN' ? styles.closed : styles.open]}>
-          <Animated.Text style={{transform: [{translateX: scale}], color: '#cad5db', textAlign: 'center'}}>
-            {currentConversationState === 'OPEN' ? 'SET TO CLOSED' : 'SET TO OPEN'}
+      <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
+        <View
+          style={[
+            styles.toggleStateBox,
+            currentConversationState === 'OPEN' ? styles.closed : styles.open,
+          ]}>
+          <Animated.Text
+            style={{
+              transform: [{translateX: scale}],
+              color: '#cad5db',
+              textAlign: 'center',
+            }}>
+            {currentConversationState === 'OPEN'
+              ? 'SET TO CLOSED'
+              : 'SET TO OPEN'}
           </Animated.Text>
         </View>
       </TouchableOpacity>
@@ -66,11 +76,10 @@ const ConversationListItem = (props: any) => {
             conversation.id,
           );
           changedConversation.metadata.state = newState;
-          console.log('changedConversation', changedConversation.metadata);
         });
       })
-      .catch((error: any) => {
-        console.log('error: CHANGE STATE ', error);
+      .catch((error: Error) => {
+        console.log('error: ', error);
       });
   };
   const OpenStateButton = () => {
@@ -78,36 +87,50 @@ const ConversationListItem = (props: any) => {
   };
   const ClosedStateButton = () => {
     return (
-      <View style={styles.closedStateButton} >
+      <View style={styles.closedStateButton}>
         <Checkmark height={24} width={24} fill="#0da36b" />
       </View>
     );
   };
+
   const markAsRead = () => {
     if (unread) {
       HttpClientInstance.readConversations(conversation.id);
     }
+  };  
+
+  const onSelectItem = () => {
+    markAsRead()
+    console.log(navigation);
+    
+    navigation.navigate('Inbox', {
+      screen: 'MessageList'
+    })
+  }
+
+  const close = () => {
+    if (swipeableRef.current) {
+      swipeableRef.current.close();
+    }
   };
 
- 
-  // useEffect(() => {
-  //   markAsRead();
-  // }, [conversation, currentConversationState]);
-  //
-
-  //onPress={() =>{ navigation.navigate('MessageList')}}
-
+  const handlePress = () => {
+    changeState()
+    close();
+  };
 
   return (
-    <Swipeable  renderRightActions={LeftSwipe} overshootRight={true} >
-    <Pressable style={styles.clickableListItem}>
+    <Swipeable ref={swipeableRef} renderRightActions={LeftSwipe}>
+      <Pressable
+        style={styles.clickableListItem}
+        onPress={onSelectItem}>
         <View style={styles.container}>
           <View style={styles.avatar}>
             <Avatar contact={participant} />
           </View>
           <View style={styles.contentContainer}>
             <View style={styles.nameStatus}>
-              <Text style={unread ? styles.name : styles.unreadName}>
+              <Text style={unread ? styles.unreadName : styles.name}>
                 {participant && participant.displayName}
               </Text>
               {currentConversationState === 'OPEN' ? (
@@ -138,27 +161,25 @@ const ConversationListItem = (props: any) => {
             </View>
           </View>
         </View>
-    </Pressable>
+      </Pressable>
     </Swipeable>
-
   );
 };
-export default ConversationListItem;
-const {height, width} = Dimensions.get('window');
-console.log('height ', height);
-console.log('width ', width);
+
+const {width} = Dimensions.get('window');
+
 const styles = StyleSheet.create({
   clickableListItem: {
     height: 100,
     width: width,
-    flex:1,
-    backgroundColor: 'white'
+    flex: 1,
+    backgroundColor: 'white',
   },
   contentContainer: {
     display: 'flex',
     marginBottom: 20,
     paddingLeft: 16,
-    width: 305,
+    width: width * 0.8,
   },
   avatar: {
     marginLeft: 8,
@@ -195,7 +216,7 @@ const styles = StyleSheet.create({
   channelTimeContainer: {
     display: 'flex',
     flexDirection: 'row',
-    width: 285,
+    width: width * 0.73,
     justifyContent: 'space-between',
     paddingBottom: 4,
     borderBottomWidth: 1,
@@ -211,7 +232,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    
   },
   container: {
     display: 'flex',
@@ -223,7 +243,7 @@ const styles = StyleSheet.create({
     height: 20,
     width: 20,
     borderRadius: 50,
-    marginRight: 10
+    marginRight: 10,
   },
   closedStateButton: {
     borderColor: '#0da36b',
@@ -238,12 +258,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: width * 0.2,
     height: 92,
-    textAlign: 'center'
-  }, 
+    textAlign: 'center',
+  },
   open: {
-    backgroundColor: '#bf1a2f'
-  }, 
+    backgroundColor: '#bf1a2f',
+  },
   closed: {
-    backgroundColor: '#0da36b'
-  }
+    backgroundColor: '#0da36b',
+  },
 });

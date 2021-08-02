@@ -13,7 +13,6 @@ interface FormattedMessageProps {
 }
 
 const FormattedMessage = ({message}: FormattedMessageProps) => {
-
   if (message?.content) {
     return <>{message.content.text}</>;
   }
@@ -33,16 +32,21 @@ const isImageFromGoogleSource = (messageText: string | undefined) => {
 export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
   const {conversation} = props;
 
-
   const lastMessageIsText = (conversation: Conversation) => {
-    const lastMessageContent:any = conversation.lastMessage.content;
+    const lastMessageContent: any = conversation.lastMessage.content;
 
     if (typeof lastMessageContent === 'string') {
-      if (typeof lastMessageContent === 'string' && lastMessageContent.includes('&Body=' && '&FromCountry=')) {
+      if (
+        typeof lastMessageContent === 'string' &&
+        lastMessageContent.includes('&Body=' && '&FromCountry=')
+      ) {
         const startText = lastMessageContent.search('&Body=');
         const endText = lastMessageContent.search('&FromCountry=');
         const textLength = endText - startText;
-        const enCodedText = lastMessageContent.substring(startText + 6, startText + textLength);
+        const enCodedText = lastMessageContent.substring(
+          startText + 6,
+          startText + textLength,
+        );
         const replaced = enCodedText.split('+').join(' ');
         const text = decodeURIComponent(replaced);
         return text;
@@ -50,7 +54,10 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
         const startText = lastMessageContent.search('&Body=');
         const endText = lastMessageContent.search('&To=whatsapp');
         const textLength = endText - startText;
-        const enCodedText = lastMessageContent.substring(startText + 6, startText + textLength);
+        const enCodedText = lastMessageContent.substring(
+          startText + 6,
+          startText + textLength,
+        );
         const replaced = enCodedText.split('+').join(' ');
         const text = decodeURIComponent(replaced);
         return text;
@@ -61,7 +68,11 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       (lastMessageContent.text || lastMessageContent.message?.text) &&
       !isImageFromGoogleSource(lastMessageContent.message?.text)
     ) {
-      return <Text><FormattedMessage message={conversation.lastMessage} /></Text>;
+      return (
+        <Text>
+          <FormattedMessage message={conversation.lastMessage} />
+        </Text>
+      );
     } else {
       return <Text> Type not supported </Text>;
     }
@@ -89,13 +100,12 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
   //       return <AttachmentImage />;
   //     } else if (lastMessageContent.richCard) {
   //       return <RichCardIcon style={{height: '24', width: '24', margin: '0%'}} />;
-  //     } 
-        
+  //     }
+
   //   }
 
   //   return <AttachmentTemplate />;
 
-   
   // };
 
   return <>{lastMessageIsText(conversation)}</>;

@@ -1,16 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Dimensions,
-  SafeAreaView,
-  FlatList,
-} from 'react-native';
+import {StyleSheet, Dimensions, SafeAreaView, FlatList, Button} from 'react-native';
 import {debounce} from 'lodash-es';
 import {Conversation} from '../../../model/Conversation';
-import ConversationListItem from '../ConversationListItem';
-import NoConversations from '../NoConversations';
+import {ConversationListItem} from '../ConversationListItem';
+import {NoConversations} from '../NoConversations';
 import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {getPagination} from '../../../services/Pagination';
@@ -21,22 +14,20 @@ type ConversationListProps = {
   conversationsPaginationData?: any;
   filteredPaginationData?: any;
   fetchNext?: any;
+  navigation: any
 };
 
-const ConversationList = (props: any) => {
+export const ConversationList = (props: ConversationListProps) => {
   const realm = RealmDB.getInstance();
   const paginationData = getPagination();
-  const {currentConversationId, match} = props;
   const conversationListRef = useRef<any>(null);
   const [conversations, setConversations] = useState<any>([]);
-
-  console.log('match', match);
+  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     const databaseConversations = realm.objects('Conversation');
 
     databaseConversations.addListener(() => {
-      console.log('listener');
       setConversations([...databaseConversations]);
     });
 
@@ -44,18 +35,14 @@ const ConversationList = (props: any) => {
 
     return () => {
       const databaseConversations = realm.objects('Conversation');
-      // Remember to remove the listener when you're done!
+
       databaseConversations.removeAllListeners();
-      // Call the close() method when done with a realm instance to avoid memory leaks.
-      //realm.close();
     };
   }, []);
 
-  const [offset, setOffset] = useState(0);
-
-  const getConversationsList = () => {
+  const getConversationsList = () => {  
     HttpClientInstance.listConversations({page_size: 50})
-      .then((response: any) => {
+      .then((response: any) => {  
         setConversations(response.data);
         realm.write(() => {
           realm.create('Pagination', response.paginationData);
@@ -65,20 +52,17 @@ const ConversationList = (props: any) => {
           }
         });
       })
-      .catch((error: any) => {
-        console.log('error feth ', error);
+      .catch((error: Error) => {
+        console.log('Error: ', error);
       });
   };
 
   const getNextConversationList = () => {
     const cursor = paginationData?.nextCursor;
-    console.log('GET NEXT');
     HttpClientInstance.listConversations({cursor: cursor, page_size: 50})
       .then((response: any) => {
         realm.write(() => {
           for (const conversation of response.data) {
-            //console.log('conversation last msg LIST', conversation.lastMessage.content)
-
             const isStored: any = realm.objectForPrimaryKey(
               'Conversation',
               conversation.id,
@@ -98,19 +82,10 @@ const ConversationList = (props: any) => {
           pagination.nextCursor = response.paginationData.nextCursor;
           pagination.total = response.paginationData.total;
         });
-
-        console.log(
-          'CONVERSATIONS LENGTH',
-          realm.objects('Conversation').length,
-        );
       })
-      .catch((error: any) => {
-        console.log('error: fetch next ', error);
+      .catch((error: Error) => {
+        console.log('Error: ', error);
       });
-  };
-
-  const hasPreviousMessages = () => {
-    return !!(paginationData && paginationData.nextCursor);
   };
 
   const debouncedListPreviousConversations = () => {
@@ -141,74 +116,37 @@ const ConversationList = (props: any) => {
       if (!conversationListRef) {
         return;
       }
-
-      // if (
-      //   hasPreviousMessages()
-      //   // !isLoadingConversation
-      // ) {
       debouncedListPreviousConversations();
-      // }
     },
     200,
     {leading: true},
   );
 
-  let number = 0;
-
   return (
-    <SafeAreaView
-      style={{flex: 1, justifyContent: 'center', backgroundColor: 'white'}}>
-    
-          <FlatList
-            data={conversations}
-            onScroll={handleScroll}
-            renderItem={({item}) => {
-              return <ConversationListItem key={item.id}
-              conversation={item} />;
-            }}
-            
-            
-            
-          />
-
-          {/* {!items && items.length && !isLoadingConversation ? (
-          <NoConversations conversations={conversations.length} />
-        ) : (
-          <>
-            {conversations &&
-              conversations.map((conversation: Conversation) => (
-                <ConversationListItem
-                  key={conversation.id}
-                  conversation={conversation}
-                  active={conversation.id === currentConversationId}
-                />
-              ))}
-          </>
-        )} */}
-
-  
+    <SafeAreaView style={styles.container}>
+      {conversations && conversations.length === 0 ? (
+        <NoConversations conversations={conversations.length} />
+      ) : (
+        <FlatList
+          data={conversations}
+          onScroll={handleScroll}
+          renderItem={({item}) => {
+            return <ConversationListItem key={item.id} conversation={item} navigation={props.navigation}/>;
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 };
 
-export default ConversationList;
 const {height, width} = Dimensions.get('window');
-console.log('height ', height);
-console.log('width ', width);
 
 const styles = StyleSheet.create({
-  conversationListPaginationWrapper: {
-    display: 'flex',
+  container: {
     flex: 1,
     width: width,
     height: height,
     backgroundColor: 'white',
-  },
-  text: {
-    color: 'black',
-    marginTop: 10,
-  },
-  inputTitle: {
-    // fontSize: 20,
+    justifyContent: 'center',
   },
 });
