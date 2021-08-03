@@ -57,12 +57,3 @@ export const MessageMetadataSchema = {
     suggestions: 'Suggestions',
   },
 };
-
-// export const DeliveryStateSchema = {
-//   name: 'DeliveryState',
-//   properties: {
-//     pending: 'string',
-//     failed: 'string',
-//     delivered: 'string',
-//   },
-// };

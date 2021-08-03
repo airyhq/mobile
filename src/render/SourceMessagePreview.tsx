@@ -1,9 +1,5 @@
 import React from 'react';
-// import AttachmentTemplate from '../assets/images/icons/attachmentTemplate.svg';
-// import AttachmentImage from '../assets/images/icons/attachmentImage.svg';
-// import AttachmentVideo from '../assets/images/icons/attachmentVideo.svg';
-// import RichCardIcon from '../assets/images/icons/richCardIcon.svg';
-import {View, Text} from 'react-native';
+import {Text} from 'react-native';
 import {Conversation, Message} from '../model';
 interface SourceMessagePreviewProps {
   conversation: Conversation;
@@ -76,37 +72,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     } else {
       return <Text> Type not supported </Text>;
     }
-
-    // else if (lastMessageContent.suggestionResponse) {
-    //   return <Text>{conversation.lastMessage?.content?.suggestionResponse?.text}</Text>;
   };
-
-  // const lastMessageIsIcon = (conversation: Conversation) => {
-  //   const lastMessageContent = conversation.lastMessage.content;
-
-  //   //console.log('icon', lastMessageIsIcon)
-
-  //   if (!lastMessageContent.attachment && lastMessageContent !== {}) {
-  //     if (
-  //       lastMessageContent.message?.attachments?.[0].type === 'image' ||
-  //       isImageFromGoogleSource(lastMessageContent.message?.text)
-  //     ) {
-  //       return <AttachmentImage />;
-  //     } else if (lastMessageContent.message?.attachments?.[0].type === 'video') {
-  //       return <AttachmentVideo style={{height: '24', width: '24', margin: '0%'}} />;
-  //     } else if (lastMessageContent.suggestionResponse) {
-  //       return <>{conversation.lastMessage.content.suggestionResponse.text}</>;
-  //     } else if (lastMessageContent.image) {
-  //       return <AttachmentImage />;
-  //     } else if (lastMessageContent.richCard) {
-  //       return <RichCardIcon style={{height: '24', width: '24', margin: '0%'}} />;
-  //     }
-
-  //   }
-
-  //   return <AttachmentTemplate />;
-
-  // };
 
   return <>{lastMessageIsText(conversation)}</>;
 };

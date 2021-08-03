@@ -15,8 +15,6 @@ export const MetadataSchema = {
     state: 'string?'
   },
 };
-//    
-//    state: 'string'
 
 export const MetadataEventSchema = {
   name: 'MetadataEvent',

@@ -4,9 +4,33 @@ import {ConversationList} from '../views/inbox/ConversationList';
 import {Settings} from '../components/Settings';
 import InboxIcon from '../assets/images/icons/bubble_icon.svg';
 import SettingsIcon from '../assets/images/icons/settings_icon.svg';
+import {createStackNavigator} from '@react-navigation/stack';
+import MessageList from '../views/inbox/MessageList';
 
 export const TabBar = () => {
   const Tab = createBottomTabNavigator();
+  const InboxStack = createStackNavigator();
+
+  const InboxStackScreen = ({route}: any) => {
+
+    console.log('ROOOOOOUTE ', route);
+    
+    return (
+      <InboxStack.Navigator>
+        <InboxStack.Screen name="Inbox" component={ConversationList} options={{headerShown: false}}/>
+        <InboxStack.Screen name="MessageList" component={MessageList} options={{title: 'Name'}}/>
+      </InboxStack.Navigator>
+    );
+  }
+  const SettingsStack = createStackNavigator();
+
+  const SettingsStackScreen = () => {
+    return (
+      <SettingsStack.Navigator>
+        <InboxStack.Screen name="Settings" component={Settings} />
+      </SettingsStack.Navigator>
+    );
+  }
 
   const airyBlue = '#1578d4';
   const textGray = '#737373';
@@ -34,8 +58,8 @@ export const TabBar = () => {
           fontSize: 12,
         },
       }}>
-      <Tab.Screen name="Inbox" component={ConversationList} />
-      <Tab.Screen name="Settings" component={Settings} />
+      <Tab.Screen name="Inbox" component={InboxStackScreen} />
+      <Tab.Screen name="Settings" component={SettingsStackScreen} />
     </Tab.Navigator>
   );
 };

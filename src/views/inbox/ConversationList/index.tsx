@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {StyleSheet, Dimensions, SafeAreaView, FlatList, Button} from 'react-native';
+import {StyleSheet, Dimensions, SafeAreaView, FlatList} from 'react-native';
 import {debounce} from 'lodash-es';
 import {Conversation} from '../../../model/Conversation';
 import {ConversationListItem} from '../ConversationListItem';

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, {useRef} from 'react';
 import {
   View,
   StyleSheet,
@@ -12,12 +12,12 @@ import {Conversation} from '../../../model/Conversation';
 import IconChannel from '../../../components/IconChannel';
 import {formatTimeOfMessage} from '../../../services/format/date';
 import Checkmark from '../../../assets/images/icons/checkmark-circle.svg';
+import RightArrow from '../../../assets/images/icons/rightArrow.svg';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {Avatar} from '../../../components/Avatar';
 import {SourceMessagePreview} from '../../../render/SourceMessagePreview';
 import {RealmDB} from '../../../storage/realm';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { getUserInfo } from '../../../model/userInfo';
 
 type ConversationListItemProps = {
   conversation: Conversation;
@@ -31,9 +31,6 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
   const currentConversationState = conversation.metadata.state || 'OPEN';
   const realm = RealmDB.getInstance();
   const swipeableRef = useRef<Swipeable | null>(null);
-
-  console.log('USER: ', getUserInfo());
-  
 
   const LeftSwipe = (dragX: any) => {
     const scale = dragX.interpolate({
@@ -97,16 +94,12 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
     if (unread) {
       HttpClientInstance.readConversations(conversation.id);
     }
-  };  
+  };
 
   const onSelectItem = () => {
-    markAsRead()
-    console.log(navigation);
-    
-    navigation.navigate('Inbox', {
-      screen: 'MessageList'
-    })
-  }
+    markAsRead();
+    navigation.navigate('MessageList');
+  };
 
   const close = () => {
     if (swipeableRef.current) {
@@ -115,15 +108,13 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
   };
 
   const handlePress = () => {
-    changeState()
+    changeState();
     close();
   };
 
   return (
     <Swipeable ref={swipeableRef} renderRightActions={LeftSwipe}>
-      <Pressable
-        style={styles.clickableListItem}
-        onPress={onSelectItem}>
+      <Pressable style={styles.clickableListItem} onPress={onSelectItem}>
         <View style={styles.container}>
           <View style={styles.avatar}>
             <Avatar contact={participant} />
@@ -157,6 +148,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
                 <Text style={styles.channel}>
                   {formatTimeOfMessage(conversation.lastMessage)}
                 </Text>
+                <RightArrow height={12} width={12} fill="black" />
               </View>
             </View>
           </View>
@@ -221,17 +213,20 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
     borderBottomWidth: 1,
     borderColor: 'gray',
-    alignItems: 'flex-end',
+    alignItems: 'center',  
   },
   iconChannel: {
     display: 'flex',
     flexDirection: 'row',
+    height: 20,
   },
   timeIcon: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    height: 20,
+    marginRight: -3
   },
   container: {
     display: 'flex',

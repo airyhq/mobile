@@ -1,9 +1,12 @@
 import React from 'react';
 import { Dimensions } from 'react-native';
-import {StyleSheet, Text, SafeAreaView} from 'react-native';
+import {StyleSheet, SafeAreaView} from 'react-native';
 
+type MessageListProps = {
 
-const MessageList = (props: any) => {
+}
+
+const MessageList = (props: MessageListProps) => {
     return(
         <SafeAreaView style={styles.container}>
         </SafeAreaView>
