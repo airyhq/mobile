@@ -32,7 +32,7 @@ export const ConversationList = (props: ConversationListProps) => {
     });
 
     getConversationsList();
-
+  
     return () => {
       const databaseConversations = realm.objects('Conversation');
 
@@ -131,7 +131,7 @@ export const ConversationList = (props: ConversationListProps) => {
           data={conversations}
           onScroll={handleScroll}
           renderItem={({item}) => {
-            return <ConversationListItem key={item.id} conversation={item} navigation={props.navigation}/>;
+            return <ConversationListItem key={item.id} conversation={item} navigation={props.navigation} />;
           }}
         />
       )}

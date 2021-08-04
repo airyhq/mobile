@@ -6,15 +6,13 @@ import InboxIcon from '../assets/images/icons/bubble_icon.svg';
 import SettingsIcon from '../assets/images/icons/settings_icon.svg';
 import {createStackNavigator} from '@react-navigation/stack';
 import MessageList from '../views/inbox/MessageList';
+import { colorAiryBlue, colorTextGray } from '../assets/colors';
 
 export const TabBar = () => {
   const Tab = createBottomTabNavigator();
   const InboxStack = createStackNavigator();
 
   const InboxStackScreen = ({route}: any) => {
-
-    console.log('ROOOOOOUTE ', route);
-    
     return (
       <InboxStack.Navigator>
         <InboxStack.Screen name="Inbox" component={ConversationList} options={{headerShown: false}}/>
@@ -32,15 +30,12 @@ export const TabBar = () => {
     );
   }
 
-  const airyBlue = '#1578d4';
-  const textGray = '#737373';
-
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
         tabBarIcon: ({focused}) => {
           let iconColor;
-          iconColor = focused ? airyBlue : textGray;
+          iconColor = focused ? colorAiryBlue : colorTextGray;
 
           if (route.name === 'Settings') {
             return <SettingsIcon height={32} width={32} fill={iconColor} />;
@@ -52,8 +47,8 @@ export const TabBar = () => {
         },
       })}
       tabBarOptions={{
-        activeTintColor: airyBlue,
-        inactiveTintColor: textGray,
+        activeTintColor: colorAiryBlue,
+        inactiveTintColor: colorTextGray,
         labelStyle: {
           fontSize: 12,
         },

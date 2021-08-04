@@ -1,7 +1,7 @@
 /* eslint-disable react/display-name */
 import React from 'react';
 import {Channel} from '../model/Channel';
-import { StyleSheet, Text, View } from 'react-native';
+import {Dimensions, StyleSheet, Text, View} from 'react-native';
 
 import FacebookIcon from '../assets/images/icons/facebook_rounded.svg';
 import InstagramIcon from '../assets/images/icons/instagram.svg';
@@ -33,7 +33,7 @@ const PlaceholderChannelData: Channel = {
   connected: true,
 };
 
-const SOURCE_INFO:any = {
+const SOURCE_INFO: any = {
   facebook: {
     text: 'Facebook page',
     icon: () => <FacebookIcon />,
@@ -77,17 +77,18 @@ const IconChannel: React.FC<IconChannelProps> = ({
     channel = PlaceholderChannelData;
   }
 
-
-
-
-
   const channelInfo = SOURCE_INFO[channel.source];
-  //const channelInfo = SOURCE_INFO['facebook'];
   const fbFallback = SOURCE_INFO['facebook'];
-  const isFromTwilioSource = channel.source === 'twilio.sms' || channel.source === 'twilio.whatsapp';
+  const isFromTwilioSource =
+    channel.source === 'twilio.sms' || channel.source === 'twilio.whatsapp';
 
   const ChannelName = () => {
-    return <Text>{channel.metadata?.name || (isFromTwilioSource ? channel.sourceChannelId : channel.source)}</Text>;
+    return (
+      <Text style={styles.text} numberOfLines={1}>
+        {channel.metadata?.name ||
+          (isFromTwilioSource ? channel.sourceChannelId : channel.source)}
+      </Text>
+    );
   };
 
   if (icon && showName) {
@@ -103,6 +104,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
     return (
       <View style={styles.avatarName}>
         {channelInfo.avatar()}
+        <ChannelName />
       </View>
     );
   }
@@ -111,7 +113,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
     return (
       <View style={styles.iconText}>
         {channelInfo.icon()}
-        <Text>{channelInfo.text}</Text>
+        <Text style={styles.text}>{channelInfo.text}</Text>
       </View>
     );
   }
@@ -120,17 +122,17 @@ const IconChannel: React.FC<IconChannelProps> = ({
     return (
       <View style={styles.avatarText}>
         {channelInfo.avatar()}
-        <Text>{channelInfo.text}</Text>
+        <Text style={styles.text}>{channelInfo.text}</Text>
       </View>
     );
   }
 
   if (icon) {
-    return <>{channelInfo.icon()}</>;
+    return <View style={styles.icon}>{channelInfo.icon()}</View>;
   }
 
   if (showAvatar) {
-    return <>{channelInfo.avatar()}</>;
+    return <View style={styles.avatar}>{channelInfo.avatar()}</View>;
   }
 
   return (
@@ -143,18 +145,48 @@ const IconChannel: React.FC<IconChannelProps> = ({
 
 export default IconChannel;
 
-const styles = StyleSheet.create({
-  iconName: {
-    alignItems: 'center',
-    minWidth: 0,
-   
-  },
+const {width} = Dimensions.get('window');
 
-  avatarName: {
+const styles = StyleSheet.create({
+  iconText: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: 20,
     height: 20,
-    width: 20
   },
-    avatarText: {},
-    iconText: {},
-  });
-  
+  iconName: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: 20,
+    height: 20,
+  },
+  avatarText: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: 20,
+    height: 20,
+    alignItems: 'center',
+  },
+  avatarName: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: 20,
+    height: 20,
+    alignItems: 'center',
+  },
+  text: {
+    width: width * 0.5,
+    marginLeft: 3,
+    fontSize: 13,
+  },
+  icon: {
+    width: 20,
+    height: 20,
+  },
+  avatar: {
+    width: 20,
+    height: 20,
+  },
+});

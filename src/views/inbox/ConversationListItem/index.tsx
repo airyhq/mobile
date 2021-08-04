@@ -18,6 +18,13 @@ import {Avatar} from '../../../components/Avatar';
 import {SourceMessagePreview} from '../../../render/SourceMessagePreview';
 import {RealmDB} from '../../../storage/realm';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import {
+  colorAiryBlue,
+  colorLightGray,
+  colorSoftGreen,
+  colorStateRed,
+  colorTextContrast,
+} from '../../../assets/colors';
 
 type ConversationListItemProps = {
   conversation: Conversation;
@@ -48,7 +55,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
           <Animated.Text
             style={{
               transform: [{translateX: scale}],
-              color: '#cad5db',
+              color: `${colorLightGray}`,
               textAlign: 'center',
             }}>
             {currentConversationState === 'OPEN'
@@ -85,7 +92,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
   const ClosedStateButton = () => {
     return (
       <View style={styles.closedStateButton}>
-        <Checkmark height={24} width={24} fill="#0da36b" />
+        <Checkmark height={24} width={24} fill={`${colorSoftGreen}`} />
       </View>
     );
   };
@@ -130,9 +137,9 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
                 <ClosedStateButton />
               )}
             </View>
-            <View style={styles.message}>
+            <Text style={unread ? styles.unreadMessage : styles.message}>
               <SourceMessagePreview conversation={conversation} />
-            </View>
+            </Text>
             <View style={styles.channelTimeContainer}>
               <View style={styles.iconChannel}>
                 <IconChannel
@@ -140,9 +147,6 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
                   showAvatar
                   showName
                 />
-                <Text style={styles.channel}>
-                  {conversation.channel.sourceChannelId}
-                </Text>
               </View>
               <View style={styles.timeIcon}>
                 <Text style={styles.channel}>
@@ -179,23 +183,33 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 16,
-    color: 'black',
+    fontWeight: '500',
+    color: `${colorTextContrast}`,
     paddingTop: 10,
   },
   unreadName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#1578d4',
+    color: `${colorAiryBlue}`,
     paddingTop: 10,
   },
   message: {
-    color: 'black',
+    color: `${colorTextContrast}`,
+    fontSize: 15,
+    fontWeight: '500',
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  unreadMessage: {
+    color: `${colorTextContrast}`,
+    fontSize: 15,
+    fontWeight: 'bold',
     paddingTop: 10,
     paddingBottom: 10,
   },
   channel: {
-    fontSize: 12,
-    color: 'black',
+    fontSize: 13,
+    color: `${colorTextContrast}`,
     alignSelf: 'center',
     marginLeft: 4,
   },
@@ -213,7 +227,7 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
     borderBottomWidth: 1,
     borderColor: 'gray',
-    alignItems: 'center',  
+    alignItems: 'center',
   },
   iconChannel: {
     display: 'flex',
@@ -226,7 +240,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     height: 20,
-    marginRight: -3
+    marginRight: -3,
   },
   container: {
     display: 'flex',
@@ -234,14 +248,13 @@ const styles = StyleSheet.create({
   },
   openStateButton: {
     borderWidth: 2,
-    borderColor: '#bf1a2f',
+    borderColor: `${colorStateRed}`,
     height: 20,
     width: 20,
     borderRadius: 50,
     marginRight: 10,
   },
   closedStateButton: {
-    borderColor: '#0da36b',
     height: 24,
     width: 24,
     borderRadius: 50,
@@ -256,9 +269,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   open: {
-    backgroundColor: '#bf1a2f',
+    backgroundColor: `${colorStateRed}`,
   },
   closed: {
-    backgroundColor: '#0da36b',
+    backgroundColor: `${colorSoftGreen}`,
   },
 });

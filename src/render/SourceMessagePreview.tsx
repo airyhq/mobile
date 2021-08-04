@@ -1,19 +1,9 @@
 import React from 'react';
 import {Text} from 'react-native';
-import {Conversation, Message} from '../model';
+import {Conversation} from '../model';
 interface SourceMessagePreviewProps {
   conversation: Conversation;
 }
-interface FormattedMessageProps {
-  message: Message;
-}
-
-const FormattedMessage = ({message}: FormattedMessageProps) => {
-  if (message?.content) {
-    return <>{message.content.text}</>;
-  }
-  return <>{message.content.text}</>;
-};
 
 const isImageFromGoogleSource = (messageText: string | undefined) => {
   if (!messageText) return false;
@@ -66,9 +56,12 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     ) {
       return (
         <Text>
-          <FormattedMessage message={conversation.lastMessage} />
+          {lastMessageContent?.message?.text ||
+            conversation.lastMessage.content.text}
         </Text>
       );
+    } else if (lastMessageContent.suggestionResponse) {
+      return <Text>{lastMessageContent.suggestionResponse?.text}</Text>;
     } else {
       return <Text> Type not supported </Text>;
     }
