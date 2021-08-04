@@ -26,7 +26,7 @@ const App = () => {
     <>
       <SafeAreaProvider>
         <NavigationContainer>
-          {userInfo ? <TabBar /> : <Login />}
+          {!userInfo ? <TabBar /> : <Login />}
         </NavigationContainer>
       </SafeAreaProvider>
     </>

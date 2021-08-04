@@ -124,6 +124,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
       <Pressable style={styles.clickableListItem} onPress={onSelectItem}>
         <View style={styles.container}>
           <View style={styles.avatar}>
+            {unread ? <View style={styles.unreadMessageIndicator} /> : <View style={styles.readMessageIndicator} />}
             <Avatar contact={participant} />
           </View>
           <View style={styles.contentContainer}>
@@ -174,12 +175,15 @@ const styles = StyleSheet.create({
   contentContainer: {
     display: 'flex',
     marginBottom: 20,
-    paddingLeft: 16,
+    paddingLeft: 10,
     width: width * 0.8,
   },
   avatar: {
+    flexDirection: 'row',
+    height: 60,
     marginLeft: 8,
     marginTop: 8,
+    alignItems: 'center',
   },
   name: {
     fontSize: 16,
@@ -218,6 +222,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
+    marginRight: 6,
   },
   channelTimeContainer: {
     display: 'flex',
@@ -226,7 +231,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingBottom: 4,
     borderBottomWidth: 1,
-    borderColor: 'gray',
+    borderColor: `${colorLightGray}`,
     alignItems: 'center',
   },
   iconChannel: {
@@ -273,5 +278,19 @@ const styles = StyleSheet.create({
   },
   closed: {
     backgroundColor: `${colorSoftGreen}`,
+  },
+  unreadMessageIndicator: {
+    height: 8,
+    width: 8,
+    backgroundColor: colorAiryBlue,
+    borderRadius: 50,
+    marginRight: 4,
+  },
+  readMessageIndicator: {
+    height: 8,
+    width: 8,
+    backgroundColor: 'transparent',
+    borderRadius: 50,
+    marginRight: 4,
   },
 });

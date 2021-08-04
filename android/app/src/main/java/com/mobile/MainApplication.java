@@ -1,4 +1,4 @@
-package com.mobile;
+package com.airy.mobile;
 
 import android.app.Application;
 import android.content.Context;
