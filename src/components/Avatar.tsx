@@ -12,7 +12,11 @@ export const Avatar = ({contact}: AvatarProps) => {
   return (
     <Image
       style={styles.avatarImage}
-      source={contact.avatarUrl ? {uri: `${contact.avatarUrl}`} : {uri: `${fallbackAvatar}`}}
+      source={
+        contact.avatarUrl
+          ? {uri: `${contact.avatarUrl}`}
+          : {uri: `${fallbackAvatar}`}
+      }
     />
   );
 };
@@ -22,6 +26,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     height: 60,
     width: 60,
-    borderRadius: 50
+    borderRadius: 50,
   },
 });

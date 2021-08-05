@@ -4,16 +4,18 @@ import {Channel} from '../model/Channel';
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
 
 import FacebookIcon from '../assets/images/icons/facebook_rounded.svg';
-import InstagramIcon from '../assets/images/icons/instagram.svg';
-import GoogleIcon from '../assets/images/icons/google-messages.svg';
-import SmsIcon from '../assets/images/icons/sms-icon.svg';
-import WhatsappIcon from '../assets/images/icons/whatsapp-icon.svg';
 import MessengerAvatar from '../assets/images/icons/messenger_avatar.svg';
+import GoogleIcon from '../assets/images/icons/google-messages.svg';
 import GoogleAvatar from '../assets/images/icons/google_avatar.svg';
+import SmsIcon from '../assets/images/icons/sms-icon.svg';
 import SmsAvatar from '../assets/images/icons/sms_avatar.svg';
+import WhatsappIcon from '../assets/images/icons/whatsapp-icon.svg';
 import WhatsappAvatar from '../assets/images/icons/whatsapp_avatar.svg';
-import AiryAvatar from '../assets/images/icons/airy_avatar.svg';
 import AiryIcon from '../assets/images/icons/airy-icon.svg';
+import AiryAvatar from '../assets/images/icons/airy_avatar.svg';
+import InstagramIcon from '../assets/images/icons/instagram.svg';
+import InstagramAvatar from '../assets/images/icons/instagram_avatar.svg';
+import {colorTextGray} from '../assets/colors';
 
 type IconChannelProps = {
   channel: Channel;
@@ -42,7 +44,7 @@ const SOURCE_INFO: any = {
   instagram: {
     text: 'Instagram Account',
     icon: () => <InstagramIcon />,
-    avatar: () => <InstagramIcon />,
+    avatar: () => <InstagramAvatar />,
   },
   google: {
     text: 'Google page',
@@ -180,6 +182,7 @@ const styles = StyleSheet.create({
     width: width * 0.5,
     marginLeft: 3,
     fontSize: 13,
+    color: `${colorTextGray}`,
   },
   icon: {
     width: 20,

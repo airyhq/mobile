@@ -24,6 +24,7 @@ import {
   colorSoftGreen,
   colorStateRed,
   colorTextContrast,
+  colorTextGray,
 } from '../../../assets/colors';
 
 type ConversationListItemProps = {
@@ -39,7 +40,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
   const realm = RealmDB.getInstance();
   const swipeableRef = useRef<Swipeable | null>(null);
 
-  const LeftSwipe = (dragX: any) => {
+  const LeftSwipe = (dragX: Animated.AnimatedInterpolation) => {
     const scale = dragX.interpolate({
       inputRange: [0, 100],
       outputRange: [0.7, 0],
@@ -86,9 +87,11 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
         console.log('error: ', error);
       });
   };
+
   const OpenStateButton = () => {
     return <View style={styles.openStateButton} />;
   };
+
   const ClosedStateButton = () => {
     return (
       <View style={styles.closedStateButton}>
@@ -124,7 +127,11 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
       <Pressable style={styles.clickableListItem} onPress={onSelectItem}>
         <View style={styles.container}>
           <View style={styles.avatar}>
-            {unread ? <View style={styles.unreadMessageIndicator} /> : <View style={styles.readMessageIndicator} />}
+            {unread ? (
+              <View style={styles.unreadMessageIndicator} />
+            ) : (
+              <View style={styles.readMessageIndicator} />
+            )}
             <Avatar contact={participant} />
           </View>
           <View style={styles.contentContainer}>
@@ -187,7 +194,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '400',
     color: `${colorTextContrast}`,
     paddingTop: 10,
   },
@@ -198,9 +205,9 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   message: {
-    color: `${colorTextContrast}`,
+    color: `${colorTextGray}`,
     fontSize: 15,
-    fontWeight: '500',
+    fontWeight: '400',
     paddingTop: 10,
     paddingBottom: 10,
   },
@@ -213,7 +220,7 @@ const styles = StyleSheet.create({
   },
   channel: {
     fontSize: 13,
-    color: `${colorTextContrast}`,
+    color: `${colorTextGray}`,
     alignSelf: 'center',
     marginLeft: 4,
   },

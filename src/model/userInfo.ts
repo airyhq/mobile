@@ -1,22 +1,24 @@
-import { Results } from "realm";
-import { RealmDB } from "../storage/realm";
+import {Results} from 'realm';
+import {RealmDB} from '../storage/realm';
 
 export const UserInfoSchema = {
-  name: "UserInfo",
+  name: 'UserInfo',
   properties: {
-    accessToken: "string",
-    name: "string?",   
-    email: "string?"   
-  },  
+    accessToken: 'string',
+    name: 'string?',
+    email: 'string?',
+  },
 };
 
 export type UserInfo = {
   accessToken: string;
   name?: string;
   email?: string;
-}
-
-export const getUserInfo = (): UserInfo | undefined => {
-  const objects: Results<UserInfo> = RealmDB.getInstance()?.objects('UserInfo');
-  if (objects) return objects[0];
 };
+
+//commented out cause we are running into a "Require cycle: src/storage/realm.ts -> src/model/userInfo.ts -> src/storage/realm.ts"
+
+// export const getUserInfo = (): UserInfo | undefined => {
+//   const objects: Results<UserInfo> = RealmDB.getInstance()?.objects('UserInfo');
+//   if (objects) return objects[0];
+// };

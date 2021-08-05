@@ -1,23 +1,21 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet, Dimensions, SafeAreaView, FlatList} from 'react-native';
 import {debounce} from 'lodash-es';
-import {Conversation} from '../../../model/Conversation';
 import {ConversationListItem} from '../ConversationListItem';
 import {NoConversations} from '../NoConversations';
 import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {getPagination} from '../../../services/Pagination';
+import {parseToRealmConversation} from '../../../model/Conversation';
+import {NativeScrollEvent} from 'react-native';
+import {NativeSyntheticEvent} from 'react-native';
 
 type ConversationListProps = {
-  currentConversationId?: string;
-  filteredConversations?: Conversation[];
-  conversationsPaginationData?: any;
-  filteredPaginationData?: any;
-  fetchNext?: any;
-  navigation: any
+  navigation: any;
 };
 
 export const ConversationList = (props: ConversationListProps) => {
+  const {navigation} = props;
   const realm = RealmDB.getInstance();
   const paginationData = getPagination();
   const conversationListRef = useRef<any>(null);
@@ -25,30 +23,32 @@ export const ConversationList = (props: ConversationListProps) => {
   const [offset, setOffset] = useState(0);
 
   useEffect(() => {
-    const databaseConversations = realm.objects('Conversation');
+    const databaseConversations = realm
+      .objects('Conversation')
+      .sorted('lastMessage.sentAt', true);
 
     databaseConversations.addListener(() => {
       setConversations([...databaseConversations]);
     });
 
     getConversationsList();
-  
-    return () => {
-      const databaseConversations = realm.objects('Conversation');
 
+    return () => {
       databaseConversations.removeAllListeners();
     };
   }, []);
 
-  const getConversationsList = () => {  
+  const getConversationsList = () => {
     HttpClientInstance.listConversations({page_size: 50})
-      .then((response: any) => {  
-        setConversations(response.data);
+      .then((response: any) => {
         realm.write(() => {
           realm.create('Pagination', response.paginationData);
 
           for (const conversation of response.data) {
-            realm.create('Conversation', conversation);
+            realm.create(
+              'Conversation',
+              parseToRealmConversation(conversation),
+            );
           }
         });
       })
@@ -63,7 +63,7 @@ export const ConversationList = (props: ConversationListProps) => {
       .then((response: any) => {
         realm.write(() => {
           for (const conversation of response.data) {
-            const isStored: any = realm.objectForPrimaryKey(
+            const isStored = realm.objectForPrimaryKey(
               'Conversation',
               conversation.id,
             );
@@ -72,7 +72,10 @@ export const ConversationList = (props: ConversationListProps) => {
               realm.delete(isStored);
             }
 
-            realm.create('Conversation', conversation);
+            realm.create(
+              'Conversation',
+              parseToRealmConversation(conversation),
+            );
           }
         });
 
@@ -92,7 +95,7 @@ export const ConversationList = (props: ConversationListProps) => {
     getNextConversationList();
   };
 
-  const isCloseToBottom = (event: any) => {
+  const isCloseToBottom = (event: NativeScrollEvent) => {
     const paddingToBottom = 30;
     return (
       event.layoutMeasurement &&
@@ -101,7 +104,7 @@ export const ConversationList = (props: ConversationListProps) => {
     );
   };
 
-  const handleScroll = (event: any) => {
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const currentOffset = event.nativeEvent.contentOffset.y;
     const direction = currentOffset > offset ? 'down' : 'up';
     setOffset(currentOffset);
@@ -131,7 +134,13 @@ export const ConversationList = (props: ConversationListProps) => {
           data={conversations}
           onScroll={handleScroll}
           renderItem={({item}) => {
-            return <ConversationListItem key={item.id} conversation={item} navigation={props.navigation} />;
+            return (
+              <ConversationListItem
+                key={item.id}
+                conversation={item}
+                navigation={navigation}
+              />
+            );
           }}
         />
       )}

@@ -6,7 +6,7 @@ import InboxIcon from '../assets/images/icons/bubble_icon.svg';
 import SettingsIcon from '../assets/images/icons/settings_icon.svg';
 import {createStackNavigator} from '@react-navigation/stack';
 import MessageList from '../views/inbox/MessageList';
-import { colorAiryBlue, colorTextGray } from '../assets/colors';
+import {colorAiryBlue, colorTextGray} from '../assets/colors';
 
 export const TabBar = () => {
   const Tab = createBottomTabNavigator();
@@ -15,11 +15,19 @@ export const TabBar = () => {
   const InboxStackScreen = ({route}: any) => {
     return (
       <InboxStack.Navigator>
-        <InboxStack.Screen name="Inbox" component={ConversationList} options={{headerShown: false}}/>
-        <InboxStack.Screen name="MessageList" component={MessageList} options={{title: 'Name'}}/>
+        <InboxStack.Screen
+          name="Inbox"
+          component={ConversationList}
+          options={{headerShown: false}}
+        />
+        <InboxStack.Screen
+          name="MessageList"
+          component={MessageList}
+          options={{title: 'Name'}}
+        />
       </InboxStack.Navigator>
     );
-  }
+  };
   const SettingsStack = createStackNavigator();
 
   const SettingsStackScreen = () => {
@@ -28,7 +36,7 @@ export const TabBar = () => {
         <InboxStack.Screen name="Settings" component={Settings} />
       </SettingsStack.Navigator>
     );
-  }
+  };
 
   return (
     <Tab.Navigator

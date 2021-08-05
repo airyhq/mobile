@@ -2,11 +2,7 @@ import React from 'react';
 import {SafeAreaView, StyleSheet, Dimensions} from 'react-native';
 
 export const Settings = () => {
-  return (
-    <SafeAreaView style={styles.container}>
-      
-    </SafeAreaView>
-  );
+  return <SafeAreaView style={styles.container}></SafeAreaView>;
 };
 
 const {height, width} = Dimensions.get('window');

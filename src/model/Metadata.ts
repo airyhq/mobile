@@ -12,6 +12,7 @@ export const MetadataSchema = {
   name: 'Metadata',
   properties: {
     contact: 'Contact',
+    unreadCount: 'int',
     state: 'string?'
   },
 };
