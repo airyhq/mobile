@@ -38,10 +38,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
     marginTop: 20,
+    fontFamily: 'Lato',
   },
   text: {
     fontSize: 14,
     fontWeight: 'normal',
     textAlign: 'center',
+    fontFamily: 'Lato',
   },
 });

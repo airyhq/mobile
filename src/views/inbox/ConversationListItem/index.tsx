@@ -26,10 +26,11 @@ import {
   colorTextContrast,
   colorTextGray,
 } from '../../../assets/colors';
+import {NavigationStackProp} from 'react-navigation-stack';
 
 type ConversationListItemProps = {
   conversation: Conversation;
-  navigation?: any;
+  navigation?: NavigationStackProp<{conversationId: string}>;
 };
 
 export const ConversationListItem = (props: ConversationListItemProps) => {
@@ -84,7 +85,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
         });
       })
       .catch((error: Error) => {
-        console.log('error: ', error);
+        console.log('Error: ', error);
       });
   };
 
@@ -108,7 +109,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
 
   const onSelectItem = () => {
     markAsRead();
-    navigation.navigate('MessageList');
+    navigation.push('MessageList');
   };
 
   const close = () => {
@@ -197,12 +198,14 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: `${colorTextContrast}`,
     paddingTop: 10,
+    fontFamily: 'Lato',
   },
   unreadName: {
     fontSize: 16,
     fontWeight: 'bold',
     color: `${colorAiryBlue}`,
     paddingTop: 10,
+    fontFamily: 'Lato',
   },
   message: {
     color: `${colorTextGray}`,
@@ -210,6 +213,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     paddingTop: 10,
     paddingBottom: 10,
+    fontFamily: 'Lato',
   },
   unreadMessage: {
     color: `${colorTextContrast}`,
@@ -217,12 +221,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingTop: 10,
     paddingBottom: 10,
+    fontFamily: 'Lato',
   },
   channel: {
     fontSize: 13,
     color: `${colorTextGray}`,
     alignSelf: 'center',
     marginLeft: 4,
+    fontFamily: 'Lato',
   },
   nameStatus: {
     display: 'flex',

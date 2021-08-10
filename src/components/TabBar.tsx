@@ -12,7 +12,7 @@ export const TabBar = () => {
   const Tab = createBottomTabNavigator();
   const InboxStack = createStackNavigator();
 
-  const InboxStackScreen = ({route}: any) => {
+  const InboxStackScreen = () => {
     return (
       <InboxStack.Navigator>
         <InboxStack.Screen
@@ -23,7 +23,7 @@ export const TabBar = () => {
         <InboxStack.Screen
           name="MessageList"
           component={MessageList}
-          options={{title: 'Name'}}
+          options={{title: 'Name', headerTitleStyle: {fontFamily: 'Lato'}}}
         />
       </InboxStack.Navigator>
     );
@@ -33,7 +33,11 @@ export const TabBar = () => {
   const SettingsStackScreen = () => {
     return (
       <SettingsStack.Navigator>
-        <InboxStack.Screen name="Settings" component={Settings} />
+        <InboxStack.Screen
+          name="Settings"
+          component={Settings}
+          options={{headerTitleStyle: {fontFamily: 'Lato'}}}
+        />
       </SettingsStack.Navigator>
     );
   };
@@ -59,6 +63,7 @@ export const TabBar = () => {
         inactiveTintColor: colorTextGray,
         labelStyle: {
           fontSize: 12,
+          fontFamily: 'Lato',
         },
       }}>
       <Tab.Screen name="Inbox" component={InboxStackScreen} />

@@ -183,6 +183,7 @@ const styles = StyleSheet.create({
     marginLeft: 3,
     fontSize: 13,
     color: `${colorTextGray}`,
+    fontFamily: 'Lato',
   },
   icon: {
     width: 20,

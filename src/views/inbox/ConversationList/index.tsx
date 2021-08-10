@@ -7,11 +7,11 @@ import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {getPagination} from '../../../services/Pagination';
 import {parseToRealmConversation} from '../../../model/Conversation';
-import {NativeScrollEvent} from 'react-native';
-import {NativeSyntheticEvent} from 'react-native';
+import {NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
+import {NavigationStackProp} from 'react-navigation-stack';
 
 type ConversationListProps = {
-  navigation: any;
+  navigation?: NavigationStackProp<{conversationId: string}>;
 };
 
 export const ConversationList = (props: ConversationListProps) => {
