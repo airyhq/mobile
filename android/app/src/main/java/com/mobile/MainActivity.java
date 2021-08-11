@@ -1,4 +1,4 @@
-package com.mobile;
+package com.airy.mobile;
 
 import com.facebook.react.ReactActivity;
 

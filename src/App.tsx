@@ -1,13 +1,13 @@
+import 'react-native-gesture-handler';
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView} from 'react-native';
-
 import {Login} from './components/Login';
-import { Logout } from './components/Logout';
-import { UserInfo } from './model/userInfo';
-import { RealmDB } from './storage/realm';
+import {UserInfo} from './model/userInfo';
+import {RealmDB} from './storage/realm';
+import {TabBar} from './components/TabBar';
+import {NavigationContainer} from '@react-navigation/native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 const App = () => {
-
   const [userInfo, setUserInfo] = useState<UserInfo | undefined>();
 
   useEffect(() => {
@@ -19,13 +19,17 @@ const App = () => {
       setUserInfo(users[0]);
     } else {
       setUserInfo(undefined);
-    }     
-  }
- 
+    }
+  };
+
   return (
-      <SafeAreaView style={{flex: 1, alignItems: 'center'}}>
-        {userInfo ? <Logout userInfo={userInfo} /> : <Login />}        
-      </SafeAreaView>
+    <>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          {!userInfo ? <TabBar /> : <Login />}
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </>
   );
 };
 
