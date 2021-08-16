@@ -4,11 +4,9 @@ import {Message} from '../../model/Message';
 import {Tag} from '../../model/Tag';
 import {Channel} from '../../model/Channel';
 import {EventPayload} from './payload';
-import { getUserInfo } from '../../model/userInfo';
+import { RealmDB } from '../../storage/realm';
 /* eslint-disable @typescript-eslint/no-var-requires */
 const camelcaseKeys = require('camelcase-keys');
-
-const accessToken = getUserInfo()?.accessToken;
 
 type CallbackMap = {
   onMessage?: (
@@ -22,6 +20,8 @@ type CallbackMap = {
   onError?: () => void;
 };
 
+const realm = RealmDB.getInstance()
+const accessToken: any = realm.objects('UserInfo')[0]
 // https: -> wss: and http: -> ws:
 // const protocol = location.protocol.replace('http', 'ws');
 

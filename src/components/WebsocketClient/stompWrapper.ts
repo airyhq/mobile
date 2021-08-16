@@ -5,14 +5,13 @@ import {
   IMessage,
   StompSubscription,
 } from '@stomp/stompjs';
-import { getUserInfo } from '../../model/userInfo';
-
-
-const accessToken = getUserInfo()?.accessToken
+import { RealmDB } from '../../storage/realm';
 
 type QueueMappingType = {[destination: string]: (message: IMessage) => void};
 type ErrorCallback = () => void;
 
+const realm = RealmDB.getInstance()
+const accessToken: any = realm.objects('UserInfo')[0]
 export class StompWrapper {
   stompClient?: Client;
   onError: ErrorCallback;
