@@ -23,7 +23,7 @@ export const TabBar = () => {
         <InboxStack.Screen
           name="MessageList"
           component={MessageList}
-          options={{title: 'Name', headerTitleStyle: {fontFamily: 'Lato'}}}
+          options={({route}: any) => ({title: `${route.params.displayName}`, headerTitleStyle: {fontFamily: 'Lato'}})}
         />
       </InboxStack.Navigator>
     );

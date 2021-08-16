@@ -1,10 +1,35 @@
 import React from 'react';
+import {useEffect} from 'react';
 import {Dimensions} from 'react-native';
 import {StyleSheet, SafeAreaView} from 'react-native';
+import {HttpClientInstance} from '../../../InitializeAiryApi';
 
-type MessageListProps = {};
+type MessageListProps = {
+  route: any;
+};
+
+const listMessages = (
+  conversationId: string,
+  cursor?: any,
+  page_size?: any,
+) => {
+  HttpClientInstance.listMessages({conversationId})
+    .then((response: any) => {
+      // console.log('response: ', response);
+    })
+    .catch((error: Error) => {
+      console.log('Error: ', error);
+    });
+};
 
 const MessageList = (props: MessageListProps) => {
+  const {route} = props;
+  const conversationId = route.params.conversationId;
+
+  useEffect(() => {
+    listMessages(conversationId);
+  }, []);
+
   return <SafeAreaView style={styles.container}></SafeAreaView>;
 };
 

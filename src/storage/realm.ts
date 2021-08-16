@@ -1,6 +1,7 @@
 import Realm from 'realm';
 import {UserInfoSchema} from '../model/userInfo';
 import {ConversationSchema} from '../model/Conversation';
+import {TagSchema} from '../model/Tag';
 import {
   ChannelMetadataSchema,
   ChannelSchema,
@@ -13,7 +14,7 @@ import {
   MetadataSchema,
   PaginationSchema,
   SuggestedReplySchema,
-  SuggestionsSchema
+  SuggestionsSchema,
 } from '../model';
 
 export class RealmDB {
@@ -38,6 +39,7 @@ export class RealmDB {
           MessageMetadataSchema,
           SuggestedReplySchema,
           SuggestionsSchema,
+          TagSchema,
           PaginationSchema,
           UserInfoSchema,
         ],

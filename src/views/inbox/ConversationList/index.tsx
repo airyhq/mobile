@@ -132,6 +132,7 @@ export const ConversationList = (props: ConversationListProps) => {
       ) : (
         <FlatList
           data={conversations}
+          keyExtractor={item => item?.id}
           onScroll={handleScroll}
           renderItem={({item}) => {
             return (
