@@ -1,17 +1,17 @@
 import {
-  ActivationState,
   Client,
   IFrame,
   IMessage,
   StompSubscription,
 } from '@stomp/stompjs';
-import { RealmDB } from '../../storage/realm';
+import { UserInfo } from '../../model/userInfo';
+import {RealmDB} from '../../storage/realm';
 
 type QueueMappingType = {[destination: string]: (message: IMessage) => void};
 type ErrorCallback = () => void;
 
-const realm = RealmDB.getInstance()
-const accessToken: any = realm.objects('UserInfo')[0]
+const realm = RealmDB.getInstance();
+const accessToken: string = realm.objects<UserInfo>('UserInfo')[0].accessToken;
 export class StompWrapper {
   stompClient?: Client;
   onError: ErrorCallback;
@@ -40,20 +40,12 @@ export class StompWrapper {
       onDisconnect: this.onWSError,
       onConnect: this.stompOnConnect,
       onStompError: this.stompOnError,
-      onChangeState: this.onChangeState,
-      onUnhandledFrame: this.onWSError,
-      onUnhandledMessage: this.onWSError,
-      onUnhandledReceipt: this.onWSError,
-      onWebSocketClose: this.onWSError,
-      appendMissingNULLonIncoming: true
+      appendMissingNULLonIncoming: true,
     });
-    
     this.stompClient.activate();
   };
 
   destroyConnection = () => {
-    console.log('STOMP DESTRORY');
-
     this.stompClient?.deactivate();
     if (this.queues) {
       this.queues.filter(it => !!it).forEach(queue => queue.unsubscribe());
@@ -61,9 +53,6 @@ export class StompWrapper {
   };
 
   stompOnConnect = () => {
-    console.log('STOMP ON CONNECT');
-    
-
     this.queues = Object.keys(this.queueMapping).reduce(
       (acc: any, queue: any) =>
         acc.concat([
@@ -74,22 +63,13 @@ export class StompWrapper {
   };
 
   stompOnError = (error: IFrame) => {
-    console.log('STOMP ERROR');
-
     if (error.headers.message.includes('401')) {
       this.onError();
     }
   };
 
   onWSError = (error: IFrame) => {
-    console.log('WS Error');
-    console.log(error);
-  };
-
-  onChangeState = (state: ActivationState) => {
-    // console.log('STATE');
-    // console.log(state);
-    // console.log(this.stompClient?.active);
+    return error
   };
 
   publish = (queue: any, body: any) => {

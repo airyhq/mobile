@@ -21,8 +21,8 @@ export const Login = () => {
           });                  
         });        
       })
-      .catch(error => {
-        console.log(error)
+      .catch((error: Error) => {
+        return error
       });
   };
 

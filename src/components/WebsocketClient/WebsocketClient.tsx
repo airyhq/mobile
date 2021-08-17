@@ -5,6 +5,7 @@ import {Tag} from '../../model/Tag';
 import {Channel} from '../../model/Channel';
 import {EventPayload} from './payload';
 import { RealmDB } from '../../storage/realm';
+import { UserInfo } from '../../model/userInfo';
 /* eslint-disable @typescript-eslint/no-var-requires */
 const camelcaseKeys = require('camelcase-keys');
 
@@ -21,9 +22,7 @@ type CallbackMap = {
 };
 
 const realm = RealmDB.getInstance()
-const accessToken: any = realm.objects('UserInfo')[0]
-// https: -> wss: and http: -> ws:
-// const protocol = location.protocol.replace('http', 'ws');
+const accessToken: string = realm.objects<UserInfo>('UserInfo')[0].accessToken;
 
 export class WebSocketClient {
   public readonly apiUrlConfig?: string;
@@ -53,8 +52,6 @@ export class WebSocketClient {
   };
 
   onEvent = (body: string) => {
-    console.log('++++++++++++++ BODY: ', body);
-
     const json = JSON.parse(body) as EventPayload;
     switch (json.type) {
       case 'channel':

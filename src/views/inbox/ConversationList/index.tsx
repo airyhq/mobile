@@ -22,8 +22,6 @@ export const ConversationList = (props: ConversationListProps) => {
   const [conversations, setConversations] = useState<any>([]);
   const [offset, setOffset] = useState(0);
 
-  console.log('CONVERSATIONS LENGTH: ', conversations.length);
-
   useEffect(() => {
     const databaseConversations = realm
       .objects('Conversation')
@@ -47,15 +45,6 @@ export const ConversationList = (props: ConversationListProps) => {
           realm.create('Pagination', response.paginationData);
 
           for (const conversation of response.data) {
-            // const isStored = realm.objectForPrimaryKey(
-            //   'Conversation',
-            //   conversation.id,
-            // );
-
-            // if (isStored) {
-            //   realm.delete(isStored);
-            // }
-
             realm.create(
               'Conversation',
               parseToRealmConversation(conversation),
@@ -64,7 +53,7 @@ export const ConversationList = (props: ConversationListProps) => {
         });
       })
       .catch((error: Error) => {
-        console.log('Error: ', error);
+        return error
       });
   };
 
@@ -98,7 +87,7 @@ export const ConversationList = (props: ConversationListProps) => {
         });
       })
       .catch((error: Error) => {
-        console.log('Error: ', error);
+        return error
       });
   };
 

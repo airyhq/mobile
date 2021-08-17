@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -40,6 +40,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
   const currentConversationState = conversation.metadata.state || 'OPEN';
   const realm = RealmDB.getInstance();
   const swipeableRef = useRef<Swipeable | null>(null);
+  const [conversations, setConversations] = useState<any>([]);
 
   const LeftSwipe = (dragX: Animated.AnimatedInterpolation) => {
     const scale = dragX.interpolate({
@@ -85,7 +86,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
         });
       })
       .catch((error: Error) => {
-        console.log('Error: ', error);
+        return error
       });
   };
 
