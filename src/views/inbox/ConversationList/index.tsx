@@ -14,6 +14,7 @@ type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
 };
 
+
 export const ConversationList = (props: ConversationListProps) => {
   const {navigation} = props;
   const realm = RealmDB.getInstance();
@@ -23,7 +24,7 @@ export const ConversationList = (props: ConversationListProps) => {
   const [offset, setOffset] = useState(0);
 
   useEffect(() => {
-    const databaseConversations = realm
+    const databaseConversations  = realm
       .objects('Conversation')
       .sorted('lastMessage.sentAt', true);
 
@@ -53,7 +54,7 @@ export const ConversationList = (props: ConversationListProps) => {
         });
       })
       .catch((error: Error) => {
-        console.log('Error: ', error);
+       console.log('error', error)
       });
   };
 
@@ -87,7 +88,7 @@ export const ConversationList = (props: ConversationListProps) => {
         });
       })
       .catch((error: Error) => {
-        console.log('Error: ', error);
+        return error
       });
   };
 

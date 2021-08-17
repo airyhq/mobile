@@ -85,7 +85,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
         });
       })
       .catch((error: Error) => {
-        console.log('Error: ', error);
+        return error
       });
   };
 
@@ -109,7 +109,10 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
 
   const onSelectItem = () => {
     markAsRead();
-    navigation.push('MessageList');
+    navigation.push('MessageList', {
+      displayName: conversation.metadata.contact.displayName,
+      conversationId: conversation.id,
+    });
   };
 
   const close = () => {
