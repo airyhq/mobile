@@ -109,7 +109,9 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
 
   const onSelectItem = () => {
     markAsRead();
-    navigation.push('MessageList');
+    navigation.push('MessageList', {
+      conversationId: conversation.id
+    });
   };
 
   const close = () => {

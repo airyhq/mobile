@@ -1,11 +1,18 @@
 import React from 'react';
-import {Dimensions} from 'react-native';
+import {Dimensions, View} from 'react-native';
 import {StyleSheet, SafeAreaView} from 'react-native';
+import { InputBar } from '../../../components/InputBar';
 
-type MessageListProps = {};
+type MessageListProps = {
+  route: any
+};
 
 const MessageList = (props: MessageListProps) => {
-  return <SafeAreaView style={styles.container}></SafeAreaView>;
+  const {route} = props;
+  return <SafeAreaView style={styles.container}>
+    <View style={styles.messageList} />
+    <InputBar conversationId={route.params.conversationId}/>
+  </SafeAreaView>;
 };
 
 export default MessageList;
@@ -18,4 +25,8 @@ const styles = StyleSheet.create({
     height: height,
     backgroundColor: 'white',
   },
+  messageList: {
+    flex: 0.5,
+    backgroundColor: 'blue'
+  }
 });

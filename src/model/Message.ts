@@ -125,6 +125,7 @@ export const parseToRealmMessage = (
 
 export const MessageSchema = {
   name: 'Message',
+  primaryKey: 'id',
   properties: {
     id: 'string',
     content: 'Content',
