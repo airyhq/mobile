@@ -137,7 +137,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
             ) : (
               <View style={styles.readMessageIndicator} />
             )}
-            <Avatar contact={participant} />
+            <Avatar avatarUrl={participant.avatarUrl} />
           </View>
           <View style={styles.contentContainer}>
             <View style={styles.nameStatus}>
@@ -156,7 +156,8 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
             <View style={styles.channelTimeContainer}>
               <View style={styles.iconChannel}>
                 <IconChannel
-                  channel={conversation.channel}
+                source={conversation.channel.source}
+                  sourceChannelId={conversation.channel.sourceChannelId}
                   showAvatar
                   showName
                 />

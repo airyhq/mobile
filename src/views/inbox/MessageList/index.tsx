@@ -1,4 +1,5 @@
 import React from 'react';
+<<<<<<< HEAD
 import {useEffect} from 'react';
 import {Dimensions} from 'react-native';
 import {StyleSheet, SafeAreaView} from 'react-native';
@@ -18,10 +19,19 @@ const listMessages = (
     .catch((error: Error) => {
       console.log('Error: ', error);
     });
+=======
+import {Dimensions, View} from 'react-native';
+import {StyleSheet, SafeAreaView} from 'react-native';
+import { InputBar } from '../../../components/InputBar';
+
+type MessageListProps = {
+  route: any
+>>>>>>> c10546d (created inputBar)
 };
 
 const MessageList = (props: MessageListProps) => {
   const {route} = props;
+<<<<<<< HEAD
   const conversationId = route.params.conversationId;
 
   useEffect(() => {
@@ -29,6 +39,12 @@ const MessageList = (props: MessageListProps) => {
   }, []);
 
   return <SafeAreaView style={styles.container}></SafeAreaView>;
+=======
+  return <SafeAreaView style={styles.container}>
+    <View style={styles.messageList} />
+    <InputBar conversationId={route.params.conversationId}/>
+  </SafeAreaView>;
+>>>>>>> c10546d (created inputBar)
 };
 
 export default MessageList;
@@ -41,4 +57,8 @@ const styles = StyleSheet.create({
     height: height,
     backgroundColor: 'white',
   },
+  messageList: {
+    flex: 0.5,
+    backgroundColor: 'blue'
+  }
 });
