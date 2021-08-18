@@ -3,7 +3,7 @@ import {Contact} from '../model/Contact';
 import {Image, StyleSheet} from 'react-native';
 
 type AvatarProps = {
-  contact: Contact;
+  contact: Contact 
 };
 
 const fallbackAvatar = 'https://s3.amazonaws.com/assets.airy.co/unknown.png';
