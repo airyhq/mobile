@@ -7,6 +7,7 @@ import {parseToRealmMessage, Message} from '../../../model';
 import {formatTime, isSameDay} from '../../../services/dates';
 import {formatDateOfMessage} from '../../../services/format/date';
 import {MessageInfoWrapper} from '../../../components/MessageInfoWrapper';
+import {SourceMessage} from '../../../render/SourceMessage';
 
 type MessageListProps = {
   route: any
