@@ -29,18 +29,23 @@ export interface Message {
   source?: string
 }
 
+
 export const parseToRealmMessage = (
   unformattedMessage: any,
   channel: Channel,
 ): Message => {
   let message: Message;
 
+  const messageContent = unformattedMessage.content.text ?? unformattedMessage.content.message.text
+
+  console.log('message RealmParse', unformattedMessage)
+
   switch (channel.source) {
     case 'facebook':
       message = {
         id: unformattedMessage.id,
         content: {
-          text: unformattedMessage.content.message.text,
+          text: messageContent,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
@@ -52,7 +57,7 @@ export const parseToRealmMessage = (
       message = {
         id: unformattedMessage.id,
         content: {
-          text: unformattedMessage.content.message.text,
+          text: messageContent,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
@@ -64,7 +69,7 @@ export const parseToRealmMessage = (
       message = {
         id: unformattedMessage.id,
         content: {
-          text: unformattedMessage.content.text,
+          text: messageContent,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
@@ -76,7 +81,7 @@ export const parseToRealmMessage = (
       message = {
         id: unformattedMessage.id,
         content: {
-          text: unformattedMessage.content,
+          text: messageContent,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
@@ -88,7 +93,7 @@ export const parseToRealmMessage = (
       message = {
         id: unformattedMessage.id,
         content: {
-          text: unformattedMessage.content,
+          text: messageContent,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
@@ -112,7 +117,7 @@ export const parseToRealmMessage = (
       message = {
         id: unformattedMessage.id,
         content: {
-          text: unformattedMessage.content.message.text,
+          text: messageContent,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,

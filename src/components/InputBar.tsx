@@ -9,6 +9,7 @@ import {
 import Paperplane from '../assets/images/icons/paperplane.svg';
 import {HttpClientInstance} from '../InitializeAiryApi';
 import {parseToRealmMessage} from '../model';
+import { getOutboundMapper } from '../render/outbound';
 import {RealmDB} from '../storage/realm';
 
 type InputBarProps = {
@@ -21,25 +22,49 @@ export const InputBar = (props: InputBarProps) => {
   const [inputHeight, setInputHeight] = useState(33);
   const realm = RealmDB.getInstance();
 
+  const conversation:any = realm.objectForPrimaryKey(
+    'Conversation',
+    conversationId,
+  );
+
+  const source:any = conversation && conversation.channel.source
+
+  const outboundMapper:any = getOutboundMapper(source);
+
   const sendMessage = (conversationId: string, message: string) => {
-    HttpClientInstance.sendMessages({conversationId, message})
+
+    if(message.length === 0) return; 
+
+    HttpClientInstance.sendMessages({
+      conversationId: conversation.id,
+      message: outboundMapper.getTextPayload(input),
+    })
       .then((response: any) => {
         realm.write(() => {
+
           const conversation = realm.objectForPrimaryKey(
             'Message',
             conversationId,
           );
+        
           if (conversation) {
             realm.delete(conversation);
           }
           realm.create(
             'Message',
-            parseToRealmMessage(message, response.source),
+            {
+                id: response.id,
+                content: {'text': response.content.text},
+                deliveryState: response.deliveryState,
+                fromContact: response.fromContact,
+                sentAt: response.sentAt,
+                metadata: response.metadata,
+              },
           );
         });
       })
       .catch((error: Error) => {
-        console.log('Error: ', error);
+        console.log('Error: SEND', error);
       });
     setInput('');
   };
