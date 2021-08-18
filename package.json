@@ -18,7 +18,11 @@
     "@stomp/stompjs": "^6.1.0",
     "@types/lodash-es": "^4.17.4",
     "@types/react-native-auth0": "^2.5.7",
+<<<<<<< HEAD
     "camelcase-keys": "^7.0.0",
+=======
+    "linkifyjs": "^3.0.0-beta.3",
+>>>>>>> 1b9d450 (adding messageList)
     "lodash-es": "^4.17.21",
     "react": "17.0.1",
     "react-native": "0.64.1",
