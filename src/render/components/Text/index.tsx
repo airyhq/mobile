@@ -1,47 +1,61 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
-
-//import Linkify from 'linkifyjs/react';
+import {StyleSheet, Text} from 'react-native';
+import Hyperlink from 'react-native-hyperlink';
+import {
+  colorBackgroundBlue,
+  colorTextContrast,
+  colorAiryBlue,
+} from '../../../assets/colors';
 
 type TextRenderProps = {
   text: string;
   fromContact?: boolean;
 };
 
-//https://www.npmjs.com/package/react-native-hyperlink
+export const TextComponent = ({text, fromContact}: TextRenderProps) => {
+  return(
+    <Hyperlink linkDefault={true} linkStyle={styles.messageLink}>
+    <Text style={fromContact ? styles.contactContent : styles.memberContent}>
+      {text}
+    </Text>
+  </Hyperlink>
+  ) 
+};
 
-export const Text = ({text, fromContact}: TextRenderProps) => (
-  <Linkify
-    tagName="div"
-    className={`${fromContact ? styles.contactContent : styles.memberContent}`}
-    options={{
-      defaultProtocol: 'https',
-      className: `${styles.messageLink} ${fromContact ? styles.contactContent : styles.memberContent}`,
-    }}>
-    {text}
-  </Linkify>
-);
-
+//memberContent, textMessage, :wordBreak: 'break-word',
+//    whiteSpace: 'pre-wrap',
+//    textDecoration: 'underline',
 
 const styles = StyleSheet.create({
+  textMessage: {
+    display: 'flex',
+    maxWidth: 500,
+    padding: 10,
+    marginTop: 5,
+    borderRadius: 8,
+    fontFamily: 'Lato',
+  },
   contactContent: {
-    width: width,
-    height: height,
-    backgroundColor: 'white',
+    display: 'flex',
+    maxWidth: 500,
+    padding: 10,
+    marginTop: 5,
+    borderRadius: 8,
+    fontFamily: 'Lato',
+    backgroundColor: colorBackgroundBlue,
+    color: colorTextContrast,
   },
   memberContent: {
-    flex: 0.5,
-    backgroundColor: 'blue'
+    display: 'flex',
+    maxWidth: 500,
+    padding: 10,
+    marginTop: 5,
+    borderRadius: 8,
+    fontFamily: 'Lato',
+    backgroundColor: colorAiryBlue,
+    color: 'white',
   },
   messageLink: {
-  backgroundColor: 'blue'
-},
-contactContent: {
-  background: var(--color-background-blue);
-  color: var(--color-text-contrast);
-}, 
-memberContent: {
-  background: var(--color-airy-blue);
-  color: white;
-}
+    fontWeight: 'normal',
+  },
 });

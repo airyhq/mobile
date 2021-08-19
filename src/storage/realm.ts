@@ -15,6 +15,10 @@ import {
   PaginationSchema,
   SuggestedReplySchema,
   SuggestionsSchema,
+<<<<<<< HEAD
+=======
+  MessageDataSchema
+>>>>>>> 4885307 (messagelist wip: reorganize storing of messages in db)
 } from '../model';
 
 export class RealmDB {
@@ -33,6 +37,7 @@ export class RealmDB {
           ContentSchema,
           ChannelMetadataSchema,
           MessageSchema,
+          MessageDataSchema,
           MetadataSchema,
           MessageTypeSchema,
           MetadataEventSchema,

@@ -25,26 +25,49 @@ import {Dimensions, View} from 'react-native';
 import {StyleSheet, SafeAreaView} from 'react-native';
 =======
 import React, {useEffect, createRef, useState} from 'react';
+<<<<<<< HEAD
 import {Dimensions, ScrollView, View, StyleSheet, SafeAreaView} from 'react-native';
 >>>>>>> e9a6dcf (added message list)
 import { InputBar } from '../../../components/InputBar';
+=======
+import {
+  Dimensions,
+  ScrollView,
+  View,
+  StyleSheet,
+  SafeAreaView,
+  Text,
+  FlatList,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+} from 'react-native';
+import {InputBar} from '../../../components/InputBar';
+>>>>>>> 4885307 (messagelist wip: reorganize storing of messages in db)
 import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
-import {parseToRealmMessage, Message} from '../../../model';
-import {formatTime, isSameDay} from '../../../services/dates';
-import {formatDateOfMessage} from '../../../services/format/date';
-import {MessageInfoWrapper} from '../../../components/MessageInfoWrapper';
-import {SourceMessage} from '../../../render/SourceMessage';
+import {
+  parseToRealmMessage,
+  Message,
+  parseToRealmConversation,
+} from '../../../model';
+import {colorBackgroundGray, colorTextGray} from '../../../assets/colors';
+import {MessageComponent} from './MessageComponent';
+import {debounce} from 'lodash-es';
 
 type MessageListProps = {
+<<<<<<< HEAD
   route: any
 >>>>>>> c10546d (created inputBar)
+=======
+  route: any;
+>>>>>>> 4885307 (messagelist wip: reorganize storing of messages in db)
 };
 
 //missing: reaction
 
 const MessageList = (props: MessageListProps) => {
   const {route} = props;
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
   const conversationId = route.params.conversationId;
@@ -62,16 +85,23 @@ const MessageList = (props: MessageListProps) => {
 >>>>>>> c10546d (created inputBar)
 =======
   const conversationId: string = route.params.conversationId
+=======
+  const conversationId: string = route.params.conversationId;
+>>>>>>> 4885307 (messagelist wip: reorganize storing of messages in db)
   const [messages, setMessages] = useState<any>([]);
+  const [offset, setOffset] = useState(0);
 
+  console.log('conversationId', conversationId);
 
-  console.log('conversationId', conversationId)
-
-  const scrollViewRef:any = createRef<HTMLDivElement>();
+  const scrollViewRef: any = createRef<HTMLDivElement>();
 
   const realm = RealmDB.getInstance();
-  const conversation:any = realm.objectForPrimaryKey(
+  const conversation: any = realm.objectForPrimaryKey(
     'Conversation',
+    conversationId,
+  );
+  const dbMessages: any = realm.objectForPrimaryKey(
+    'MessageData',
     conversationId,
   );
 
@@ -81,26 +111,9 @@ const MessageList = (props: MessageListProps) => {
     paginationData,
   } = conversation;
 
-
   if (!conversation) {
     return null;
   }
-
-
-  useEffect(() => {
-    const databaseMessages = realm
-      .objects('Message')
-
-      databaseMessages.addListener(() => {
-      setMessages([...databaseMessages]);
-    });
-
-    listMessages();
-
-    return () => {
-      databaseMessages.removeAllListeners();
-    };
-  }, []);
 
   useEffect(() => {
     if (!messages || messages.length === 0) {
@@ -108,68 +121,143 @@ const MessageList = (props: MessageListProps) => {
     }
   }, [conversationId, messages]);
 
-  const hasDateChanged = (prevMessage: Message, message: Message) => {
-    if (prevMessage == null) {
-      return true;
+
+  ///add listener
+  // conversationMessages.addListener(() => {
+  //   setMessages([...dbMessages.messages]);
+  // });
+
+  // return () => {
+  //   conversationMessages.removeAllListeners();
+  // };
+
+  const parseDataToRealmMessages = (messages: any) => {
+    const parsedData = [];
+    for (let message of messages) {
+      parsedData.push(parseToRealmMessage(message, message.source));
+    }
+    return parsedData;
+  };
+
+  const listPreviousMessages = () => {
+    const cursor = paginationData && paginationData.nextCursor;
+
+    HttpClientInstance.listMessages({
+      conversationId,
+      pageSize: 10,
+      cursor: cursor,
+    })
+      .then((response: any) => {
+        const conversationMessages: any = realm.objectForPrimaryKey(
+          'MessageData',
+          conversation.id,
+        );
+
+        console.log('LIST PREV MESSAGE');
+
+        //update with new messages data
+        if (conversationMessages) {
+
+
+          realm.write(() => {
+            let conversationMessagesData = conversationMessages.messages;
+            conversationMessagesData = conversationMessagesData.concat(
+              parseDataToRealmMessages(response.data),
+            );
+          });
+
+          setMessages([...conversationMessages.messages]);
+        } else {
+          realm.write(() => {
+            realm.create('MessageData', {
+              id: conversationId,
+              messages: parseDataToRealmMessages(response.data),
+            });
+          }); 
+
+          
+        }
+      })
+      .catch((error: any) => {
+        console.log('error listMessages', error);
+      });
     }
 
-    return !isSameDay(prevMessage.sentAt, message.sentAt);
+  const debouncedListPreviousMessages = debounce(()=> {
+    listPreviousMessages();
+  }, 200);
+
+  const hasPreviousMessages = () => !!(paginationData && paginationData.nextCursor);
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const currentOffset = event.nativeEvent.contentOffset.y;
+    const direction = currentOffset > offset ? 'down' : 'up';
+    setOffset(currentOffset);
+
+    if (hasPreviousMessages() && direction == 'down' && isCloseToBottom(event.nativeEvent)) {
+      debouncedListPreviousMessages();
+    }
+  };
+
+  const isCloseToBottom = (event: NativeScrollEvent) => {
+    const paddingToBottom = 30;
+    return (
+      event.layoutMeasurement &&
+      event.layoutMeasurement.height + event.contentOffset.y >=
+        event.contentSize.height - paddingToBottom
+    );
   };
 
   const listMessages = () => {
     HttpClientInstance.listMessages({conversationId})
       .then((response: any) => {
-        console.log('response', response)
-        realm.write(() => {
-          for (const message of response.data) {
-            console.log('message', message)
-            const isStored = realm.objectForPrimaryKey(
-              'Message',
-              conversation.id,
-            );
+        const conversationMessages: any = realm.objectForPrimaryKey(
+          'MessageData',
+          conversation.id,
+        );
 
-            if (isStored) {
-              realm.delete(isStored);
-            }
+        console.log('LISTMESSAGE');
 
-            realm.create(
-              'Message',
-              parseToRealmMessage(message, message.source),
+        //update with new messages data
+        if (conversationMessages) {
+          realm.write(() => {
+            let conversationMessagesData = conversationMessages.messages;
+            conversationMessagesData = conversationMessagesData.concat(
+              parseDataToRealmMessages(response.data),
             );
-          }
-        })
-      }).catch((error: any)=> {
-        console.log('error listMessages', error)
+          });
+
+          setMessages([...conversationMessages.messages]);
+        } else {
+          realm.write(() => {
+            realm.create('MessageData', {
+              id: conversationId,
+              messages: parseDataToRealmMessages(response.data),
+            });
+          }); 
+
+      
+        }
       })
-  }
-
- 
-//onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
-
-//  <Reaction message={message} />
-
+      .catch((error: any) => {
+        console.log('error listMessages', error);
+      });
+  };
 
   return (
-  <SafeAreaView style={styles.container}>
-     <ScrollView style={styles.messageList}>
-      {messages?.map((message: Message, index: number) => {
-        const prevMessage = messages[index - 1];
-        const nextMessage = messages[index + 1];
-
-        const lastInGroup = nextMessage ? message.fromContact !== nextMessage.fromContact : true;
-
-        const sentAt: any = lastInGroup ? formatTime(message.sentAt) : null;
-
-        return (
-          <View key={message.id}>
-            {hasDateChanged(prevMessage, message) && (
-              <View key={`date-${message.id}`} style={styles.dateHeader}>
-                {formatDateOfMessage(message)}
-              </View>
-            )}
-            <MessageInfoWrapper
-              fromContact={message.fromContact}
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        data={messages}
+        onScroll={handleScroll}
+        renderItem={({item, index}) => {
+          return (
+            <MessageComponent
+              key={item.id}
+              message={item}
+              messages={messages}
+              source={source}
               contact={contact}
+<<<<<<< HEAD
               sentAt={sentAt}
               lastInGroup={lastInGroup}
               isChatPlugin={false}>
@@ -183,12 +271,21 @@ const MessageList = (props: MessageListProps) => {
   </SafeAreaView>
   )
 >>>>>>> e9a6dcf (added message list)
+=======
+              index={index}
+            />
+          );
+        }}
+      />
+    </SafeAreaView>
+  );
+>>>>>>> 4885307 (messagelist wip: reorganize storing of messages in db)
 };
 
 //add ReactMemo
 //id on a View ---> id={`message-item-${message.id}`}
 
-export default MessageList;
+
 
 const {width, height} = Dimensions.get('window');
 
@@ -196,24 +293,26 @@ const styles = StyleSheet.create({
   container: {
     width: width,
     height: height,
-    backgroundColor: 'white',
+    backgroundColor: 'red',
+
+    paddingLeft: 16,
+    paddingRight: 16
   },
-  messageList: {
-    flex: 0.5,
-    backgroundColor: 'blue'
+  dateHeader: {
+    margin: 8,
+    marginBottom: 8,
+    left: '50%',
+    marginLeft: -25,
+    paddingTop: 4,
+    paddingBottom: 8,
+    paddingRight: 4,
+    paddingLeft: 4,
+    borderRadius: 4,
+    backgroundColor: colorBackgroundGray,
+    color: colorTextGray,
+    width: 72,
+    textAlign: 'center',
   },
-dateHeader: {
-  backgroundColor: 'blue'
-},
 });
 
-
-// .dateHeader {
-//   @include font-s;
-//   margin: 8px auto;
-//   padding: 4px 8px;
-//   border-radius: 4px;
-//   background-color: var(--color-background-gray);
-//   color: var(--color-text-gray);
-//   width: max-content;
-// }
+export default MessageList;
