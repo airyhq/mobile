@@ -1,5 +1,5 @@
 import React, {ReactNode} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import {Avatar} from '../Avatar';
 import {Contact} from '../../model';
 import {colorTextGray} from '../../assets/colors';
@@ -21,8 +21,8 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
 
   const MemberMessage = () => (
     <View style={styles.member}>
-      <View style={styles.memberContent}>{children}</View>
-      <View style={styles.time}>{sentAt}</View>
+      <Text style={styles.memberContent}>{children}</Text>
+      <Text style={styles.time}>{sentAt}</Text>
     </View>
   );
 
@@ -34,13 +34,13 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
             <Avatar contact={contact} />
           </View>
         )}
-        <View
+        <Text
           style={[styles.contactContent, lastInGroup === false && isChatPlugin === false ? {marginLeft: '48px'} : {}]}>
           {children}
-        </View>
+        </Text>
         {decoration}
       </View>
-      <div style={styles.time}>{sentAt}</div>
+      <Text style={styles.time}>{sentAt}</Text>
     </>
   );
 
@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'flex-end',
     flexDirection: 'column',
+    
   },
   avatar: {
     width: 40,

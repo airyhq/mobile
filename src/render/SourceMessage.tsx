@@ -1,7 +1,7 @@
 import React from 'react';
 import {renderProviders} from './renderProviders';
 
-import {Text} from './components/Text';
+import {TextComponent} from './components/Text';
 import {RenderPropsUnion} from './props';
 
 type SourceMessageState = {
@@ -23,7 +23,7 @@ export class SourceMessage extends React.Component<RenderPropsUnion, SourceMessa
   }
 
   errorFallback() {
-    return <Text fromContact={this.props.message.fromContact || false} text="Could not render this content" />;
+    return <TextComponent fromContact={this.props.message.fromContact || false} text="Could not render this content" />;
   }
 
   render() {

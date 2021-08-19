@@ -13,7 +13,8 @@ import {
   MetadataSchema,
   PaginationSchema,
   SuggestedReplySchema,
-  SuggestionsSchema
+  SuggestionsSchema,
+  MessageDataSchema
 } from '../model';
 
 export class RealmDB {
@@ -32,6 +33,7 @@ export class RealmDB {
           ContentSchema,
           ChannelMetadataSchema,
           MessageSchema,
+          MessageDataSchema,
           MetadataSchema,
           MessageTypeSchema,
           MetadataEventSchema,

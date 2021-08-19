@@ -1,7 +1,7 @@
 import React from 'react';
 import {RenderPropsUnion} from '../../props';
 import {ContentUnion} from './chatPluginModel';
-import {Text} from '../../components/Text';
+import {TextComponent} from '../../components/Text';
 
 
 export const ChatPluginRender = (props: RenderPropsUnion) => {
@@ -19,7 +19,7 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
 
   switch (content.type) {
     case 'text':
-      return <Text {...propsToUse} text={content.text} />;
+      return <TextComponent {...propsToUse} text={content.text} />;
   }
 }
 

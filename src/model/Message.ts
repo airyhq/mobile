@@ -35,9 +35,8 @@ export const parseToRealmMessage = (
 ): Message => {
   let message: Message;
 
-  const messageContent = unformattedMessage.content.text ?? unformattedMessage.content.message.text
+  const messageContent = unformattedMessage.content?.text ?? unformattedMessage.content?.message?.text ?? unformattedMessage.content
 
-  console.log('message RealmParse', unformattedMessage)
 
   switch (channel.source) {
     case 'facebook':
@@ -130,7 +129,6 @@ export const parseToRealmMessage = (
 
 export const MessageSchema = {
   name: 'Message',
-  primaryKey: 'id',
   properties: {
     id: 'string',
     content: 'Content',
@@ -140,6 +138,15 @@ export const MessageSchema = {
     metadata: 'MessageMetadata?',
   },
 };
+
+export const MessageDataSchema = {
+  name: 'MessageData',
+  primaryKey: 'id',
+  properties: {
+  id: 'string',
+  messages: { type: 'list', objectType: 'Message' },
+  }
+}
 
 export const MessageTypeSchema = {
   name: 'MessageType',
