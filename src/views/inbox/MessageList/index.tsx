@@ -231,14 +231,18 @@ const MessageList = (props: MessageListProps) => {
               messages: mergeMessages([], [...response.data]),
             });
           }); 
-        }
+
+          const databaseMessages:any = realm.objectForPrimaryKey('MessageData', conversationId);
          
 
-          if(storedConversationMessages){
-            storedConversationMessages.addListener(() => {
-              setMessages([...storedConversationMessages.messages]);
+          if(databaseMessages){
+            databaseMessages.addListener(() => {
+              setMessages([...databaseMessages.messages]);
             });
           }
+        }
+
+    
         
 
         if(response.paginationData){
