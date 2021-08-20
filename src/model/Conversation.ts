@@ -2,6 +2,7 @@ import {Contact} from './Contact';
 import {Message} from './Message';
 import {Metadata} from './Metadata';
 import {Channel} from './Channel';
+import {Pagination} from './Pagination';
 import {parseToRealmMessage} from './Message';
 
 export type ConversationMetadata = Metadata & {
@@ -22,6 +23,7 @@ export const ConversationSchema = {
     metadata: 'Metadata',
     createdAt: 'date?',
     lastMessage: 'Message',
+    paginationData: 'Pagination'
   },
 };
 
@@ -31,6 +33,7 @@ export interface Conversation {
   metadata: Metadata;
   createdAt: Date;
   lastMessage: Message;
+  paginationData: Pagination
 }
 
 export const parseToRealmConversation = (
@@ -47,6 +50,12 @@ export const parseToRealmConversation = (
       unformattedConversation.lastMessage,
       unformattedConversation.channel,
     ),
+    paginationData: {
+      loading: null,
+      previousCursor: null,
+      nextCursor: null,
+      total: null
+    }
   };
 
   return conversation;

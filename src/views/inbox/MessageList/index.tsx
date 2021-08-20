@@ -1,11 +1,8 @@
-import React, {useEffect, createRef, useState} from 'react';
+import React, {useEffect, createRef, useState, useRef} from 'react';
 import {
   Dimensions,
-  ScrollView,
-  View,
   StyleSheet,
   SafeAreaView,
-  Text,
   FlatList,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -16,35 +13,37 @@ import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {
   parseToRealmMessage,
   Message,
-  parseToRealmConversation,
+  Conversation,
 } from '../../../model';
 import {colorBackgroundGray, colorTextGray} from '../../../assets/colors';
 import {MessageComponent} from './MessageComponent';
-import {debounce} from 'lodash-es';
+import {debounce, cloneDeep, sortBy} from 'lodash-es';
 
 type MessageListProps = {
   route: any;
 };
 
-//missing: reaction
+//use usePrevious / prevMessages to scroll to message?
+
+// function usePrevious(value: Message[] | string) {
+//   const ref = useRef(null);
+//   useEffect(() => {
+//     ref.current = value;
+//   });
+//   return ref.current;
+// }
 
 const MessageList = (props: MessageListProps) => {
   const {route} = props;
   const conversationId: string = route.params.conversationId;
   const [messages, setMessages] = useState<any>([]);
+  //const prevMessages = usePrevious(messages);
   const [offset, setOffset] = useState(0);
-
-  console.log('conversationId', conversationId);
-
-  const scrollViewRef: any = createRef<HTMLDivElement>();
+  const messageListRef = useRef<FlatList>(null);
 
   const realm = RealmDB.getInstance();
-  const conversation: any = realm.objectForPrimaryKey(
+  const conversation: Conversation = realm.objectForPrimaryKey(
     'Conversation',
-    conversationId,
-  );
-  const dbMessages: any = realm.objectForPrimaryKey(
-    'MessageData',
     conversationId,
   );
 
@@ -54,78 +53,76 @@ const MessageList = (props: MessageListProps) => {
     paginationData,
   } = conversation;
 
+
   if (!conversation) {
     return null;
   }
 
-  useEffect(() => {
-    if (!messages || messages.length === 0) {
-      conversationId && listMessages();
-    }
-  }, [conversationId, messages]);
+  const scrollBottom = () => {
+    messageListRef?.current?.scrollToEnd()
+  }
 
+  // const scrollToMessage = id => {
+  //   const element = document.querySelector<HTMLElement>(`#message-item-${id}`);
 
-  ///add listener
-  // conversationMessages.addListener(() => {
-  //   setMessages([...dbMessages.messages]);
-  // });
-
-  // return () => {
-  //   conversationMessages.removeAllListeners();
+  //   if (element && messageListRef) {
+  //     messageListRef.current.scrollTop = element.offsetTop - messageListRef.current.offsetTop;
+  //   }
   // };
 
-  const parseDataToRealmMessages = (messages: any) => {
-    const parsedData = [];
-    for (let message of messages) {
-      parsedData.push(parseToRealmMessage(message, message.source));
-    }
-    return parsedData;
-  };
+  // useEffect(() => {
+  //   if (prevMessages && messages && prevMessages.length < messages.length) {
 
-  const listPreviousMessages = () => {
-    const cursor = paginationData && paginationData.nextCursor;
+  //     //scrollBottom();
 
-    HttpClientInstance.listMessages({
-      conversationId,
-      pageSize: 10,
-      cursor: cursor,
-    })
-      .then((response: any) => {
-        const conversationMessages: any = realm.objectForPrimaryKey(
-          'MessageData',
-          conversation.id,
-        );
+  //     // if (
+  //     //   conversationId &&
+  //     //   prevCurrentConversationId &&
+  //     //   prevCurrentConversationId === conversationId &&
+  //     //   messages &&
+  //     //   prevMessages &&
+  //     //   prevMessages[0] &&
+  //     //   prevMessages[0].id !== messages[0].id
+  //     // ) {
+  //     //   scrollToMessage(prevMessages[0].id);
+  //     // } else {
+  //     //    scrollBottom();
+  //     // }
+  //   }
+  // }, [messages, conversationId]);
 
-        console.log('LIST PREV MESSAGE');
+  useEffect(() => {
 
-        //update with new messages data
-        if (conversationMessages) {
+      listMessages();
+      scrollBottom()
+     
 
+      const databaseMessages:any = realm.objectForPrimaryKey('MessageData', conversationId);
+  
+      if(databaseMessages){
+        databaseMessages.addListener(() => {
+          setMessages([...databaseMessages.messages]);
+        });
+      }
+    
+  
+      return () => {
+        databaseMessages.removeAllListeners();
+      };
 
-          realm.write(() => {
-            let conversationMessagesData = conversationMessages.messages;
-            conversationMessagesData = conversationMessagesData.concat(
-              parseDataToRealmMessages(response.data),
-            );
-          });
+  }, []);
 
-          setMessages([...conversationMessages.messages]);
-        } else {
-          realm.write(() => {
-            realm.create('MessageData', {
-              id: conversationId,
-              messages: parseDataToRealmMessages(response.data),
-            });
-          }); 
+  function mergeMessages(oldMessages: any, newMessages: Message[]): any {
+    newMessages.forEach((message: any) => {
+      if (!oldMessages.some((item: Message) => item.id === message.id)) {
+        oldMessages.push(parseToRealmMessage(message, message.source));
+      }
+    });
+   
+    return sortBy(oldMessages, message => message.sentAt)
+  }
 
-          
-        }
-      })
-      .catch((error: any) => {
-        console.log('error listMessages', error);
-      });
-    }
-
+  
   const debouncedListPreviousMessages = debounce(()=> {
     listPreviousMessages();
   }, 200);
@@ -137,61 +134,117 @@ const MessageList = (props: MessageListProps) => {
     const direction = currentOffset > offset ? 'down' : 'up';
     setOffset(currentOffset);
 
-    if (hasPreviousMessages() && direction == 'down' && isCloseToBottom(event.nativeEvent)) {
+    console.log('direction', direction)
+    console.log('event.nativeEvent.contentOffset.y', event.nativeEvent.contentOffset.y)
+
+    console.log('NEXT CURSOR', paginationData.nextCursor)
+
+    if (hasPreviousMessages()  && event.nativeEvent.contentOffset.y < -30) {
+      console.log('DEBOUNCE LIST PREV')
       debouncedListPreviousMessages();
     }
   };
 
-  const isCloseToBottom = (event: NativeScrollEvent) => {
-    const paddingToBottom = 30;
-    return (
-      event.layoutMeasurement &&
-      event.layoutMeasurement.height + event.contentOffset.y >=
-        event.contentSize.height - paddingToBottom
-    );
-  };
 
   const listMessages = () => {
-    HttpClientInstance.listMessages({conversationId})
-      .then((response: any) => {
-        const conversationMessages: any = realm.objectForPrimaryKey(
+
+    if(messages.length > 0) return; 
+
+    HttpClientInstance.listMessages({conversationId, pageSize: 10})
+      .then((response) => {
+        const storedConversationMessages: any = realm.objectForPrimaryKey(
           'MessageData',
           conversation.id,
         );
 
-        console.log('LISTMESSAGE');
-
-        //update with new messages data
-        if (conversationMessages) {
+          console.log('LIST MSGS')
+      
+        if (storedConversationMessages) {
           realm.write(() => {
-            let conversationMessagesData = conversationMessages.messages;
-            conversationMessagesData = conversationMessagesData.concat(
-              parseDataToRealmMessages(response.data),
-            );
+            storedConversationMessages.messages = [...mergeMessages(storedConversationMessages.messages, [...response.data])]
           });
-
-          setMessages([...conversationMessages.messages]);
         } else {
           realm.write(() => {
             realm.create('MessageData', {
               id: conversationId,
-              messages: parseDataToRealmMessages(response.data),
+              messages: mergeMessages([], [...response.data]),
             });
           }); 
-
-      
         }
-      })
+         
+
+          if(storedConversationMessages){
+            storedConversationMessages.addListener(() => {
+              setMessages([...storedConversationMessages.messages]);
+            });
+          }
+        
+
+        if(response.paginationData){
+          realm.write(() => {
+            conversation.paginationData.loading = response.paginationData?.loading ?? null;
+            conversation.paginationData.nextCursor = response.paginationData?.nextCursor ?? null;
+            conversation.paginationData.previousCursor = response.paginationData?.previousCursor ?? null;
+            conversation.paginationData.total = response.paginationData?.total ?? null;
+            console.log('conversation.paginationData', conversation.paginationData.nextCursor)
+          })
+          }
+        
+        })
       .catch((error: any) => {
         console.log('error listMessages', error);
       });
   };
+
+  const listPreviousMessages = () => {
+    const cursor = paginationData && paginationData.nextCursor;
+    console.log('LISTNEXT NEXTCURSOR', cursor);
+
+    HttpClientInstance.listMessages({
+      conversationId,
+      pageSize: 10,
+      cursor: cursor,
+    }).then((response) => {
+        console.log('DEBOUNCE LIST PREV')
+        const storedConversationMessages: any = realm.objectForPrimaryKey(
+          'MessageData',
+          conversation.id,
+        );
+
+        if (storedConversationMessages) {
+          realm.write(() => {
+            storedConversationMessages.messages = [...mergeMessages(storedConversationMessages.messages, [...response.data])]
+          });
+        } else {
+          realm.write(() => {
+            realm.create('MessageData', {
+              id: conversationId,
+              messages: mergeMessages([], [...response.data]),
+            });
+          }); 
+        }
+
+        if(response.paginationData){
+          realm.write(() => {
+            conversation.paginationData.loading = response.paginationData?.loading ?? null;
+            conversation.paginationData.nextCursor = response.paginationData?.nextCursor ?? null;
+            conversation.paginationData.previousCursor = response.paginationData?.previousCursor ?? null;
+            conversation.paginationData.total = response.paginationData?.total ?? null;
+          });
+        }
+      })
+      .catch((error: any) => {
+        console.log('error listPrevMessages', error);
+      });
+    }
+
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
         data={messages}
         onScroll={handleScroll}
+        ref={messageListRef}
         renderItem={({item, index}) => {
           return (
             <MessageComponent
@@ -205,6 +258,7 @@ const MessageList = (props: MessageListProps) => {
           );
         }}
       />
+      <InputBar conversationId={conversationId}/>
     </SafeAreaView>
   );
 };
@@ -220,7 +274,7 @@ const styles = StyleSheet.create({
   container: {
     width: width,
     height: height,
-    backgroundColor: 'red',
+    backgroundColor: 'white',
 
     paddingLeft: 16,
     paddingRight: 16
