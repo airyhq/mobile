@@ -2,13 +2,15 @@ export interface Pagination {
   previousCursor: string;
   nextCursor: string;
   total: number;
+  loading?: null | boolean;
 }
 
 export const PaginationSchema = {
   name: 'Pagination',
   properties: {
-    previousCursor: 'string',
+    loading: 'bool?',
+    previousCursor: 'string?',
     nextCursor: 'string?',
-    total: 'int',
+    total: 'int?',
   },
 };

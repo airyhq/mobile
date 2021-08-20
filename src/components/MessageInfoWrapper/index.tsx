@@ -35,7 +35,7 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
           </View>
         )}
         <Text
-          style={[styles.contactContent, lastInGroup === false && isChatPlugin === false ? {marginLeft: '48px'} : {}]}>
+          style={[styles.contactContent, {marginLeft: lastInGroup === false && isChatPlugin === false ? '15%' : '0%'}]}>
           {children}
         </Text>
         {decoration}
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'flex-end',
     flexDirection: 'column',
-    
+
   },
   avatar: {
     width: 40,
@@ -80,6 +80,6 @@ const styles = StyleSheet.create({
     color: colorTextGray,
     marginTop: 5,
     paddingLeft: 50
-  }
+  },
 });
 
