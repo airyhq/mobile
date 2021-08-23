@@ -5,21 +5,20 @@ import {formatDateOfMessage} from '../../../services/format/date';
 import {MessageInfoWrapper} from '../../../components/MessageInfoWrapper';
 import {SourceMessage} from '../../../render/SourceMessage';
 import {colorBackgroundGray, colorTextGray} from '../../../assets/colors';
-import { Message } from '../../../model/Message';
+import { Message, Contact } from '../../../model';
 
 type MessageProps = {
-    message: any, 
-    index: number, 
-    messages: any,
-    source: any, 
-    contact: any
+    message: Message;
+    index: number;
+    messages: Message[];
+    source: string;
+    contact: Contact;
 }
 
 const hasDateChanged = (prevMessage: Message, message: Message) => {
   if (prevMessage == null) {
     return true;
   }
-
   return !isSameDay(prevMessage.sentAt, message.sentAt);
 };
 

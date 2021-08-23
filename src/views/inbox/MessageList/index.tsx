@@ -97,8 +97,12 @@ const MessageList = (props: MessageListProps) => {
   const conversationId: string = route.params.conversationId
 =======
   const conversationId: string = route.params.conversationId;
+<<<<<<< HEAD
 >>>>>>> 4885307 (messagelist wip: reorganize storing of messages in db)
   const [messages, setMessages] = useState<any>([]);
+=======
+  const [messages, setMessages] = useState<Message[] | []>([]);
+>>>>>>> 50a199b (fixed typing)
   const [offset, setOffset] = useState(0);
   const messageListRef = useRef<FlatList>(null);
 
@@ -149,7 +153,7 @@ const MessageList = (props: MessageListProps) => {
     };
   }, []);
 
-  function mergeMessages(oldMessages: any, newMessages: Message[]):Message[]  {
+  function mergeMessages(oldMessages: Message[], newMessages: Message[]):Message[]  {
     newMessages.forEach((message: any) => {
       if (!oldMessages.some((item: Message) => item.id === message.id)) {
         oldMessages.push(parseToRealmMessage(message, message.source));

@@ -22,10 +22,6 @@ export const TextComponent = ({text, fromContact}: TextRenderProps) => {
   ) 
 };
 
-//memberContent, textMessage, :wordBreak: 'break-word',
-//    whiteSpace: 'pre-wrap',
-//    textDecoration: 'underline',
-
 const styles = StyleSheet.create({
   textMessage: {
     display: 'flex',
@@ -34,7 +30,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
     borderRadius: 8,
     fontFamily: 'Lato',
-
   },
   contactContent: {
     display: 'flex',
