@@ -107,6 +107,8 @@ const MessageList = (props: MessageListProps) => {
     'Conversation',
     conversationId,
   );
+  const databaseMessages:any = realm.objectForPrimaryKey('MessageData', conversationId);
+         
 
   const {
     metadata: {contact},
@@ -154,24 +156,27 @@ const MessageList = (props: MessageListProps) => {
 
   useEffect(() => {
 
+    if(!databaseMessages){
       listMessages();
-      scrollBottom()
-     
+    }
 
-      const databaseMessages:any = realm.objectForPrimaryKey('MessageData', conversationId);
+    scrollBottom()
+
+    if(databaseMessages){
+      databaseMessages.addListener(() => {
+        setMessages([...databaseMessages.messages]);
+      });
+    }
   
-      if(databaseMessages){
-        databaseMessages.addListener(() => {
-          setMessages([...databaseMessages.messages]);
-        });
-      }
+
+    return () => {
+      databaseMessages.removeAllListeners();
+    };
     
-  
-      return () => {
-        databaseMessages.removeAllListeners();
-      };
-
+    
   }, []);
+
+
 
   function mergeMessages(oldMessages: any, newMessages: Message[]): any {
     newMessages.forEach((message: any) => {
@@ -195,36 +200,18 @@ const MessageList = (props: MessageListProps) => {
     const direction = currentOffset > offset ? 'down' : 'up';
     setOffset(currentOffset);
 
-    console.log('direction', direction)
-    console.log('event.nativeEvent.contentOffset.y', event.nativeEvent.contentOffset.y)
-
-    console.log('NEXT CURSOR', paginationData.nextCursor)
-
     if (hasPreviousMessages()  && event.nativeEvent.contentOffset.y < -30) {
-      console.log('DEBOUNCE LIST PREV')
       debouncedListPreviousMessages();
     }
   };
 
 
   const listMessages = () => {
-
-    if(messages.length > 0) return; 
-
     HttpClientInstance.listMessages({conversationId, pageSize: 10})
       .then((response) => {
-        const storedConversationMessages: any = realm.objectForPrimaryKey(
-          'MessageData',
-          conversation.id,
-        );
 
-          console.log('LIST MSGS')
+        //console.log('LIST MESSAGE')
       
-        if (storedConversationMessages) {
-          realm.write(() => {
-            storedConversationMessages.messages = [...mergeMessages(storedConversationMessages.messages, [...response.data])]
-          });
-        } else {
           realm.write(() => {
             realm.create('MessageData', {
               id: conversationId,
@@ -233,27 +220,28 @@ const MessageList = (props: MessageListProps) => {
           }); 
 
           const databaseMessages:any = realm.objectForPrimaryKey('MessageData', conversationId);
-         
 
-          if(databaseMessages){
+          if( databaseMessages){
             databaseMessages.addListener(() => {
               setMessages([...databaseMessages.messages]);
             });
           }
-        }
-
-    
+         
         
-
+      
         if(response.paginationData){
           realm.write(() => {
             conversation.paginationData.loading = response.paginationData?.loading ?? null;
             conversation.paginationData.nextCursor = response.paginationData?.nextCursor ?? null;
             conversation.paginationData.previousCursor = response.paginationData?.previousCursor ?? null;
             conversation.paginationData.total = response.paginationData?.total ?? null;
-            console.log('conversation.paginationData', conversation.paginationData.nextCursor)
           })
           }
+
+          return () => {
+            databaseMessages.removeAllListeners();
+          };
+
         
         })
       .catch((error: any) => {
@@ -263,18 +251,18 @@ const MessageList = (props: MessageListProps) => {
 
   const listPreviousMessages = () => {
     const cursor = paginationData && paginationData.nextCursor;
-    console.log('LISTNEXT NEXTCURSOR', cursor);
 
     HttpClientInstance.listMessages({
       conversationId,
       pageSize: 10,
       cursor: cursor,
     }).then((response) => {
-        console.log('DEBOUNCE LIST PREV')
         const storedConversationMessages: any = realm.objectForPrimaryKey(
           'MessageData',
           conversation.id,
         );
+
+        //console.log('LIST PREV')
 
         if (storedConversationMessages) {
           realm.write(() => {
@@ -347,8 +335,6 @@ const MessageList = (props: MessageListProps) => {
 //add ReactMemo
 //id on a View ---> id={`message-item-${message.id}`}
 
-
-
 const {width, height} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -356,24 +342,6 @@ const styles = StyleSheet.create({
     width: width,
     height: height,
     backgroundColor: 'white',
-
-    paddingLeft: 16,
-    paddingRight: 16
-  },
-  dateHeader: {
-    margin: 8,
-    marginBottom: 8,
-    left: '50%',
-    marginLeft: -25,
-    paddingTop: 4,
-    paddingBottom: 8,
-    paddingRight: 4,
-    paddingLeft: 4,
-    borderRadius: 4,
-    backgroundColor: colorBackgroundGray,
-    color: colorTextGray,
-    width: 72,
-    textAlign: 'center',
   },
 });
 
