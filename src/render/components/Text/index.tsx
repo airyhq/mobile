@@ -28,7 +28,6 @@ const styles = StyleSheet.create({
     maxWidth: 500,
     padding: 10,
     marginTop: 5,
-    borderRadius: 8,
     fontFamily: 'Lato',
   },
   contactContent: {
@@ -36,7 +35,6 @@ const styles = StyleSheet.create({
     maxWidth: 500,
     padding: 10,
     marginTop: 5,
-    borderRadius: 8,
     fontFamily: 'Lato',
     backgroundColor: colorBackgroundBlue,
     color: colorTextContrast,
@@ -46,7 +44,6 @@ const styles = StyleSheet.create({
     maxWidth: 500,
     padding: 10,
     marginTop: 5,
-    borderRadius: 8,
     fontFamily: 'Lato',
     backgroundColor: colorAiryBlue,
     color: 'white',

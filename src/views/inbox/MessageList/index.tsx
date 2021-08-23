@@ -4,6 +4,7 @@ import {
   StyleSheet,
   SafeAreaView,
   FlatList,
+  View,
   NativeScrollEvent,
   NativeSyntheticEvent,
 } from 'react-native';
@@ -192,7 +193,9 @@ const MessageList = (props: MessageListProps) => {
 
 
   return (
+    <>
     <SafeAreaView style={styles.container}>
+      <View style={styles.flatlist}>
       <FlatList
         data={messages}
         onScroll={handleScroll}
@@ -210,8 +213,10 @@ const MessageList = (props: MessageListProps) => {
           );
         }}
       />
+      </View>
       <InputBar conversationId={conversationId}/>
     </SafeAreaView>
+    </>
   );
 };
 
@@ -223,6 +228,11 @@ const styles = StyleSheet.create({
     height: height,
     backgroundColor: 'white',
   },
+  flatlist: {
+  flex: 0.77,
+  backgroundColor: 'red'
+
+  }
 });
 
 const arePropsEqual = (prevProps, nextProps) => {
