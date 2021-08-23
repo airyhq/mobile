@@ -29,6 +29,11 @@ export interface Message {
   source?: string
 }
 
+export type MessageData = {
+  id: string;
+  messages: Message[]
+}
+
 
 export const parseToRealmMessage = (
   unformattedMessage: any,

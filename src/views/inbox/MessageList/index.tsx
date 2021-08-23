@@ -49,30 +49,31 @@ import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {
   parseToRealmMessage,
   Message,
+  MessageData,
   Conversation,
 } from '../../../model';
-import {colorBackgroundGray, colorTextGray} from '../../../assets/colors';
 import {MessageComponent} from './MessageComponent';
-import {debounce, cloneDeep, sortBy} from 'lodash-es';
+import {debounce, sortBy, isEqual} from 'lodash-es';
+
+interface RouteProps {
+  key: string;
+  name: string;
+  params: {conversationId: string}
+}
 
 type MessageListProps = {
+<<<<<<< HEAD
 <<<<<<< HEAD
   route: any
 >>>>>>> c10546d (created inputBar)
 =======
   route: any;
 >>>>>>> 4885307 (messagelist wip: reorganize storing of messages in db)
+=======
+  route: RouteProps;
+>>>>>>> 70515a2 (messagelist wip)
 };
 
-//use usePrevious / prevMessages to scroll to message?
-
-// function usePrevious(value: Message[] | string) {
-//   const ref = useRef(null);
-//   useEffect(() => {
-//     ref.current = value;
-//   });
-//   return ref.current;
-// }
 
 const MessageList = (props: MessageListProps) => {
   const {route} = props;
@@ -98,7 +99,6 @@ const MessageList = (props: MessageListProps) => {
   const conversationId: string = route.params.conversationId;
 >>>>>>> 4885307 (messagelist wip: reorganize storing of messages in db)
   const [messages, setMessages] = useState<any>([]);
-  //const prevMessages = usePrevious(messages);
   const [offset, setOffset] = useState(0);
   const messageListRef = useRef<FlatList>(null);
 
@@ -107,9 +107,8 @@ const MessageList = (props: MessageListProps) => {
     'Conversation',
     conversationId,
   );
-  const databaseMessages:any = realm.objectForPrimaryKey('MessageData', conversationId);
+  const databaseMessages: any = realm.objectForPrimaryKey<Realm.Results<MessageData>>('MessageData', conversationId)
          
-
   const {
     metadata: {contact},
     channel: {source},
@@ -125,60 +124,32 @@ const MessageList = (props: MessageListProps) => {
     messageListRef?.current?.scrollToEnd()
   }
 
-  // const scrollToMessage = id => {
-  //   const element = document.querySelector<HTMLElement>(`#message-item-${id}`);
-
-  //   if (element && messageListRef) {
-  //     messageListRef.current.scrollTop = element.offsetTop - messageListRef.current.offsetTop;
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (prevMessages && messages && prevMessages.length < messages.length) {
-
-  //     //scrollBottom();
-
-  //     // if (
-  //     //   conversationId &&
-  //     //   prevCurrentConversationId &&
-  //     //   prevCurrentConversationId === conversationId &&
-  //     //   messages &&
-  //     //   prevMessages &&
-  //     //   prevMessages[0] &&
-  //     //   prevMessages[0].id !== messages[0].id
-  //     // ) {
-  //     //   scrollToMessage(prevMessages[0].id);
-  //     // } else {
-  //     //    scrollBottom();
-  //     // }
-  //   }
-  // }, [messages, conversationId]);
-
   useEffect(() => {
+    let unmounted = false;
 
     if(!databaseMessages){
+      if (!unmounted) {
       listMessages();
+      }
     }
 
     scrollBottom()
 
     if(databaseMessages){
       databaseMessages.addListener(() => {
+        if (!unmounted) {
         setMessages([...databaseMessages.messages]);
+        }
       });
     }
-  
 
     return () => {
       databaseMessages.removeAllListeners();
+      unmounted = true ;
     };
-    
-    
   }, []);
 
-
-
-  function mergeMessages(oldMessages: any, newMessages: Message[]): any {
+  function mergeMessages(oldMessages: any, newMessages: Message[]):Message[]  {
     newMessages.forEach((message: any) => {
       if (!oldMessages.some((item: Message) => item.id === message.id)) {
         oldMessages.push(parseToRealmMessage(message, message.source));
@@ -188,7 +159,6 @@ const MessageList = (props: MessageListProps) => {
     return sortBy(oldMessages, message => message.sentAt)
   }
 
-  
   const debouncedListPreviousMessages = debounce(()=> {
     listPreviousMessages();
   }, 200);
@@ -197,7 +167,6 @@ const MessageList = (props: MessageListProps) => {
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const currentOffset = event.nativeEvent.contentOffset.y;
-    const direction = currentOffset > offset ? 'down' : 'up';
     setOffset(currentOffset);
 
     if (hasPreviousMessages()  && event.nativeEvent.contentOffset.y < -30) {
@@ -209,8 +178,6 @@ const MessageList = (props: MessageListProps) => {
   const listMessages = () => {
     HttpClientInstance.listMessages({conversationId, pageSize: 10})
       .then((response) => {
-
-        //console.log('LIST MESSAGE')
       
           realm.write(() => {
             realm.create('MessageData', {
@@ -221,14 +188,13 @@ const MessageList = (props: MessageListProps) => {
 
           const databaseMessages:any = realm.objectForPrimaryKey('MessageData', conversationId);
 
-          if( databaseMessages){
+          if(databaseMessages){
             databaseMessages.addListener(() => {
               setMessages([...databaseMessages.messages]);
             });
           }
          
         
-      
         if(response.paginationData){
           realm.write(() => {
             conversation.paginationData.loading = response.paginationData?.loading ?? null;
@@ -261,8 +227,6 @@ const MessageList = (props: MessageListProps) => {
           'MessageData',
           conversation.id,
         );
-
-        //console.log('LIST PREV')
 
         if (storedConversationMessages) {
           realm.write(() => {
@@ -332,9 +296,6 @@ const MessageList = (props: MessageListProps) => {
 >>>>>>> 4885307 (messagelist wip: reorganize storing of messages in db)
 };
 
-//add ReactMemo
-//id on a View ---> id={`message-item-${message.id}`}
-
 const {width, height} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -345,4 +306,17 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MessageList;
+const arePropsEqual = (prevProps, nextProps) => {
+  if (
+    prevProps.history.location.pathname === nextProps.history.location.pathname &&
+    prevProps.conversation?.id === nextProps.conversation?.id &&
+    prevProps.history.location.key === nextProps.history.location.key &&
+    prevProps.location.key !== nextProps.location.key
+  ) {
+    return true;
+  }
+
+  return isEqual(prevProps, nextProps);
+};
+
+export default React.memo(MessageList, arePropsEqual);
