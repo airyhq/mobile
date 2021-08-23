@@ -1,8 +1,8 @@
 export interface Pagination {
-  previousCursor: string;
-  nextCursor: string;
-  total: number;
-  loading?: null | boolean;
+  previousCursor: string | null;
+  nextCursor: string | null;
+  total: number | null;
+  loading?: boolean | null;
 }
 
 export const PaginationSchema = {
