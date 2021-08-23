@@ -28,6 +28,11 @@ export interface Message {
   metadata?: MessageMetadata;
 }
 
+export type MessageData = {
+  id: string;
+  messages: Message[]
+}
+
 
 export const parseToRealmMessage = (
   unformattedMessage: any,
