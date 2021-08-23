@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     borderRadius: 8,
     fontFamily: 'Lato',
+
   },
   contactContent: {
     display: 'flex',

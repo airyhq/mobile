@@ -36,7 +36,7 @@ export const MessageComponent = ({message, index, messages, source, contact}: Me
     const sentAt: any = lastInGroup ? formatTime(message.sentAt) : null;
 
     return(
-          <View key={message.id} style={styles.messageList}>
+          <View key={message.id} style={styles.message}>
             {hasDateChanged(prevMessage, message) && (
               <View key={`date-${message.id}`} style={styles.dateHeader}>
                 <Text>{formatDateOfMessage(message)}</Text>
@@ -58,24 +58,23 @@ export const MessageComponent = ({message, index, messages, source, contact}: Me
         );
             }
 
-
 const styles = StyleSheet.create({
-    messageList: {
-      marginRight: 5,
+    message: {
+      paddingRight: 16,
+      paddingLeft: 16,
+      backgroundColor: 'white'
     },
     dateHeader: {
-      margin: 8,
+      marginTop: 8,
       marginBottom: 8,
-      left: '50%',
-      marginLeft: -25,
       paddingTop: 4,
-      paddingBottom: 8,
-      paddingRight: 4,
+      paddingBottom: 4,
       paddingLeft: 4,
+      paddingRight: 4,
       borderRadius: 4,
       backgroundColor: colorBackgroundGray,
       color: colorTextGray,
-      width: 72,
-      textAlign: 'center',
+      alignSelf: 'center',
+     
     },
   });
