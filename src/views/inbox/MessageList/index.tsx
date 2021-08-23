@@ -33,7 +33,7 @@ type MessageListProps = {
 const MessageList = (props: MessageListProps) => {
   const {route} = props;
   const conversationId: string = route.params.conversationId;
-  const [messages, setMessages] = useState<any>([]);
+  const [messages, setMessages] = useState<Message[] | []>([]);
   const [offset, setOffset] = useState(0);
   const messageListRef = useRef<FlatList>(null);
 
@@ -84,7 +84,7 @@ const MessageList = (props: MessageListProps) => {
     };
   }, []);
 
-  function mergeMessages(oldMessages: any, newMessages: Message[]):Message[]  {
+  function mergeMessages(oldMessages: Message[], newMessages: Message[]):Message[]  {
     newMessages.forEach((message: any) => {
       if (!oldMessages.some((item: Message) => item.id === message.id)) {
         oldMessages.push(parseToRealmMessage(message, message.source));
