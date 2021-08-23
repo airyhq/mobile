@@ -30,10 +30,10 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
     <>
       <View style={styles.contact}>
         {sentAt && contact && (
-          <View style={styles.avatar}>
-            <Avatar contact={contact} />
-          </View>
-        )}
+            <View style={styles.avatar}>
+            <Avatar avatarUrl={contact.avatarUrl} small={true}/>
+            </View>        
+            )}
         <Text
           style={[styles.contactContent, {marginLeft: lastInGroup === false && isChatPlugin === false ? '20%' : '0%'}]}>
           {children}
@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
   contactContent: {
     overflow: 'hidden',
     maxWidth: '100%',
+    borderRadius: 10
   },
   member: {
     display: 'flex',
@@ -67,12 +68,11 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'flex-end',
     flexDirection: 'column',
+    borderRadius: 10
   },
   avatar: {
-    width: 40,
-    height: 40,
     marginTop: 6,
-    marginRight: 32,
+    marginRight: 4,
     marginBottom: 0,
     marginLeft: 0,
   },

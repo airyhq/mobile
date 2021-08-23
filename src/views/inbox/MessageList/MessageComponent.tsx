@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
     message: {
       paddingRight: 16,
       paddingLeft: 16,
-      backgroundColor: 'white'
     },
     dateHeader: {
       marginTop: 8,

@@ -105,7 +105,7 @@ const {width, height} = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 200,
+    bottom: 180,
     left: 0,
     width: width,
     justifyContent: 'center',
