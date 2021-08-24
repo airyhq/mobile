@@ -1,6 +1,8 @@
-import React, {useState} from 'react';
-import {Dimensions, Pressable, TextInput} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {useEffect} from 'react';
+import {Animated, Dimensions, TextInput} from 'react-native';
 import {View, StyleSheet} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import {
   colorAiryBlue,
   colorBackgroundGray,
@@ -13,13 +15,30 @@ import {RealmDB} from '../storage/realm';
 
 type InputBarProps = {
   conversationId: string;
+  extended: boolean;
+  setExtended: (extended: boolean) => void;
 };
 
 export const InputBar = (props: InputBarProps) => {
-  const {conversationId} = props;
+  const {conversationId, extended, setExtended} = props;
   const [input, setInput] = useState('');
   const [inputHeight, setInputHeight] = useState(33);
+  const collapsedWidth = width * 0.65;
+  const extendedWidth = width * 0.83;
+  const extendAnimation = useRef(new Animated.Value(collapsedWidth)).current;
+  const collapseAnimation = useRef(new Animated.Value(extendedWidth)).current;
   const realm = RealmDB.getInstance();
+
+  useEffect(() => {
+    if (input.length >= 20 && !extended) {
+      setExtended(!extended);
+      // onExpand();
+    }
+    if (input.length < 10 && extended) {
+      setExtended(!extended);
+      // onCollapse();
+    }
+  }, [input, setInput]);
 
   const sendMessage = (conversationId: string, message: string) => {
     HttpClientInstance.sendMessages({conversationId, message})
@@ -44,16 +63,46 @@ export const InputBar = (props: InputBarProps) => {
     setInput('');
   };
 
+  const onCollapse = () => {
+    Animated.timing(collapseAnimation, {
+      toValue: 300,
+      duration: 400,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const onExpand = () => {
+    Animated.timing(extendAnimation, {
+      toValue: 300,
+      duration: 400,
+      useNativeDriver: false,
+    }).start();
+  };
+
   return (
     <View style={styles.container}>
       <View
         style={[
-          {height: inputHeight < 20 ? 33 : inputHeight + 15},
+          {
+            height: inputHeight < 20 ? 33 : inputHeight + 15,
+            width: extended ? extendedWidth : collapsedWidth,
+          },
           styles.inputBar,
         ]}>
+        {/* <Animated.View
+        style={[
+          {
+            height: inputHeight < 20 ? 33 : inputHeight + 15,
+            width: !extended ? extendAnimation : collapseAnimation,
+          },
+          styles.inputBar,
+        ]}> */}
         <TextInput
           style={[
-            {height: inputHeight < 20 ? 33 : inputHeight + 15},
+            {
+              height: inputHeight < 20 ? 33 : inputHeight + 15,
+              width: extended ? '85%' : '80%',
+            },
             styles.textInput,
           ]}
           placeholder="Message"
@@ -61,28 +110,26 @@ export const InputBar = (props: InputBarProps) => {
           onChangeText={(text: string) => setInput(text)}
           multiline={true}
           autoFocus={true}
-          onContentSizeChange={e =>
-            setInputHeight(e.nativeEvent.contentSize.height)
-          }
+          onContentSizeChange={e => {
+            setInputHeight(e.nativeEvent.contentSize.height);
+          }}
         />
-        <Pressable
+        <TouchableOpacity
           onPress={() => sendMessage(conversationId, input)}
-          style={styles.sendButton}>
+          style={styles.sendButton}
+          disabled={input.length === 0}>
           <Paperplane width={16} height={16} fill="white" />
-        </Pressable>
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
 
-const {width, height} = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    bottom: 200,
-    left: 0,
-    width: width,
+    width: width * 0.65,
     justifyContent: 'center',
     backgroundColor: 'transparent',
   },
@@ -94,13 +141,12 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     borderColor: `${colorLightGray}`,
-    marginLeft: 8,
-    marginRight: 8,
+    marginRight: 16,
     paddingLeft: 10,
   },
   textInput: {
+    fontFamily: 'Lato',
     alignSelf: 'flex-end',
-    width: '90%',
     borderRadius: 16,
     paddingTop: 10,
   },

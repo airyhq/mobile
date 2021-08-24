@@ -1,18 +1,25 @@
 import React from 'react';
-import {Dimensions, View} from 'react-native';
-import {StyleSheet, SafeAreaView} from 'react-native';
-import { InputBar } from '../../../components/InputBar';
+import {Dimensions, View, StyleSheet, SafeAreaView} from 'react-native';
+import {AttachmentBar} from '../../../components/AttachmentBar';
+import {InputBar} from '../../../components/InputBar';
+import { MessageBar } from '../../../components/MessageBar';
 
 type MessageListProps = {
-  route: any
+  route: any;
 };
 
 const MessageList = (props: MessageListProps) => {
   const {route} = props;
-  return <SafeAreaView style={styles.container}>
-    <View style={styles.messageList} />
-    <InputBar conversationId={route.params.conversationId}/>
-  </SafeAreaView>;
+  return (
+    <SafeAreaView>
+      <View style={styles.container}>
+        <View style={styles.messageList} />
+        <View style={styles.contentBar}>
+          <MessageBar conversationId={route.params.conversationId}/>
+        </View>
+      </View>
+    </SafeAreaView>
+  );
 };
 
 export default MessageList;
@@ -26,7 +33,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   messageList: {
-    flex: 0.5,
-    backgroundColor: 'blue'
-  }
+    position: 'relative',
+    width: width,
+    flex: 0.77,
+    backgroundColor: 'white',
+  },
+  contentBar: {
+    position: 'absolute',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    left: 0,
+    bottom: 150,
+    flexDirection: 'row',
+  },
 });

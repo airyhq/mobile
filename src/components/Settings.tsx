@@ -1,14 +1,18 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet, Dimensions} from 'react-native';
+import {SafeAreaView, StyleSheet, Dimensions, View} from 'react-native';
 
 export const Settings = () => {
-  return <SafeAreaView style={styles.container}></SafeAreaView>;
+  return (
+  <SafeAreaView >
+    <View style={styles.container}>
+    </View>
+  </SafeAreaView>);
 };
 
 const {height, width} = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
+    backgroundColor: 'red',
     height: height,
     width: width,
   },
