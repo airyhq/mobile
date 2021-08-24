@@ -35,7 +35,7 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
             </View>        
             )}
         <Text
-          style={[styles.contactContent, {marginLeft: lastInGroup === false && isChatPlugin === false ? '20%' : '0%'}]}>
+          style={[styles.contactContent, {marginLeft: lastInGroup === false && isChatPlugin === false ? '13%' : '0%'}]}>
           {children}
         </Text>
         {decoration}
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   avatar: {
     marginTop: 6,
-    marginRight: 4,
+    marginRight: 6,
     marginBottom: 0,
     marginLeft: 0,
   },
