@@ -132,10 +132,8 @@ const MessageList = (props: MessageListProps) => {
   useEffect(() => {
     let unmounted = false;
 
-    if(!databaseMessages){
-      if (!unmounted) {
+    if(!databaseMessages && !unmounted){
       listMessages();
-      }
     }
 
     scrollBottom()
@@ -208,12 +206,6 @@ const MessageList = (props: MessageListProps) => {
             conversation.paginationData.total = response.paginationData?.total ?? null;
           })
           }
-
-          return () => {
-            databaseMessages.removeAllListeners();
-          };
-
-        
         })
       .catch((error: any) => {
         console.log('error listMessages', error);
@@ -315,8 +307,7 @@ const styles = StyleSheet.create({
   },
   flatlist: {
   flex: 0.77,
-  backgroundColor: 'red'
-
+  backgroundColor: 'white'
   }
 });
 
