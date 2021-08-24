@@ -261,6 +261,7 @@ const MessageList = (props: MessageListProps) => {
         data={messages}
         onScroll={handleScroll}
         ref={messageListRef}
+        onContentSizeChange={()=> messageListRef.current.scrollToEnd({animated: true})} 
         renderItem={({item, index}) => {
           return (
             <MessageComponent
