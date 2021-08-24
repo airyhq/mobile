@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colorTextGray,
     marginTop: 5,
-    paddingLeft: 68
+    paddingLeft: '13%'
   },
 });
 
