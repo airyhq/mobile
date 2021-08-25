@@ -1,6 +1,5 @@
 import React, {ReactNode} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {Avatar} from '../Avatar';
 import {Contact} from '../../model';
 import {colorTextGray} from '../../assets/colors';
 
@@ -11,11 +10,10 @@ type MessageInfoWrapperProps = {
   fromContact?: boolean;
   contact?: Contact;
   sentAt?: string;
-  decoration?: ReactNode;
 };
 
 export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
-  const {sentAt, contact, fromContact, children, lastInGroup, isChatPlugin, decoration} = props;
+  const {sentAt, fromContact, children, isChatPlugin} = props;
 
   const isContact = isChatPlugin ? !fromContact : fromContact;
 
@@ -29,16 +27,7 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
   const ContactMessage = () => (
     <>
       <View style={styles.contact}>
-        {sentAt && contact && (
-            <View style={styles.avatar}>
-            <Avatar avatarUrl={contact.avatarUrl} small={true}/>
-            </View>        
-            )}
-        <Text
-          style={[styles.contactContent, {marginLeft: lastInGroup === false && isChatPlugin === false ? '13%' : '0%'}]}>
-          {children}
-        </Text>
-        {decoration}
+        <Text style={styles.contactContent}>{children}</Text>
       </View>
       <Text style={styles.time}>{sentAt}</Text>
     </>
@@ -55,7 +44,7 @@ const styles = StyleSheet.create({
   contactContent: {
     overflow: 'hidden',
     maxWidth: '100%',
-    borderRadius: 10
+    borderRadius: 12,
   },
   member: {
     display: 'flex',
@@ -68,19 +57,13 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'flex-end',
     flexDirection: 'column',
-    borderRadius: 10
-  },
-  avatar: {
-    marginTop: 6,
-    marginRight: 6,
-    marginBottom: 0,
-    marginLeft: 0,
+    borderRadius: 20,
   },
   time: {
-    fontSize: 13,
+    fontFamily: 'Lato',
+    fontSize: 10,
     color: colorTextGray,
     marginTop: 5,
-    paddingLeft: '13%'
+    marginLeft: 5,
   },
 });
-
