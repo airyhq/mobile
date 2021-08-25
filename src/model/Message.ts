@@ -26,6 +26,7 @@ export interface Message {
   fromContact: boolean;
   sentAt: Date;
   metadata?: MessageMetadata;
+  source?: string
 }
 
 export const parseToRealmMessage = (

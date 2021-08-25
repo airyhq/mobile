@@ -29,7 +29,7 @@ export const ConversationList = (props: ConversationListProps) => {
 
     databaseConversations.addListener(() => {
       setConversations([...databaseConversations]);
-    });
+    });    
 
     getConversationsList();
 
@@ -40,7 +40,7 @@ export const ConversationList = (props: ConversationListProps) => {
 
   const getConversationsList = () => {
     HttpClientInstance.listConversations({page_size: 50})
-      .then((response: any) => {
+      .then((response: any) => {  
         realm.write(() => {
           realm.create('Pagination', response.paginationData);
 
@@ -53,7 +53,7 @@ export const ConversationList = (props: ConversationListProps) => {
         });
       })
       .catch((error: Error) => {
-        console.log('Error: ', error);
+        console.error(error);
       });
   };
 
@@ -87,7 +87,7 @@ export const ConversationList = (props: ConversationListProps) => {
         });
       })
       .catch((error: Error) => {
-        console.log('Error: ', error);
+        console.error(error);
       });
   };
 

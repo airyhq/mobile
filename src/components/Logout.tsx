@@ -24,8 +24,8 @@ export const Logout = (props: LogoutProps) => {
           realm.deleteAll();        
         });        
       })
-      .catch(error => {
-        console.log(error);
+      .catch((error: Error) => {
+        console.error(error);
       });
   };
   
