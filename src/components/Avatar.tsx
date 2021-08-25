@@ -1,22 +1,21 @@
 import React from 'react';
-import {Image, StyleSheet} from 'react-native';
-import {Dimensions} from 'react-native';
+import {Image, ImageStyle, StyleProp, StyleSheet} from 'react-native';
 
 type AvatarProps = {
   avatarUrl: string;
   small?: boolean;
+  style?: StyleProp<ImageStyle>;
 };
 const fallbackAvatar = 'https://s3.amazonaws.com/assets.airy.co/unknown.png';
 
-export const Avatar = ({avatarUrl, small}: AvatarProps) => {
+export const Avatar = ({avatarUrl, small, style}: AvatarProps) => {
   return (
     <Image
-      style={small ? styles.avatarImageSmall : styles.avatarImage}
+      style={[small ? styles.avatarImageSmall : styles.avatarImage, style]}
       source={avatarUrl ? {uri: `${avatarUrl}`} : {uri: `${fallbackAvatar}`}}
     />
   );
 };
-const {width} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   avatarImage: {
