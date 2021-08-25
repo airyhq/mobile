@@ -72,16 +72,6 @@ export class StompWrapper {
     return error
   };
 
-  publish = (queue: any, body: any) => {
-    if (!this.stompClient || !this.stompClient.connected) {
-      return false;
-    }
-    this.stompClient.publish({
-      destination: queue,
-      body: JSON.stringify(body),
-    });
-  };
-
   refreshSocket = () => {
     this.destroyConnection();
     this.initConnection(accessToken);

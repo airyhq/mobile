@@ -53,7 +53,7 @@ export const ConversationList = (props: ConversationListProps) => {
         });
       })
       .catch((error: Error) => {
-        return error
+        console.error(error);
       });
   };
 
@@ -87,7 +87,7 @@ export const ConversationList = (props: ConversationListProps) => {
         });
       })
       .catch((error: Error) => {
-        return error
+        console.error(error);
       });
   };
 

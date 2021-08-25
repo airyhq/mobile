@@ -25,7 +25,7 @@ export const Logout = (props: LogoutProps) => {
         });        
       })
       .catch((error: Error) => {
-        return error
+        console.error(error);
       });
   };
   

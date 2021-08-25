@@ -10,13 +10,11 @@ type MessageListProps = {
 
 const listMessages = (
   conversationId: string,
-  cursor?: any,
-  page_size?: any,
+  cursor?: string,
+  page_size?: string,
 ) => {
   HttpClientInstance.listMessages({conversationId})
-    .then((response: any) => {
-      // console.log('response: ', response);
-    })
+    .then((response: any) => {})
     .catch((error: Error) => {
       console.log('Error: ', error);
     });

@@ -22,7 +22,7 @@ export const Login = () => {
         });        
       })
       .catch((error: Error) => {
-        return error
+        console.error(error);
       });
   };
 

@@ -21,33 +21,30 @@ export const AiryWebSocket = (props: AiryWebSocketProps) => {
   useEffect(() => refreshSocket(), []);
 
   const addMessage = (conversationId: string, message: Message) => {
-    if (conversationId && message) {
-      realm.write(() => {
-        const currentConversation: any = realm.objectForPrimaryKey<Conversation>(
-          'Conversation',
-          conversationId,
-        );
-        currentConversation.lastMessage = message;
-      });
-    }
+    realm.write(() => {
+      const currentConversation: Conversation | undefined = realm.objectForPrimaryKey<Conversation>(
+        'Conversation',
+        conversationId,
+      );      
+      if (currentConversation) currentConversation.lastMessage = message;
+    });    
   };
 
   const getInfoNewConversation = (conversationId: string, retries: number) => {
     if (retries > 5) {
       return Promise.reject(true);
-    } else {
-      HttpClientInstance.getConversationInfo(conversationId)
-        .then((response: any) => {
-          realm.write(() => {
-            realm.create('Conversation', parseToRealmConversation(response));
-          });
-        })
-        .catch((error: Error) => {
-          setTimeout(() => {
-            getInfoNewConversation(conversationId, retries ? retries + 1 : 1);
-          }, 1000);
+    } 
+    HttpClientInstance.getConversationInfo(conversationId)
+      .then((response: any) => {
+        realm.write(() => {
+          realm.create('Conversation', parseToRealmConversation(response));
         });
-    }
+      })
+      .catch((error: Error) => {
+        setTimeout(() => {
+          getInfoNewConversation(conversationId, retries ? retries + 1 : 1);
+        }, 1000);
+      });    
   };
 
   const onMetadata = (metadata: Metadata) => {
@@ -73,17 +70,15 @@ export const AiryWebSocket = (props: AiryWebSocketProps) => {
     }
   };
 
-  const onMessage = (conversationId: string, message: Message) => {
-    if (conversationId && message) {
-      const isStored = realm.objectForPrimaryKey<Conversation>(
-        'Conversation',
-        conversationId,
-      );
-      if (isStored) {
-        addMessage(conversationId, message);
-      } else {
-        getInfoNewConversation(conversationId, 0);
-      }
+  const onMessage = (conversationId: string, message: Message) => {    
+    const isStored = realm.objectForPrimaryKey<Conversation>(
+      'Conversation',
+      conversationId,
+    );
+    if (isStored) {
+      addMessage(conversationId, message);
+    } else {
+      getInfoNewConversation(conversationId, 0);
     }
   };
 

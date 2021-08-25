@@ -86,7 +86,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
         });
       })
       .catch((error: Error) => {
-        return error
+        console.error(error);
       });
   };
 

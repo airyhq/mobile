@@ -7,6 +7,8 @@ import SettingsIcon from '../assets/images/icons/settings_icon.svg';
 import {createStackNavigator} from '@react-navigation/stack';
 import MessageList from '../views/inbox/MessageList';
 import {colorAiryBlue, colorTextGray} from '../assets/colors';
+import { StackNavigationOptions } from 'react-navigation-stack/lib/typescript/src/vendor/types';
+import { RouteProp } from '@react-navigation/native';
 
 export const TabBar = () => {
   const Tab = createBottomTabNavigator();
