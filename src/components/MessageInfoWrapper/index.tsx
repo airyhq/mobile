@@ -20,7 +20,7 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
   const MemberMessage = () => (
     <View style={styles.member}>
       <Text style={styles.memberContent}>{children}</Text>
-      <Text style={styles.time}>{sentAt}</Text>
+      {/* <Text style={styles.time}>{sentAt}</Text> */}
     </View>
   );
 
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   contactContent: {
     overflow: 'hidden',
     maxWidth: '100%',
-    borderRadius: 12,
+    borderRadius: 10,
   },
   member: {
     display: 'flex',
@@ -57,13 +57,13 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'flex-end',
     flexDirection: 'column',
-    borderRadius: 20,
+    borderRadius: 10,
   },
   time: {
     fontFamily: 'Lato',
     fontSize: 10,
     color: colorTextGray,
-    marginTop: 5,
     marginLeft: 5,
+    marginBottom: 10
   },
 });

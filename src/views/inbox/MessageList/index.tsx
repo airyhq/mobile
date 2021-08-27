@@ -39,13 +39,15 @@ import React, {useEffect, createRef, useState, useRef} from 'react';
 import React, {useEffect, useState, useRef} from 'react';
 >>>>>>> 8141021 (refactored tabbar and navbar)
 import {
-  Dimensions,
   StyleSheet,
   SafeAreaView,
   FlatList,
   View,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
 } from 'react-native';
 <<<<<<< HEAD
 import {InputBar} from '../../../components/InputBar';
@@ -54,14 +56,11 @@ import {InputBar} from '../../../components/InputBar';
 >>>>>>> 8141021 (refactored tabbar and navbar)
 import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
-import {
-  parseToRealmMessage,
-  Message,
-  MessageData,
-} from '../../../model';
+import {parseToRealmMessage, Message, MessageData} from '../../../model';
 import {MessageComponent} from './MessageComponent';
 import {debounce, sortBy, isEqual} from 'lodash-es';
 import {MessageBar} from '../../../components/MessageBar';
+import {useHeaderHeight} from '@react-navigation/stack';
 
 interface RouteProps {
   key: string;
@@ -112,6 +111,9 @@ const MessageList = (props: MessageListProps) => {
 >>>>>>> 50a199b (fixed typing)
   const [offset, setOffset] = useState(0);
   const messageListRef = useRef<FlatList>(null);
+  const headerHeight = useHeaderHeight();
+  const keyboardVerticalOffset = Platform.OS === 'ios' ? headerHeight : 0;
+  const behavior = Platform.OS === 'ios' ? 'padding' : 'height';
 
   const realm = RealmDB.getInstance();
   const conversation: any = realm.objectForPrimaryKey(
@@ -276,8 +278,40 @@ const MessageList = (props: MessageListProps) => {
         console.log('error listPrevMessages', error);
       });
   };
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [isKeyboardVisibile, setIsKeyboardVisible] = useState(false);
+  const [flatListHeight, setFlatListHeight] = useState(200);
+
+  useEffect(() => {
+    if (isKeyboardVisibile) {
+      setFlatListHeight(120);
+    }
+  }, [isKeyboardVisibile, setIsKeyboardVisible]);
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener(
+      'keyboardDidShow',
+      keyboardVerticalOffset => {
+        setKeyboardHeight(keyboardVerticalOffset.startCoordinates.height);
+        messageListRef.current?.scrollToEnd();
+      },
+    );
+    const hideSubscription = Keyboard.addListener(
+      'keyboardDidHide',
+      keyboardVerticalOffset => {
+        setKeyboardHeight(keyboardVerticalOffset.startCoordinates.height);
+        setIsKeyboardVisible(false);
+      },
+    );
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
   return (
+<<<<<<< HEAD
 <<<<<<< HEAD
     <>
     <SafeAreaView style={styles.container}>
@@ -319,11 +353,21 @@ const MessageList = (props: MessageListProps) => {
     <SafeAreaView>
       <View style={styles.container}>
         <View style={styles.flatlist}>
+=======
+    <SafeAreaView style={{backgroundColor: 'white'}}>
+      <KeyboardAvoidingView
+        behavior={behavior}
+        keyboardVerticalOffset={keyboardVerticalOffset}>
+        <View style={styles.container}>
+>>>>>>> 9da7f06 (added tabbar and navbar to messageList)
           <FlatList
+            style={styles.flatlist}
             data={messages}
             onScroll={handleScroll}
             ref={messageListRef}
-            // onContentSizeChange={() => messageListRef.current.scrollToEnd({animated: true})}
+            onContentSizeChange={() =>
+              messageListRef.current?.scrollToEnd({animated: true})
+            }
             renderItem={({item, index}) => {
               return (
                 <MessageComponent
@@ -337,52 +381,41 @@ const MessageList = (props: MessageListProps) => {
               );
             }}
           />
+          <View style={styles.messageBar}>
+            <MessageBar conversationId={route.params.conversationId} />
+          </View>
         </View>
+<<<<<<< HEAD
         <View style={styles.messageBar}>
           <MessageBar conversationId={route.params.conversationId} />
         </View>
 >>>>>>> 8141021 (refactored tabbar and navbar)
       </View>
+=======
+      </KeyboardAvoidingView>
+>>>>>>> 9da7f06 (added tabbar and navbar to messageList)
     </SafeAreaView>
   );
 >>>>>>> 4885307 (messagelist wip: reorganize storing of messages in db)
 };
 
-const {width, height} = Dimensions.get('window');
-
 const styles = StyleSheet.create({
   container: {
-    width: width,
-    height: height,
+    height: '100%',
+    justifyContent: 'flex-end',
     backgroundColor: 'white',
   },
   flatlist: {
-    position: 'relative',
-    width: width,
-    flex: 0.8,
     backgroundColor: 'white',
   },
   messageBar: {
-    position: 'absolute',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-    left: 0,
-    bottom: 150,
-    flexDirection: 'row',
+    alignSelf: 'flex-start',
+    backgroundColor: 'white',
+    marginBottom: 5,
   },
 });
 
 const arePropsEqual = (prevProps: any, nextProps: any) => {
-  if (
-    prevProps.history.location.pathname ===
-      nextProps.history.location.pathname &&
-    prevProps.conversation?.id === nextProps.conversation?.id &&
-    prevProps.history.location.key === nextProps.history.location.key &&
-    prevProps.location.key !== nextProps.location.key
-  ) {
-    return true;
-  }
-
   return isEqual(prevProps, nextProps);
 };
 

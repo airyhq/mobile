@@ -29,11 +29,9 @@ export const MessageBar = (props: MessageBarProps) => {
 
 const styles = StyleSheet.create({
   contentBar: {
-    position: 'absolute',
+    display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
-    left: 0,
-    bottom: 0,
     flexDirection: 'row',
   },
 });

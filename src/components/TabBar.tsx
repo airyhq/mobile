@@ -81,7 +81,7 @@ export const TabBar = () => {
       <Stack.Screen
         name="Settings"
         component={Settings}
-        options={{headerShown: true}}
+        options={{headerShown: true, title: 'dsjadioas'}}
       />
       <Stack.Screen
         name="MessageList"
