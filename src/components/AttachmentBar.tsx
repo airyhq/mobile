@@ -46,7 +46,6 @@ const styles = StyleSheet.create({
     width: width * 0.32,
     justifyContent: 'space-evenly',
     alignItems: 'center',
-    backgroundColor: 'white',
     height: 33,
   },
   extendIcon: {
@@ -54,6 +53,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: 33,
-    backgroundColor: 'white',
   },
 });

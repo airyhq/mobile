@@ -118,7 +118,7 @@ export const InputBar = (props: InputBarProps) => {
           value={input}
           onChangeText={(text: string) => setInput(text)}
           multiline={true}
-          autoFocus={true}
+          autoFocus={false}
           onContentSizeChange={e =>
             setInputHeight(e.nativeEvent.contentSize.height)
           }
