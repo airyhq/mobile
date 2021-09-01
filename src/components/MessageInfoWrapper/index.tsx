@@ -13,24 +13,26 @@ type MessageInfoWrapperProps = {
 };
 
 export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
-  const {sentAt, fromContact, children, isChatPlugin} = props;
+  const {sentAt, fromContact, children, isChatPlugin, lastInGroup} = props;
 
   const isContact = isChatPlugin ? !fromContact : fromContact;
 
   const MemberMessage = () => (
     <View style={styles.member}>
-      <Text style={styles.memberContent}>{children}</Text>
-      {/* <Text style={styles.time}>{sentAt}</Text> */}
+      <Text style={styles.memberContent}>
+        <View>{children}</View>
+      </Text>
+      {lastInGroup && <Text style={styles.time}>{sentAt}</Text>}
     </View>
   );
 
   const ContactMessage = () => (
-    <>
-      <View style={styles.contact}>
-        <Text style={styles.contactContent}>{children}</Text>
-      </View>
-      <Text style={styles.time}>{sentAt}</Text>
-    </>
+    <View style={styles.contact}>
+      <Text style={styles.contactContent}>
+        <View>{children}</View>
+      </Text>
+      {lastInGroup && <Text style={styles.time}>{sentAt}</Text>}
+    </View>
   );
 
   return <>{isContact ? <ContactMessage /> : <MemberMessage />}</>;
@@ -38,32 +40,28 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
 
 const styles = StyleSheet.create({
   contact: {
-    display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
+    justifyContent: 'center',
   },
   contactContent: {
     overflow: 'hidden',
-    maxWidth: '100%',
-    borderRadius: 10,
+    maxWidth: '75%',
+    alignItems: 'flex-start',
   },
   member: {
-    display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-end',
   },
   memberContent: {
     overflow: 'hidden',
-    maxWidth: '100%',
-    display: 'flex',
+    maxWidth: '75%',
     alignItems: 'flex-end',
     flexDirection: 'column',
-    borderRadius: 10,
   },
   time: {
     fontFamily: 'Lato',
     fontSize: 10,
     color: colorTextGray,
     marginLeft: 5,
-    marginBottom: 10
   },
 });

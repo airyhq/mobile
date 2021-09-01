@@ -1,8 +1,6 @@
 /* eslint-disable react/display-name */
 import React from 'react';
-import {Channel} from '../model/Channel';
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
-
 import FacebookIcon from '../assets/images/icons/facebook_rounded.svg';
 import MessengerAvatar from '../assets/images/icons/messenger_avatar.svg';
 import GoogleIcon from '../assets/images/icons/google-messages.svg';
@@ -18,21 +16,12 @@ import InstagramAvatar from '../assets/images/icons/instagram_avatar.svg';
 import {colorTextGray} from '../assets/colors';
 
 type IconChannelProps = {
-  channel: Channel;
+  source: string;
+  sourceChannelId: string;
   icon?: boolean;
   showAvatar?: boolean;
   showName?: boolean;
   text?: boolean;
-};
-
-const PlaceholderChannelData: Channel = {
-  id: 'id',
-  source: 'facebook',
-  metadata: {
-    name: 'Retrieving Data...',
-  },
-  sourceChannelId: 'external_channel_id',
-  connected: true,
 };
 
 const SOURCE_INFO: any = {
@@ -69,26 +58,22 @@ const SOURCE_INFO: any = {
 };
 
 const IconChannel: React.FC<IconChannelProps> = ({
-  channel,
+  source,
+  sourceChannelId,
   icon,
   showAvatar,
   showName,
   text,
 }: IconChannelProps): JSX.Element => {
-  if (!channel) {
-    channel = PlaceholderChannelData;
-  }
-
-  const channelInfo = SOURCE_INFO[channel.source];
+  const channelInfo = SOURCE_INFO[source];
   const fbFallback = SOURCE_INFO['facebook'];
   const isFromTwilioSource =
-    channel.source === 'twilio.sms' || channel.source === 'twilio.whatsapp';
+    source === 'twilio.sms' || source === 'twilio.whatsapp';
 
   const ChannelName = () => {
     return (
       <Text style={styles.text} numberOfLines={1}>
-        {channel.metadata?.name ||
-          (isFromTwilioSource ? channel.sourceChannelId : channel.source)}
+        {sourceChannelId || (isFromTwilioSource ? sourceChannelId : source)}
       </Text>
     );
   };
