@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import Hyperlink from 'react-native-hyperlink';
 import {
   colorBackgroundBlue,
@@ -13,37 +13,39 @@ type TextRenderProps = {
 };
 
 export const TextComponent = ({text, fromContact}: TextRenderProps) => {
-  return(
-    <Hyperlink linkDefault={true} linkStyle={styles.messageLink}>
-    <Text style={fromContact ? styles.contactContent : styles.memberContent}>
-      {text}
-    </Text>
-  </Hyperlink>
-  ) 
+  return (
+    <View
+      style={[
+        styles.bubble,
+        fromContact ? styles.contactContent : styles.memberContent,
+      ]}>
+      <Hyperlink linkDefault={true} linkStyle={styles.messageLink}>
+        <Text
+          style={fromContact ? styles.contactContent : styles.memberContent}>
+          {text}
+        </Text>
+      </Hyperlink>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-  textMessage: {
-    display: 'flex',
-    maxWidth: 500,
-    padding: 10,
+  bubble: {
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 5,
+    paddingRight: 10,
+    paddingBottom: 5,
+    paddingLeft: 10,
     marginTop: 5,
-    fontFamily: 'Lato',
   },
   contactContent: {
-    display: 'flex',
-    maxWidth: 500,
-    padding: 10,
-    marginTop: 5,
     fontFamily: 'Lato',
     backgroundColor: colorBackgroundBlue,
     color: colorTextContrast,
   },
   memberContent: {
-    display: 'flex',
-    maxWidth: 500,
-    padding: 10,
-    marginTop: 5,
     fontFamily: 'Lato',
     backgroundColor: colorAiryBlue,
     color: 'white',

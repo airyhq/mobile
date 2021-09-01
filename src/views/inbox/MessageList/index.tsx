@@ -43,11 +43,9 @@ import {
   SafeAreaView,
   FlatList,
   View,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
   KeyboardAvoidingView,
   Platform,
-  Keyboard,
+  Animated,
 } from 'react-native';
 <<<<<<< HEAD
 import {InputBar} from '../../../components/InputBar';
@@ -108,13 +106,16 @@ const MessageList = (props: MessageListProps) => {
   const [messages, setMessages] = useState<any>([]);
 =======
   const [messages, setMessages] = useState<Message[] | []>([]);
+<<<<<<< HEAD
 >>>>>>> 50a199b (fixed typing)
   const [offset, setOffset] = useState(0);
+=======
+>>>>>>> d91301f (refactored messageList)
   const messageListRef = useRef<FlatList>(null);
   const headerHeight = useHeaderHeight();
   const keyboardVerticalOffset = Platform.OS === 'ios' ? headerHeight : 0;
   const behavior = Platform.OS === 'ios' ? 'padding' : 'height';
-
+  const slideRightOffset = useRef(new Animated.Value(100)).current;
   const realm = RealmDB.getInstance();
   const conversation: any = realm.objectForPrimaryKey(
     'Conversation',
@@ -135,18 +136,12 @@ const MessageList = (props: MessageListProps) => {
     return null;
   }
 
-  const scrollBottom = () => {
-    messageListRef?.current?.scrollToEnd();
-  };
-
   useEffect(() => {
     let unmounted = false;
 
     if (!databaseMessages && !unmounted) {
       listMessages();
     }
-
-    scrollBottom();
 
     if (databaseMessages) {
       databaseMessages.addListener(() => {
@@ -175,24 +170,17 @@ const MessageList = (props: MessageListProps) => {
     return sortBy(oldMessages, message => message.sentAt);
   }
 
-  const debouncedListPreviousMessages = debounce(() => {
-    listPreviousMessages();
-  }, 200);
-
   const hasPreviousMessages = () =>
     !!(paginationData && paginationData.nextCursor);
 
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const currentOffset = event.nativeEvent.contentOffset.y;
-    setOffset(currentOffset);
-
-    if (hasPreviousMessages() && event.nativeEvent.contentOffset.y < -30) {
-      debouncedListPreviousMessages();
+  const debouncedListPreviousMessages = debounce((event?: any) => {
+    if (hasPreviousMessages()) {
+      listPreviousMessages();
     }
-  };
+  }, 2000);
 
   const listMessages = () => {
-    HttpClientInstance.listMessages({conversationId, pageSize: 10})
+    HttpClientInstance.listMessages({conversationId, pageSize: 50})
       .then((response: any) => {
         realm.write(() => {
           realm.create('MessageData', {
@@ -235,7 +223,7 @@ const MessageList = (props: MessageListProps) => {
 
     HttpClientInstance.listMessages({
       conversationId,
-      pageSize: 10,
+      pageSize: 50,
       cursor: cursor,
     })
       .then((response: any) => {
@@ -278,37 +266,6 @@ const MessageList = (props: MessageListProps) => {
         console.log('error listPrevMessages', error);
       });
   };
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const [isKeyboardVisibile, setIsKeyboardVisible] = useState(false);
-  const [flatListHeight, setFlatListHeight] = useState(200);
-
-  useEffect(() => {
-    if (isKeyboardVisibile) {
-      setFlatListHeight(120);
-    }
-  }, [isKeyboardVisibile, setIsKeyboardVisible]);
-
-  useEffect(() => {
-    const showSubscription = Keyboard.addListener(
-      'keyboardDidShow',
-      keyboardVerticalOffset => {
-        setKeyboardHeight(keyboardVerticalOffset.startCoordinates.height);
-        messageListRef.current?.scrollToEnd();
-      },
-    );
-    const hideSubscription = Keyboard.addListener(
-      'keyboardDidHide',
-      keyboardVerticalOffset => {
-        setKeyboardHeight(keyboardVerticalOffset.startCoordinates.height);
-        setIsKeyboardVisible(false);
-      },
-    );
-
-    return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }, []);
 
   return (
 <<<<<<< HEAD
@@ -362,12 +319,11 @@ const MessageList = (props: MessageListProps) => {
 >>>>>>> 9da7f06 (added tabbar and navbar to messageList)
           <FlatList
             style={styles.flatlist}
-            data={messages}
-            onScroll={handleScroll}
+            data={messages.reverse()}
+            inverted={true}
             ref={messageListRef}
-            onContentSizeChange={() =>
-              messageListRef.current?.scrollToEnd({animated: true})
-            }
+            onEndReached={debouncedListPreviousMessages}
+            initialNumToRender={25}
             renderItem={({item, index}) => {
               return (
                 <MessageComponent
@@ -412,6 +368,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     backgroundColor: 'white',
     marginBottom: 5,
+    marginTop: 10,
   },
 });
 

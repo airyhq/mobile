@@ -107,8 +107,13 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
       avatarUrl: conversation.metadata.contact.avatarUrl,
       displayName: conversation.metadata.contact.displayName,
       state: conversation.metadata.state,
+<<<<<<< HEAD
       channel: conversation.channel,
 >>>>>>> 8141021 (refactored tabbar and navbar)
+=======
+      source: conversation.channel.source,
+      sourceChannelId: conversation.channel.sourceChannelId,
+>>>>>>> d91301f (refactored messageList)
     });
   };
 
@@ -137,7 +142,12 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
           </View>
           <View style={styles.contentContainer}>
             <View style={styles.nameStatus}>
-              <Text style={unread ? styles.unreadName : styles.name}>
+              <Text
+                numberOfLines={1}
+                style={[
+                  {width: '80%'},
+                  unread ? styles.unreadName : styles.name,
+                ]}>
                 {participant && participant.displayName}
               </Text>
               <CurrentState
@@ -146,13 +156,23 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
                 pressable={false}
               />
             </View>
-            <Text style={unread ? styles.unreadMessage : styles.message}>
+            <Text
+              numberOfLines={1}
+              style={[
+                {width: '85%'},
+                unread ? styles.unreadMessage : styles.message,
+              ]}>
               <SourceMessagePreview conversation={conversation} />
             </Text>
             <View style={styles.channelTimeContainer}>
               <View style={styles.iconChannel}>
                 <IconChannel
+<<<<<<< HEAD
                 source={conversation.channel.source}
+=======
+                  // channel={conversation.channel}
+                  source={conversation.channel.source}
+>>>>>>> d91301f (refactored messageList)
                   sourceChannelId={conversation.channel.sourceChannelId}
                   showAvatar
                   showName

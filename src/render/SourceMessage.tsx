@@ -8,7 +8,10 @@ type SourceMessageState = {
   hasError: boolean;
 };
 
-export class SourceMessage extends React.Component<RenderPropsUnion, SourceMessageState> {
+export class SourceMessage extends React.Component<
+  RenderPropsUnion,
+  SourceMessageState
+> {
   constructor(props: RenderPropsUnion) {
     super(props);
     this.state = {hasError: false};
@@ -18,17 +21,26 @@ export class SourceMessage extends React.Component<RenderPropsUnion, SourceMessa
     return {hasError: true};
   }
 
-  componentDidCatch(error:any, errorInfo:any) {
+  componentDidCatch(error: any, errorInfo: any) {
     console.error(error, errorInfo);
   }
 
   errorFallback() {
-    return <TextComponent fromContact={this.props.message.fromContact || false} text="Could not render this content" />;
+    return (
+      <TextComponent
+        fromContact={this.props.message.fromContact || false}
+        text="Could not render this content"
+      />
+    );
   }
 
   render() {
     const provider = renderProviders[this.props.source];
-    if (this.state.hasError || this.props.source === undefined || provider === undefined) {
+    if (
+      this.state.hasError ||
+      this.props.source === undefined ||
+      provider === undefined
+    ) {
       return this.errorFallback();
     }
 

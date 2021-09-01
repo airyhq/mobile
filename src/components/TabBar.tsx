@@ -104,9 +104,10 @@ export const TabBar = () => {
                     width: 32,
                   }}
                 />
-                <View style={{marginRight: width * 0.66, marginTop: 20}}>
+                <View style={{marginRight: width * 0.76, marginTop: 20}}>
                   <IconChannel
-                    channel={route.params.channel}
+                    source={route.params.source}
+                    sourceChannelId={route.params.sourceChannelId}
                     showAvatar
                     showName
                   />
@@ -115,7 +116,8 @@ export const TabBar = () => {
                   conversationId={route.params.conversationId}
                   state={route.params.state}
                   pressable={true}
-                  style={{marginBottom: 10, marginRight: 17}}
+                  // style={{marginBottom: 10, marginRight: 17}}
+                  style={{position: 'absolute', right: 12, top: 3}}
                   navigation={navigation}
                 />
               </View>

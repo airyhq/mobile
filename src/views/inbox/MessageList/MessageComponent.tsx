@@ -32,8 +32,8 @@ export const MessageComponent = ({
   const prevMessage = messages[index - 1];
   const nextMessage = messages[index + 1];
 
-  const lastInGroup = nextMessage
-    ? message.fromContact !== nextMessage.fromContact
+  const lastInGroup = prevMessage
+    ? message.fromContact !== prevMessage.fromContact
     : true;
 
   const sentAt: any = lastInGroup ? formatTime(message.sentAt) : null;
@@ -45,8 +45,10 @@ export const MessageComponent = ({
           <Text>{formatDateOfMessage(message)}</Text>
         </View>
       )}
+
       <MessageInfoWrapper
         fromContact={message.fromContact}
+        lastInGroup={lastInGroup}
         contact={contact}
         sentAt={sentAt}
         isChatPlugin={false}>
