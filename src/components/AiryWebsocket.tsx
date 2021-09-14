@@ -2,9 +2,10 @@ import React, {useState, useEffect} from 'react';
 import {HttpClientInstance} from '../InitializeAiryApi';
 import {Metadata} from '../model/Metadata';
 import {Conversation, parseToRealmConversation} from '../model/Conversation';
-import {Message} from '../model/Message';
+import {Message, MessageData, parseToRealmMessage} from '../model/Message';
 import {RealmDB} from '../storage/realm';
 import {WebSocketClient} from './WebsocketClient/WebsocketClient';
+import {mergeMessages} from '../services/message';
 
 type AiryWebSocketProps = {
   children: React.ReactNode;
@@ -22,36 +23,48 @@ export const AiryWebSocket = (props: AiryWebSocketProps) => {
 
   const addMessage = (conversationId: string, message: Message) => {
     realm.write(() => {
-      const currentConversation: Conversation | undefined = realm.objectForPrimaryKey<Conversation>(
-        'Conversation',
-        conversationId,
-      );      
-      if (currentConversation) currentConversation.lastMessage = message;
-    });    
+      const currentConversation: Conversation | undefined =
+        realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
+      const currentMessageData: MessageData =
+        realm.objectForPrimaryKey<MessageData>('MessageData', conversationId);
+
+      if (currentConversation) {
+        currentConversation.lastMessage = parseToRealmMessage(
+          message,
+          currentConversation.channel,
+        );
+        currentMessageData.messages = mergeMessages(
+          currentMessageData.messages,
+          [message],
+        );
+      }
+    });
   };
 
   const getInfoNewConversation = (conversationId: string, retries: number) => {
     if (retries > 5) {
       return Promise.reject(true);
-    } 
+    }
     HttpClientInstance.getConversationInfo(conversationId)
       .then((response: any) => {
         realm.write(() => {
           realm.create('Conversation', parseToRealmConversation(response));
+          realm.create('MessageData', {id: conversationId, messages: []});
         });
       })
       .catch((error: Error) => {
         setTimeout(() => {
           getInfoNewConversation(conversationId, retries ? retries + 1 : 1);
         }, 1000);
-      });    
+      });
   };
 
   const onMetadata = (metadata: Metadata) => {
-    const currentConversation: Conversation | undefined = realm.objectForPrimaryKey<Conversation>(
-      'Conversation',
-      metadata.identifier,
-    );
+    const currentConversation: Conversation | undefined =
+      realm.objectForPrimaryKey<Conversation>(
+        'Conversation',
+        metadata.identifier,
+      );
 
     if (
       currentConversation &&
@@ -70,7 +83,7 @@ export const AiryWebSocket = (props: AiryWebSocketProps) => {
     }
   };
 
-  const onMessage = (conversationId: string, message: Message) => {    
+  const onMessage = (conversationId: string, message: Message) => {
     const isStored = realm.objectForPrimaryKey<Conversation>(
       'Conversation',
       conversationId,

@@ -1,7 +1,7 @@
+
 import Realm from 'realm';
 import {UserInfoSchema} from '../model/userInfo';
 import {ConversationSchema} from '../model/Conversation';
-import {TagSchema} from '../model/Tag';
 import {
   ChannelMetadataSchema,
   ChannelSchema,
@@ -15,10 +15,7 @@ import {
   PaginationSchema,
   SuggestedReplySchema,
   SuggestionsSchema,
-<<<<<<< HEAD
-=======
   MessageDataSchema
->>>>>>> 4885307 (messagelist wip: reorganize storing of messages in db)
 } from '../model';
 
 export class RealmDB {
@@ -44,7 +41,6 @@ export class RealmDB {
           MessageMetadataSchema,
           SuggestedReplySchema,
           SuggestionsSchema,
-          TagSchema,
           PaginationSchema,
           UserInfoSchema,
         ],

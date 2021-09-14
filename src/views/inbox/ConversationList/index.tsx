@@ -29,7 +29,7 @@ export const ConversationList = (props: ConversationListProps) => {
 
     databaseConversations.addListener(() => {
       setConversations([...databaseConversations]);
-    });    
+    });
 
     getConversationsList();
 
@@ -40,15 +40,32 @@ export const ConversationList = (props: ConversationListProps) => {
 
   const getConversationsList = () => {
     HttpClientInstance.listConversations({page_size: 50})
-      .then((response: any) => {  
+      .then((response: any) => {
         realm.write(() => {
           realm.create('Pagination', response.paginationData);
 
           for (const conversation of response.data) {
+            const isStored = realm.objectForPrimaryKey(
+              'Conversation',
+              conversation.id,
+            );
+
+            const isStoredMessageData = realm.objectForPrimaryKey(
+              'MessageData',
+              conversation.id,
+            );
+
+            if (isStored) {
+              realm.delete(isStored);
+            }
+
             realm.create(
               'Conversation',
               parseToRealmConversation(conversation),
             );
+            if (!isStoredMessageData) {
+              realm.create('MessageData', {id: conversation.id, messages: []});
+            }
           }
         });
       })

@@ -26,14 +26,13 @@ export interface Message {
   fromContact: boolean;
   sentAt: Date;
   metadata?: MessageMetadata;
-  source?: string
+  source?: string;
 }
 
 export type MessageData = {
   id: string;
-  messages: Message[]
-}
-
+  messages: Message[];
+};
 
 export const parseToRealmMessage = (
   unformattedMessage: any,
@@ -41,8 +40,16 @@ export const parseToRealmMessage = (
 ): Message => {
   let message: Message;
 
-  const messageContent = unformattedMessage.content?.text ?? unformattedMessage.content?.message?.text ?? unformattedMessage.content
+  let messageContent =
+    unformattedMessage.content?.Body ??
+    unformattedMessage.content?.text ??
+    unformattedMessage.content?.message?.text ??
+    unformattedMessage.content?.postback?.title ??
+    unformattedMessage.content;
 
+  if (typeof messageContent === 'object') {
+    messageContent = JSON.stringify(messageContent);
+  }
 
   switch (channel.source) {
     case 'facebook':
@@ -109,7 +116,19 @@ export const parseToRealmMessage = (
       message = {
         id: unformattedMessage.id,
         content: {
-          text: unformattedMessage.content.postback.title,
+          text: messageContent,
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+      break;
+    case 'viber':
+      message = {
+        id: unformattedMessage.id,
+        content: {
+          text: messageContent,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
@@ -149,10 +168,10 @@ export const MessageDataSchema = {
   name: 'MessageData',
   primaryKey: 'id',
   properties: {
-  id: 'string',
-  messages: { type: 'list', objectType: 'Message' },
-  }
-}
+    id: 'string',
+    messages: {type: 'list', objectType: 'Message'},
+  },
+};
 
 export const MessageTypeSchema = {
   name: 'MessageType',

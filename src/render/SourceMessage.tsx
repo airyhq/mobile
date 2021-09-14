@@ -1,7 +1,7 @@
 import React from 'react';
 import {renderProviders} from './renderProviders';
-
 import {TextComponent} from './components/Text';
+import {UnknownSourceText} from '../components/UnknownSourceText';
 import {RenderPropsUnion} from './props';
 
 type SourceMessageState = {
@@ -21,8 +21,25 @@ export class SourceMessage extends React.Component<
     return {hasError: true};
   }
 
-  componentDidCatch(error: any, errorInfo: any) {
+  componentDidCatch(error, errorInfo) {
     console.error(error, errorInfo);
+  }
+
+  unknownSource() {
+    let message;
+    if (this.props.message.content.text) {
+      message = this.props.message.content.text;
+    } else {
+      message = JSON.stringify(this.props.message.content, null, 2);
+    }
+
+    return (
+      <UnknownSourceText
+        fromContact={this.props.message.fromContact || false}
+        text={message}
+        sourceName={this.props.source}
+      />
+    );
   }
 
   errorFallback() {
@@ -36,11 +53,12 @@ export class SourceMessage extends React.Component<
 
   render() {
     const provider = renderProviders[this.props.source];
-    if (
-      this.state.hasError ||
-      this.props.source === undefined ||
-      provider === undefined
-    ) {
+
+    if (provider === undefined || this.props.source === undefined) {
+      return this.unknownSource();
+    }
+
+    if (this.state.hasError) {
       return this.errorFallback();
     }
 
@@ -48,7 +66,7 @@ export class SourceMessage extends React.Component<
       return provider(this.props);
     } catch (e) {
       console.error(e);
-      return this.errorFallback();
+      return this.unknownSource();
     }
   }
 }

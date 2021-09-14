@@ -1,43 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-import React from 'react';
-<<<<<<< HEAD
-import {useEffect} from 'react';
-import {Dimensions} from 'react-native';
-import {StyleSheet, SafeAreaView} from 'react-native';
-import {HttpClientInstance} from '../../../InitializeAiryApi';
-
-type MessageListProps = {
-  route: any;
-};
-
-const listMessages = (
-  conversationId: string,
-  cursor?: string,
-  page_size?: string,
-) => {
-  HttpClientInstance.listMessages({conversationId})
-    .then((response: any) => {})
-    .catch((error: Error) => {
-      console.log('Error: ', error);
-    });
-=======
-import {Dimensions, View} from 'react-native';
-import {StyleSheet, SafeAreaView} from 'react-native';
-=======
-import React, {useEffect, createRef, useState} from 'react';
-<<<<<<< HEAD
-import {Dimensions, ScrollView, View, StyleSheet, SafeAreaView} from 'react-native';
->>>>>>> e9a6dcf (added message list)
-import { InputBar } from '../../../components/InputBar';
-=======
-=======
-import React, {useEffect, createRef, useState, useRef} from 'react';
->>>>>>> 4a9bbd9 (messagelist wip)
-=======
 import React, {useEffect, useState, useRef} from 'react';
->>>>>>> 8141021 (refactored tabbar and navbar)
 import {
   StyleSheet,
   SafeAreaView,
@@ -45,13 +6,7 @@ import {
   View,
   KeyboardAvoidingView,
   Platform,
-  Animated,
 } from 'react-native';
-<<<<<<< HEAD
-import {InputBar} from '../../../components/InputBar';
->>>>>>> 4885307 (messagelist wip: reorganize storing of messages in db)
-=======
->>>>>>> 8141021 (refactored tabbar and navbar)
 import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {parseToRealmMessage, Message, MessageData} from '../../../model';
@@ -67,64 +22,27 @@ interface RouteProps {
 }
 
 type MessageListProps = {
-<<<<<<< HEAD
-<<<<<<< HEAD
-  route: any
->>>>>>> c10546d (created inputBar)
-=======
-  route: any;
->>>>>>> 4885307 (messagelist wip: reorganize storing of messages in db)
-=======
   route: RouteProps;
->>>>>>> 70515a2 (messagelist wip)
 };
 
 const MessageList = (props: MessageListProps) => {
   const {route} = props;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-  const conversationId = route.params.conversationId;
-
-  useEffect(() => {
-    listMessages(conversationId);
-  }, []);
-
-  return <SafeAreaView style={styles.container}></SafeAreaView>;
-=======
-  return <SafeAreaView style={styles.container}>
-    <View style={styles.messageList} />
-    <InputBar conversationId={route.params.conversationId}/>
-  </SafeAreaView>;
->>>>>>> c10546d (created inputBar)
-=======
-  const conversationId: string = route.params.conversationId
-=======
   const conversationId: string = route.params.conversationId;
-<<<<<<< HEAD
->>>>>>> 4885307 (messagelist wip: reorganize storing of messages in db)
-  const [messages, setMessages] = useState<any>([]);
-=======
   const [messages, setMessages] = useState<Message[] | []>([]);
-<<<<<<< HEAD
->>>>>>> 50a199b (fixed typing)
-  const [offset, setOffset] = useState(0);
-=======
->>>>>>> d91301f (refactored messageList)
   const messageListRef = useRef<FlatList>(null);
   const headerHeight = useHeaderHeight();
   const keyboardVerticalOffset = Platform.OS === 'ios' ? headerHeight : 0;
   const behavior = Platform.OS === 'ios' ? 'padding' : 'height';
-  const slideRightOffset = useRef(new Animated.Value(100)).current;
   const realm = RealmDB.getInstance();
   const conversation: any = realm.objectForPrimaryKey(
     'Conversation',
     conversationId,
   );
 
-  const databaseMessages: any = realm.objectForPrimaryKey<
-    Realm.Results<MessageData>
-  >('MessageData', conversationId);
+  const databaseMessages: any = realm.objectForPrimaryKey<MessageData>(
+    'MessageData',
+    conversationId,
+  );
 
   const {
     metadata: {contact},
@@ -137,23 +55,16 @@ const MessageList = (props: MessageListProps) => {
   }
 
   useEffect(() => {
-    let unmounted = false;
-
-    if (!databaseMessages && !unmounted) {
-      listMessages();
-    }
+    listMessages();
 
     if (databaseMessages) {
       databaseMessages.addListener(() => {
-        if (!unmounted) {
-          setMessages([...databaseMessages.messages]);
-        }
+        setMessages([...databaseMessages.messages]);
       });
     }
 
     return () => {
       databaseMessages.removeAllListeners();
-      unmounted = true;
     };
   }, []);
 
@@ -173,7 +84,7 @@ const MessageList = (props: MessageListProps) => {
   const hasPreviousMessages = () =>
     !!(paginationData && paginationData.nextCursor);
 
-  const debouncedListPreviousMessages = debounce((event?: any) => {
+  const debouncedListPreviousMessages = debounce(() => {
     if (hasPreviousMessages()) {
       listPreviousMessages();
     }
@@ -182,21 +93,18 @@ const MessageList = (props: MessageListProps) => {
   const listMessages = () => {
     HttpClientInstance.listMessages({conversationId, pageSize: 50})
       .then((response: any) => {
-        realm.write(() => {
-          realm.create('MessageData', {
-            id: conversationId,
-            messages: mergeMessages([], [...response.data]),
-          });
-        });
-
-        const databaseMessages: any = realm.objectForPrimaryKey(
-          'MessageData',
-          conversationId,
-        );
-
         if (databaseMessages) {
-          databaseMessages.addListener(() => {
-            setMessages([...databaseMessages.messages]);
+          realm.write(() => {
+            databaseMessages.messages = [
+              ...mergeMessages(databaseMessages.messages, [...response.data]),
+            ];
+          });
+        } else {
+          realm.write(() => {
+            realm.create('MessageData', {
+              id: conversationId,
+              messages: mergeMessages([], [...response.data]),
+            });
           });
         }
 
@@ -214,7 +122,7 @@ const MessageList = (props: MessageListProps) => {
         }
       })
       .catch((error: any) => {
-        console.log('error listMessages', error);
+        console.log('Error: ', error);
       });
   };
 
@@ -263,60 +171,16 @@ const MessageList = (props: MessageListProps) => {
         }
       })
       .catch((error: any) => {
-        console.log('error listPrevMessages', error);
+        console.log('Error: ', error);
       });
   };
 
   return (
-<<<<<<< HEAD
-<<<<<<< HEAD
-    <>
-    <SafeAreaView style={styles.container}>
-      <View style={styles.flatlist}>
-      <FlatList
-        data={messages}
-        onScroll={handleScroll}
-        ref={messageListRef}
-        onContentSizeChange={()=> messageListRef.current.scrollToEnd({animated: true})} 
-        renderItem={({item, index}) => {
-          return (
-            <MessageComponent
-              key={item.id}
-              message={item}
-              messages={messages}
-              source={source}
-              contact={contact}
-<<<<<<< HEAD
-              sentAt={sentAt}
-              lastInGroup={lastInGroup}
-              isChatPlugin={false}>
-              <SourceMessage source={source} message={message} contentType="message" />
-            </MessageInfoWrapper>
-          </View>
-        );
-      })}
-    </ScrollView>
-    <InputBar conversationId={conversationId} />
-  </SafeAreaView>
-  )
->>>>>>> e9a6dcf (added message list)
-=======
-              index={index}
-            />
-          );
-        }}
-      />
-=======
-    <SafeAreaView>
-      <View style={styles.container}>
-        <View style={styles.flatlist}>
-=======
     <SafeAreaView style={{backgroundColor: 'white'}}>
       <KeyboardAvoidingView
         behavior={behavior}
         keyboardVerticalOffset={keyboardVerticalOffset}>
         <View style={styles.container}>
->>>>>>> 9da7f06 (added tabbar and navbar to messageList)
           <FlatList
             style={styles.flatlist}
             data={messages.reverse()}
@@ -341,18 +205,9 @@ const MessageList = (props: MessageListProps) => {
             <MessageBar conversationId={route.params.conversationId} />
           </View>
         </View>
-<<<<<<< HEAD
-        <View style={styles.messageBar}>
-          <MessageBar conversationId={route.params.conversationId} />
-        </View>
->>>>>>> 8141021 (refactored tabbar and navbar)
-      </View>
-=======
       </KeyboardAvoidingView>
->>>>>>> 9da7f06 (added tabbar and navbar to messageList)
     </SafeAreaView>
   );
->>>>>>> 4885307 (messagelist wip: reorganize storing of messages in db)
 };
 
 const styles = StyleSheet.create({

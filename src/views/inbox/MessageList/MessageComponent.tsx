@@ -40,7 +40,7 @@ export const MessageComponent = ({
 
   return (
     <View key={message.id} style={styles.message}>
-      {hasDateChanged(prevMessage, message) && (
+      {hasDateChanged(nextMessage, message) && (
         <View key={`date-${message.id}`} style={styles.dateHeader}>
           <Text>{formatDateOfMessage(message)}</Text>
         </View>

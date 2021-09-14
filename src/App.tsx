@@ -6,7 +6,7 @@ import {RealmDB} from './storage/realm';
 import {TabBar} from './components/TabBar';
 import {NavigationContainer} from '@react-navigation/native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import { AiryWebSocket } from './components/AiryWebsocket';
+import {AiryWebSocket} from './components/AiryWebsocket';
 
 const App = () => {
   const [userInfo, setUserInfo] = useState<UserInfo | undefined>();

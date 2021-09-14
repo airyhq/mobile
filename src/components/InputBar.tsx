@@ -23,18 +23,17 @@ export const InputBar = (props: InputBarProps) => {
   const [inputHeight, setInputHeight] = useState(33);
   const collapsedWidth = width * 0.65;
   const extendedWidth = width * 0.83;
-  const extendAnimation = useRef(new Animated.Value(collapsedWidth)).current;
-  const collapseAnimation = useRef(new Animated.Value(extendedWidth)).current;
+  const expandAnimation = useRef(new Animated.Value(collapsedWidth)).current;
   const realm = RealmDB.getInstance();
 
   useEffect(() => {
     if (input.length >= 20 && !extended) {
       setExtended(!extended);
-      // onExpand();
+      onExpand();
     }
     if (input.length < 10 && extended) {
       setExtended(!extended);
-      // onCollapse();
+      onCollapse();
     }
   }, [input, setInput]);
 
@@ -47,7 +46,7 @@ export const InputBar = (props: InputBarProps) => {
 
   const outboundMapper: any = getOutboundMapper(source);
 
-  const sendMessage = (conversationId: string, message: string) => {
+  const sendMessage = (message: string) => {
     if (message.length === 0) return;
 
     HttpClientInstance.sendMessages({
@@ -56,14 +55,6 @@ export const InputBar = (props: InputBarProps) => {
     })
       .then((response: any) => {
         realm.write(() => {
-          const conversation = realm.objectForPrimaryKey(
-            'Message',
-            conversationId,
-          );
-
-          if (conversation) {
-            realm.delete(conversation);
-          }
           realm.create('Message', {
             id: response.id,
             content: {text: response.content.text},
@@ -75,22 +66,22 @@ export const InputBar = (props: InputBarProps) => {
         });
       })
       .catch((error: Error) => {
-        console.log('Error: SEND', error);
+        console.log('Error: ', error);
       });
     setInput('');
   };
 
   const onCollapse = () => {
-    Animated.timing(collapseAnimation, {
-      toValue: 300,
+    Animated.timing(expandAnimation, {
+      toValue: collapsedWidth,
       duration: 400,
       useNativeDriver: false,
     }).start();
   };
 
   const onExpand = () => {
-    Animated.timing(extendAnimation, {
-      toValue: 300,
+    Animated.timing(expandAnimation, {
+      toValue: extendedWidth,
       duration: 400,
       useNativeDriver: false,
     }).start();
@@ -98,11 +89,11 @@ export const InputBar = (props: InputBarProps) => {
 
   return (
     <View style={styles.container}>
-      <View
+      <Animated.View
         style={[
           {
             height: inputHeight < 20 ? 33 : inputHeight + 15,
-            width: extended ? extendedWidth : collapsedWidth,
+            width: expandAnimation,
           },
           styles.inputBar,
         ]}>
@@ -124,12 +115,12 @@ export const InputBar = (props: InputBarProps) => {
           }
         />
         <TouchableOpacity
-          onPress={() => sendMessage(conversationId, input)}
+          onPress={() => sendMessage(input)}
           style={styles.sendButton}
           disabled={input.length === 0}>
           <Paperplane width={16} height={16} fill="white" />
         </TouchableOpacity>
-      </View>
+      </Animated.View>
     </View>
   );
 };
@@ -138,8 +129,6 @@ const {width} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
-    width: width * 0.65,
-    justifyContent: 'center',
     backgroundColor: 'transparent',
   },
   inputBar: {
@@ -150,7 +139,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     borderColor: colorLightGray,
-    marginRight: 16,
+    marginRight: 12,
     paddingLeft: 10,
   },
   textInput: {

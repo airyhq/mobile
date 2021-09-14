@@ -23,7 +23,7 @@ export const ConversationSchema = {
     metadata: 'Metadata',
     createdAt: 'date?',
     lastMessage: 'Message',
-    paginationData: 'Pagination'
+    paginationData: 'Pagination',
   },
 };
 
@@ -33,7 +33,7 @@ export interface Conversation {
   metadata: Metadata;
   createdAt: Date;
   lastMessage: Message;
-  paginationData: Pagination
+  paginationData: Pagination;
 }
 
 export const parseToRealmConversation = (
@@ -54,8 +54,8 @@ export const parseToRealmConversation = (
       loading: null,
       previousCursor: null,
       nextCursor: null,
-      total: null
-    }
+      total: null,
+    },
   };
 
   return conversation;

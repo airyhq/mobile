@@ -59,6 +59,7 @@ export const CurrentState = (props: CurrentStateProps) => {
               <IconChannel
                 source={channel.source}
                 sourceChannelId={channel.sourceChannelId}
+                metadataName={channel.metadata.name}
                 showAvatar
                 showName
               />
@@ -67,7 +68,6 @@ export const CurrentState = (props: CurrentStateProps) => {
               conversationId={conversationId}
               state={newState}
               pressable={true}
-              // style={{marginBottom: 10, marginRight: 17}}
               style={{position: 'absolute', right: 12, top: 3}}
               navigation={navigation}
             />
@@ -103,7 +103,6 @@ export const CurrentState = (props: CurrentStateProps) => {
             onPressIn={() => Vibration.vibrate}
             style={[
               styles.openStateButton,
-              // {height: 24, width: 24, marginRight: 17},
               {position: 'absolute', right: 7, top: 8, height: 24, width: 24},
             ]}
           />

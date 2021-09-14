@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Dimensions} from 'react-native';
 import {AttachmentBar} from './AttachmentBar';
 import {InputBar} from './InputBar';
 
@@ -27,9 +27,11 @@ export const MessageBar = (props: MessageBarProps) => {
   );
 };
 
+const {width} = Dimensions.get('window');
+
 const styles = StyleSheet.create({
   contentBar: {
-    display: 'flex',
+    width: width,
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
     flexDirection: 'row',

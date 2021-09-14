@@ -1,18 +1,25 @@
 import React from 'react';
 import {RenderPropsUnion} from '../../props';
-import {Text} from '../../components/Text';
-import { ContentUnion } from './facebookModel';
+import {TextComponent} from '../../components/Text';
+import {ContentUnion} from './facebookModel';
 
 export const FacebookRender = (props: RenderPropsUnion) => {
   const message = props.message;
-  const content = message.fromContact ? facebookInbound(message) : facebookOutbound(message);
+  const content = message.fromContact
+    ? facebookInbound(message)
+    : facebookOutbound(message);
   return render(content, props);
 };
 
 function render(content: ContentUnion, props: RenderPropsUnion) {
   switch (content.type) {
     case 'text':
-      return <Text fromContact={props.message.fromContact || false} text={content.text} />;
+      return (
+        <TextComponent
+          fromContact={props.message.fromContact || false}
+          text={content.text}
+        />
+      );
 
     default:
       return null;
@@ -22,7 +29,10 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
 function facebookInbound(message): ContentUnion {
   const messageJson = message.content.message ?? message.content;
 
-  if (messageJson.attachment?.type === 'fallback' || messageJson.attachments?.[0].type === 'fallback') {
+  if (
+    messageJson.attachment?.type === 'fallback' ||
+    messageJson.attachments?.[0].type === 'fallback'
+  ) {
     return {
       text: messageJson.text ?? null,
       ...parseAttachment(messageJson.attachment || messageJson.attachments[0]),
@@ -39,13 +49,16 @@ function facebookInbound(message): ContentUnion {
   }
 
   if (messageJson.attachment || messageJson.attachments) {
-    return parseAttachment(messageJson.attachment || messageJson.attachments[0]);
+    return parseAttachment(
+      messageJson.attachment || messageJson.attachments[0],
+    );
   }
 
   if (messageJson.postback) {
     return {
       type: 'postback',
-      title: messageJson.postback.title == false ? null : messageJson.postback.title,
+      title:
+        messageJson.postback.title == false ? null : messageJson.postback.title,
       payload: messageJson.postback.payload,
     };
   }
@@ -74,7 +87,9 @@ function facebookOutbound(message): ContentUnion {
     if (messageJson.attachment || messageJson.attachments) {
       return {
         type: 'quickReplies',
-        attachment: parseAttachment(messageJson.attachment || messageJson.attachments),
+        attachment: parseAttachment(
+          messageJson.attachment || messageJson.attachments,
+        ),
         quickReplies: messageJson.quick_replies,
       };
     }
@@ -86,7 +101,10 @@ function facebookOutbound(message): ContentUnion {
     };
   }
 
-  if (messageJson.attachment?.type === 'fallback' || messageJson.attachments?.[0].type === 'fallback') {
+  if (
+    messageJson.attachment?.type === 'fallback' ||
+    messageJson.attachments?.[0].type === 'fallback'
+  ) {
     return {
       text: messageJson.text ?? null,
       ...parseAttachment(messageJson.attachment || messageJson.attachments[0]),
@@ -94,13 +112,16 @@ function facebookOutbound(message): ContentUnion {
   }
 
   if (messageJson.attachment || messageJson.attachments) {
-    return parseAttachment(messageJson.attachment || messageJson.attachments[0]);
+    return parseAttachment(
+      messageJson.attachment || messageJson.attachments[0],
+    );
   }
 
   if (messageJson.postback) {
     return {
       type: 'postback',
-      title: messageJson.postback.title == false ? null : messageJson.postback.title,
+      title:
+        messageJson.postback.title == false ? null : messageJson.postback.title,
       payload: messageJson.postback.payload,
     };
   }

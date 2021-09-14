@@ -13,6 +13,8 @@ import AiryIcon from '../assets/images/icons/airy-icon.svg';
 import AiryAvatar from '../assets/images/icons/airy_avatar.svg';
 import InstagramIcon from '../assets/images/icons/instagram.svg';
 import InstagramAvatar from '../assets/images/icons/instagram_avatar.svg';
+import ViberAvatar from '../assets/images/icons/viber_avatar.svg';
+import BubbleIcon from '../assets/images/icons/bubble_icon.svg';
 import {colorTextGray} from '../assets/colors';
 
 type IconChannelProps = {
@@ -22,6 +24,7 @@ type IconChannelProps = {
   showAvatar?: boolean;
   showName?: boolean;
   text?: boolean;
+  metadataName: string;
 };
 
 const SOURCE_INFO: any = {
@@ -50,22 +53,33 @@ const SOURCE_INFO: any = {
     icon: () => <WhatsappIcon />,
     avatar: () => <WhatsappAvatar />,
   },
+  viber: {
+    text: 'Viber Account',
+    icon: () => <ViberAvatar fill="#564E8E" />,
+    avatar: () => <ViberAvatar fill="#564E8E" />,
+  },
   chatplugin: {
     text: 'Airy Live Chat plugin',
     icon: () => <AiryIcon />,
     avatar: () => <AiryAvatar />,
   },
+  unknown: {
+    text: 'Unknown Source',
+    icon: () => <BubbleIcon />,
+    avatar: () => <BubbleIcon />,
+  },
 };
 
 const IconChannel: React.FC<IconChannelProps> = ({
   source,
+  metadataName,
   sourceChannelId,
   icon,
   showAvatar,
   showName,
   text,
 }: IconChannelProps): JSX.Element => {
-  const channelInfo = SOURCE_INFO[source];
+  const channelInfo = SOURCE_INFO[source] || SOURCE_INFO['unknown'];
   const fbFallback = SOURCE_INFO['facebook'];
   const isFromTwilioSource =
     source === 'twilio.sms' || source === 'twilio.whatsapp';
@@ -73,7 +87,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
   const ChannelName = () => {
     return (
       <Text style={styles.text} numberOfLines={1}>
-        {sourceChannelId || (isFromTwilioSource ? sourceChannelId : source)}
+        {metadataName || (isFromTwilioSource ? sourceChannelId : source)}
       </Text>
     );
   };

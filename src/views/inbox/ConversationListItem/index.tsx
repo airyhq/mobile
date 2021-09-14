@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef} from 'react';
 import {
   View,
   StyleSheet,
@@ -40,7 +40,6 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
   const currentConversationState = conversation.metadata.state || 'OPEN';
   const realm = RealmDB.getInstance();
   const swipeableRef = useRef<Swipeable | null>(null);
-  const [conversations, setConversations] = useState<any>([]);
 
   const LeftSwipe = (dragX: Animated.AnimatedInterpolation) => {
     const scale = dragX.interpolate({
@@ -86,7 +85,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
         });
       })
       .catch((error: Error) => {
-        console.error(error);
+        console.log('Error: ', error);
       });
   };
 
@@ -99,21 +98,13 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
   const onSelectItem = () => {
     markAsRead();
     navigation.push('MessageList', {
-<<<<<<< HEAD
-      displayName: conversation.metadata.contact.displayName,
-      conversationId: conversation.id,
-=======
       conversationId: conversation.id,
       avatarUrl: conversation.metadata.contact.avatarUrl,
       displayName: conversation.metadata.contact.displayName,
       state: conversation.metadata.state,
-<<<<<<< HEAD
-      channel: conversation.channel,
->>>>>>> 8141021 (refactored tabbar and navbar)
-=======
       source: conversation.channel.source,
       sourceChannelId: conversation.channel.sourceChannelId,
->>>>>>> d91301f (refactored messageList)
+      metadataName: conversation.channel.metadata.name,
     });
   };
 
@@ -152,14 +143,14 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
               </Text>
               <CurrentState
                 conversationId={conversation.id}
-                state={conversation.metadata.state}
+                state={conversation.metadata.state || 'OPEN'}
                 pressable={false}
               />
             </View>
             <Text
               numberOfLines={1}
               style={[
-                {width: '85%'},
+                {width: '85%', height: 38},
                 unread ? styles.unreadMessage : styles.message,
               ]}>
               <SourceMessagePreview conversation={conversation} />
@@ -167,12 +158,8 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
             <View style={styles.channelTimeContainer}>
               <View style={styles.iconChannel}>
                 <IconChannel
-<<<<<<< HEAD
-                source={conversation.channel.source}
-=======
-                  // channel={conversation.channel}
+                  metadataName={conversation.channel.metadata.name}
                   source={conversation.channel.source}
->>>>>>> d91301f (refactored messageList)
                   sourceChannelId={conversation.channel.sourceChannelId}
                   showAvatar
                   showName
