@@ -1,7 +1,6 @@
 import React from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {ConversationList} from '../views/inbox/ConversationList';
-import Settings from '../views/settings';
+import SettingsView from '../views/settings';
 import InboxIcon from '../assets/images/icons/bubble_icon.svg';
 import SettingsIcon from '../assets/images/icons/settings_icon.svg';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -9,14 +8,24 @@ import MessageList from '../views/inbox/MessageList';
 import {colorAiryBlue, colorTextGray} from '../assets/colors';
 import {Avatar} from './Avatar';
 import {CurrentState} from './CurrentState';
-import {View} from 'react-native';
-import {Dimensions} from 'react-native';
+import {Dimensions, View} from 'react-native';
 import IconChannel from './IconChannel';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 export const TabBar = () => {
   const Tab = createBottomTabNavigator();
   const Stack = createStackNavigator();
   const {width} = Dimensions.get('window');
+
+  const SettingsStack = createStackNavigator();
+
+  const SettingsScreen = () => {
+    return (
+      <SettingsStack.Navigator screenOptions={{headerShown: true}}>
+        <SettingsStack.Screen name="Settings" component={SettingsView} />
+      </SettingsStack.Navigator>
+    );
+  };
 
   const TabBarScreens = () => {
     return (
@@ -43,7 +52,7 @@ export const TabBar = () => {
           },
         }}>
         <Tab.Screen name="Inbox" component={ConversationList} />
-        <Tab.Screen name="Settings" component={Settings} />
+        <Tab.Screen name="Settings" component={SettingsScreen} />
       </Tab.Navigator>
     );
   };
@@ -54,11 +63,6 @@ export const TabBar = () => {
         name="Inbox"
         component={TabBarScreens}
         options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="Settings"
-        component={Settings}
-        options={{headerShown: true, title: 'Settings'}}
       />
       <Stack.Screen
         name="MessageList"
