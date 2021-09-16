@@ -109,7 +109,9 @@ export const ConversationList = (props: ConversationListProps) => {
   };
 
   const debouncedListPreviousConversations = () => {
-    getNextConversationList();
+    if (paginationData && paginationData.nextCursor) {
+      getNextConversationList();
+    }
   };
 
   const isCloseToBottom = (event: NativeScrollEvent) => {
