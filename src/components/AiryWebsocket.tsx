@@ -31,7 +31,7 @@ export const AiryWebSocket = (props: AiryWebSocketProps) => {
       if (currentConversation) {
         currentConversation.lastMessage = parseToRealmMessage(
           message,
-          currentConversation.channel,
+          currentConversation.channel.source,
         );
         currentMessageData.messages = mergeMessages(
           currentMessageData.messages,

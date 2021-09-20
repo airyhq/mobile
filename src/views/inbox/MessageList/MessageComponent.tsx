@@ -36,7 +36,9 @@ export const MessageComponent = ({
     ? message.fromContact !== prevMessage.fromContact
     : true;
 
-  const sentAt: any = lastInGroup ? formatTime(message.sentAt) : null;
+  const sentAt: string | undefined = lastInGroup
+    ? formatTime(message.sentAt)
+    : null;
 
   return (
     <View key={message.id} style={styles.message}>

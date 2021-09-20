@@ -8,6 +8,7 @@ import {
 } from '../assets/colors';
 import Paperplane from '../assets/images/icons/paperplane.svg';
 import {HttpClientInstance} from '../InitializeAiryApi';
+import {Conversation} from '../model/Conversation';
 import {getOutboundMapper} from '../render/outbound';
 import {RealmDB} from '../storage/realm';
 
@@ -37,12 +38,12 @@ export const InputBar = (props: InputBarProps) => {
     }
   }, [input, setInput]);
 
-  const conversation: any = realm.objectForPrimaryKey(
+  const conversation: Conversation | undefined = realm.objectForPrimaryKey(
     'Conversation',
     conversationId,
   );
 
-  const source: any = conversation && conversation.channel.source;
+  const source = conversation && conversation.channel.source;
 
   const outboundMapper: any = getOutboundMapper(source);
 

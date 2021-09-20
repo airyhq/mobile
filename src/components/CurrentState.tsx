@@ -29,6 +29,8 @@ export const CurrentState = (props: CurrentStateProps) => {
   const currentConversationState = state || 'OPEN';
   const realm = RealmDB.getInstance();
   const {width} = Dimensions.get('window');
+  const marginRightAvatar = width * 0.84;
+  const marginRightIconChannel = width * 0.76;
 
   const avatarUrl = realm.objectForPrimaryKey<Conversation>(
     'Conversation',
@@ -50,12 +52,12 @@ export const CurrentState = (props: CurrentStateProps) => {
               small={true}
               style={{
                 position: 'absolute',
-                right: width * 0.84,
+                right: marginRightAvatar,
                 height: 32,
                 width: 32,
               }}
             />
-            <View style={{marginRight: width * 0.76, marginTop: 20}}>
+            <View style={{marginRight: marginRightIconChannel, marginTop: 20}}>
               <IconChannel
                 source={channel.source}
                 sourceChannelId={channel.sourceChannelId}

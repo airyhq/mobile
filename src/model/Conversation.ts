@@ -48,7 +48,7 @@ export const parseToRealmConversation = (
     createdAt: unformattedConversation.createdAt,
     lastMessage: parseToRealmMessage(
       unformattedConversation.lastMessage,
-      unformattedConversation.channel,
+      unformattedConversation.channel.source,
     ),
     paginationData: {
       loading: null,

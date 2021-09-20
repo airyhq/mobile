@@ -1,7 +1,6 @@
 import React from 'react';
 import {renderProviders} from './renderProviders';
 import {TextComponent} from './components/Text';
-import {UnknownSourceText} from '../components/UnknownSourceText';
 import {RenderPropsUnion} from './props';
 
 type SourceMessageState = {
@@ -34,10 +33,9 @@ export class SourceMessage extends React.Component<
     }
 
     return (
-      <UnknownSourceText
+      <TextComponent
         fromContact={this.props.message.fromContact || false}
         text={message}
-        sourceName={this.props.source}
       />
     );
   }

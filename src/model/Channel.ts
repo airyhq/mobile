@@ -9,9 +9,9 @@ export const ChannelMetadataSchema = {
   name: 'ChannelMetadata',
   properties: {
     name: 'string',
-    imageUrl: 'string?'
-  }
-}
+    imageUrl: 'string?',
+  },
+};
 
 export interface Channel {
   id?: string;
@@ -29,6 +29,17 @@ export const ChannelSchema = {
     metadata: 'ChannelMetadata',
     source: 'string',
     sourceChannelId: 'string',
-    connected: 'bool?'
+    connected: 'bool?',
   },
 };
+
+export enum Source {
+  facebook = 'facebook',
+  instagram = 'instagram',
+  google = 'google',
+  viber = 'viber',
+  chatplugin = 'chatplugin',
+  twilioSms = 'twilio.sms',
+  twilioWhatsapp = 'twilio.whatsapp',
+  unknown = 'unknown',
+}

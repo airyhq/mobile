@@ -180,6 +180,9 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
 };
 
 const {width} = Dimensions.get('window');
+const itemContentWidth = width * 0.8;
+const channelTimeWidth = width * 0.73;
+const sliderWidth = width * 0.2;
 
 const styles = StyleSheet.create({
   clickableListItem: {
@@ -192,7 +195,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     marginBottom: 20,
     paddingLeft: 10,
-    width: width * 0.8,
+    width: itemContentWidth,
   },
   avatar: {
     flexDirection: 'row',
@@ -248,7 +251,7 @@ const styles = StyleSheet.create({
   channelTimeContainer: {
     display: 'flex',
     flexDirection: 'row',
-    width: width * 0.73,
+    width: channelTimeWidth,
     justifyContent: 'space-between',
     paddingBottom: 4,
     borderBottomWidth: 1,
@@ -275,7 +278,7 @@ const styles = StyleSheet.create({
   toggleStateBox: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: width * 0.2,
+    width: sliderWidth,
     height: 92,
     textAlign: 'center',
   },

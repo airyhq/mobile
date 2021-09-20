@@ -39,17 +39,19 @@ export const AttachmentBar = (props: AttachmentBarProps) => {
   );
 };
 const {width} = Dimensions.get('window');
+const attachmentBarExtendedWidth = width * 0.32;
+const attachmentBarCollapsedWidth = width * 0.14;
 
 const styles = StyleSheet.create({
   extendedIcons: {
     flexDirection: 'row',
-    width: width * 0.32,
+    width: attachmentBarExtendedWidth,
     justifyContent: 'space-evenly',
     alignItems: 'center',
     height: 33,
   },
   extendIcon: {
-    width: width * 0.14,
+    width: attachmentBarCollapsedWidth,
     alignItems: 'center',
     justifyContent: 'center',
     height: 33,
