@@ -17,6 +17,8 @@ export const TabBar = () => {
   const Tab = createBottomTabNavigator();
   const Stack = createStackNavigator();
   const {width} = Dimensions.get('window');
+  const marginRightAvatar = width * 0.84;
+  const marginRightIconChannel = width * 0.76;
 
   const TabBarScreens = () => {
     return (
@@ -76,12 +78,13 @@ export const TabBar = () => {
                   small={true}
                   style={{
                     position: 'absolute',
-                    right: width * 0.84,
+                    right: marginRightAvatar,
                     height: 32,
                     width: 32,
                   }}
                 />
-                <View style={{marginRight: width * 0.76, marginTop: 20}}>
+                <View
+                  style={{marginRight: marginRightIconChannel, marginTop: 20}}>
                   <IconChannel
                     metadataName={route.params.metadataName}
                     source={route.params.source}

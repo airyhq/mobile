@@ -1,4 +1,4 @@
-import {Channel} from '.';
+import {Source} from '.';
 import {Content} from './Content';
 import {Suggestions} from './SuggestedReply';
 
@@ -36,7 +36,7 @@ export type MessageData = {
 
 export const parseToRealmMessage = (
   unformattedMessage: any,
-  channel: Channel,
+  source: string,
 ): Message => {
   let message: Message;
 
@@ -51,8 +51,8 @@ export const parseToRealmMessage = (
     messageContent = JSON.stringify(messageContent);
   }
 
-  switch (channel.source) {
-    case 'facebook':
+  switch (source) {
+    case Source.facebook:
       message = {
         id: unformattedMessage.id,
         content: {
@@ -64,7 +64,7 @@ export const parseToRealmMessage = (
         metadata: unformattedMessage.metadata,
       };
       break;
-    case 'google':
+    case Source.google:
       message = {
         id: unformattedMessage.id,
         content: {
@@ -76,7 +76,7 @@ export const parseToRealmMessage = (
         metadata: unformattedMessage.metadata,
       };
       break;
-    case 'chatplugin':
+    case Source.chatplugin:
       message = {
         id: unformattedMessage.id,
         content: {
@@ -88,7 +88,7 @@ export const parseToRealmMessage = (
         metadata: unformattedMessage.metadata,
       };
       break;
-    case 'twilio.sms':
+    case Source.twilioSms:
       message = {
         id: unformattedMessage.id,
         content: {
@@ -100,7 +100,7 @@ export const parseToRealmMessage = (
         metadata: unformattedMessage.metadata,
       };
       break;
-    case 'twilio.whatsapp':
+    case Source.twilioWhatsapp:
       message = {
         id: unformattedMessage.id,
         content: {
@@ -112,7 +112,7 @@ export const parseToRealmMessage = (
         metadata: unformattedMessage.metadata,
       };
       break;
-    case 'instagram':
+    case Source.instagram:
       message = {
         id: unformattedMessage.id,
         content: {
@@ -124,7 +124,7 @@ export const parseToRealmMessage = (
         metadata: unformattedMessage.metadata,
       };
       break;
-    case 'viber':
+    case Source.viber:
       message = {
         id: unformattedMessage.id,
         content: {

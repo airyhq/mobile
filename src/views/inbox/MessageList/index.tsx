@@ -9,7 +9,12 @@ import {
 } from 'react-native';
 import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
-import {parseToRealmMessage, Message, MessageData} from '../../../model';
+import {
+  parseToRealmMessage,
+  Message,
+  MessageData,
+  Conversation,
+} from '../../../model';
 import {MessageComponent} from './MessageComponent';
 import {debounce, sortBy, isEqual} from 'lodash-es';
 import {MessageBar} from '../../../components/MessageBar';
@@ -34,10 +39,8 @@ const MessageList = (props: MessageListProps) => {
   const keyboardVerticalOffset = Platform.OS === 'ios' ? headerHeight : 0;
   const behavior = Platform.OS === 'ios' ? 'padding' : 'height';
   const realm = RealmDB.getInstance();
-  const conversation: any = realm.objectForPrimaryKey(
-    'Conversation',
-    conversationId,
-  );
+  const conversation: Conversation | undefined =
+    realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
 
   const databaseMessages: any = realm.objectForPrimaryKey<MessageData>(
     'MessageData',
@@ -72,7 +75,7 @@ const MessageList = (props: MessageListProps) => {
     oldMessages: Message[],
     newMessages: Message[],
   ): Message[] {
-    newMessages.forEach((message: any) => {
+    newMessages.forEach((message: Message) => {
       if (!oldMessages.some((item: Message) => item.id === message.id)) {
         oldMessages.push(parseToRealmMessage(message, message.source));
       }
@@ -121,7 +124,7 @@ const MessageList = (props: MessageListProps) => {
           });
         }
       })
-      .catch((error: any) => {
+      .catch((error: Error) => {
         console.log('Error: ', error);
       });
   };
@@ -135,10 +138,11 @@ const MessageList = (props: MessageListProps) => {
       cursor: cursor,
     })
       .then((response: any) => {
-        const storedConversationMessages: any = realm.objectForPrimaryKey(
-          'MessageData',
-          conversation.id,
-        );
+        const storedConversationMessages: MessageData | undefined =
+          realm.objectForPrimaryKey<MessageData>(
+            'MessageData',
+            conversation.id,
+          );
 
         if (storedConversationMessages) {
           realm.write(() => {
@@ -170,7 +174,7 @@ const MessageList = (props: MessageListProps) => {
           });
         }
       })
-      .catch((error: any) => {
+      .catch((error: Error) => {
         console.log('Error: ', error);
       });
   };

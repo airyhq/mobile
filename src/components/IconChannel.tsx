@@ -15,7 +15,8 @@ import InstagramIcon from '../assets/images/icons/instagram.svg';
 import InstagramAvatar from '../assets/images/icons/instagram_avatar.svg';
 import ViberAvatar from '../assets/images/icons/viber_avatar.svg';
 import BubbleIcon from '../assets/images/icons/bubble_icon.svg';
-import {colorTextGray} from '../assets/colors';
+import {colorAiryBlue, colorTextGray} from '../assets/colors';
+import {Source} from '../model/Channel';
 
 type IconChannelProps = {
   source: string;
@@ -65,8 +66,8 @@ const SOURCE_INFO: any = {
   },
   unknown: {
     text: 'Unknown Source',
-    icon: () => <BubbleIcon />,
-    avatar: () => <BubbleIcon />,
+    icon: () => <BubbleIcon fill={colorAiryBlue} />,
+    avatar: () => <BubbleIcon fill={colorAiryBlue} />,
   },
 };
 
@@ -79,10 +80,10 @@ const IconChannel: React.FC<IconChannelProps> = ({
   showName,
   text,
 }: IconChannelProps): JSX.Element => {
-  const channelInfo = SOURCE_INFO[source] || SOURCE_INFO['unknown'];
-  const fbFallback = SOURCE_INFO['facebook'];
+  const channelInfo = SOURCE_INFO[source] || SOURCE_INFO[Source.unknown];
+  const fbFallback = SOURCE_INFO[Source.facebook];
   const isFromTwilioSource =
-    source === 'twilio.sms' || source === 'twilio.whatsapp';
+    source === Source.twilioSms || source === Source.twilioWhatsapp;
 
   const ChannelName = () => {
     return (
@@ -147,6 +148,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
 export default IconChannel;
 
 const {width} = Dimensions.get('window');
+const iconChannelTextWidth = width * 0.5;
 
 const styles = StyleSheet.create({
   iconText: {
@@ -178,7 +180,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    width: width * 0.5,
+    width: iconChannelTextWidth,
     marginLeft: 3,
     fontSize: 13,
     color: colorTextGray,

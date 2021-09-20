@@ -3,20 +3,21 @@ import {ChatpluginMapper} from './chatplugin';
 import {GoogleMapper} from './google';
 import {TwilioMapper} from './twilio';
 import {ViberMapper} from './viber';
+import {Source} from '../../model';
 
 export const getOutboundMapper = (source: string) => {
   switch (source) {
-    case 'facebook':
-    case 'instagram':
+    case Source.facebook:
+    case Source.instagram:
       return new FacebookMapper();
-    case 'google':
+    case Source.google:
       return new GoogleMapper();
-    case 'chatplugin':
+    case Source.chatplugin:
       return new ChatpluginMapper();
-    case 'twilio.sms':
-    case 'twilio.whatsapp':
+    case Source.twilioSms:
+    case Source.twilioWhatsapp:
       return new TwilioMapper();
-    case 'viber':
+    case Source.viber:
       return new ViberMapper();
     default: {
       console.error('Unknown source ', source);
