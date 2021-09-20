@@ -7,7 +7,6 @@ import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {getPagination} from '../../../services/Pagination';
 import {parseToRealmConversation} from '../../../model/Conversation';
-import {NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
 import {NavigationStackProp} from 'react-navigation-stack';
 
 type ConversationListProps = {
@@ -108,41 +107,11 @@ export const ConversationList = (props: ConversationListProps) => {
       });
   };
 
-  const debouncedListPreviousConversations = () => {
+  const debouncedListPreviousConversations = debounce(() => {
     if (paginationData && paginationData.nextCursor) {
       getNextConversationList();
     }
-  };
-
-  const isCloseToBottom = (event: NativeScrollEvent) => {
-    const paddingToBottom = 30;
-    return (
-      event.layoutMeasurement &&
-      event.layoutMeasurement.height + event.contentOffset.y >=
-        event.contentSize.height - paddingToBottom
-    );
-  };
-
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const currentOffset = event.nativeEvent.contentOffset.y;
-    const direction = currentOffset > offset ? 'down' : 'up';
-    setOffset(currentOffset);
-
-    if (direction == 'down' && isCloseToBottom(event.nativeEvent)) {
-      fetchConversationScroll();
-    }
-  };
-
-  const fetchConversationScroll = debounce(
-    () => {
-      if (!conversationListRef) {
-        return;
-      }
-      debouncedListPreviousConversations();
-    },
-    200,
-    {leading: true},
-  );
+  }, 2000);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -151,7 +120,7 @@ export const ConversationList = (props: ConversationListProps) => {
       ) : (
         <FlatList
           data={conversations}
-          onScroll={handleScroll}
+          onEndReached={debouncedListPreviousConversations}
           renderItem={({item}) => {
             return (
               <ConversationListItem
