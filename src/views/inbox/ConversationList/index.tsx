@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Dimensions, SafeAreaView, FlatList} from 'react-native';
 import {debounce} from 'lodash-es';
 import {ConversationListItem} from '../ConversationListItem';
@@ -6,7 +6,7 @@ import {NoConversations} from '../NoConversations';
 import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {getPagination} from '../../../services/Pagination';
-import {parseToRealmConversation} from '../../../model/Conversation';
+import {Conversation, parseToRealmConversation} from '../../../model/Conversation';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {MessageData} from '../../../model/Message';
 
@@ -18,9 +18,7 @@ export const ConversationList = (props: ConversationListProps) => {
   const {navigation} = props;
   const realm = RealmDB.getInstance();
   const paginationData = getPagination();
-  const conversationListRef = useRef<any>(null);
   const [conversations, setConversations] = useState<any>([]);
-  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     const databaseConversations = realm
