@@ -6,7 +6,10 @@ import {NoConversations} from '../NoConversations';
 import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {getPagination} from '../../../services/Pagination';
-import {Conversation, parseToRealmConversation} from '../../../model/Conversation';
+import {
+  Conversation,
+  parseToRealmConversation,
+} from '../../../model/Conversation';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {MessageData} from '../../../model/Message';
 
