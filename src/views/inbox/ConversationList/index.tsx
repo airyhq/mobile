@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Dimensions, SafeAreaView, FlatList} from 'react-native';
 import {debounce} from 'lodash-es';
 import {ConversationListItem} from '../ConversationListItem';
@@ -10,7 +10,6 @@ import {
   Conversation,
   parseToRealmConversation,
 } from '../../../model/Conversation';
-import {NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {MessageData} from '../../../model/Message';
 
@@ -22,9 +21,7 @@ export const ConversationList = (props: ConversationListProps) => {
   const {navigation} = props;
   const realm = RealmDB.getInstance();
   const paginationData = getPagination();
-  const conversationListRef = useRef<any>(null);
   const [conversations, setConversations] = useState<any>([]);
-  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     const databaseConversations = realm
@@ -108,39 +105,11 @@ export const ConversationList = (props: ConversationListProps) => {
       });
   };
 
-  const debouncedListPreviousConversations = () => {
-    getNextConversationList();
-  };
-
-  const isCloseToBottom = (event: NativeScrollEvent) => {
-    const paddingToBottom = 30;
-    return (
-      event.layoutMeasurement &&
-      event.layoutMeasurement.height + event.contentOffset.y >=
-        event.contentSize.height - paddingToBottom
-    );
-  };
-
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const currentOffset = event.nativeEvent.contentOffset.y;
-    const direction = currentOffset > offset ? 'down' : 'up';
-    setOffset(currentOffset);
-
-    if (direction == 'down' && isCloseToBottom(event.nativeEvent)) {
-      fetchConversationScroll();
+  const debouncedListPreviousConversations = debounce(() => {
+    if (paginationData && paginationData.nextCursor) {
+      getNextConversationList();
     }
-  };
-
-  const fetchConversationScroll = debounce(
-    () => {
-      if (!conversationListRef) {
-        return;
-      }
-      debouncedListPreviousConversations();
-    },
-    200,
-    {leading: true},
-  );
+  }, 2000);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -149,7 +118,7 @@ export const ConversationList = (props: ConversationListProps) => {
       ) : (
         <FlatList
           data={conversations}
-          onScroll={handleScroll}
+          onEndReached={debouncedListPreviousConversations}
           renderItem={({item}) => {
             return (
               <ConversationListItem
