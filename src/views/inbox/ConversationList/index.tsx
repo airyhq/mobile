@@ -6,9 +6,13 @@ import {NoConversations} from '../NoConversations';
 import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {getPagination} from '../../../services/Pagination';
-import {parseToRealmConversation} from '../../../model/Conversation';
+import {
+  Conversation,
+  parseToRealmConversation,
+} from '../../../model/Conversation';
 import {NativeScrollEvent, NativeSyntheticEvent} from 'react-native';
 import {NavigationStackProp} from 'react-navigation-stack';
+import {MessageData} from '../../../model/Message';
 
 type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
@@ -29,7 +33,7 @@ export const ConversationList = (props: ConversationListProps) => {
 
     databaseConversations.addListener(() => {
       setConversations([...databaseConversations]);
-    });    
+    });
 
     getConversationsList();
 
@@ -40,15 +44,28 @@ export const ConversationList = (props: ConversationListProps) => {
 
   const getConversationsList = () => {
     HttpClientInstance.listConversations({page_size: 50})
-      .then((response: any) => {  
+      .then((response: any) => {
         realm.write(() => {
           realm.create('Pagination', response.paginationData);
 
           for (const conversation of response.data) {
+            const isStored: Conversation | undefined =
+              realm.objectForPrimaryKey('Conversation', conversation.id);
+
+            const isStoredMessageData: MessageData | undefined =
+              realm.objectForPrimaryKey('MessageData', conversation.id);
+
+            if (isStored) {
+              realm.delete(isStored);
+            }
+
             realm.create(
               'Conversation',
               parseToRealmConversation(conversation),
             );
+            if (!isStoredMessageData) {
+              realm.create('MessageData', {id: conversation.id, messages: []});
+            }
           }
         });
       })

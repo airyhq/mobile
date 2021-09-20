@@ -1,22 +1,18 @@
 import React from 'react';
-import {Contact} from '../model/Contact';
-import {Image, StyleSheet} from 'react-native';
+import {Image, ImageStyle, StyleProp, StyleSheet} from 'react-native';
 
 type AvatarProps = {
-  contact: Contact;
+  avatarUrl: string;
+  small?: boolean;
+  style?: StyleProp<ImageStyle>;
 };
-
 const fallbackAvatar = 'https://s3.amazonaws.com/assets.airy.co/unknown.png';
 
-export const Avatar = ({contact}: AvatarProps) => {
+export const Avatar = ({avatarUrl, small, style}: AvatarProps) => {
   return (
     <Image
-      style={styles.avatarImage}
-      source={
-        contact.avatarUrl
-          ? {uri: `${contact.avatarUrl}`}
-          : {uri: `${fallbackAvatar}`}
-      }
+      style={[small ? styles.avatarImageSmall : styles.avatarImage, style]}
+      source={avatarUrl ? {uri: `${avatarUrl}`} : {uri: `${fallbackAvatar}`}}
     />
   );
 };
@@ -26,6 +22,12 @@ const styles = StyleSheet.create({
     display: 'flex',
     height: 60,
     width: 60,
+    borderRadius: 50,
+  },
+  avatarImageSmall: {
+    display: 'flex',
+    height: 40,
+    width: 40,
     borderRadius: 50,
   },
 });

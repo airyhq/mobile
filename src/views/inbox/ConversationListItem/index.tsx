@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef} from 'react';
 import {
   View,
   StyleSheet,
@@ -11,7 +11,6 @@ import {
 import {Conversation} from '../../../model/Conversation';
 import IconChannel from '../../../components/IconChannel';
 import {formatTimeOfMessage} from '../../../services/format/date';
-import Checkmark from '../../../assets/images/icons/checkmark-circle.svg';
 import RightArrow from '../../../assets/images/icons/rightArrow.svg';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {Avatar} from '../../../components/Avatar';
@@ -27,6 +26,7 @@ import {
   colorTextGray,
 } from '../../../assets/colors';
 import {NavigationStackProp} from 'react-navigation-stack';
+import {CurrentState} from '../../../components/CurrentState';
 
 type ConversationListItemProps = {
   conversation: Conversation;
@@ -40,7 +40,6 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
   const currentConversationState = conversation.metadata.state || 'OPEN';
   const realm = RealmDB.getInstance();
   const swipeableRef = useRef<Swipeable | null>(null);
-  const [conversations, setConversations] = useState<any>([]);
 
   const LeftSwipe = (dragX: Animated.AnimatedInterpolation) => {
     const scale = dragX.interpolate({
@@ -58,7 +57,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
           <Animated.Text
             style={{
               transform: [{translateX: scale}],
-              color: `${colorLightGray}`,
+              color: colorLightGray,
               textAlign: 'center',
             }}>
             {currentConversationState === 'OPEN'
@@ -86,20 +85,8 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
         });
       })
       .catch((error: Error) => {
-        console.error(error);
+        console.log('Error: ', error);
       });
-  };
-
-  const OpenStateButton = () => {
-    return <View style={styles.openStateButton} />;
-  };
-
-  const ClosedStateButton = () => {
-    return (
-      <View style={styles.closedStateButton}>
-        <Checkmark height={24} width={24} fill={`${colorSoftGreen}`} />
-      </View>
-    );
   };
 
   const markAsRead = () => {
@@ -111,8 +98,13 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
   const onSelectItem = () => {
     markAsRead();
     navigation.push('MessageList', {
-      displayName: conversation.metadata.contact.displayName,
       conversationId: conversation.id,
+      avatarUrl: conversation.metadata.contact.avatarUrl,
+      displayName: conversation.metadata.contact.displayName,
+      state: conversation.metadata.state,
+      source: conversation.channel.source,
+      sourceChannelId: conversation.channel.sourceChannelId,
+      metadataName: conversation.channel.metadata.name,
     });
   };
 
@@ -137,26 +129,38 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
             ) : (
               <View style={styles.readMessageIndicator} />
             )}
-            <Avatar contact={participant} />
+            <Avatar avatarUrl={participant.avatarUrl} />
           </View>
           <View style={styles.contentContainer}>
             <View style={styles.nameStatus}>
-              <Text style={unread ? styles.unreadName : styles.name}>
+              <Text
+                numberOfLines={1}
+                style={[
+                  {width: '80%'},
+                  unread ? styles.unreadName : styles.name,
+                ]}>
                 {participant && participant.displayName}
               </Text>
-              {currentConversationState === 'OPEN' ? (
-                <OpenStateButton />
-              ) : (
-                <ClosedStateButton />
-              )}
+              <CurrentState
+                conversationId={conversation.id}
+                state={conversation.metadata.state || 'OPEN'}
+                pressable={false}
+              />
             </View>
-            <Text style={unread ? styles.unreadMessage : styles.message}>
+            <Text
+              numberOfLines={1}
+              style={[
+                {width: '85%', height: 38},
+                unread ? styles.unreadMessage : styles.message,
+              ]}>
               <SourceMessagePreview conversation={conversation} />
             </Text>
             <View style={styles.channelTimeContainer}>
               <View style={styles.iconChannel}>
                 <IconChannel
-                  channel={conversation.channel}
+                  metadataName={conversation.channel.metadata.name}
+                  source={conversation.channel.source}
+                  sourceChannelId={conversation.channel.sourceChannelId}
                   showAvatar
                   showName
                 />
@@ -176,6 +180,9 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
 };
 
 const {width} = Dimensions.get('window');
+const itemContentWidth = width * 0.8;
+const channelTimeWidth = width * 0.73;
+const sliderWidth = width * 0.2;
 
 const styles = StyleSheet.create({
   clickableListItem: {
@@ -188,7 +195,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     marginBottom: 20,
     paddingLeft: 10,
-    width: width * 0.8,
+    width: itemContentWidth,
   },
   avatar: {
     flexDirection: 'row',
@@ -200,19 +207,19 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: '400',
-    color: `${colorTextContrast}`,
+    color: colorTextContrast,
     paddingTop: 10,
     fontFamily: 'Lato',
   },
   unreadName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: `${colorAiryBlue}`,
+    color: colorAiryBlue,
     paddingTop: 10,
     fontFamily: 'Lato',
   },
   message: {
-    color: `${colorTextGray}`,
+    color: colorTextGray,
     fontSize: 15,
     fontWeight: '400',
     paddingTop: 10,
@@ -220,7 +227,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato',
   },
   unreadMessage: {
-    color: `${colorTextContrast}`,
+    color: colorTextContrast,
     fontSize: 15,
     fontWeight: 'bold',
     paddingTop: 10,
@@ -229,7 +236,7 @@ const styles = StyleSheet.create({
   },
   channel: {
     fontSize: 13,
-    color: `${colorTextGray}`,
+    color: colorTextGray,
     alignSelf: 'center',
     marginLeft: 4,
     fontFamily: 'Lato',
@@ -244,11 +251,11 @@ const styles = StyleSheet.create({
   channelTimeContainer: {
     display: 'flex',
     flexDirection: 'row',
-    width: width * 0.73,
+    width: channelTimeWidth,
     justifyContent: 'space-between',
     paddingBottom: 4,
     borderBottomWidth: 1,
-    borderColor: `${colorLightGray}`,
+    borderColor: colorLightGray,
     alignItems: 'center',
   },
   iconChannel: {
@@ -268,33 +275,18 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
   },
-  openStateButton: {
-    borderWidth: 2,
-    borderColor: `${colorStateRed}`,
-    height: 20,
-    width: 20,
-    borderRadius: 50,
-    marginRight: 10,
-  },
-  closedStateButton: {
-    height: 24,
-    width: 24,
-    borderRadius: 50,
-    marginRight: 8,
-    paddingTop: 2,
-  },
   toggleStateBox: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: width * 0.2,
+    width: sliderWidth,
     height: 92,
     textAlign: 'center',
   },
   open: {
-    backgroundColor: `${colorStateRed}`,
+    backgroundColor: colorStateRed,
   },
   closed: {
-    backgroundColor: `${colorSoftGreen}`,
+    backgroundColor: colorSoftGreen,
   },
   unreadMessageIndicator: {
     height: 8,

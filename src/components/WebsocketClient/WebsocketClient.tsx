@@ -22,7 +22,7 @@ type CallbackMap = {
 };
 
 const realm = RealmDB.getInstance()
-const accessToken: string = realm.objects<UserInfo>('UserInfo')[0].accessToken;
+const accessToken: string = realm.objects<UserInfo>('UserInfo')[0]?.accessToken;
 
 export class WebSocketClient {
   public readonly apiUrlConfig?: string;
@@ -54,31 +54,19 @@ export class WebSocketClient {
   onEvent = (body: string) => {
     const json = JSON.parse(body) as EventPayload;
     switch (json.type) {
-      case 'channel':
-        this.callbackMap.onChannel?.(
-          camelcaseKeys(json.payload, {
-            deep: true,
-            stopPaths: ['metadata.user_data'],
-          }),
-        );
+      case 'channel.updated':
+        this.callbackMap.onChannel?.(camelcaseKeys(json.payload, {deep: true, stopPaths: ['metadata.user_data']}));
         break;
-      case 'message':
-        this.callbackMap.onMessage?.(
-          json.payload.conversation_id,
-          json.payload.channel_id,
-          {
-            ...camelcaseKeys(json.payload.message, {
-              deep: true,
-              stopPaths: ['content'],
-            }),
-            sentAt: new Date(json.payload.message.sent_at),
-          },
-        );
+      case 'message.created':
+        this.callbackMap.onMessage?.(json.payload.conversation_id, json.payload.channel_id, {
+          ...camelcaseKeys(json.payload.message, {deep: true, stopPaths: ['content']}),
+          sentAt: new Date(json.payload.message.sent_at),
+        });
         break;
-      case 'metadata':
+      case 'metadata.updated':
         this.callbackMap.onMetadata?.(json.payload);
         break;
-      case 'tag':
+      case 'tag.updated':
         this.callbackMap.onTag?.(json.payload);
         break;
       default:

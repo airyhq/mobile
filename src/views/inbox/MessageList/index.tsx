@@ -1,44 +1,238 @@
-import React from 'react';
-import {useEffect} from 'react';
-import {Dimensions} from 'react-native';
-import {StyleSheet, SafeAreaView} from 'react-native';
+import React, {useEffect, useState, useRef} from 'react';
+import {
+  StyleSheet,
+  SafeAreaView,
+  FlatList,
+  View,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
+import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
+import {
+  parseToRealmMessage,
+  Message,
+  MessageData,
+  Conversation,
+} from '../../../model';
+import {MessageComponent} from './MessageComponent';
+import {debounce, sortBy, isEqual} from 'lodash-es';
+import {MessageBar} from '../../../components/MessageBar';
+import {useHeaderHeight} from '@react-navigation/stack';
+
+interface RouteProps {
+  key: string;
+  name: string;
+  params: {conversationId: string};
+}
 
 type MessageListProps = {
-  route: any;
-};
-
-const listMessages = (
-  conversationId: string,
-  cursor?: string,
-  page_size?: string,
-) => {
-  HttpClientInstance.listMessages({conversationId})
-    .then((response: any) => {})
-    .catch((error: Error) => {
-      console.log('Error: ', error);
-    });
+  route: RouteProps;
 };
 
 const MessageList = (props: MessageListProps) => {
   const {route} = props;
-  const conversationId = route.params.conversationId;
+  const conversationId: string = route.params.conversationId;
+  const [messages, setMessages] = useState<Message[] | []>([]);
+  const messageListRef = useRef<FlatList>(null);
+  const headerHeight = useHeaderHeight();
+  const keyboardVerticalOffset = Platform.OS === 'ios' ? headerHeight : 0;
+  const behavior = Platform.OS === 'ios' ? 'padding' : 'height';
+  const realm = RealmDB.getInstance();
+  const conversation: Conversation | undefined =
+    realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
+
+  const databaseMessages: any = realm.objectForPrimaryKey<MessageData>(
+    'MessageData',
+    conversationId,
+  );
+
+  const {
+    metadata: {contact},
+    channel: {source},
+    paginationData,
+  } = conversation;
+
+  if (!conversation) {
+    return null;
+  }
 
   useEffect(() => {
-    listMessages(conversationId);
+    listMessages();
+
+    if (databaseMessages) {
+      databaseMessages.addListener(() => {
+        setMessages([...databaseMessages.messages]);
+      });
+    }
+
+    return () => {
+      databaseMessages.removeAllListeners();
+    };
   }, []);
 
-  return <SafeAreaView style={styles.container}></SafeAreaView>;
+  function mergeMessages(
+    oldMessages: Message[],
+    newMessages: Message[],
+  ): Message[] {
+    newMessages.forEach((message: Message) => {
+      if (!oldMessages.some((item: Message) => item.id === message.id)) {
+        oldMessages.push(parseToRealmMessage(message, message.source));
+      }
+    });
+
+    return sortBy(oldMessages, message => message.sentAt);
+  }
+
+  const hasPreviousMessages = () =>
+    !!(paginationData && paginationData.nextCursor);
+
+  const debouncedListPreviousMessages = debounce(() => {
+    if (hasPreviousMessages()) {
+      listPreviousMessages();
+    }
+  }, 2000);
+
+  const listMessages = () => {
+    HttpClientInstance.listMessages({conversationId, pageSize: 50})
+      .then((response: any) => {
+        if (databaseMessages) {
+          realm.write(() => {
+            databaseMessages.messages = [
+              ...mergeMessages(databaseMessages.messages, [...response.data]),
+            ];
+          });
+        } else {
+          realm.write(() => {
+            realm.create('MessageData', {
+              id: conversationId,
+              messages: mergeMessages([], [...response.data]),
+            });
+          });
+        }
+
+        if (response.paginationData) {
+          realm.write(() => {
+            conversation.paginationData.loading =
+              response.paginationData?.loading ?? null;
+            conversation.paginationData.nextCursor =
+              response.paginationData?.nextCursor ?? null;
+            conversation.paginationData.previousCursor =
+              response.paginationData?.previousCursor ?? null;
+            conversation.paginationData.total =
+              response.paginationData?.total ?? null;
+          });
+        }
+      })
+      .catch((error: Error) => {
+        console.log('Error: ', error);
+      });
+  };
+
+  const listPreviousMessages = () => {
+    const cursor = paginationData && paginationData.nextCursor;
+
+    HttpClientInstance.listMessages({
+      conversationId,
+      pageSize: 50,
+      cursor: cursor,
+    })
+      .then((response: any) => {
+        const storedConversationMessages: MessageData | undefined =
+          realm.objectForPrimaryKey<MessageData>(
+            'MessageData',
+            conversation.id,
+          );
+
+        if (storedConversationMessages) {
+          realm.write(() => {
+            storedConversationMessages.messages = [
+              ...mergeMessages(storedConversationMessages.messages, [
+                ...response.data,
+              ]),
+            ];
+          });
+        } else {
+          realm.write(() => {
+            realm.create('MessageData', {
+              id: conversationId,
+              messages: mergeMessages([], [...response.data]),
+            });
+          });
+        }
+
+        if (response.paginationData) {
+          realm.write(() => {
+            conversation.paginationData.loading =
+              response.paginationData?.loading ?? null;
+            conversation.paginationData.nextCursor =
+              response.paginationData?.nextCursor ?? null;
+            conversation.paginationData.previousCursor =
+              response.paginationData?.previousCursor ?? null;
+            conversation.paginationData.total =
+              response.paginationData?.total ?? null;
+          });
+        }
+      })
+      .catch((error: Error) => {
+        console.log('Error: ', error);
+      });
+  };
+
+  return (
+    <SafeAreaView style={{backgroundColor: 'white'}}>
+      <KeyboardAvoidingView
+        behavior={behavior}
+        keyboardVerticalOffset={keyboardVerticalOffset}>
+        <View style={styles.container}>
+          <FlatList
+            style={styles.flatlist}
+            data={messages.reverse()}
+            inverted={true}
+            ref={messageListRef}
+            onEndReached={debouncedListPreviousMessages}
+            initialNumToRender={25}
+            renderItem={({item, index}) => {
+              return (
+                <MessageComponent
+                  key={item.id}
+                  message={item}
+                  messages={messages}
+                  source={source}
+                  contact={contact}
+                  index={index}
+                />
+              );
+            }}
+          />
+          <View style={styles.messageBar}>
+            <MessageBar conversationId={route.params.conversationId} />
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
 };
-
-export default MessageList;
-
-const {width, height} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
-    width: width,
-    height: height,
+    height: '100%',
+    justifyContent: 'flex-end',
     backgroundColor: 'white',
   },
+  flatlist: {
+    backgroundColor: 'white',
+  },
+  messageBar: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'white',
+    marginBottom: 5,
+    marginTop: 10,
+  },
 });
+
+const arePropsEqual = (prevProps: any, nextProps: any) => {
+  return isEqual(prevProps, nextProps);
+};
+
+export default React.memo(MessageList, arePropsEqual);

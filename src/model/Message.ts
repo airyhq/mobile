@@ -1,4 +1,4 @@
-import {Channel} from '.';
+import {Source} from '.';
 import {Content} from './Content';
 import {Suggestions} from './SuggestedReply';
 
@@ -26,21 +26,37 @@ export interface Message {
   fromContact: boolean;
   sentAt: Date;
   metadata?: MessageMetadata;
-  source?: string
+  source?: string;
 }
+
+export type MessageData = {
+  id: string;
+  messages: Message[];
+};
 
 export const parseToRealmMessage = (
   unformattedMessage: any,
-  channel: Channel,
+  source: string,
 ): Message => {
   let message: Message;
 
-  switch (channel.source) {
-    case 'facebook':
+  let messageContent =
+    unformattedMessage.content?.Body ??
+    unformattedMessage.content?.text ??
+    unformattedMessage.content?.message?.text ??
+    unformattedMessage.content?.postback?.title ??
+    unformattedMessage.content;
+
+  if (typeof messageContent === 'object') {
+    messageContent = JSON.stringify(messageContent);
+  }
+
+  switch (source) {
+    case Source.facebook:
       message = {
         id: unformattedMessage.id,
         content: {
-          text: unformattedMessage.content.message.text,
+          text: messageContent,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
@@ -48,11 +64,11 @@ export const parseToRealmMessage = (
         metadata: unformattedMessage.metadata,
       };
       break;
-    case 'google':
+    case Source.google:
       message = {
         id: unformattedMessage.id,
         content: {
-          text: unformattedMessage.content.message.text,
+          text: messageContent,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
@@ -60,11 +76,11 @@ export const parseToRealmMessage = (
         metadata: unformattedMessage.metadata,
       };
       break;
-    case 'chatplugin':
+    case Source.chatplugin:
       message = {
         id: unformattedMessage.id,
         content: {
-          text: unformattedMessage.content.text,
+          text: messageContent,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
@@ -72,11 +88,11 @@ export const parseToRealmMessage = (
         metadata: unformattedMessage.metadata,
       };
       break;
-    case 'twilio.sms':
+    case Source.twilioSms:
       message = {
         id: unformattedMessage.id,
         content: {
-          text: unformattedMessage.content,
+          text: messageContent,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
@@ -84,11 +100,11 @@ export const parseToRealmMessage = (
         metadata: unformattedMessage.metadata,
       };
       break;
-    case 'twilio.whatsapp':
+    case Source.twilioWhatsapp:
       message = {
         id: unformattedMessage.id,
         content: {
-          text: unformattedMessage.content,
+          text: messageContent,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
@@ -96,11 +112,23 @@ export const parseToRealmMessage = (
         metadata: unformattedMessage.metadata,
       };
       break;
-    case 'instagram':
+    case Source.instagram:
       message = {
         id: unformattedMessage.id,
         content: {
-          text: unformattedMessage.content.postback.title,
+          text: messageContent,
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+      break;
+    case Source.viber:
+      message = {
+        id: unformattedMessage.id,
+        content: {
+          text: messageContent,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
@@ -112,7 +140,7 @@ export const parseToRealmMessage = (
       message = {
         id: unformattedMessage.id,
         content: {
-          text: unformattedMessage.content.message.text,
+          text: messageContent,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
@@ -133,6 +161,15 @@ export const MessageSchema = {
     fromContact: 'bool',
     sentAt: 'date',
     metadata: 'MessageMetadata?',
+  },
+};
+
+export const MessageDataSchema = {
+  name: 'MessageData',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    messages: {type: 'list', objectType: 'Message'},
   },
 };
 

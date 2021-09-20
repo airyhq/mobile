@@ -11,7 +11,7 @@ type QueueMappingType = {[destination: string]: (message: IMessage) => void};
 type ErrorCallback = () => void;
 
 const realm = RealmDB.getInstance();
-const accessToken: string = realm.objects<UserInfo>('UserInfo')[0].accessToken;
+const accessToken: string = realm.objects<UserInfo>('UserInfo')[0]?.accessToken;
 export class StompWrapper {
   stompClient?: Client;
   onError: ErrorCallback;

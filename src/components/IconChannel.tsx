@@ -1,8 +1,6 @@
 /* eslint-disable react/display-name */
 import React from 'react';
-import {Channel} from '../model/Channel';
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
-
 import FacebookIcon from '../assets/images/icons/facebook_rounded.svg';
 import MessengerAvatar from '../assets/images/icons/messenger_avatar.svg';
 import GoogleIcon from '../assets/images/icons/google-messages.svg';
@@ -15,24 +13,19 @@ import AiryIcon from '../assets/images/icons/airy-icon.svg';
 import AiryAvatar from '../assets/images/icons/airy_avatar.svg';
 import InstagramIcon from '../assets/images/icons/instagram.svg';
 import InstagramAvatar from '../assets/images/icons/instagram_avatar.svg';
-import {colorTextGray} from '../assets/colors';
+import ViberAvatar from '../assets/images/icons/viber_avatar.svg';
+import BubbleIcon from '../assets/images/icons/bubble_icon.svg';
+import {colorAiryBlue, colorTextGray} from '../assets/colors';
+import {Source} from '../model/Channel';
 
 type IconChannelProps = {
-  channel: Channel;
+  source: string;
+  sourceChannelId: string;
   icon?: boolean;
   showAvatar?: boolean;
   showName?: boolean;
   text?: boolean;
-};
-
-const PlaceholderChannelData: Channel = {
-  id: 'id',
-  source: 'facebook',
-  metadata: {
-    name: 'Retrieving Data...',
-  },
-  sourceChannelId: 'external_channel_id',
-  connected: true,
+  metadataName: string;
 };
 
 const SOURCE_INFO: any = {
@@ -61,34 +54,41 @@ const SOURCE_INFO: any = {
     icon: () => <WhatsappIcon />,
     avatar: () => <WhatsappAvatar />,
   },
+  viber: {
+    text: 'Viber Account',
+    icon: () => <ViberAvatar fill="#564E8E" />,
+    avatar: () => <ViberAvatar fill="#564E8E" />,
+  },
   chatplugin: {
     text: 'Airy Live Chat plugin',
     icon: () => <AiryIcon />,
     avatar: () => <AiryAvatar />,
   },
+  unknown: {
+    text: 'Unknown Source',
+    icon: () => <BubbleIcon fill={colorAiryBlue} />,
+    avatar: () => <BubbleIcon fill={colorAiryBlue} />,
+  },
 };
 
 const IconChannel: React.FC<IconChannelProps> = ({
-  channel,
+  source,
+  metadataName,
+  sourceChannelId,
   icon,
   showAvatar,
   showName,
   text,
 }: IconChannelProps): JSX.Element => {
-  if (!channel) {
-    channel = PlaceholderChannelData;
-  }
-
-  const channelInfo = SOURCE_INFO[channel.source];
-  const fbFallback = SOURCE_INFO['facebook'];
+  const channelInfo = SOURCE_INFO[source] || SOURCE_INFO[Source.unknown];
+  const fbFallback = SOURCE_INFO[Source.facebook];
   const isFromTwilioSource =
-    channel.source === 'twilio.sms' || channel.source === 'twilio.whatsapp';
+    source === Source.twilioSms || source === Source.twilioWhatsapp;
 
   const ChannelName = () => {
     return (
       <Text style={styles.text} numberOfLines={1}>
-        {channel.metadata?.name ||
-          (isFromTwilioSource ? channel.sourceChannelId : channel.source)}
+        {metadataName || (isFromTwilioSource ? sourceChannelId : source)}
       </Text>
     );
   };
@@ -148,6 +148,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
 export default IconChannel;
 
 const {width} = Dimensions.get('window');
+const iconChannelTextWidth = width * 0.5;
 
 const styles = StyleSheet.create({
   iconText: {
@@ -179,10 +180,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    width: width * 0.5,
+    width: iconChannelTextWidth,
     marginLeft: 3,
     fontSize: 13,
-    color: `${colorTextGray}`,
+    color: colorTextGray,
     fontFamily: 'Lato',
   },
   icon: {

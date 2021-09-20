@@ -3,11 +3,11 @@ import {DeliveryState} from '../../model/Message';
 import {Tag} from '../../model/Tag';
 
 interface Event {
-  type: 'message' | 'channel' | 'metadata' | 'tag';
+  type: 'message.created' | 'channel.updated' | 'metadata.updated' | 'tag.updated';
 }
 
-export interface MessageEventPayload extends Event {
-  type: 'message';
+export interface MessageCreatedPayload extends Event {
+  type: 'message.created';
   payload: {
     conversation_id: string;
     channel_id: string;
@@ -21,8 +21,8 @@ export interface MessageEventPayload extends Event {
   };
 }
 
-export interface ChannelEventPayload extends Event {
-  type: 'channel';
+export interface ChannelUpdatedPayload extends Event {
+  type: 'channel.updated';
   payload: {
     id: string;
     metadata?: Metadata & {
@@ -35,14 +35,14 @@ export interface ChannelEventPayload extends Event {
   };
 }
 
-export interface MetadataEventPayload extends Event {
-  type: 'metadata';
+export interface MetadataUpdatedPayload extends Event {
+  type: 'metadata.updated';
   payload: MetadataEvent;
 }
 
-export interface TagEventPayload extends Event {
-  type: 'tag';
+export interface TagUpdatedPayload extends Event {
+  type: 'tag.updated';
   payload: Tag;
 }
 
-export type EventPayload = MessageEventPayload | ChannelEventPayload | MetadataEventPayload | TagEventPayload;
+export type EventPayload = MessageCreatedPayload | ChannelUpdatedPayload | MetadataUpdatedPayload | TagUpdatedPayload;
