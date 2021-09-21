@@ -11,17 +11,20 @@ export const MessageBar = (props: MessageBarProps) => {
   const {conversationId} = props;
   const [extended, setExtended] = useState<boolean>();
 
-  const extend = (extended: boolean) => {
-    setExtended(extended);
+  const extendInputBar = (isExtended: boolean) => {
+    setExtended(isExtended);
   };
 
   return (
     <View style={styles.contentBar}>
-      <AttachmentBar extended={!extended} setExtended={extend} />
+      <AttachmentBar
+        extended={!extended}
+        setExtended={() => extendInputBar(extended)}
+      />
       <InputBar
         conversationId={conversationId}
         extended={!!extended}
-        setExtended={extend}
+        setExtended={setExtended}
       />
     </View>
   );

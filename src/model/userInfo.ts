@@ -1,5 +1,5 @@
-import {Results} from 'realm';
-import {RealmDB} from '../storage/realm';
+// import {Results} from 'realm';
+// import {RealmDB} from '../storage/realm';
 
 export const UserInfoSchema = {
   name: 'UserInfo',
