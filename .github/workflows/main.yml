@@ -8,7 +8,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v1
         with:
           node-version: '14'
 
@@ -29,15 +29,7 @@ jobs:
         working-directory: ios
 
       - name: Build IOS
-        run: "xcodebuild \
-        -workspace ios/mobile.xcworkspace \
-        -scheme mobile \
-        clean archive \
-        -sdk iphoneos \
-        -configuration Debug \
-        -UseModernBuildSystem=NO \
-        -archivePath $PWD/mobile \
-        CODE_SIGNING_ALLOWED=NO"
+        run: yarn run react-native run-ios
 
       - name: Build Android
         run: cd android && chmod +x gradlew && ./gradlew assembleRelease
