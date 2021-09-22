@@ -1,4 +1,4 @@
-import {Source} from '.';
+import {Source} from './Channel';
 import {Content} from './Content';
 import {Suggestions} from './SuggestedReply';
 
