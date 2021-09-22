@@ -1,10 +1,5 @@
-import {
-  Client,
-  IFrame,
-  IMessage,
-  StompSubscription,
-} from '@stomp/stompjs';
-import { UserInfo } from '../../model/userInfo';
+import {Client, IFrame, IMessage, StompSubscription} from '@stomp/stompjs';
+import {UserInfo} from '../../model/userInfo';
 import {RealmDB} from '../../storage/realm';
 
 type QueueMappingType = {[destination: string]: (message: IMessage) => void};
@@ -69,7 +64,7 @@ export class StompWrapper {
   };
 
   onWSError = (error: IFrame) => {
-    return error
+    return error;
   };
 
   refreshSocket = () => {

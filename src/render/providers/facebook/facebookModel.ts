@@ -52,7 +52,14 @@ export interface ButtonAttachment extends Attachment {
   payload: {
     text: string;
     template_type: 'button';
-    buttons: (URLButton | PostbackButton | CallButton | LoginButton | LogoutButton | GamePlayButton)[];
+    buttons: (
+      | URLButton
+      | PostbackButton
+      | CallButton
+      | LoginButton
+      | LogoutButton
+      | GamePlayButton
+    )[];
   };
 }
 export interface GenericAttachment extends Attachment {
@@ -69,7 +76,14 @@ export interface MediaTemplate extends Content {
   media_type: 'video' | 'image';
   url?: string;
   attachment_id?: string;
-  buttons: (URLButton | PostbackButton | CallButton | LoginButton | LogoutButton | GamePlayButton)[];
+  buttons: (
+    | URLButton
+    | PostbackButton
+    | CallButton
+    | LoginButton
+    | LogoutButton
+    | GamePlayButton
+  )[];
 }
 
 export interface MediaAttachment extends Attachment {
@@ -88,7 +102,14 @@ export interface Element {
     type: string;
     url?: string;
   };
-  buttons: (URLButton | PostbackButton | CallButton | LoginButton | LogoutButton | GamePlayButton)[];
+  buttons: (
+    | URLButton
+    | PostbackButton
+    | CallButton
+    | LoginButton
+    | LogoutButton
+    | GamePlayButton
+  )[];
 }
 
 export interface Content {
@@ -132,7 +153,14 @@ export interface QuickRepliesContent extends Content {
 export interface ButtonTemplate extends Content {
   type: 'buttonTemplate';
   text: string;
-  buttons: (URLButton | PostbackButton | CallButton | LoginButton | LogoutButton | GamePlayButton)[];
+  buttons: (
+    | URLButton
+    | PostbackButton
+    | CallButton
+    | LoginButton
+    | LogoutButton
+    | GamePlayButton
+  )[];
 }
 
 export interface GenericTemplate extends Content {

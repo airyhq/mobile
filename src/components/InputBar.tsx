@@ -48,7 +48,9 @@ export const InputBar = (props: InputBarProps) => {
   const outboundMapper: any = getOutboundMapper(source);
 
   const sendMessage = (message: string) => {
-    if (message.length === 0) return;
+    if (message.length === 0) {
+      return;
+    }
 
     HttpClientInstance.sendMessages({
       conversationId: conversation.id,

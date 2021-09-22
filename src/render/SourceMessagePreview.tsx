@@ -6,7 +6,9 @@ interface SourceMessagePreviewProps {
 }
 
 const isImageFromGoogleSource = (messageText: string | undefined) => {
-  if (!messageText) return false;
+  if (!messageText) {
+    return false;
+  }
 
   return (
     messageText.includes('https://storage.googleapis.com') &&
