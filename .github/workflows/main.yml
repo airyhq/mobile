@@ -9,14 +9,22 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+     - name: Use Node.js v14
+      uses: actions/setup-node@v1
+      with:
+        node-version: 14.x
+
       - name: Install
         run: yarn install
 
       - name: Lint
         run: yarn run eslint . --ext .js,.jsx,.ts,.tsx
 
+      - name: IOS pod install
+        run: cd ios && pod install 
+
       - name: Build IOS
-        run: yarn run react-native run-ios
+        run: yarn run react-native run-ios --simulator="iPhone 12"
 
       - name: Build Android
-        run: react-native run-android
+        run: cd android && chmod +x gradlew && ./gradlew assembleRelease
