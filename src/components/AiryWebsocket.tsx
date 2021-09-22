@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useEffect, useCallback} from 'react';
 import {HttpClientInstance} from '../InitializeAiryApi';
 import {Metadata} from '../model/Metadata';
 import {Conversation, parseToRealmConversation} from '../model/Conversation';
@@ -16,10 +16,10 @@ const realm = RealmDB.getInstance();
 
 export const AiryWebSocket = (props: AiryWebSocketProps) => {
   const {children} = props;
-  const [webSocketClient, setWebSocketClient] =
-    useState<WebSocketClient | null>(null);
 
   const refreshSocket = useCallback(() => {
+    let webSocketClient: WebSocketClient | null = null;
+
     const addMessage = (conversationId: string, message: Message) => {
       realm.write(() => {
         const currentConversation: Conversation | undefined =
@@ -103,21 +103,20 @@ export const AiryWebSocket = (props: AiryWebSocketProps) => {
     if (webSocketClient) {
       webSocketClient.destroyConnection();
     }
-    setWebSocketClient(
-      new WebSocketClient('airy.core', {
-        onMessage: (
-          conversationId: string,
-          _channelId: string,
-          message: Message,
-        ) => {
-          onMessage(conversationId, message);
-        },
-        onMetadata: (metadata: Metadata) => {
-          onMetadata(metadata);
-        },
-      }),
-    );
-  }, [webSocketClient]);
+
+    webSocketClient = new WebSocketClient('airy.core', {
+      onMessage: (
+        conversationId: string,
+        _channelId: string,
+        message: Message,
+      ) => {
+        onMessage(conversationId, message);
+      },
+      onMetadata: (metadata: Metadata) => {
+        onMetadata(metadata);
+      },
+    });
+  }, []);
 
   useEffect(() => refreshSocket(), [refreshSocket]);
 

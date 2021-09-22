@@ -43,11 +43,6 @@ const MessageList = (props: MessageListProps) => {
   const conversation: Conversation | undefined =
     realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
 
-  const databaseMessages: any = realm.objectForPrimaryKey<MessageData>(
-    'MessageData',
-    conversationId,
-  );
-
   const {
     metadata: {contact},
     channel: {source},
@@ -55,6 +50,14 @@ const MessageList = (props: MessageListProps) => {
   } = conversation;
 
   useEffect(() => {
+    const databaseMessages: any = realm.objectForPrimaryKey<MessageData>(
+      'MessageData',
+      conversationId,
+    );
+
+    const currentConversation: Conversation | undefined =
+      realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
+
     const listMessages = () => {
       HttpClientInstance.listMessages({conversationId, pageSize: 50})
         .then((response: any) => {
@@ -75,13 +78,13 @@ const MessageList = (props: MessageListProps) => {
 
           if (response.paginationData) {
             realm.write(() => {
-              conversation.paginationData.loading =
+              currentConversation.paginationData.loading =
                 response.paginationData?.loading ?? null;
-              conversation.paginationData.nextCursor =
+              currentConversation.paginationData.nextCursor =
                 response.paginationData?.nextCursor ?? null;
-              conversation.paginationData.previousCursor =
+              currentConversation.paginationData.previousCursor =
                 response.paginationData?.previousCursor ?? null;
-              conversation.paginationData.total =
+              currentConversation.paginationData.total =
                 response.paginationData?.total ?? null;
             });
           }
@@ -102,7 +105,7 @@ const MessageList = (props: MessageListProps) => {
     return () => {
       databaseMessages.removeAllListeners();
     };
-  }, [databaseMessages, conversation.paginationData, conversationId]);
+  }, [conversationId]);
 
   function mergeMessages(
     oldMessages: Message[],

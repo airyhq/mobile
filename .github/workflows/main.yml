@@ -18,10 +18,10 @@ jobs:
       - name: Lint
         run: yarn run eslint . --ext .js,.jsx,.ts,.tsx
 
-      - name: Cocoapods
+      - name: Install Cocoapods
         run: sudo gem install cocoapods
 
-      - name: XCode
+      - name: Set up XCode
         run: xcode-select -p
 
       - name: Install pod dependencies 
@@ -32,4 +32,4 @@ jobs:
         run: yarn run react-native run-ios
 
       - name: Build Android
-        run: yarn run react-native run-android
+        run: cd android && chmod +x gradlew && ./gradlew assembleRelease
