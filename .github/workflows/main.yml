@@ -9,14 +9,32 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Use Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 14.x
+
       - name: Install
         run: yarn install
 
       - name: Lint
         run: yarn run eslint . --ext .js,.jsx,.ts,.tsx
 
+    - run: xcode-select -p
+    - run: pod install
+      working-directory: ios
+      name: Install pod dependencies
+
       - name: Build IOS
-        run: yarn run react-native run-ios --simulator="iPhone 12"
+        run: "xcodebuild \
+        -workspace ios/mobile.xcworkspace \
+        -scheme mobile \
+        clean archive \
+        -sdk iphoneos \
+        -configuration Debug \
+        -UseModernBuildSystem=NO \
+        -archivePath $PWD/mobile \
+        CODE_SIGNING_ALLOWED=NO"
 
       - name: Build Android
         run: cd android && chmod +x gradlew && ./gradlew assembleRelease
