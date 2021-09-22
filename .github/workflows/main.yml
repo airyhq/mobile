@@ -18,8 +18,11 @@ jobs:
       - name: Lint
         run: yarn run eslint . --ext .js,.jsx,.ts,.tsx
 
-      - name: cocoapods
+      - name: Cocoapods
         run: sudo gem install cocoapods
+
+      - name: XCode
+        run: sudo xcode-select --switch /Applications/Xcode.app
 
       - name: Install pod dependencies 
         run: pod install
