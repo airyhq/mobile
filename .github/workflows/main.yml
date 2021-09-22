@@ -9,16 +9,23 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Use Node
+        uses: actions/setup-node@v2
+        with:
+        node-version: '14.17.6'
+
       - name: Install
         run: yarn install
 
       - name: Lint
         run: yarn run eslint . --ext .js,.jsx,.ts,.tsx
+      
+      - name: XCode
+        run: xcode-select -p
 
-    - run: xcode-select -p
-    - run: pod install
-      working-directory: ios
-      name: Install pod dependencies
+      - name: Install pod dependencies 
+        run: pod install
+        working-directory: ios
 
       - name: Build IOS
         run: "xcodebuild \
