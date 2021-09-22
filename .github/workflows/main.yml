@@ -4,7 +4,7 @@ on: push
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v1
@@ -12,7 +12,7 @@ jobs:
         with:
           node-version: '14'
 
-      - name: Install
+      - name: Install Dependencies
         run: yarn install
 
       - name: Lint
@@ -22,7 +22,7 @@ jobs:
         run: sudo gem install cocoapods
 
       - name: XCode
-        run: sudo xcode-select --switch /Applications/Xcode.app
+        run: xcode-select -p
 
       - name: Install pod dependencies 
         run: pod install
