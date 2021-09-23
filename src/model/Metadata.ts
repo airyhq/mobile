@@ -13,7 +13,7 @@ export const MetadataSchema = {
   properties: {
     contact: 'Contact',
     unreadCount: 'int',
-    state: 'string?'
+    state: 'string?',
   },
 };
 
@@ -22,6 +22,6 @@ export const MetadataEventSchema = {
   properties: {
     subject: 'string',
     identifier: 'string',
-    metadata: 'Metadata'
+    metadata: 'Metadata',
   },
 };

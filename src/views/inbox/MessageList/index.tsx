@@ -30,22 +30,18 @@ type MessageListProps = {
   route: RouteProps;
 };
 
+const realm = RealmDB.getInstance();
+
 const MessageList = (props: MessageListProps) => {
   const {route} = props;
   const conversationId: string = route.params.conversationId;
   const [messages, setMessages] = useState<Message[] | []>([]);
   const messageListRef = useRef<FlatList>(null);
   const headerHeight = useHeaderHeight();
-  const keyboardVerticalOffset = Platform.OS === 'ios' ? headerHeight : 0;
   const behavior = Platform.OS === 'ios' ? 'padding' : 'height';
-  const realm = RealmDB.getInstance();
+  const keyboardVerticalOffset = Platform.OS === 'ios' ? headerHeight : 0;
   const conversation: Conversation | undefined =
     realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
-
-  const databaseMessages: any = realm.objectForPrimaryKey<MessageData>(
-    'MessageData',
-    conversationId,
-  );
 
   const {
     metadata: {contact},
@@ -53,11 +49,51 @@ const MessageList = (props: MessageListProps) => {
     paginationData,
   } = conversation;
 
-  if (!conversation) {
-    return null;
-  }
-
   useEffect(() => {
+    const databaseMessages: any = realm.objectForPrimaryKey<MessageData>(
+      'MessageData',
+      conversationId,
+    );
+
+    const currentConversation: Conversation | undefined =
+      realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
+
+    const listMessages = () => {
+      HttpClientInstance.listMessages({conversationId, pageSize: 50})
+        .then((response: any) => {
+          if (databaseMessages) {
+            realm.write(() => {
+              databaseMessages.messages = [
+                ...mergeMessages(databaseMessages.messages, [...response.data]),
+              ];
+            });
+          } else {
+            realm.write(() => {
+              realm.create('MessageData', {
+                id: conversationId,
+                messages: mergeMessages([], [...response.data]),
+              });
+            });
+          }
+
+          if (response.paginationData) {
+            realm.write(() => {
+              currentConversation.paginationData.loading =
+                response.paginationData?.loading ?? null;
+              currentConversation.paginationData.nextCursor =
+                response.paginationData?.nextCursor ?? null;
+              currentConversation.paginationData.previousCursor =
+                response.paginationData?.previousCursor ?? null;
+              currentConversation.paginationData.total =
+                response.paginationData?.total ?? null;
+            });
+          }
+        })
+        .catch((error: Error) => {
+          console.log('Error: ', error);
+        });
+    };
+
     listMessages();
 
     if (databaseMessages) {
@@ -69,7 +105,7 @@ const MessageList = (props: MessageListProps) => {
     return () => {
       databaseMessages.removeAllListeners();
     };
-  }, []);
+  }, [conversationId]);
 
   function mergeMessages(
     oldMessages: Message[],
@@ -92,42 +128,6 @@ const MessageList = (props: MessageListProps) => {
       listPreviousMessages();
     }
   }, 2000);
-
-  const listMessages = () => {
-    HttpClientInstance.listMessages({conversationId, pageSize: 50})
-      .then((response: any) => {
-        if (databaseMessages) {
-          realm.write(() => {
-            databaseMessages.messages = [
-              ...mergeMessages(databaseMessages.messages, [...response.data]),
-            ];
-          });
-        } else {
-          realm.write(() => {
-            realm.create('MessageData', {
-              id: conversationId,
-              messages: mergeMessages([], [...response.data]),
-            });
-          });
-        }
-
-        if (response.paginationData) {
-          realm.write(() => {
-            conversation.paginationData.loading =
-              response.paginationData?.loading ?? null;
-            conversation.paginationData.nextCursor =
-              response.paginationData?.nextCursor ?? null;
-            conversation.paginationData.previousCursor =
-              response.paginationData?.previousCursor ?? null;
-            conversation.paginationData.total =
-              response.paginationData?.total ?? null;
-          });
-        }
-      })
-      .catch((error: Error) => {
-        console.log('Error: ', error);
-      });
-  };
 
   const listPreviousMessages = () => {
     const cursor = paginationData && paginationData.nextCursor;

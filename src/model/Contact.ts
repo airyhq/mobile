@@ -7,6 +7,6 @@ export const ContactSchema = {
   name: 'Contact',
   properties: {
     displayName: 'string',
-    avatarUrl: 'string?'
+    avatarUrl: 'string?',
   },
 };

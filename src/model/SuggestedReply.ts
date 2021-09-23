@@ -15,7 +15,5 @@ export const SuggestedReplySchema = {
 
 export const SuggestionsSchema = {
   name: 'Suggestions',
-  properties: {
-    
-  },
+  properties: {},
 };

@@ -33,8 +33,8 @@ export const SettingsItem = (props: SettingsItemProps) => {
     ]);
   };
 
-  const selectedItem = (title: string) => {
-    switch (title) {
+  const selectedItem = (selectedItemTitle: string) => {
+    switch (selectedItemTitle) {
       case 'Contact Airy':
         return Linking.openURL('mailto:support@airy.co?');
       case 'Rate Airy':
@@ -48,8 +48,8 @@ export const SettingsItem = (props: SettingsItemProps) => {
     }
   };
 
-  const ItemIcon = (title: string) => {
-    switch (title) {
+  const ItemIcon = (itemIconTitle: string) => {
+    switch (itemIconTitle) {
       case 'Account':
         return;
       case 'Contact Airy':

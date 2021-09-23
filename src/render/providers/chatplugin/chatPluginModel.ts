@@ -1,5 +1,12 @@
 export interface Content {
-  type: 'text' | 'image' | 'video' | 'richText' | 'richCard' | 'richCardCarousel' | 'quickReplies';
+  type:
+    | 'text'
+    | 'image'
+    | 'video'
+    | 'richText'
+    | 'richCard'
+    | 'richCardCarousel'
+    | 'quickReplies';
 }
 
 export interface Command {

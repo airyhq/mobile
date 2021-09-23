@@ -28,6 +28,22 @@ export const InputBar = (props: InputBarProps) => {
   const realm = RealmDB.getInstance();
 
   useEffect(() => {
+    const onCollapse = () => {
+      Animated.timing(expandAnimation, {
+        toValue: collapsedWidth,
+        duration: 400,
+        useNativeDriver: false,
+      }).start();
+    };
+
+    const onExpand = () => {
+      Animated.timing(expandAnimation, {
+        toValue: extendedWidth,
+        duration: 400,
+        useNativeDriver: false,
+      }).start();
+    };
+
     if (input.length >= 20 && !extended) {
       setExtended(!extended);
       onExpand();
@@ -36,7 +52,15 @@ export const InputBar = (props: InputBarProps) => {
       setExtended(!extended);
       onCollapse();
     }
-  }, [input, setInput]);
+  }, [
+    input,
+    setInput,
+    extended,
+    setExtended,
+    collapsedWidth,
+    extendedWidth,
+    expandAnimation,
+  ]);
 
   const conversation: Conversation | undefined = realm.objectForPrimaryKey(
     'Conversation',
@@ -48,7 +72,9 @@ export const InputBar = (props: InputBarProps) => {
   const outboundMapper: any = getOutboundMapper(source);
 
   const sendMessage = (message: string) => {
-    if (message.length === 0) return;
+    if (message.length === 0) {
+      return;
+    }
 
     HttpClientInstance.sendMessages({
       conversationId: conversation.id,
@@ -70,22 +96,6 @@ export const InputBar = (props: InputBarProps) => {
         console.log('Error: ', error);
       });
     setInput('');
-  };
-
-  const onCollapse = () => {
-    Animated.timing(expandAnimation, {
-      toValue: collapsedWidth,
-      duration: 400,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  const onExpand = () => {
-    Animated.timing(expandAnimation, {
-      toValue: extendedWidth,
-      duration: 400,
-      useNativeDriver: false,
-    }).start();
   };
 
   return (

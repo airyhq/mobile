@@ -1,4 +1,3 @@
-/* eslint-disable react/display-name */
 import React from 'react';
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import FacebookIcon from '../assets/images/icons/facebook_rounded.svg';

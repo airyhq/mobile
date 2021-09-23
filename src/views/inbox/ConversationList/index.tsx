@@ -17,13 +17,49 @@ type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
 };
 
+const realm = RealmDB.getInstance();
+
 export const ConversationList = (props: ConversationListProps) => {
   const {navigation} = props;
-  const realm = RealmDB.getInstance();
   const paginationData = getPagination();
   const [conversations, setConversations] = useState<any>([]);
 
   useEffect(() => {
+    const getConversationsList = () => {
+      HttpClientInstance.listConversations({page_size: 50})
+        .then((response: any) => {
+          realm.write(() => {
+            realm.create('Pagination', response.paginationData);
+
+            for (const conversation of response.data) {
+              const isStored: Conversation | undefined =
+                realm.objectForPrimaryKey('Conversation', conversation.id);
+
+              const isStoredMessageData: MessageData | undefined =
+                realm.objectForPrimaryKey('MessageData', conversation.id);
+
+              if (isStored) {
+                realm.delete(isStored);
+              }
+
+              realm.create(
+                'Conversation',
+                parseToRealmConversation(conversation),
+              );
+              if (!isStoredMessageData) {
+                realm.create('MessageData', {
+                  id: conversation.id,
+                  messages: [],
+                });
+              }
+            }
+          });
+        })
+        .catch((error: Error) => {
+          console.error(error);
+        });
+    };
+
     const databaseConversations = realm
       .objects('Conversation')
       .sorted('lastMessage.sentAt', true);
@@ -38,38 +74,6 @@ export const ConversationList = (props: ConversationListProps) => {
       databaseConversations.removeAllListeners();
     };
   }, []);
-
-  const getConversationsList = () => {
-    HttpClientInstance.listConversations({page_size: 50})
-      .then((response: any) => {
-        realm.write(() => {
-          realm.create('Pagination', response.paginationData);
-
-          for (const conversation of response.data) {
-            const isStored: Conversation | undefined =
-              realm.objectForPrimaryKey('Conversation', conversation.id);
-
-            const isStoredMessageData: MessageData | undefined =
-              realm.objectForPrimaryKey('MessageData', conversation.id);
-
-            if (isStored) {
-              realm.delete(isStored);
-            }
-
-            realm.create(
-              'Conversation',
-              parseToRealmConversation(conversation),
-            );
-            if (!isStoredMessageData) {
-              realm.create('MessageData', {id: conversation.id, messages: []});
-            }
-          }
-        });
-      })
-      .catch((error: Error) => {
-        console.error(error);
-      });
-  };
 
   const getNextConversationList = () => {
     const cursor = paginationData?.nextCursor;

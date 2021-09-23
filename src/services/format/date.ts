@@ -2,17 +2,29 @@ import {Message} from '../../model/Message';
 
 export function dateFormat(date: Date) {
   const now = new Date();
-  if (!date)
+  if (!date) {
     return now.toLocaleDateString('en-GB', {
       weekday: 'long',
       day: 'numeric',
       month: 'short',
     });
+  }
 
   if (date.toLocaleDateString() === now.toLocaleDateString()) {
-    return date.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit', hour12: false});
+    return date.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
   } else if (isYesterday(date)) {
-    return 'Yesterday ' + date.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit', hour12: false});
+    return (
+      'Yesterday ' +
+      date.toLocaleTimeString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      })
+    );
   } else if (isThisWeek(date)) {
     return (
       date.toLocaleDateString('en-GB', {
@@ -21,7 +33,11 @@ export function dateFormat(date: Date) {
         month: 'short',
       }) +
       ' ' +
-      date.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit', hour12: false})
+      date.toLocaleTimeString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      })
     );
   } else {
     return (
@@ -31,7 +47,11 @@ export function dateFormat(date: Date) {
         month: 'short',
       }) +
       ' ' +
-      date.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit', hour12: false})
+      date.toLocaleTimeString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      })
     );
   }
 }
@@ -40,7 +60,10 @@ export function formatTimeOfMessage(message: Message) {
   if (message) {
     const sentAtDate = new Date(message.sentAt);
     if (isToday(sentAtDate)) {
-      return sentAtDate.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
+      return sentAtDate.toLocaleTimeString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
     } else if (isThisWeek(sentAtDate)) {
       return sentAtDate.toLocaleDateString('en-GB', {
         weekday: 'short',
@@ -65,7 +88,10 @@ export function formatTimeOfMessageWithHours(message: Message) {
   if (message) {
     const sentAtDate = new Date(message.sentAt);
     if (isToday(sentAtDate)) {
-      return sentAtDate.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
+      return sentAtDate.toLocaleTimeString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
     } else if (isThisWeek(sentAtDate)) {
       return (
         sentAtDate.toLocaleDateString('en-GB', {
@@ -75,7 +101,10 @@ export function formatTimeOfMessageWithHours(message: Message) {
           hour12: false,
         }) +
         ' at ' +
-        sentAtDate.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'})
+        sentAtDate.toLocaleTimeString('en-GB', {
+          hour: '2-digit',
+          minute: '2-digit',
+        })
       );
     } else {
       return (
@@ -87,7 +116,10 @@ export function formatTimeOfMessageWithHours(message: Message) {
           hour12: false,
         }) +
         ' at ' +
-        sentAtDate.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'})
+        sentAtDate.toLocaleTimeString('en-GB', {
+          hour: '2-digit',
+          minute: '2-digit',
+        })
       );
     }
   }
@@ -118,13 +150,18 @@ export function formatDateOfMessage(message: Message) {
 }
 
 function isToday(date: Date) {
-  return new Date().setHours(0, 0, 0, 0) === new Date(date).setHours(0, 0, 0, 0);
+  return (
+    new Date().setHours(0, 0, 0, 0) === new Date(date).setHours(0, 0, 0, 0)
+  );
 }
 
 const MILLISECONDS_IN_A_DAY = 86400000;
 
 function isYesterday(date: Date) {
-  return new Date(Date.now() - MILLISECONDS_IN_A_DAY).setHours(0, 0, 0, 0) === new Date(date).setHours(0, 0, 0, 0);
+  return (
+    new Date(Date.now() - MILLISECONDS_IN_A_DAY).setHours(0, 0, 0, 0) ===
+    new Date(date).setHours(0, 0, 0, 0)
+  );
 }
 
 export function isMoreThan7Days(date: Date) {
@@ -134,7 +171,9 @@ export function isMoreThan7Days(date: Date) {
 function isThisWeek(date: Date) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const beginningOfWeek = new Date(today.getTime() - today.getDay() * 24 * 60 * 60 * 1000);
+  const beginningOfWeek = new Date(
+    today.getTime() - today.getDay() * 24 * 60 * 60 * 1000,
+  );
   return date > beginningOfWeek;
 }
 

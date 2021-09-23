@@ -4,9 +4,8 @@ import {Message} from '../../model/Message';
 import {Tag} from '../../model/Tag';
 import {Channel} from '../../model/Channel';
 import {EventPayload} from './payload';
-import { RealmDB } from '../../storage/realm';
-import { UserInfo } from '../../model/userInfo';
-/* eslint-disable @typescript-eslint/no-var-requires */
+import {RealmDB} from '../../storage/realm';
+import {UserInfo} from '../../model/userInfo';
 const camelcaseKeys = require('camelcase-keys');
 
 type CallbackMap = {
@@ -21,7 +20,7 @@ type CallbackMap = {
   onError?: () => void;
 };
 
-const realm = RealmDB.getInstance()
+const realm = RealmDB.getInstance();
 const accessToken: string = realm.objects<UserInfo>('UserInfo')[0]?.accessToken;
 
 export class WebSocketClient {
@@ -35,7 +34,6 @@ export class WebSocketClient {
     this.apiUrlConfig = `ws://${new URL(apiUrl)}ws.communication`;
 
     this.stompWrapper = new StompWrapper(
-      
       this.apiUrlConfig,
       {
         '/events': item => {
@@ -55,13 +53,25 @@ export class WebSocketClient {
     const json = JSON.parse(body) as EventPayload;
     switch (json.type) {
       case 'channel.updated':
-        this.callbackMap.onChannel?.(camelcaseKeys(json.payload, {deep: true, stopPaths: ['metadata.user_data']}));
+        this.callbackMap.onChannel?.(
+          camelcaseKeys(json.payload, {
+            deep: true,
+            stopPaths: ['metadata.user_data'],
+          }),
+        );
         break;
       case 'message.created':
-        this.callbackMap.onMessage?.(json.payload.conversation_id, json.payload.channel_id, {
-          ...camelcaseKeys(json.payload.message, {deep: true, stopPaths: ['content']}),
-          sentAt: new Date(json.payload.message.sent_at),
-        });
+        this.callbackMap.onMessage?.(
+          json.payload.conversation_id,
+          json.payload.channel_id,
+          {
+            ...camelcaseKeys(json.payload.message, {
+              deep: true,
+              stopPaths: ['content'],
+            }),
+            sentAt: new Date(json.payload.message.sent_at),
+          },
+        );
         break;
       case 'metadata.updated':
         this.callbackMap.onMetadata?.(json.payload);
