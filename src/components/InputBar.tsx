@@ -14,26 +14,30 @@ import {RealmDB} from '../storage/realm';
 
 type InputBarProps = {
   conversationId: string;
-  extended: boolean;
-  setExtended: (extended: boolean) => void;
   width: number;
+  attachmentBarWidth: number;
+  extendedInputBar: boolean;
+  setExtendedAttachments: (extended: boolean) => void;  
 };
 
 export const InputBar = (props: InputBarProps) => {
-  const {conversationId, extended, setExtended, width} = props;
+  const {conversationId, width, attachmentBarWidth, extendedInputBar, setExtendedAttachments} = props;
   const [input, setInput] = useState('');
   const [inputHeight, setInputHeight] = useState(33);
   const realm = RealmDB.getInstance();
-  const expandAnimation = useRef(new Animated.Value(width)).current;
+
+  console.log(extendedInputBar);
+  
+  const inputBarWidth = extendedInputBar ? width - 36 : width - attachmentBarWidth;
+  const expandAnimation = useRef(new Animated.Value(inputBarWidth)).current;
 
   useEffect(() => {
-    if (input.length >= 20 && !extended) {
-      setExtended(!extended);
+    if (input.length >= 20 && !extendedInputBar) {
+      setExtendedAttachments(false);
       onExpand();
-    }
-    if (input.length < 10 && extended) {
-      setExtended(!extended);
-      onCollapse();
+    } else if (input.length < 10 && extendedInputBar) {      
+      setExtendedAttachments(true);
+      onCollapse();      
     }
   }, [input, setInput]);
 
@@ -73,7 +77,7 @@ export const InputBar = (props: InputBarProps) => {
 
   const onCollapse = () => {
     Animated.timing(expandAnimation, {
-      toValue: width,
+      toValue: width - attachmentBarWidth,
       duration: 400,
       useNativeDriver: false,
     }).start();
@@ -81,7 +85,7 @@ export const InputBar = (props: InputBarProps) => {
 
   const onExpand = () => {
     Animated.timing(expandAnimation, {
-      toValue: 323,
+      toValue: width - 36,
       duration: 400,
       useNativeDriver: false,
     }).start();
@@ -100,7 +104,7 @@ export const InputBar = (props: InputBarProps) => {
           style={[
             {
               height: inputHeight < 20 ? 33 : inputHeight + 15,
-              width: extended ? '85%' : '80%',
+              width: extendedInputBar ? '85%' : '80%',
             },
             styles.textInput,
           ]}
@@ -128,8 +132,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'green',
     marginRight: 12,
-    position: 'absolute',
-    right: 0,
   },
   inputBar: {
     backgroundColor: colorBackgroundGray,

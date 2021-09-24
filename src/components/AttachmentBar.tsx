@@ -1,120 +1,66 @@
-import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
+import React from 'react';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {colorTextGray} from '../assets/colors';
 import ImageIcon from '../assets/images/icons/attachmentImage.svg';
 import AttachmentIcon from '../assets/images/icons/image.svg';
 import FileIcon from '../assets/images/icons/attachmentFile.svg';
 import ArrowIcon from '../assets/images/icons/arrowCircleRight.svg';
-import {Source} from '../model/Channel';
+import { ATTACHMENT_BAR_ITEM_HEIGHT, ATTACHMENT_BAR_ITEM_PADDING, ATTACHMENT_BAR_ITEM_WIDTH, SupportedType } from './MessageBar';
 
 type AttachmentBarProps = {
-  source: string;
-  extended: boolean | null;
-  setExtended: (extended: boolean) => void;
-  width: any;
+  attachmentTypes: SupportedType[];
+  attachmentBarWidth: number;
+  extendedAttachments: boolean;
+  setExtendedAttachments: (extended: boolean) => void;
 };
 
-enum SupportedType {
-  photo = 'photo',
-  file = 'file',
-  template = 'template',
-}
-
 export const AttachmentBar = (props: AttachmentBarProps) => {
-  const {source, extended, setExtended, width} = props;
-  const attachmentArray = [];
-  const supportedArray = [];
-  const itemWidthHeight = 24;
-  const padding = 12;
-  const [items, setItems] = useState(0);
-  const [attachmentBarWidth, setAttachmentBarWidth] = useState(
-    items * itemWidthHeight + padding,
-  );
-
-  useEffect(() => {
-    setItems(attachmentArray.length);
-    setAttachmentBarWidth(items * (itemWidthHeight + padding));
-    width(attachmentBarWidth);
-  }, [attachmentArray, extended]);
-
-  const attachmentSupport = () => {
-    switch (source) {
-      case Source.facebook:
-        attachmentArray.push(
-          SupportedType.photo,
-          SupportedType.template,
-          SupportedType.file,
-        );
-        break;
-      case Source.google:
-        attachmentArray.push(SupportedType.file, SupportedType.photo);
-        break;
-      case Source.chatplugin:
-        attachmentArray.push(SupportedType.template, SupportedType.file);
-        break;
-      case Source.viber:
-        attachmentArray.push(SupportedType.template);
-        break;
-      case Source.instagram:
-        attachmentArray.push(SupportedType.template);
-        break;
-      case Source.unknown:
-        attachmentArray.push(SupportedType.template);
-        break;
-      case Source.twilioSms:
-      case Source.twilioWhatsapp:
-        attachmentArray.push(SupportedType.template);
-        break;
-    }
-
-    if (attachmentArray.includes(SupportedType.photo)) {
-      supportedArray.push(
+  
+  const {attachmentTypes, attachmentBarWidth, extendedAttachments, setExtendedAttachments} = props;
+  
+  const Attachments = () => {  
+    return (
+      <>
+      { attachmentTypes.includes(SupportedType.photo) &&         
         <TouchableOpacity style={styles.icons}>
           <ImageIcon
-            height={itemWidthHeight}
-            width={itemWidthHeight}
+            height={ATTACHMENT_BAR_ITEM_HEIGHT}
+            width={ATTACHMENT_BAR_ITEM_WIDTH}
             fill={colorTextGray}
           />
-        </TouchableOpacity>,
-      );
-    }
-
-    if (attachmentArray.includes(SupportedType.template)) {
-      supportedArray.push(
+        </TouchableOpacity>        
+      }
+      { attachmentTypes.includes(SupportedType.template) &&        
         <TouchableOpacity style={styles.icons}>
           <AttachmentIcon
-            height={itemWidthHeight}
-            width={itemWidthHeight}
+            height={ATTACHMENT_BAR_ITEM_HEIGHT}
+            width={ATTACHMENT_BAR_ITEM_WIDTH}
             fill={colorTextGray}
           />
-        </TouchableOpacity>,
-      );
-    }
-
-    if (attachmentArray.includes(SupportedType.file)) {
-      supportedArray.push(
+        </TouchableOpacity>       
+      }
+      { attachmentTypes.includes(SupportedType.file) &&        
         <TouchableOpacity style={styles.icons}>
           <FileIcon
-            height={itemWidthHeight}
-            width={itemWidthHeight}
+            height={ATTACHMENT_BAR_ITEM_HEIGHT}
+            width={ATTACHMENT_BAR_ITEM_WIDTH}
             fill={colorTextGray}
           />
-        </TouchableOpacity>,
-      );
-    }
+        </TouchableOpacity>        
+      }
+      </>
+    )
   };
-
-  attachmentSupport();
 
   return (
     <>
-      {extended ? (
+      {extendedAttachments ? (
         <View style={[styles.container, {width: attachmentBarWidth}]}>
-          {supportedArray}
+          <Attachments />
         </View>
       ) : (
-        <View style={[styles.extendIcon, {width: itemWidthHeight + padding}]}>
-          <TouchableOpacity onPress={() => setExtended(!!extended)}>
+        <View style={[styles.extendIcon, {width: ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING}]}>
+          <TouchableOpacity onPress={() => setExtendedAttachments(!extendedAttachments)}>
             <ArrowIcon height={30} width={30} fill={colorTextGray} />
           </TouchableOpacity>
         </View>

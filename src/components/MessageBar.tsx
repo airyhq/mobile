@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {View, StyleSheet, Dimensions} from 'react-native';
+import { Source } from '../model/Channel';
 import {Conversation} from '../model/Conversation';
 import {RealmDB} from '../storage/realm';
 import {AttachmentBar} from './AttachmentBar';
@@ -10,59 +11,90 @@ type MessageBarProps = {
   items: number;
 };
 
+export enum SupportedType {
+  photo = 'photo',
+  file = 'file',
+  template = 'template',
+}
+
+export const MESSAGE_BAR_STANDARD_PADDING = 30;
+export const ATTACHMENT_BAR_ITEM_WIDTH = 24;
+export const ATTACHMENT_BAR_ITEM_HEIGHT = 24;
+export const ATTACHMENT_BAR_ITEM_PADDING = 12;
+
+const windowWidth = Dimensions.get('window').width;
+
 export const MessageBar = (props: MessageBarProps) => {
   const {conversationId} = props;
-  const [extended, setExtended] = useState<boolean>();
-  const [attachmentBarWidth, setAttachmentBarWidth] = useState(0);
-  const padding = 30;
+
   const realm = RealmDB.getInstance();
-
-  useEffect(() => {
-    console.log('ATTACH: ', attachmentBarWidth);
-  }, [])
-
-  console.log('----: ', attachmentBarWidth);
-
-
   const source = realm.objectForPrimaryKey<Conversation>(
     'Conversation',
     conversationId,
   ).channel.source;
 
-  const extend = (extended: boolean) => {
-    setExtended(extended);
-  };
-
-  const handleCallback = (width: number) => {
-    setAttachmentBarWidth(width);
-  };
+  const [extendedAttachments, setExtendedAttachments] = useState<boolean>(true);
+  
+  const attachmentBarWidth = getAttachments(Source[source]).length * (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING);    
 
   return (
     <View style={styles.contentBar}>
       <AttachmentBar
-        source={source}
-        extended={!extended}
-        setExtended={extend}
-        width={handleCallback}
+        attachmentTypes={getAttachments(Source[source])}
+        attachmentBarWidth={attachmentBarWidth}
+        extendedAttachments={extendedAttachments}
+        setExtendedAttachments={setExtendedAttachments}
       />
       <InputBar
-        width={width - attachmentBarWidth - padding}
+        width={windowWidth - MESSAGE_BAR_STANDARD_PADDING}
+        attachmentBarWidth={attachmentBarWidth}
         conversationId={conversationId}
-        extended={!!extended}
-        setExtended={extend}
+        extendedInputBar={!extendedAttachments}
+        setExtendedAttachments={setExtendedAttachments}
       />
     </View>
   );
 };
 
-const {width} = Dimensions.get('window');
-
 const styles = StyleSheet.create({
   contentBar: {
     backgroundColor: 'red',
-    width: width,
-    justifyContent: 'space-between',
+    width: windowWidth,
+    justifyContent: 'flex-end',
     alignItems: 'flex-end',
     flexDirection: 'row',
   },
 });
+
+const getAttachments = (source: Source): SupportedType[] => {
+  const attachmentArray: SupportedType[] = []
+  switch (source) {
+    case Source.facebook:
+      attachmentArray.push(
+        SupportedType.photo,
+        SupportedType.template,
+        SupportedType.file,
+      );
+      break;
+    case Source.google:
+      attachmentArray.push(SupportedType.file, SupportedType.photo);
+      break;
+    case Source.chatplugin:
+      attachmentArray.push(SupportedType.template, SupportedType.file);
+      break;
+    case Source.viber:
+      attachmentArray.push(SupportedType.template);
+      break;
+    case Source.instagram:
+      attachmentArray.push(SupportedType.template);
+      break;
+    case Source.unknown:
+      attachmentArray.push(SupportedType.template);
+      break;
+    case Source.twilioSms:
+    case Source.twilioWhatsapp:
+      attachmentArray.push(SupportedType.template);
+      break;
+  }
+  return attachmentArray;
+}
