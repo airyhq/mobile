@@ -16,16 +16,15 @@ type InputBarProps = {
   conversationId: string;
   extended: boolean;
   setExtended: (extended: boolean) => void;
+  width: number;
 };
 
 export const InputBar = (props: InputBarProps) => {
-  const {conversationId, extended, setExtended} = props;
+  const {conversationId, extended, setExtended, width} = props;
   const [input, setInput] = useState('');
   const [inputHeight, setInputHeight] = useState(33);
-  const collapsedWidth = width * 0.65;
-  const extendedWidth = width * 0.83;
-  const expandAnimation = useRef(new Animated.Value(collapsedWidth)).current;
   const realm = RealmDB.getInstance();
+  const expandAnimation = useRef(new Animated.Value(width)).current;
 
   useEffect(() => {
     if (input.length >= 20 && !extended) {
@@ -74,7 +73,7 @@ export const InputBar = (props: InputBarProps) => {
 
   const onCollapse = () => {
     Animated.timing(expandAnimation, {
-      toValue: collapsedWidth,
+      toValue: width,
       duration: 400,
       useNativeDriver: false,
     }).start();
@@ -82,19 +81,18 @@ export const InputBar = (props: InputBarProps) => {
 
   const onExpand = () => {
     Animated.timing(expandAnimation, {
-      toValue: extendedWidth,
+      toValue: 323,
       duration: 400,
       useNativeDriver: false,
     }).start();
   };
 
   return (
-    <View style={styles.container}>
-      <Animated.View
+    <Animated.View style={[styles.container, {width: expandAnimation}]}>
+      <View
         style={[
           {
             height: inputHeight < 20 ? 33 : inputHeight + 15,
-            width: expandAnimation,
           },
           styles.inputBar,
         ]}>
@@ -121,16 +119,17 @@ export const InputBar = (props: InputBarProps) => {
           disabled={input.length === 0}>
           <Paperplane width={16} height={16} fill="white" />
         </TouchableOpacity>
-      </Animated.View>
-    </View>
+      </View>
+    </Animated.View>
   );
 };
 
-const {width} = Dimensions.get('window');
-
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'transparent',
+    backgroundColor: 'green',
+    marginRight: 12,
+    position: 'absolute',
+    right: 0,
   },
   inputBar: {
     backgroundColor: colorBackgroundGray,
@@ -140,7 +139,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     borderColor: colorLightGray,
-    marginRight: 12,
     paddingLeft: 10,
   },
   textInput: {
