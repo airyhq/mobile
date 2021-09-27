@@ -1,36 +1,80 @@
 import React from 'react';
-import {View, StyleSheet, Dimensions, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {colorTextGray} from '../assets/colors';
 import ImageIcon from '../assets/images/icons/attachmentImage.svg';
 import AttachmentIcon from '../assets/images/icons/image.svg';
 import FileIcon from '../assets/images/icons/attachmentFile.svg';
 import ArrowIcon from '../assets/images/icons/arrowCircleRight.svg';
+import {
+  ATTACHMENT_BAR_ITEM_HEIGHT,
+  ATTACHMENT_BAR_ITEM_PADDING,
+  ATTACHMENT_BAR_ITEM_WIDTH,
+  SupportedType,
+} from './MessageBar';
 
 type AttachmentBarProps = {
-  extended: boolean | null;
-  setExtended: (extended: boolean) => void;
+  attachmentTypes: SupportedType[];
+  attachmentBarWidth: number;
+  extendedAttachments: boolean;
+  setExtendedAttachments: (extended: boolean) => void;
 };
 
 export const AttachmentBar = (props: AttachmentBarProps) => {
-  const {extended, setExtended} = props;
+  const {
+    attachmentTypes,
+    attachmentBarWidth,
+    extendedAttachments,
+    setExtendedAttachments,
+  } = props;
+
+  const Attachments = () => {
+    return (
+      <>
+        {attachmentTypes.includes(SupportedType.photo) && (
+          <TouchableOpacity style={styles.icons}>
+            <ImageIcon
+              height={ATTACHMENT_BAR_ITEM_HEIGHT}
+              width={ATTACHMENT_BAR_ITEM_WIDTH}
+              fill={colorTextGray}
+            />
+          </TouchableOpacity>
+        )}
+        {attachmentTypes.includes(SupportedType.template) && (
+          <TouchableOpacity style={styles.icons}>
+            <AttachmentIcon
+              height={ATTACHMENT_BAR_ITEM_HEIGHT}
+              width={ATTACHMENT_BAR_ITEM_WIDTH}
+              fill={colorTextGray}
+            />
+          </TouchableOpacity>
+        )}
+        {attachmentTypes.includes(SupportedType.file) && (
+          <TouchableOpacity style={styles.icons}>
+            <FileIcon
+              height={ATTACHMENT_BAR_ITEM_HEIGHT}
+              width={ATTACHMENT_BAR_ITEM_WIDTH}
+              fill={colorTextGray}
+            />
+          </TouchableOpacity>
+        )}
+      </>
+    );
+  };
 
   return (
     <>
-      {extended ? (
-        <View style={styles.extendedIcons}>
-          <TouchableOpacity>
-            <ImageIcon height={24} width={24} fill={colorTextGray} />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <AttachmentIcon height={24} width={24} fill={colorTextGray} />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <FileIcon height={24} width={24} fill={colorTextGray} />
-          </TouchableOpacity>
+      {extendedAttachments ? (
+        <View style={[styles.container, {width: attachmentBarWidth}]}>
+          <Attachments />
         </View>
       ) : (
-        <View style={styles.extendIcon}>
-          <TouchableOpacity onPress={() => setExtended(!!extended)}>
+        <View
+          style={[
+            styles.extendIcon,
+            {width: ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING},
+          ]}>
+          <TouchableOpacity
+            onPress={() => setExtendedAttachments(!extendedAttachments)}>
             <ArrowIcon height={30} width={30} fill={colorTextGray} />
           </TouchableOpacity>
         </View>
@@ -38,22 +82,25 @@ export const AttachmentBar = (props: AttachmentBarProps) => {
     </>
   );
 };
-const {width} = Dimensions.get('window');
-const attachmentBarExtendedWidth = width * 0.32;
-const attachmentBarCollapsedWidth = width * 0.14;
 
 const styles = StyleSheet.create({
-  extendedIcons: {
+  container: {
+    justifyContent: 'flex-start',
     flexDirection: 'row',
-    width: attachmentBarExtendedWidth,
-    justifyContent: 'space-evenly',
     alignItems: 'center',
     height: 33,
+    marginRight: 6,
+    marginLeft: 12,
   },
   extendIcon: {
-    width: attachmentBarCollapsedWidth,
     alignItems: 'center',
     justifyContent: 'center',
     height: 33,
+    marginRight: 6,
+    marginLeft: 12,
+  },
+  icons: {
+    marginLeft: 6,
+    marginRight: 6,
   },
 });
