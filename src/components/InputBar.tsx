@@ -22,12 +22,15 @@ type InputBarProps = {
   setExtendedAttachments: (extended: boolean) => void;  
 };
 
+const INITIAL_INPUT_HEIGHT = 33;
+
 export const InputBar = (props: InputBarProps) => {
   const {conversationId, width, attachmentBarWidth, extendedInputBar, setExtendedAttachments} = props;
   const [input, setInput] = useState('');
-  const [inputHeight, setInputHeight] = useState(33);
+  const [inputHeight, setInputHeight] = useState(INITIAL_INPUT_HEIGHT);
   
   const extendedInputBarRef = useRef<boolean>();
+  const inputBarRef = useRef<TextInput>();
 
   const realm = RealmDB.getInstance();
   const conversation: Conversation | undefined = realm.objectForPrimaryKey(
@@ -41,8 +44,11 @@ export const InputBar = (props: InputBarProps) => {
   const outboundMapper: OutboundMapper = getOutboundMapper(source);
 
   useEffect(() => {    
-    if (!extendedInputBar && extendedInputBarRef.current && input.length >= 20) {      
+    if (!extendedInputBar && extendedInputBarRef.current && input.length >= 20) {                  
       expandInputBar();
+      setTimeout(() => {
+        setInputHeight(INITIAL_INPUT_HEIGHT)
+      }, 100)      
     }    
     extendedInputBarRef.current = extendedInputBar;
   }, [extendedInputBar]) 
@@ -73,25 +79,29 @@ export const InputBar = (props: InputBarProps) => {
 
   const collapseInputBar = () => {
     Animated.timing(expandAnimation, {
-      toValue: width - 36,
+      toValue: width - (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING),
       duration: 400,
       useNativeDriver: false,
     }).start();
   };
+
+  console.log(inputHeight);
+  
 
   return (
     <Animated.View style={[styles.container, {width: expandAnimation}]}>
       <View
         style={[
           {
-            height: inputHeight < 20 ? 33 : inputHeight + 15,
+            height: inputHeight < 20 ? 33 : inputHeight + 16,
           },
           styles.inputBar,
         ]}>
         <TextInput
+          ref={inputBarRef}          
           style={[
             {
-              height: inputHeight < 20 ? 33 : inputHeight + 15,
+              height: inputHeight < 20 ? 33 : inputHeight + 16,
               width: extendedInputBar ? '85%' : '80%',
             },
             styles.textInput,
