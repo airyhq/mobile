@@ -5,7 +5,12 @@ import ImageIcon from '../assets/images/icons/attachmentImage.svg';
 import AttachmentIcon from '../assets/images/icons/image.svg';
 import FileIcon from '../assets/images/icons/attachmentFile.svg';
 import ArrowIcon from '../assets/images/icons/arrowCircleRight.svg';
-import { ATTACHMENT_BAR_ITEM_HEIGHT, ATTACHMENT_BAR_ITEM_PADDING, ATTACHMENT_BAR_ITEM_WIDTH, SupportedType } from './MessageBar';
+import {
+  ATTACHMENT_BAR_ITEM_HEIGHT,
+  ATTACHMENT_BAR_ITEM_PADDING,
+  ATTACHMENT_BAR_ITEM_WIDTH,
+  SupportedType,
+} from './MessageBar';
 
 type AttachmentBarProps = {
   attachmentTypes: SupportedType[];
@@ -15,41 +20,45 @@ type AttachmentBarProps = {
 };
 
 export const AttachmentBar = (props: AttachmentBarProps) => {
-  
-  const {attachmentTypes, attachmentBarWidth, extendedAttachments, setExtendedAttachments} = props;
-  
-  const Attachments = () => {  
+  const {
+    attachmentTypes,
+    attachmentBarWidth,
+    extendedAttachments,
+    setExtendedAttachments,
+  } = props;
+
+  const Attachments = () => {
     return (
       <>
-      { attachmentTypes.includes(SupportedType.photo) &&         
-        <TouchableOpacity style={styles.icons}>
-          <ImageIcon
-            height={ATTACHMENT_BAR_ITEM_HEIGHT}
-            width={ATTACHMENT_BAR_ITEM_WIDTH}
-            fill={colorTextGray}
-          />
-        </TouchableOpacity>        
-      }
-      { attachmentTypes.includes(SupportedType.template) &&        
-        <TouchableOpacity style={styles.icons}>
-          <AttachmentIcon
-            height={ATTACHMENT_BAR_ITEM_HEIGHT}
-            width={ATTACHMENT_BAR_ITEM_WIDTH}
-            fill={colorTextGray}
-          />
-        </TouchableOpacity>       
-      }
-      { attachmentTypes.includes(SupportedType.file) &&        
-        <TouchableOpacity style={styles.icons}>
-          <FileIcon
-            height={ATTACHMENT_BAR_ITEM_HEIGHT}
-            width={ATTACHMENT_BAR_ITEM_WIDTH}
-            fill={colorTextGray}
-          />
-        </TouchableOpacity>        
-      }
+        {attachmentTypes.includes(SupportedType.photo) && (
+          <TouchableOpacity style={styles.icons}>
+            <ImageIcon
+              height={ATTACHMENT_BAR_ITEM_HEIGHT}
+              width={ATTACHMENT_BAR_ITEM_WIDTH}
+              fill={colorTextGray}
+            />
+          </TouchableOpacity>
+        )}
+        {attachmentTypes.includes(SupportedType.template) && (
+          <TouchableOpacity style={styles.icons}>
+            <AttachmentIcon
+              height={ATTACHMENT_BAR_ITEM_HEIGHT}
+              width={ATTACHMENT_BAR_ITEM_WIDTH}
+              fill={colorTextGray}
+            />
+          </TouchableOpacity>
+        )}
+        {attachmentTypes.includes(SupportedType.file) && (
+          <TouchableOpacity style={styles.icons}>
+            <FileIcon
+              height={ATTACHMENT_BAR_ITEM_HEIGHT}
+              width={ATTACHMENT_BAR_ITEM_WIDTH}
+              fill={colorTextGray}
+            />
+          </TouchableOpacity>
+        )}
       </>
-    )
+    );
   };
 
   return (
@@ -59,8 +68,13 @@ export const AttachmentBar = (props: AttachmentBarProps) => {
           <Attachments />
         </View>
       ) : (
-        <View style={[styles.extendIcon, {width: ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING}]}>
-          <TouchableOpacity onPress={() => setExtendedAttachments(!extendedAttachments)}>
+        <View
+          style={[
+            styles.extendIcon,
+            {width: ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING},
+          ]}>
+          <TouchableOpacity
+            onPress={() => setExtendedAttachments(!extendedAttachments)}>
             <ArrowIcon height={30} width={30} fill={colorTextGray} />
           </TouchableOpacity>
         </View>

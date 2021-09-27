@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, Dimensions} from 'react-native';
-import { Source } from '../model/Channel';
+import {Source} from '../model/Channel';
 import {Conversation} from '../model/Conversation';
 import {RealmDB} from '../storage/realm';
 import {AttachmentBar} from './AttachmentBar';
@@ -34,8 +34,10 @@ export const MessageBar = (props: MessageBarProps) => {
   ).channel.source;
 
   const [extendedAttachments, setExtendedAttachments] = useState<boolean>(true);
-  
-  const attachmentBarWidth = getAttachments(Source[source]).length * (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING);    
+
+  const attachmentBarWidth =
+    getAttachments(Source[source]).length *
+    (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING);
 
   return (
     <View style={styles.contentBar}>
@@ -66,7 +68,7 @@ const styles = StyleSheet.create({
 });
 
 const getAttachments = (source: Source): SupportedType[] => {
-  const attachmentArray: SupportedType[] = []
+  const attachmentArray: SupportedType[] = [];
   switch (source) {
     case Source.facebook:
       attachmentArray.push(
@@ -96,4 +98,4 @@ const getAttachments = (source: Source): SupportedType[] => {
       break;
   }
   return attachmentArray;
-}
+};
