@@ -63,7 +63,7 @@ export const InputBar = (props: InputBarProps) => {
     ) {
       expandInputBar();
       setTimeout(() => {
-        setInputHeight(INITIAL_INPUT_HEIGHT);
+        setInputHeight(0);
       }, 100);
     }
     extendedInputBarRef.current = extendedInputBar;
