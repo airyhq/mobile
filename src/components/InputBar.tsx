@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Animated, TextInput, TouchableOpacity} from 'react-native';
 import {View, StyleSheet} from 'react-native';
-import { sendMessageAPI } from '../api/conversation';
+import {sendMessageAPI} from '../api/conversation';
 import {
   colorAiryBlue,
   colorBackgroundGray,
@@ -10,25 +10,35 @@ import {
 import Paperplane from '../assets/images/icons/paperplane.svg';
 import {Conversation} from '../model/Conversation';
 import {getOutboundMapper} from '../render/outbound';
-import { OutboundMapper } from '../render/outbound/mapper';
+import {OutboundMapper} from '../render/outbound/mapper';
 import {RealmDB} from '../storage/realm';
-import { ATTACHMENT_BAR_ITEM_PADDING, ATTACHMENT_BAR_ITEM_WIDTH } from './MessageBar';
+import {
+  ATTACHMENT_BAR_ITEM_PADDING,
+  ATTACHMENT_BAR_ITEM_WIDTH,
+} from './MessageBar';
 
 type InputBarProps = {
   conversationId: string;
   width: number;
   attachmentBarWidth: number;
   extendedInputBar: boolean;
-  setExtendedAttachments: (extended: boolean) => void;  
+  setExtendedAttachments: (extended: boolean) => void;
 };
 
 const INITIAL_INPUT_HEIGHT = 33;
 
 export const InputBar = (props: InputBarProps) => {
-  const {conversationId, width, attachmentBarWidth, extendedInputBar, setExtendedAttachments} = props;
+  const {
+    conversationId,
+    width,
+    attachmentBarWidth,
+    extendedInputBar,
+    setExtendedAttachments,
+  } = props;
+
   const [input, setInput] = useState('');
   const [inputHeight, setInputHeight] = useState(INITIAL_INPUT_HEIGHT);
-  
+
   const extendedInputBarRef = useRef<boolean>();
   const inputBarRef = useRef<TextInput>();
 
@@ -37,35 +47,43 @@ export const InputBar = (props: InputBarProps) => {
     'Conversation',
     conversationId,
   );
-  
-  const inputBarWidth = extendedInputBar ? width - (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING) : width - attachmentBarWidth;
+
+  const inputBarWidth = extendedInputBar
+    ? width - (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING)
+    : width - attachmentBarWidth;
   const expandAnimation = useRef(new Animated.Value(inputBarWidth)).current;
   const source = conversation && conversation.channel.source;
   const outboundMapper: OutboundMapper = getOutboundMapper(source);
 
-  useEffect(() => {    
-    if (!extendedInputBar && extendedInputBarRef.current && input.length >= 20) {                  
+  useEffect(() => {
+    if (
+      !extendedInputBar &&
+      extendedInputBarRef.current &&
+      input.length >= 20
+    ) {
       expandInputBar();
       setTimeout(() => {
-        setInputHeight(INITIAL_INPUT_HEIGHT)
-      }, 100)      
-    }    
+        setInputHeight(INITIAL_INPUT_HEIGHT);
+      }, 100);
+    }
     extendedInputBarRef.current = extendedInputBar;
-  }, [extendedInputBar]) 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [extendedInputBar]);
 
   useEffect(() => {
     if (input.length >= 20 && !extendedInputBar) {
       setExtendedAttachments(false);
       collapseInputBar();
-    } else if (input.length < 10 && extendedInputBar) {      
+    } else if (input.length < 10 && extendedInputBar) {
       setExtendedAttachments(true);
-      expandInputBar();      
-    }   
-  }, [input, setInput]);  
+      expandInputBar();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [input, setInput]);
 
   const sendMessage = (message: string) => {
     if (message.length === 0) return;
-    sendMessageAPI(conversation.id, outboundMapper.getTextPayload(input))    
+    sendMessageAPI(conversation.id, outboundMapper.getTextPayload(input));
     setInput('');
   };
 
@@ -79,14 +97,12 @@ export const InputBar = (props: InputBarProps) => {
 
   const collapseInputBar = () => {
     Animated.timing(expandAnimation, {
-      toValue: width - (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING),
+      toValue:
+        width - (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING),
       duration: 400,
       useNativeDriver: false,
     }).start();
   };
-
-  console.log(inputHeight);
-  
 
   return (
     <Animated.View style={[styles.container, {width: expandAnimation}]}>
@@ -98,7 +114,7 @@ export const InputBar = (props: InputBarProps) => {
           styles.inputBar,
         ]}>
         <TextInput
-          ref={inputBarRef}          
+          ref={inputBarRef}
           style={[
             {
               height: inputHeight < 20 ? 33 : inputHeight + 16,
