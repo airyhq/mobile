@@ -71,7 +71,6 @@ export const AttachmentBar = (props: AttachmentBarProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'orange',
     justifyContent: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
@@ -80,7 +79,6 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   extendIcon: {
-    backgroundColor: 'purple',
     alignItems: 'center',
     justifyContent: 'center',
     height: 33,

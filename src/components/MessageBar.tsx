@@ -58,7 +58,6 @@ export const MessageBar = (props: MessageBarProps) => {
 
 const styles = StyleSheet.create({
   contentBar: {
-    backgroundColor: 'red',
     width: windowWidth,
     justifyContent: 'flex-end',
     alignItems: 'flex-end',

@@ -1,16 +1,18 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Animated, Dimensions, TextInput, TouchableOpacity} from 'react-native';
+import {Animated, TextInput, TouchableOpacity} from 'react-native';
 import {View, StyleSheet} from 'react-native';
+import { sendMessageAPI } from '../api/conversation';
 import {
   colorAiryBlue,
   colorBackgroundGray,
   colorLightGray,
 } from '../assets/colors';
 import Paperplane from '../assets/images/icons/paperplane.svg';
-import {HttpClientInstance} from '../InitializeAiryApi';
 import {Conversation} from '../model/Conversation';
 import {getOutboundMapper} from '../render/outbound';
+import { OutboundMapper } from '../render/outbound/mapper';
 import {RealmDB} from '../storage/realm';
+import { ATTACHMENT_BAR_ITEM_PADDING, ATTACHMENT_BAR_ITEM_WIDTH } from './MessageBar';
 
 type InputBarProps = {
   conversationId: string;
@@ -24,58 +26,44 @@ export const InputBar = (props: InputBarProps) => {
   const {conversationId, width, attachmentBarWidth, extendedInputBar, setExtendedAttachments} = props;
   const [input, setInput] = useState('');
   const [inputHeight, setInputHeight] = useState(33);
-  const realm = RealmDB.getInstance();
-
-  console.log(extendedInputBar);
   
-  const inputBarWidth = extendedInputBar ? width - 36 : width - attachmentBarWidth;
-  const expandAnimation = useRef(new Animated.Value(inputBarWidth)).current;
+  const extendedInputBarRef = useRef<boolean>();
 
-  useEffect(() => {
-    if (input.length >= 20 && !extendedInputBar) {
-      setExtendedAttachments(false);
-      onExpand();
-    } else if (input.length < 10 && extendedInputBar) {      
-      setExtendedAttachments(true);
-      onCollapse();      
-    }
-  }, [input, setInput]);
-
+  const realm = RealmDB.getInstance();
   const conversation: Conversation | undefined = realm.objectForPrimaryKey(
     'Conversation',
     conversationId,
   );
-
+  
+  const inputBarWidth = extendedInputBar ? width - (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING) : width - attachmentBarWidth;
+  const expandAnimation = useRef(new Animated.Value(inputBarWidth)).current;
   const source = conversation && conversation.channel.source;
+  const outboundMapper: OutboundMapper = getOutboundMapper(source);
 
-  const outboundMapper: any = getOutboundMapper(source);
+  useEffect(() => {    
+    if (!extendedInputBar && extendedInputBarRef.current && input.length >= 20) {      
+      expandInputBar();
+    }    
+    extendedInputBarRef.current = extendedInputBar;
+  }, [extendedInputBar]) 
+
+  useEffect(() => {
+    if (input.length >= 20 && !extendedInputBar) {
+      setExtendedAttachments(false);
+      collapseInputBar();
+    } else if (input.length < 10 && extendedInputBar) {      
+      setExtendedAttachments(true);
+      expandInputBar();      
+    }   
+  }, [input, setInput]);  
 
   const sendMessage = (message: string) => {
     if (message.length === 0) return;
-
-    HttpClientInstance.sendMessages({
-      conversationId: conversation.id,
-      message: outboundMapper.getTextPayload(input),
-    })
-      .then((response: any) => {
-        realm.write(() => {
-          realm.create('Message', {
-            id: response.id,
-            content: {text: response.content.text},
-            deliveryState: response.deliveryState,
-            fromContact: response.fromContact,
-            sentAt: response.sentAt,
-            metadata: response.metadata,
-          });
-        });
-      })
-      .catch((error: Error) => {
-        console.log('Error: ', error);
-      });
+    sendMessageAPI(conversation.id, outboundMapper.getTextPayload(input))    
     setInput('');
   };
 
-  const onCollapse = () => {
+  const expandInputBar = () => {
     Animated.timing(expandAnimation, {
       toValue: width - attachmentBarWidth,
       duration: 400,
@@ -83,7 +71,7 @@ export const InputBar = (props: InputBarProps) => {
     }).start();
   };
 
-  const onExpand = () => {
+  const collapseInputBar = () => {
     Animated.timing(expandAnimation, {
       toValue: width - 36,
       duration: 400,
@@ -130,7 +118,6 @@ export const InputBar = (props: InputBarProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'green',
     marginRight: 12,
   },
   inputBar: {
