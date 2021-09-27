@@ -8,7 +8,10 @@ export function formatTime(sentAt: string | number | Date) {
   const sentAtDate = new Date(sentAt);
 
   if (isToday(sentAtDate)) {
-    return sentAtDate.toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit'});
+    return sentAtDate.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   }
 
   if (isThisWeek(sentAtDate)) {

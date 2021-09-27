@@ -31,4 +31,8 @@ export interface ContactContent extends Content {
   };
 }
 
-export type ContentUnion = TextContent | PictureContent | VideoContent | ContactContent;
+export type ContentUnion =
+  | TextContent
+  | PictureContent
+  | VideoContent
+  | ContactContent;

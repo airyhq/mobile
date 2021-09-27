@@ -52,7 +52,14 @@ export interface ButtonAttachment extends Attachment {
   payload: {
     text: string;
     template_type: 'button';
-    buttons: (URLButton | PostbackButton | CallButton | LoginButton | LogoutButton | GamePlayButton)[];
+    buttons: (
+      | URLButton
+      | PostbackButton
+      | CallButton
+      | LoginButton
+      | LogoutButton
+      | GamePlayButton
+    )[];
   };
 }
 export interface GenericAttachment extends Attachment {
@@ -69,7 +76,14 @@ export interface MediaTemplate extends Content {
   media_type: 'video' | 'image';
   url?: string;
   attachment_id?: string;
-  buttons: (URLButton | PostbackButton | CallButton | LoginButton | LogoutButton | GamePlayButton)[];
+  buttons: (
+    | URLButton
+    | PostbackButton
+    | CallButton
+    | LoginButton
+    | LogoutButton
+    | GamePlayButton
+  )[];
 }
 
 export interface MediaAttachment extends Attachment {
@@ -88,7 +102,14 @@ export interface Element {
     type: string;
     url?: string;
   };
-  buttons: (URLButton | PostbackButton | CallButton | LoginButton | LogoutButton | GamePlayButton)[];
+  buttons: (
+    | URLButton
+    | PostbackButton
+    | CallButton
+    | LoginButton
+    | LogoutButton
+    | GamePlayButton
+  )[];
 }
 
 export interface Content {
@@ -103,6 +124,16 @@ export interface TextContent extends Content {
 export interface ImageContent extends Content {
   type: 'image';
   imageUrl: string;
+}
+
+export interface AudioContent extends Content {
+  type: 'audio';
+  audioUrl: string;
+}
+
+export interface FileContent extends Content {
+  type: 'file';
+  fileUrl: string;
 }
 
 export interface ImagesContent extends Content {
@@ -132,7 +163,14 @@ export interface QuickRepliesContent extends Content {
 export interface ButtonTemplate extends Content {
   type: 'buttonTemplate';
   text: string;
-  buttons: (URLButton | PostbackButton | CallButton | LoginButton | LogoutButton | GamePlayButton)[];
+  buttons: (
+    | URLButton
+    | PostbackButton
+    | CallButton
+    | LoginButton
+    | LogoutButton
+    | GamePlayButton
+  )[];
 }
 
 export interface GenericTemplate extends Content {
@@ -148,24 +186,43 @@ export interface Fallback extends Content {
   url: string;
 }
 
+export interface StoryMentionContent extends Content {
+  type: 'story_mention';
+  url: string;
+  sentAt: Date;
+}
+
+export interface StoryRepliesContent extends Content {
+  type: 'story_replies';
+  url: string;
+  sentAt: Date;
+}
+
 // Add a new facebook content model here:
 export type ContentUnion =
   | TextContent
   | PostbackButton
   | ImageContent
+  | AudioContent
   | ImagesContent
   | VideoContent
+  | FileContent
   | ButtonTemplate
   | GenericTemplate
   | QuickRepliesContent
   | MediaTemplate
+  | StoryMentionContent
+  | StoryRepliesContent
   | Fallback;
 
 export type AttachmentUnion =
   | TextContent
   | ImageContent
   | VideoContent
+  | FileContent
+  | AudioContent
   | ButtonTemplate
   | GenericTemplate
   | MediaTemplate
+  | StoryMentionContent
   | Fallback;

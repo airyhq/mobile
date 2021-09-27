@@ -15,7 +15,7 @@ const App = () => {
     RealmDB.getInstance().objects('UserInfo').addListener(onUserUpdated);
   }, []);
 
-  const onUserUpdated = (users: any, changes: any) => {
+  const onUserUpdated = (users: any) => {
     if (users.length) {
       setUserInfo(users[0]);
     } else {

@@ -1,4 +1,3 @@
-
 import Realm from 'realm';
 import {UserInfoSchema} from '../model/userInfo';
 import {ConversationSchema} from '../model/Conversation';
@@ -15,7 +14,7 @@ import {
   PaginationSchema,
   SuggestedReplySchema,
   SuggestionsSchema,
-  MessageDataSchema
+  MessageDataSchema,
 } from '../model';
 
 export class RealmDB {

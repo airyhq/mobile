@@ -6,7 +6,9 @@ interface SourceMessagePreviewProps {
 }
 
 const isImageFromGoogleSource = (messageText: string | undefined) => {
-  if (!messageText) return false;
+  if (!messageText) {
+    return false;
+  }
 
   return (
     messageText.includes('https://storage.googleapis.com') &&
@@ -18,8 +20,8 @@ const isImageFromGoogleSource = (messageText: string | undefined) => {
 export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
   const {conversation} = props;
 
-  const lastMessageIsText = (conversation: Conversation) => {
-    const lastMessageContent: any = conversation.lastMessage.content;
+  const lastMessageIsText = (currentConversation: Conversation) => {
+    const lastMessageContent: any = currentConversation.lastMessage.content;
 
     if (typeof lastMessageContent.text === 'string') {
       if (
