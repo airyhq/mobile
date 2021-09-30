@@ -97,6 +97,7 @@ const onMessage = (conversationId: string, message: Message) => {
 const WebSocketComponent = ({children, user}: WebSocketProps) => {
   let [webSocketClient, setWebsocketClient] = useState(null);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (webSocketClient) {
       webSocketClient.destroyConnection();
