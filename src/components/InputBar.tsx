@@ -7,10 +7,10 @@ import {
   colorLightGray,
 } from '../assets/colors';
 import Paperplane from '../assets/images/icons/paperplane.svg';
-import {HttpClientInstance} from '../InitializeAiryApi';
 import {Conversation} from '../model/Conversation';
 import {getOutboundMapper} from '../render/outbound';
 import {RealmDB} from '../storage/realm';
+import {api} from '../api';
 
 type InputBarProps = {
   conversationId: string;
@@ -76,10 +76,11 @@ export const InputBar = (props: InputBarProps) => {
       return;
     }
 
-    HttpClientInstance.sendMessages({
-      conversationId: conversation.id,
-      message: outboundMapper.getTextPayload(input),
-    })
+    api
+      .sendMessages({
+        conversationId: conversation.id,
+        message: outboundMapper.getTextPayload(input),
+      })
       .then((response: any) => {
         realm.write(() => {
           realm.create('Message', {
@@ -91,9 +92,6 @@ export const InputBar = (props: InputBarProps) => {
             metadata: response.metadata,
           });
         });
-      })
-      .catch((error: Error) => {
-        console.log('Error: ', error);
       });
     setInput('');
   };

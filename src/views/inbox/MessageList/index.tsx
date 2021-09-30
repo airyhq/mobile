@@ -8,7 +8,6 @@ import {
   Platform,
 } from 'react-native';
 import {RealmDB} from '../../../storage/realm';
-import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {
   parseToRealmMessage,
   Message,
@@ -19,6 +18,7 @@ import {MessageComponent} from './MessageComponent';
 import {debounce, sortBy, isEqual} from 'lodash-es';
 import {MessageBar} from '../../../components/MessageBar';
 import {useHeaderHeight} from '@react-navigation/stack';
+import {api} from '../../../api';
 
 interface RouteProps {
   key: string;
@@ -59,39 +59,35 @@ const MessageList = (props: MessageListProps) => {
       realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
 
     const listMessages = () => {
-      HttpClientInstance.listMessages({conversationId, pageSize: 50})
-        .then((response: any) => {
-          if (databaseMessages) {
-            realm.write(() => {
-              databaseMessages.messages = [
-                ...mergeMessages(databaseMessages.messages, [...response.data]),
-              ];
+      api.listMessages({conversationId, pageSize: 50}).then((response: any) => {
+        if (databaseMessages) {
+          realm.write(() => {
+            databaseMessages.messages = [
+              ...mergeMessages(databaseMessages.messages, [...response.data]),
+            ];
+          });
+        } else {
+          realm.write(() => {
+            realm.create('MessageData', {
+              id: conversationId,
+              messages: mergeMessages([], [...response.data]),
             });
-          } else {
-            realm.write(() => {
-              realm.create('MessageData', {
-                id: conversationId,
-                messages: mergeMessages([], [...response.data]),
-              });
-            });
-          }
+          });
+        }
 
-          if (response.paginationData) {
-            realm.write(() => {
-              currentConversation.paginationData.loading =
-                response.paginationData?.loading ?? null;
-              currentConversation.paginationData.nextCursor =
-                response.paginationData?.nextCursor ?? null;
-              currentConversation.paginationData.previousCursor =
-                response.paginationData?.previousCursor ?? null;
-              currentConversation.paginationData.total =
-                response.paginationData?.total ?? null;
-            });
-          }
-        })
-        .catch((error: Error) => {
-          console.log('Error: ', error);
-        });
+        if (response.paginationData) {
+          realm.write(() => {
+            currentConversation.paginationData.loading =
+              response.paginationData?.loading ?? null;
+            currentConversation.paginationData.nextCursor =
+              response.paginationData?.nextCursor ?? null;
+            currentConversation.paginationData.previousCursor =
+              response.paginationData?.previousCursor ?? null;
+            currentConversation.paginationData.total =
+              response.paginationData?.total ?? null;
+          });
+        }
+      });
     };
 
     listMessages();
@@ -132,11 +128,12 @@ const MessageList = (props: MessageListProps) => {
   const listPreviousMessages = () => {
     const cursor = paginationData && paginationData.nextCursor;
 
-    HttpClientInstance.listMessages({
-      conversationId,
-      pageSize: 50,
-      cursor: cursor,
-    })
+    api
+      .listMessages({
+        conversationId,
+        pageSize: 50,
+        cursor: cursor,
+      })
       .then((response: any) => {
         const storedConversationMessages: MessageData | undefined =
           realm.objectForPrimaryKey<MessageData>(
@@ -173,9 +170,6 @@ const MessageList = (props: MessageListProps) => {
               response.paginationData?.total ?? null;
           });
         }
-      })
-      .catch((error: Error) => {
-        console.log('Error: ', error);
       });
   };
 
