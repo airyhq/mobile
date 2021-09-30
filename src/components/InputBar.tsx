@@ -80,24 +80,6 @@ export const InputBar = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input, setInput]);
 
-  api
-    .sendMessages({
-      conversationId: conversation.id,
-      message: outboundMapper.getTextPayload(input),
-    })
-    .then((response: any) => {
-      realm.write(() => {
-        realm.create('Message', {
-          id: response.id,
-          content: {text: response.content.text},
-          deliveryState: response.deliveryState,
-          fromContact: response.fromContact,
-          sentAt: response.sentAt,
-          metadata: response.metadata,
-        });
-      });
-    });
-
   const onSendMessage = (message: string) => {
     if (message.length === 0) {
       return;
