@@ -1,116 +1,143 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Animated, Dimensions, TextInput, TouchableOpacity} from 'react-native';
+import {Animated, TextInput, TouchableOpacity} from 'react-native';
 import {View, StyleSheet} from 'react-native';
+import {sendMessage} from '../api/conversation';
 import {
   colorAiryBlue,
   colorBackgroundGray,
   colorLightGray,
 } from '../assets/colors';
 import Paperplane from '../assets/images/icons/paperplane.svg';
-import {Conversation} from '../model/Conversation';
+import {Conversation} from '../model';
 import {getOutboundMapper} from '../render/outbound';
+import {OutboundMapper} from '../render/outbound/mapper';
 import {RealmDB} from '../storage/realm';
 import {api} from '../api';
+import {
+  ATTACHMENT_BAR_ITEM_PADDING,
+  ATTACHMENT_BAR_ITEM_WIDTH,
+} from './MessageBar';
 
 type InputBarProps = {
   conversationId: string;
-  extended: boolean;
-  setExtended: (extended: boolean) => void;
+  width: number;
+  attachmentBarWidth: number;
+  extendedInputBar: boolean;
+  setExtendedAttachments: (extended: boolean) => void;
 };
 
-export const InputBar = (props: InputBarProps) => {
-  const {conversationId, extended, setExtended} = props;
+const INITIAL_INPUT_HEIGHT = 33;
+
+export const InputBar = ({
+  conversationId,
+  width,
+  attachmentBarWidth,
+  extendedInputBar,
+  setExtendedAttachments,
+}: InputBarProps) => {
   const [input, setInput] = useState('');
-  const [inputHeight, setInputHeight] = useState(33);
-  const collapsedWidth = width * 0.65;
-  const extendedWidth = width * 0.83;
-  const expandAnimation = useRef(new Animated.Value(collapsedWidth)).current;
+  const [inputHeight, setInputHeight] = useState(INITIAL_INPUT_HEIGHT);
+
+  const extendedInputBarRef = useRef<boolean>();
+  const inputBarRef = useRef<TextInput>();
+
   const realm = RealmDB.getInstance();
-
-  useEffect(() => {
-    const onCollapse = () => {
-      Animated.timing(expandAnimation, {
-        toValue: collapsedWidth,
-        duration: 400,
-        useNativeDriver: false,
-      }).start();
-    };
-
-    const onExpand = () => {
-      Animated.timing(expandAnimation, {
-        toValue: extendedWidth,
-        duration: 400,
-        useNativeDriver: false,
-      }).start();
-    };
-
-    if (input.length >= 20 && !extended) {
-      setExtended(!extended);
-      onExpand();
-    }
-    if (input.length < 10 && extended) {
-      setExtended(!extended);
-      onCollapse();
-    }
-  }, [
-    input,
-    setInput,
-    extended,
-    setExtended,
-    collapsedWidth,
-    extendedWidth,
-    expandAnimation,
-  ]);
-
   const conversation: Conversation | undefined = realm.objectForPrimaryKey(
     'Conversation',
     conversationId,
   );
 
+  const inputBarWidth = extendedInputBar
+    ? width - (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING)
+    : width - attachmentBarWidth;
+  const expandAnimation = useRef(new Animated.Value(inputBarWidth)).current;
   const source = conversation && conversation.channel.source;
+  const outboundMapper: OutboundMapper = getOutboundMapper(source);
 
-  const outboundMapper: any = getOutboundMapper(source);
+  useEffect(() => {
+    if (
+      !extendedInputBar &&
+      extendedInputBarRef.current &&
+      input.length >= 20
+    ) {
+      expandInputBar();
+      setTimeout(() => {
+        setInputHeight(0);
+      }, 100);
+    }
+    extendedInputBarRef.current = extendedInputBar;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [extendedInputBar]);
 
-  const sendMessage = (message: string) => {
+  useEffect(() => {
+    if (input.length >= 20 && !extendedInputBar) {
+      setExtendedAttachments(false);
+      collapseInputBar();
+    } else if (input.length < 10 && extendedInputBar) {
+      setExtendedAttachments(true);
+      expandInputBar();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [input, setInput]);
+
+  api
+    .sendMessages({
+      conversationId: conversation.id,
+      message: outboundMapper.getTextPayload(input),
+    })
+    .then((response: any) => {
+      realm.write(() => {
+        realm.create('Message', {
+          id: response.id,
+          content: {text: response.content.text},
+          deliveryState: response.deliveryState,
+          fromContact: response.fromContact,
+          sentAt: response.sentAt,
+          metadata: response.metadata,
+        });
+      });
+    });
+
+  const onSendMessage = (message: string) => {
     if (message.length === 0) {
       return;
     }
-
-    api
-      .sendMessages({
-        conversationId: conversation.id,
-        message: outboundMapper.getTextPayload(input),
-      })
-      .then((response: any) => {
-        realm.write(() => {
-          realm.create('Message', {
-            id: response.id,
-            content: {text: response.content.text},
-            deliveryState: response.deliveryState,
-            fromContact: response.fromContact,
-            sentAt: response.sentAt,
-            metadata: response.metadata,
-          });
-        });
-      });
+    sendMessage(conversation.id, outboundMapper.getTextPayload(input));
     setInput('');
   };
 
+  const expandInputBar = () => {
+    Animated.timing(expandAnimation, {
+      toValue: width - attachmentBarWidth,
+      duration: 400,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const collapseInputBar = () => {
+    Animated.timing(expandAnimation, {
+      toValue:
+        width - (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING),
+      duration: 400,
+      useNativeDriver: false,
+    }).start();
+  };
+
   return (
-    <View style={styles.container}>
-      <Animated.View
+    <Animated.View style={[styles.container, {width: expandAnimation}]}>
+      <View
         style={[
           {
-            height: inputHeight < 20 ? 33 : inputHeight + 15,
-            width: expandAnimation,
+            height: inputHeight < 20 ? 33 : inputHeight + 16,
           },
           styles.inputBar,
         ]}>
         <TextInput
+          ref={inputBarRef}
           style={[
             {
-              height: inputHeight < 20 ? 33 : inputHeight + 15,
-              width: extended ? '85%' : '80%',
+              height: inputHeight < 20 ? 33 : inputHeight + 16,
+              width: extendedInputBar ? '85%' : '80%',
             },
             styles.textInput,
           ]}
@@ -124,21 +151,19 @@ export const InputBar = (props: InputBarProps) => {
           }
         />
         <TouchableOpacity
-          onPress={() => sendMessage(input)}
+          onPress={() => onSendMessage(input)}
           style={styles.sendButton}
           disabled={input.length === 0}>
           <Paperplane width={16} height={16} fill="white" />
         </TouchableOpacity>
-      </Animated.View>
-    </View>
+      </View>
+    </Animated.View>
   );
 };
 
-const {width} = Dimensions.get('window');
-
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'transparent',
+    marginRight: 12,
   },
   inputBar: {
     backgroundColor: colorBackgroundGray,
@@ -148,7 +173,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     borderColor: colorLightGray,
-    marginRight: 12,
     paddingLeft: 10,
   },
   textInput: {

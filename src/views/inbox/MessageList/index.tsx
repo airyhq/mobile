@@ -181,8 +181,8 @@ const MessageList = (props: MessageListProps) => {
         <View style={styles.container}>
           <FlatList
             style={styles.flatlist}
-            data={messages.reverse()}
-            inverted={true}
+            data={messages}
+            inverted={false}
             ref={messageListRef}
             onEndReached={debouncedListPreviousMessages}
             initialNumToRender={25}
