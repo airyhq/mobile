@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Metadata,
   Conversation,
@@ -97,8 +97,7 @@ const onMessage = (conversationId: string, message: Message) => {
 const WebSocketComponent = ({children, user}: WebSocketProps) => {
   let [webSocketClient, setWebsocketClient] = useState(null);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
+  const refreshSocket = useCallback(() => {
     if (webSocketClient) {
       webSocketClient.destroyConnection();
     }
@@ -115,9 +114,12 @@ const WebSocketComponent = ({children, user}: WebSocketProps) => {
         onMetadata,
       }),
     );
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  return children;
+  useEffect(() => refreshSocket(), [refreshSocket]);
+
+  return <>{children}</>;
 };
 
 export const WebSocket = ({children}) => (
