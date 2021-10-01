@@ -20,11 +20,11 @@ import {Source} from '../model/Channel';
 type IconChannelProps = {
   source: string;
   sourceChannelId: string;
+  metadataName: string;
   icon?: boolean;
   showAvatar?: boolean;
   showName?: boolean;
   text?: boolean;
-  metadataName: string;
 };
 
 const SOURCE_INFO: any = {
@@ -86,7 +86,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
 
   const ChannelName = () => {
     return (
-      <Text style={styles.text} numberOfLines={1}>
+      <Text numberOfLines={1} style={styles.text}>
         {metadataName || (isFromTwilioSource ? sourceChannelId : source)}
       </Text>
     );
@@ -114,7 +114,9 @@ const IconChannel: React.FC<IconChannelProps> = ({
     return (
       <View style={styles.iconText}>
         {channelInfo.icon()}
-        <Text style={styles.text}>{channelInfo.text}</Text>
+        <Text numberOfLines={1} style={styles.text}>
+          {channelInfo.text}
+        </Text>
       </View>
     );
   }
@@ -123,7 +125,9 @@ const IconChannel: React.FC<IconChannelProps> = ({
     return (
       <View style={styles.avatarText}>
         {channelInfo.avatar()}
-        <Text style={styles.text}>{channelInfo.text}</Text>
+        <Text numberOfLines={1} style={styles.text}>
+          {channelInfo.text}
+        </Text>
       </View>
     );
   }
@@ -180,6 +184,7 @@ const styles = StyleSheet.create({
   },
   text: {
     width: iconChannelTextWidth,
+    maxWidth: 150,
     marginLeft: 3,
     fontSize: 13,
     color: colorTextGray,
