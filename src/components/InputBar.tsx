@@ -1,14 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Animated, TextInput, TouchableOpacity} from 'react-native';
 import {View, StyleSheet} from 'react-native';
-import {sendMessageAPI} from '../api/conversation';
+import {sendMessage} from '../api/conversation';
 import {
   colorAiryBlue,
   colorBackgroundGray,
   colorLightGray,
 } from '../assets/colors';
 import Paperplane from '../assets/images/icons/paperplane.svg';
-import {Conversation} from '../model/Conversation';
+import {Conversation} from '../model';
 import {getOutboundMapper} from '../render/outbound';
 import {OutboundMapper} from '../render/outbound/mapper';
 import {RealmDB} from '../storage/realm';
@@ -27,15 +27,13 @@ type InputBarProps = {
 
 const INITIAL_INPUT_HEIGHT = 33;
 
-export const InputBar = (props: InputBarProps) => {
-  const {
-    conversationId,
-    width,
-    attachmentBarWidth,
-    extendedInputBar,
-    setExtendedAttachments,
-  } = props;
-
+export const InputBar = ({
+  conversationId,
+  width,
+  attachmentBarWidth,
+  extendedInputBar,
+  setExtendedAttachments,
+}: InputBarProps) => {
   const [input, setInput] = useState('');
   const [inputHeight, setInputHeight] = useState(INITIAL_INPUT_HEIGHT);
 
@@ -81,9 +79,11 @@ export const InputBar = (props: InputBarProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input, setInput]);
 
-  const sendMessage = (message: string) => {
-    if (message.length === 0) return;
-    sendMessageAPI(conversation.id, outboundMapper.getTextPayload(input));
+  const onSendMessage = (message: string) => {
+    if (message.length === 0) {
+      return;
+    }
+    sendMessage(conversation.id, outboundMapper.getTextPayload(input));
     setInput('');
   };
 
@@ -132,7 +132,7 @@ export const InputBar = (props: InputBarProps) => {
           }
         />
         <TouchableOpacity
-          onPress={() => sendMessage(input)}
+          onPress={() => onSendMessage(input)}
           style={styles.sendButton}
           disabled={input.length === 0}>
           <Paperplane width={16} height={16} fill="white" />

@@ -1,11 +1,12 @@
-import {HttpClientInstance} from '../InitializeAiryApi';
 import {RealmDB} from '../storage/realm';
+import {api} from '../api';
 
-export const sendMessageAPI = (conversationId: string, message: any) => {
-  HttpClientInstance.sendMessages({
-    conversationId,
-    message,
-  })
+export const sendMessage = (conversationId: string, message: any) => {
+  api
+    .sendMessages({
+      conversationId,
+      message,
+    })
     .then((response: any) => {
       const realm = RealmDB.getInstance();
       realm.write(() => {

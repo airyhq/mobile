@@ -9,12 +9,12 @@ import {
   Dimensions,
 } from 'react-native';
 import {colorSoftGreen, colorStateRed} from '../assets/colors';
-import {HttpClientInstance} from '../InitializeAiryApi';
 import {RealmDB} from '../storage/realm';
 import Checkmark from '../assets/images/icons/checkmark-circle.svg';
 import {Conversation} from '../model/Conversation';
 import {Avatar} from './Avatar';
 import IconChannel from './IconChannel';
+import {api} from '../api';
 
 type CurrentStateProps = {
   state: string;
@@ -78,10 +78,11 @@ export const CurrentState = (props: CurrentStateProps) => {
       },
     });
     const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
-    HttpClientInstance.setStateConversation({
-      conversationId: conversationId,
-      state: newState,
-    })
+    api
+      .setStateConversation({
+        conversationId: conversationId,
+        state: newState,
+      })
       .then(() => {
         realm.write(() => {
           const changedConversation: any = realm.objectForPrimaryKey(
@@ -90,9 +91,6 @@ export const CurrentState = (props: CurrentStateProps) => {
           );
           changedConversation.metadata.state = newState;
         });
-      })
-      .catch((error: Error) => {
-        console.log('Error: ', error);
       });
   };
 

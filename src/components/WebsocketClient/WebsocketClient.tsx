@@ -1,11 +1,9 @@
 import {StompWrapper} from './stompWrapper';
-import {MetadataEvent} from '../../model/Metadata';
-import {Message} from '../../model/Message';
+import {MetadataEvent} from '../../model';
+import {Message} from '../../model';
 import {Tag} from '../../model/Tag';
-import {Channel} from '../../model/Channel';
+import {Channel} from '../../model';
 import {EventPayload} from './payload';
-import {RealmDB} from '../../storage/realm';
-import {UserInfo} from '../../model/userInfo';
 const camelcaseKeys = require('camelcase-keys');
 
 type CallbackMap = {
@@ -20,21 +18,23 @@ type CallbackMap = {
   onError?: () => void;
 };
 
-const realm = RealmDB.getInstance();
-const accessToken: string = realm.objects<UserInfo>('UserInfo')[0]?.accessToken;
-
 export class WebSocketClient {
-  public readonly apiUrlConfig?: string;
+  public readonly endpoint?: string;
 
   stompWrapper: StompWrapper;
   callbackMap: CallbackMap;
 
-  constructor(apiUrl: string, callbackMap: CallbackMap = {}) {
+  constructor(
+    apiUrl: string,
+    accessToken: string,
+    callbackMap: CallbackMap = {},
+  ) {
     this.callbackMap = callbackMap;
-    this.apiUrlConfig = `ws://${new URL(apiUrl)}ws.communication`;
+    this.endpoint = `wss://${apiUrl.split('//')[1]}/ws.communication`;
 
     this.stompWrapper = new StompWrapper(
-      this.apiUrlConfig,
+      this.endpoint,
+      accessToken,
       {
         '/events': item => {
           this.onEvent(item.body);
@@ -42,7 +42,7 @@ export class WebSocketClient {
       },
       this.onError,
     );
-    this.stompWrapper.initConnection(accessToken);
+    this.stompWrapper.initConnection();
   }
 
   destroyConnection = () => {

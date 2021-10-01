@@ -1,21 +1,19 @@
 import {Client, IFrame, IMessage, StompSubscription} from '@stomp/stompjs';
-import {UserInfo} from '../../model/userInfo';
-import {RealmDB} from '../../storage/realm';
 
 type QueueMappingType = {[destination: string]: (message: IMessage) => void};
 type ErrorCallback = () => void;
 
-const realm = RealmDB.getInstance();
-const accessToken: string = realm.objects<UserInfo>('UserInfo')[0]?.accessToken;
 export class StompWrapper {
   stompClient?: Client;
   onError: ErrorCallback;
   url: string;
   queues?: StompSubscription[];
   queueMapping: QueueMappingType;
+  token: string;
 
   constructor(
     url: string,
+    token: string,
     queueMapping: QueueMappingType,
     onError: ErrorCallback,
   ) {
@@ -24,11 +22,11 @@ export class StompWrapper {
     this.onError = onError;
   }
 
-  initConnection = (token: string | undefined) => {
+  initConnection = () => {
     this.stompClient = new Client({
       brokerURL: this.url,
       connectHeaders: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${this.token}`,
       },
       reconnectDelay: 2000,
       onWebSocketError: this.onWSError,
@@ -69,6 +67,6 @@ export class StompWrapper {
 
   refreshSocket = () => {
     this.destroyConnection();
-    this.initConnection(accessToken);
+    this.initConnection();
   };
 }

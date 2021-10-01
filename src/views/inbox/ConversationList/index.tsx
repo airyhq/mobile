@@ -4,14 +4,14 @@ import {debounce} from 'lodash-es';
 import {ConversationListItem} from '../ConversationListItem';
 import {NoConversations} from '../NoConversations';
 import {RealmDB} from '../../../storage/realm';
-import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {getPagination} from '../../../services/Pagination';
 import {
   Conversation,
   parseToRealmConversation,
-} from '../../../model/Conversation';
+  MessageData,
+} from '../../../model';
 import {NavigationStackProp} from 'react-navigation-stack';
-import {MessageData} from '../../../model/Message';
+import {api} from '../../../components/auth/AuthWrapper';
 
 type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
@@ -26,7 +26,8 @@ export const ConversationList = (props: ConversationListProps) => {
 
   useEffect(() => {
     const getConversationsList = () => {
-      HttpClientInstance.listConversations({page_size: 50})
+      api
+        .listConversations({page_size: 50})
         .then((response: any) => {
           realm.write(() => {
             realm.create('Pagination', response.paginationData);
@@ -77,7 +78,8 @@ export const ConversationList = (props: ConversationListProps) => {
 
   const getNextConversationList = () => {
     const cursor = paginationData?.nextCursor;
-    HttpClientInstance.listConversations({cursor: cursor, page_size: 50})
+    api
+      .listConversations({cursor: cursor, page_size: 50})
       .then((response: any) => {
         realm.write(() => {
           for (const conversation of response.data) {
