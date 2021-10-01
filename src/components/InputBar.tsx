@@ -12,7 +12,6 @@ import {Conversation} from '../model';
 import {getOutboundMapper} from '../render/outbound';
 import {OutboundMapper} from '../render/outbound/mapper';
 import {RealmDB} from '../storage/realm';
-import {api} from '../api';
 import {
   ATTACHMENT_BAR_ITEM_PADDING,
   ATTACHMENT_BAR_ITEM_WIDTH,
