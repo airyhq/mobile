@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, Dimensions} from 'react-native';
 import {ImageWithFallback} from '../ImageWithFallback';
 import {ImageContent} from '../../providers/facebook/facebookModel';
 
@@ -8,7 +8,7 @@ type ImageRenderProps = {
   images?: ImageContent[];
 };
 
-export const Image = ({imageUrl, images}: ImageRenderProps) => (
+export const ImageComponent = ({imageUrl, images}: ImageRenderProps) => (
   <View style={styles.wrapper}>
     {images ? (
       <View style={styles.imagesContainer}>
@@ -42,8 +42,8 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   messageListItemImageBlock: {
-    height: 150,
-    width: 150,
+    width: Dimensions.get('window').width / 2,
+    height: 100,
     resizeMode: 'contain',
     borderRadius: 8,
   },

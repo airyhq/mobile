@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, Text, Linking} from 'react-native';
+import {StyleSheet, View, Text, Dimensions} from 'react-native';
 import Video from 'react-native-video';
 
 type VideoRenderProps = {
@@ -19,8 +19,6 @@ export const VideoComponent = ({videoUrl}: VideoRenderProps) => {
     failedUrls.includes(videoUrl),
   );
 
-  console.log('videoUrl', videoUrl);
-
   useEffect(() => {
     setVideoFailed(failedUrls.includes(videoUrl));
   }, [videoUrl]);
@@ -34,15 +32,15 @@ export const VideoComponent = ({videoUrl}: VideoRenderProps) => {
     <View style={styles.wrapper}>
       <View style={styles.item}>
         {isVideoFailed ? (
-          <div>Loading of video failed</div>
+          <Text>Loading of video failed</Text>
         ) : (
-          <Text onPress={() => Linking.openURL(videoUrl)}>
-            <Video
-              source={{uri: videoUrl}}
-              style={styles.video}
-              onError={loadingFailed}
-            />
-          </Text>
+          <Video
+            source={{uri: videoUrl}}
+            onError={loadingFailed}
+            style={styles.video}
+            resizeMode={'contain'}
+            controls
+          />
         )}
       </View>
     </View>
@@ -52,13 +50,15 @@ export const VideoComponent = ({videoUrl}: VideoRenderProps) => {
 const styles = StyleSheet.create({
   wrapper: {
     display: 'flex',
-    flex: 0,
+    flex: 1,
     marginTop: 5,
+    backgroundColor: 'blue',
   },
   item: {
     display: 'flex',
     alignSelf: 'flex-end',
     width: '100%',
+    backgroundColor: 'red',
   },
   itemMember: {
     marginTop: 5,
@@ -87,9 +87,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   video: {
-    maxWidth: '100%',
-    maxHeight: 210,
-    width: 150,
-    height: 150,
+    width: Dimensions.get('window').width / 2,
+    height: 100,
   },
 });

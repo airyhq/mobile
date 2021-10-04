@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {Text, Linking, Image} from 'react-native';
+import {Image} from 'react-native';
 import {SvgUri} from 'react-native-svg';
-
-//import FallbackImage from 'https://s3.amazonaws.com/assets.airy.co/fallbackMediaImage.svg';
 
 type ImageRenderProps = {
   src: string;
@@ -21,8 +19,6 @@ const failedUrls = [];
 export const ImageWithFallback = ({src, style}: ImageRenderProps) => {
   const [imageFailed, setImageFailed] = useState(failedUrls.includes(src));
 
-  console.log('imageFailed', imageFailed);
-
   useEffect(() => {
     setImageFailed(failedUrls.includes(src));
   }, [src]);
@@ -33,7 +29,7 @@ export const ImageWithFallback = ({src, style}: ImageRenderProps) => {
   };
 
   return (
-    <Text onPress={() => Linking.openURL(src)}>
+    <>
       {imageFailed ? (
         <SvgUri
           width="70"
@@ -49,6 +45,6 @@ export const ImageWithFallback = ({src, style}: ImageRenderProps) => {
           onError={() => loadingFailed()}
         />
       )}
-    </Text>
+    </>
   );
 };
