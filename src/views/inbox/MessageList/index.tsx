@@ -16,7 +16,7 @@ import {
 } from '../../../model';
 import {MessageComponent} from './MessageComponent';
 import {debounce, sortBy, isEqual} from 'lodash-es';
-import {MessageBar} from '../../../components/MessageBar';
+import {ChatInput} from '../../../components/chat/input/ChatInput';
 import {useHeaderHeight} from '@react-navigation/stack';
 import {api} from '../../../api';
 
@@ -199,8 +199,8 @@ const MessageList = (props: MessageListProps) => {
               );
             }}
           />
-          <View style={styles.messageBar}>
-            <MessageBar conversationId={route.params.conversationId} />
+          <View style={styles.chatInput}>
+            <ChatInput conversationId={route.params.conversationId} />
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   flatlist: {
     backgroundColor: 'white',
   },
-  messageBar: {
+  chatInput: {
     alignSelf: 'flex-start',
     backgroundColor: 'white',
     marginBottom: 5,

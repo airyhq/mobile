@@ -1,16 +1,16 @@
 import React from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
-import {colorTextGray} from '../assets/colors';
-import ImageIcon from '../assets/images/icons/attachmentImage.svg';
-import AttachmentIcon from '../assets/images/icons/image.svg';
-import FileIcon from '../assets/images/icons/attachmentFile.svg';
-import ArrowIcon from '../assets/images/icons/arrowCircleRight.svg';
+import {colorTextGray} from '../../../assets/colors';
+import ImageIcon from '../../../assets/images/icons/attachmentImage.svg';
+import AttachmentIcon from '../../../assets/images/icons/image.svg';
+import FileIcon from '../../../assets/images/icons/attachmentFile.svg';
+import ArrowIcon from '../../../assets/images/icons/arrowCircleRight.svg';
 import {
   ATTACHMENT_BAR_ITEM_HEIGHT,
-  ATTACHMENT_BAR_ITEM_PADDING,
   ATTACHMENT_BAR_ITEM_WIDTH,
+  ATTACHMENT_BAR_ITEM_PADDING,
   SupportedType,
-} from './MessageBar';
+} from './config';
 
 type AttachmentBarProps = {
   attachmentTypes: SupportedType[];
@@ -19,7 +19,7 @@ type AttachmentBarProps = {
   setExtendedAttachments: (extended: boolean) => void;
 };
 
-export const AttachmentBar = (props: AttachmentBarProps) => {
+export const AttachmentPicker = (props: AttachmentBarProps) => {
   const {
     attachmentTypes,
     attachmentBarWidth,

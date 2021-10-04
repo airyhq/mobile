@@ -1,21 +1,18 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Animated, TextInput, TouchableOpacity} from 'react-native';
 import {View, StyleSheet} from 'react-native';
-import {sendMessage} from '../api/conversation';
+import {sendMessage} from '../../../api/conversation';
 import {
   colorAiryBlue,
   colorBackgroundGray,
   colorLightGray,
-} from '../assets/colors';
-import Paperplane from '../assets/images/icons/paperplane.svg';
-import {Conversation} from '../model';
-import {getOutboundMapper} from '../render/outbound';
-import {OutboundMapper} from '../render/outbound/mapper';
-import {RealmDB} from '../storage/realm';
-import {
-  ATTACHMENT_BAR_ITEM_PADDING,
-  ATTACHMENT_BAR_ITEM_WIDTH,
-} from './MessageBar';
+} from '../../../assets/colors';
+import PaperPlane from '../../../assets/images/icons/paperplane.svg';
+import {Conversation} from '../../../model';
+import {getOutboundMapper} from '../../../render/outbound';
+import {OutboundMapper} from '../../../render/outbound/mapper';
+import {RealmDB} from '../../../storage/realm';
+import {ATTACHMENT_BAR_ITEM_WIDTH, ATTACHMENT_BAR_ITEM_PADDING} from './config';
 
 type InputBarProps = {
   conversationId: string;
@@ -27,7 +24,7 @@ type InputBarProps = {
 
 const INITIAL_INPUT_HEIGHT = 33;
 
-export const InputBar = ({
+export const Input = ({
   conversationId,
   width,
   attachmentBarWidth,
@@ -135,7 +132,7 @@ export const InputBar = ({
           onPress={() => onSendMessage(input)}
           style={styles.sendButton}
           disabled={input.length === 0}>
-          <Paperplane width={16} height={16} fill="white" />
+          <PaperPlane width={16} height={16} fill="white" />
         </TouchableOpacity>
       </View>
     </Animated.View>
