@@ -18,9 +18,6 @@ jobs:
       - name: Lint
         run: yarn run eslint . --ext .js,.jsx,.ts,.tsx
 
-      - name: Set up XCode
-        run: xcode-select -p
-
       - name: Install pod dependencies 
         run: pod install
         working-directory: ios
