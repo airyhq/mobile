@@ -52,13 +52,11 @@ const styles = StyleSheet.create({
     display: 'flex',
     flex: 1,
     marginTop: 5,
-    backgroundColor: 'blue',
   },
   item: {
     display: 'flex',
     alignSelf: 'flex-end',
     width: '100%',
-    backgroundColor: 'red',
   },
   itemMember: {
     marginTop: 5,
