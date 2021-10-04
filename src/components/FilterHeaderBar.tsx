@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Animated,
   Dimensions,
@@ -158,12 +158,84 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
     );
   };
 
+  const ReadUnreadComponent = () => {
+    return (
+      <View
+        style={{
+          marginBottom: 12,
+          marginTop: 12,
+        }}>
+        <Text
+          style={{color: colorTextGray, fontFamily: 'Lato', paddingBottom: 8}}>
+          Conversation Status
+        </Text>
+        <View style={{flexDirection: 'row', alignSelf: 'flex-start'}}>
+          <TouchableOpacity
+            style={[
+              stateActive === 0 ? styles.buttonActive : styles.buttonInactive,
+              {
+                flex: 1,
+                height: 32,
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderTopLeftRadius: 24,
+                borderBottomLeftRadius: 24,
+              },
+            ]}
+            onPress={() => setStateActive(0)}>
+            <Text style={{color: stateActive === 0 ? 'white' : colorContrast}}>
+              All
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              stateActive === 1 ? styles.buttonActive : styles.buttonInactive,
+              {
+                flex: 1,
+                height: 32,
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderLeftColor: 'transparent',
+                borderRightColor: 'transparent',
+              },
+            ]}
+            onPress={() => setStateActive(1)}>
+            <Text style={{color: stateActive === 1 ? 'white' : colorRedAlert}}>
+              Read
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              stateActive === 2 ? styles.buttonActive : styles.buttonInactive,
+              {
+                flex: 1,
+                height: 32,
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderTopRightRadius: 24,
+                borderBottomRightRadius: 24,
+              },
+            ]}
+            onPress={() => setStateActive(2)}>
+            <Text style={{color: stateActive === 2 ? 'white' : colorSoftGreen}}>
+              Unread
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+
   const ChannelComponent = () => {
     const selectedChannels: Channel[] = [];
 
-    const selectChannel = (channel: Channel, index: number) => {
-      selectedChannels.push(channel);
-      console.log('channel : ', selectedChannels[index]?.metadata);
+    useEffect(() => {}, [selectedChannels]);
+
+    const selectedChannelsToggle = (item: Channel) => {
+      const index = selectedChannels.indexOf(item);
+      index === -1
+        ? selectedChannels.push(item)
+        : selectedChannels.splice(index, 1);
     };
 
     return (
@@ -185,7 +257,7 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
         data={CONNECTED_CHANNEL_DUMMIE}
         ref={channelListRef}
         keyExtractor={item => item.sourceChannelId}
-        renderItem={({item, index}) => {
+        renderItem={({item}) => {
           return (
             <View
               style={{
@@ -194,25 +266,20 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
                 paddingRight: 12,
               }}>
               <TouchableOpacity
-                // onPress={() => setSelectedChannel(!selectedChannel)}
-                onPress={() => selectChannel(item, index)}
+                onPress={() => selectedChannelsToggle(item)}
                 style={[
                   {
-                    flexDirection: 'row',
+                    flexDirection: 'column',
                     padding: 4,
                     borderRadius: 24,
-                    backgroundColor: 'red',
                   },
-                  // selectedChannels.includes(item)
-                  //   ? {
-                  //       backgroundColor: colorBackgroundBlue,
-                  //     }
-                  //   : {backgroundColor: 'white'},
-                  selectedChannels.includes(item, index)
-                    ? {
-                        backgroundColor: colorBackgroundBlue,
-                      }
-                    : {backgroundColor: 'white'},
+                  !selectedChannels.includes(item) && {
+                    backgroundColor: colorBackgroundBlue,
+                  },
+                  // ? {
+                  //     backgroundColor: colorBackgroundBlue,
+                  //   }
+                  // : {backgroundColor: 'white'},
                 ]}>
                 <IconChannel
                   source={item.source}
@@ -227,10 +294,7 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
                     right: 4,
                     alignSelf: 'center',
                   }}>
-                  {/* {selectedChannels.includes(item, index) && (
-                    <Checkmark height={20} width={20} fill={colorSoftGreen} />
-                  )} */}
-                  {selectedChannels.includes(item, index) && (
+                  {selectedChannels.includes(item) && (
                     <Checkmark height={20} width={20} fill={colorSoftGreen} />
                   )}
                 </View>
@@ -267,7 +331,6 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
   const applyFilters = () => {
     filterOpen ? onExpand() : onCollapse();
     setFilterOpen(!filterOpen);
-    console.log('FILTERS APPLIED');
   };
 
   const CollapsedFilterView = () => {

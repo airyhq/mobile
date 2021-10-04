@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   },
   text: {
     width: iconChannelTextWidth,
-    maxWidth: 150,
+    // maxWidth: 120,
     marginLeft: 3,
     fontSize: 13,
     color: colorTextGray,
