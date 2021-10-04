@@ -1,6 +1,6 @@
 name: CI
 
-on: push
+on: pull_request
 
 jobs:
   build:
@@ -17,9 +17,6 @@ jobs:
 
       - name: Lint
         run: yarn run eslint . --ext .js,.jsx,.ts,.tsx
-
-      - name: Install Cocoapods
-        run: sudo gem install cocoapods
 
       - name: Set up XCode
         run: xcode-select -p
