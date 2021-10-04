@@ -106,12 +106,7 @@ export const Carousel = ({children}) => {
   }, [carouselChildren, buttonLeft, buttonRight]);
 
   const registerObserver = useCallback(() => {
-    // const resizeObserver = new ResizeObserver(() => {
-    //   resetScrollButtons();
-    // });
-
     if (carouselChildren && carouselChildren.current) {
-      //resizeObserver.observe(carouselChildren.current);
       resetScrollButtons();
       carouselChildren.current.addEventListener('scroll', () => {
         resetScrollButtons();
