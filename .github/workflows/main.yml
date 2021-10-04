@@ -11,18 +11,26 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '14'
-      - uses: actions/cache@v2
+
+      - name: Cache Node Modules
+        id: cache-node-modules
+        uses: actions/cache@v2
         with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          path: node_modules
+          key: node-modules-${{ hashFiles('yarn.lock') }}
 
       - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
         run: yarn install
 
       - name: Lint
         run: yarn run eslint . --ext .js,.jsx,.ts,.tsx
 
-      - name: Build IOS
+      - name: Install pod dependencies 
+        run: pod install
+        working-directory: ios
+
+      - name: Build iOS
         run: yarn run react-native run-ios
 
       - name: Build Android
