@@ -19,6 +19,12 @@ import {debounce, sortBy, isEqual} from 'lodash-es';
 import {ChatInput} from '../../../components/chat/input/ChatInput';
 import {useHeaderHeight} from '@react-navigation/stack';
 import {api} from '../../../api';
+import {Pagination} from '../../../model/Pagination';
+
+interface PaginatedResponse<T> {
+  data: T[];
+  paginationData: Pagination;
+}
 
 interface RouteProps {
   key: string;
@@ -59,35 +65,37 @@ const MessageList = (props: MessageListProps) => {
       realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
 
     const listMessages = () => {
-      api.listMessages({conversationId, pageSize: 50}).then((response: any) => {
-        if (databaseMessages) {
-          realm.write(() => {
-            databaseMessages.messages = [
-              ...mergeMessages(databaseMessages.messages, [...response.data]),
-            ];
-          });
-        } else {
-          realm.write(() => {
-            realm.create('MessageData', {
-              id: conversationId,
-              messages: mergeMessages([], [...response.data]),
+      api
+        .listMessages({conversationId, pageSize: 50})
+        .then((response: PaginatedResponse<Message>) => {
+          if (databaseMessages) {
+            realm.write(() => {
+              databaseMessages.messages = [
+                ...mergeMessages(databaseMessages.messages, [...response.data]),
+              ];
             });
-          });
-        }
+          } else {
+            realm.write(() => {
+              realm.create('MessageData', {
+                id: conversationId,
+                messages: mergeMessages([], [...response.data]),
+              });
+            });
+          }
 
-        if (response.paginationData) {
-          realm.write(() => {
-            currentConversation.paginationData.loading =
-              response.paginationData?.loading ?? null;
-            currentConversation.paginationData.nextCursor =
-              response.paginationData?.nextCursor ?? null;
-            currentConversation.paginationData.previousCursor =
-              response.paginationData?.previousCursor ?? null;
-            currentConversation.paginationData.total =
-              response.paginationData?.total ?? null;
-          });
-        }
-      });
+          if (response.paginationData) {
+            realm.write(() => {
+              currentConversation.paginationData.loading =
+                response.paginationData?.loading ?? null;
+              currentConversation.paginationData.nextCursor =
+                response.paginationData?.nextCursor ?? null;
+              currentConversation.paginationData.previousCursor =
+                response.paginationData?.previousCursor ?? null;
+              currentConversation.paginationData.total =
+                response.paginationData?.total ?? null;
+            });
+          }
+        });
     };
 
     listMessages();
@@ -134,7 +142,7 @@ const MessageList = (props: MessageListProps) => {
         pageSize: 50,
         cursor: cursor,
       })
-      .then((response: any) => {
+      .then((response: PaginatedResponse<Message>) => {
         const storedConversationMessages: MessageData | undefined =
           realm.objectForPrimaryKey<MessageData>(
             'MessageData',
@@ -225,7 +233,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const arePropsEqual = (prevProps: any, nextProps: any) => {
+const arePropsEqual = (prevProps, nextProps) => {
   return isEqual(prevProps, nextProps);
 };
 

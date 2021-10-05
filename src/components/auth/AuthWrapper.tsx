@@ -72,6 +72,7 @@ export const AuthWrapper = ({children}) => {
 
   const onUserChange = useCallback(
     (users: any) => {
+      console.log('users', users);
       if (users.length > 0) {
         refreshUser(
           users[users.length - 1].host,

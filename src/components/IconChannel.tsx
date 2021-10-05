@@ -27,7 +27,7 @@ type IconChannelProps = {
   metadataName: string;
 };
 
-const SOURCE_INFO: any = {
+const SOURCE_INFO = {
   facebook: {
     text: 'Facebook page',
     icon: () => <FacebookIcon />,

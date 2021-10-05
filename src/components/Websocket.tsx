@@ -46,7 +46,7 @@ const getInfoNewConversation = (conversationId: string, retries: number) => {
   }
   api
     .getConversationInfo(conversationId)
-    .then((response: any) => {
+    .then((response: Conversation) => {
       realm.write(() => {
         realm.create('Conversation', parseToRealmConversation(response));
         realm.create('MessageData', {id: conversationId, messages: []});

@@ -12,6 +12,12 @@ import {
 } from '../../../model';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {api} from '../../../components/auth/AuthWrapper';
+import {Pagination} from '../../../model/Pagination';
+
+interface PaginatedResponse<T> {
+  data: T[];
+  paginationData: Pagination;
+}
 
 type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
@@ -22,13 +28,13 @@ const realm = RealmDB.getInstance();
 export const ConversationList = (props: ConversationListProps) => {
   const {navigation} = props;
   const paginationData = getPagination();
-  const [conversations, setConversations] = useState<any>([]);
+  const [conversations, setConversations] = useState<[] | Conversation[]>([]);
 
   useEffect(() => {
     const getConversationsList = () => {
       api
         .listConversations({page_size: 50})
-        .then((response: any) => {
+        .then((response: PaginatedResponse<Conversation>) => {
           realm.write(() => {
             realm.create('Pagination', response.paginationData);
 
@@ -61,7 +67,7 @@ export const ConversationList = (props: ConversationListProps) => {
         });
     };
 
-    const databaseConversations = realm
+    const databaseConversations: any = realm
       .objects('Conversation')
       .sorted('lastMessage.sentAt', true);
 
@@ -78,9 +84,10 @@ export const ConversationList = (props: ConversationListProps) => {
 
   const getNextConversationList = () => {
     const cursor = paginationData?.nextCursor;
+
     api
       .listConversations({cursor: cursor, page_size: 50})
-      .then((response: any) => {
+      .then((response: PaginatedResponse<Conversation>) => {
         realm.write(() => {
           for (const conversation of response.data) {
             const isStored = realm.objectForPrimaryKey(
