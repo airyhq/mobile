@@ -24,6 +24,7 @@ export interface Channel {
 
 export const ChannelSchema = {
   name: 'Channel',
+  primaryKey: 'sourceChannelId',
   properties: {
     id: 'string?',
     metadata: 'ChannelMetadata',

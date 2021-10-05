@@ -8,7 +8,7 @@ import MessageList from '../views/inbox/MessageList';
 import {colorAiryBlue, colorTextGray} from '../assets/colors';
 import {Avatar} from './Avatar';
 import {CurrentState} from './CurrentState';
-import {Dimensions, View} from 'react-native';
+import {Dimensions, SafeAreaView, View} from 'react-native';
 import IconChannel from './IconChannel';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {FilterHeaderBar} from './FilterHeaderBar';
@@ -26,7 +26,11 @@ export const TabBar = () => {
       <SettingsStack.Navigator
         screenOptions={{
           header: () => {
-            return <FilterHeaderBar />;
+            return (
+              <SafeAreaView style={{backgroundColor: 'white'}}>
+                <FilterHeaderBar />
+              </SafeAreaView>
+            );
           },
         }}>
         <SettingsStack.Screen name="Inbox" component={ConversationList} />

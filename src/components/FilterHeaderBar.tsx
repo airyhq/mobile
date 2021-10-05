@@ -7,10 +7,13 @@ import {
   View,
   StyleSheet,
   FlatList,
+  TextInput,
 } from 'react-native';
 import {
   colorAiryBlue,
+  colorAiryLogoBlue,
   colorBackgroundBlue,
+  colorBackgroundGray,
   colorContrast,
   colorLightGray,
   colorRedAlert,
@@ -20,7 +23,10 @@ import {
 import FilterIcon from '../assets/images/icons/filterIcon.svg';
 import IconChannel from './IconChannel';
 import Checkmark from '../assets/images/icons/checkmark-circle.svg';
+import SearchIcon from '../assets/images/icons/search.svg';
 import {Channel} from '../model/Channel';
+import {RealmDB} from '../storage/realm';
+import {Conversation} from '../model/Conversation';
 
 const CONNECTED_CHANNEL_DUMMIE = [
   {
@@ -73,83 +79,97 @@ const CONNECTED_CHANNEL_DUMMIE = [
   },
 ];
 
-type FilterHeaderBarProps = {
-  title?: string;
-};
+type FilterHeaderBarProps = {};
 
 export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
-  const {title} = props;
   const [filterOpen, setFilterOpen] = useState(false);
-  const [headerTitle, setHeaderTitle] = useState('');
-  const [stateActive, setStateActive] = useState(0);
+  const [stateActiveRead, setStateActiveRead] = useState(0);
+  const [stateActiveOpen, setStateActiveOpen] = useState(0);
+  const [filterActive, setFilterActive] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
   const channelListRef = useRef<FlatList>(null);
-  const defaultHeaderHeight = 91;
-  const expandedHeaderHeight = 350;
+  const defaultHeaderHeight = 45;
+  const expandedHeaderHeight = 330;
   const windowWidth = Dimensions.get('window').width;
+  const CHANNEL_PADDING = 48;
   const expandAnimation = useRef(
     new Animated.Value(defaultHeaderHeight),
   ).current;
+  const realm = RealmDB.getInstance();
+  const conversationsLength =
+    realm.objects<Conversation>('Conversation').length;
+  const connectedChannels = realm
+    .objects<Channel>('Channel')
+    .filtered('connected == true');
+
+  // useEffect(() => {
+  //   console.log('RE-RENDER');
+  // }, [searchInput, setSearchInput]);
 
   const StateButtonComponent = () => {
     return (
       <View
         style={{
           marginBottom: 12,
-          marginTop: 12,
         }}>
-        <Text
-          style={{color: colorTextGray, fontFamily: 'Lato', paddingBottom: 8}}>
-          Conversation Status
-        </Text>
         <View style={{flexDirection: 'row', alignSelf: 'flex-start'}}>
           <TouchableOpacity
             style={[
-              stateActive === 0 ? styles.buttonActive : styles.buttonInactive,
+              stateActiveOpen === 0
+                ? styles.buttonActive
+                : styles.buttonInactive,
               {
                 flex: 1,
-                height: 32,
+                height: 24,
                 justifyContent: 'center',
                 alignItems: 'center',
                 borderTopLeftRadius: 24,
                 borderBottomLeftRadius: 24,
               },
             ]}
-            onPress={() => setStateActive(0)}>
-            <Text style={{color: stateActive === 0 ? 'white' : colorContrast}}>
+            onPress={() => setStateActiveOpen(0)}>
+            <Text
+              style={{color: stateActiveOpen === 0 ? 'white' : colorContrast}}>
               All
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
-              stateActive === 1 ? styles.buttonActive : styles.buttonInactive,
+              stateActiveOpen === 1
+                ? styles.buttonActive
+                : styles.buttonInactive,
               {
                 flex: 1,
-                height: 32,
+                height: 24,
                 justifyContent: 'center',
                 alignItems: 'center',
                 borderLeftColor: 'transparent',
                 borderRightColor: 'transparent',
               },
             ]}
-            onPress={() => setStateActive(1)}>
-            <Text style={{color: stateActive === 1 ? 'white' : colorRedAlert}}>
+            onPress={() => setStateActiveOpen(1)}>
+            <Text
+              style={{color: stateActiveOpen === 1 ? 'white' : colorRedAlert}}>
               Open
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
-              stateActive === 2 ? styles.buttonActive : styles.buttonInactive,
+              stateActiveOpen === 2
+                ? styles.buttonActive
+                : styles.buttonInactive,
               {
                 flex: 1,
-                height: 32,
+                height: 24,
                 justifyContent: 'center',
                 alignItems: 'center',
                 borderTopRightRadius: 24,
                 borderBottomRightRadius: 24,
               },
             ]}
-            onPress={() => setStateActive(2)}>
-            <Text style={{color: stateActive === 2 ? 'white' : colorSoftGreen}}>
+            onPress={() => setStateActiveOpen(2)}>
+            <Text
+              style={{color: stateActiveOpen === 2 ? 'white' : colorSoftGreen}}>
               Done
             </Text>
           </TouchableOpacity>
@@ -172,53 +192,62 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
         <View style={{flexDirection: 'row', alignSelf: 'flex-start'}}>
           <TouchableOpacity
             style={[
-              stateActive === 0 ? styles.buttonActive : styles.buttonInactive,
+              stateActiveRead === 0
+                ? styles.buttonActive
+                : styles.buttonInactive,
               {
                 flex: 1,
-                height: 32,
+                height: 24,
                 justifyContent: 'center',
                 alignItems: 'center',
                 borderTopLeftRadius: 24,
                 borderBottomLeftRadius: 24,
               },
             ]}
-            onPress={() => setStateActive(0)}>
-            <Text style={{color: stateActive === 0 ? 'white' : colorContrast}}>
+            onPress={() => setStateActiveRead(0)}>
+            <Text
+              style={{color: stateActiveRead === 0 ? 'white' : colorContrast}}>
               All
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
-              stateActive === 1 ? styles.buttonActive : styles.buttonInactive,
+              stateActiveRead === 1
+                ? styles.buttonActive
+                : styles.buttonInactive,
               {
                 flex: 1,
-                height: 32,
+                height: 24,
                 justifyContent: 'center',
                 alignItems: 'center',
                 borderLeftColor: 'transparent',
                 borderRightColor: 'transparent',
               },
             ]}
-            onPress={() => setStateActive(1)}>
-            <Text style={{color: stateActive === 1 ? 'white' : colorRedAlert}}>
-              Read
+            onPress={() => setStateActiveRead(1)}>
+            <Text
+              style={{color: stateActiveRead === 1 ? 'white' : colorRedAlert}}>
+              Unread
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
-              stateActive === 2 ? styles.buttonActive : styles.buttonInactive,
+              stateActiveRead === 2
+                ? styles.buttonActive
+                : styles.buttonInactive,
               {
                 flex: 1,
-                height: 32,
+                height: 24,
                 justifyContent: 'center',
                 alignItems: 'center',
                 borderTopRightRadius: 24,
                 borderBottomRightRadius: 24,
               },
             ]}
-            onPress={() => setStateActive(2)}>
-            <Text style={{color: stateActive === 2 ? 'white' : colorSoftGreen}}>
-              Unread
+            onPress={() => setStateActiveRead(2)}>
+            <Text
+              style={{color: stateActiveRead === 2 ? 'white' : colorSoftGreen}}>
+              Read
             </Text>
           </TouchableOpacity>
         </View>
@@ -228,8 +257,6 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
 
   const ChannelComponent = () => {
     const selectedChannels: Channel[] = [];
-
-    useEffect(() => {}, [selectedChannels]);
 
     const selectedChannelsToggle = (item: Channel) => {
       const index = selectedChannels.indexOf(item);
@@ -254,16 +281,15 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
         }
         numColumns={2}
         style={styles.connectedChannelList}
-        data={CONNECTED_CHANNEL_DUMMIE}
+        data={connectedChannels}
         ref={channelListRef}
-        keyExtractor={item => item.sourceChannelId}
+        keyExtractor={item => item.id}
         renderItem={({item}) => {
           return (
             <View
               style={{
                 flex: 1,
                 paddingBottom: 8,
-                paddingRight: 12,
               }}>
               <TouchableOpacity
                 onPress={() => selectedChannelsToggle(item)}
@@ -272,8 +298,9 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
                     flexDirection: 'column',
                     padding: 4,
                     borderRadius: 24,
+                    maxWidth: (windowWidth - CHANNEL_PADDING) / 2,
                   },
-                  !selectedChannels.includes(item) && {
+                  selectedChannels.includes(item) && {
                     backgroundColor: colorBackgroundBlue,
                   },
                   // ? {
@@ -284,7 +311,7 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
                 <IconChannel
                   source={item.source}
                   sourceChannelId={item.sourceChannelId}
-                  metadataName={item.metadataName}
+                  metadataName={item.metadata?.name}
                   showAvatar
                   showName
                 />
@@ -306,6 +333,23 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
     );
   };
 
+  console.log('SEARCH: ', searchInput);
+
+  const SearchBarComponent = () => {
+    return (
+      <View style={styles.searchBarContainer}>
+        <SearchIcon height={18} width={18} fill={colorRedAlert} />
+        <TextInput
+          placeholderTextColor={colorTextGray}
+          placeholder="Search Conversation..."
+          style={styles.searchBar}
+          onChangeText={(text: string) => setSearchInput(text)}
+          value={searchInput}
+        />
+      </View>
+    );
+  };
+
   const onCollapse = () => {
     Animated.timing(expandAnimation, {
       toValue: expandedHeaderHeight,
@@ -324,7 +368,6 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
 
   const toggleFiltering = () => {
     filterOpen ? onExpand() : onCollapse();
-    !filterOpen ? setHeaderTitle('Filter') : setHeaderTitle('');
     setFilterOpen(!filterOpen);
   };
 
@@ -335,21 +378,44 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
 
   const CollapsedFilterView = () => {
     return (
-      <View
-        style={{
-          justifyContent: 'flex-end',
-          alignItems: 'flex-end',
-          width: windowWidth,
-          height: defaultHeaderHeight,
-          backgroundColor: 'white',
-          borderBottomWidth: 1,
-          borderBottomColor: colorLightGray,
-        }}>
-        <TouchableOpacity
-          onPress={toggleFiltering}
-          style={{marginRight: 8, marginBottom: 8}}>
-          <FilterIcon height={32} width={32} fill={colorAiryBlue} />
-        </TouchableOpacity>
+      <View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            alignItems: 'flex-end',
+            width: windowWidth,
+            height: defaultHeaderHeight,
+            backgroundColor: 'white',
+            borderBottomWidth: 1,
+            borderBottomColor: colorLightGray,
+          }}>
+          <View
+            style={{
+              flex: 1,
+              height: defaultHeaderHeight,
+              justifyContent: 'center',
+              marginLeft: 12,
+            }}>
+            <Text style={styles.headerTitleCollapsed}>
+              Inbox: {conversationsLength}
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={toggleFiltering}
+            style={{marginRight: 8, marginBottom: 8}}>
+            <View
+              style={
+                filterActive ? styles.filterApplied : styles.filterNotApplied
+              }>
+              <FilterIcon
+                height={32}
+                width={32}
+                fill={filterActive ? colorRedAlert : colorAiryBlue}
+              />
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -366,9 +432,11 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
           borderBottomWidth: 1,
         }}>
         <View style={{marginLeft: 12, marginRight: 12}}>
-          <Text style={styles.headerTitle}>{headerTitle}</Text>
+          <Text style={styles.headerTitleExpanded}>Filter</Text>
+          <ReadUnreadComponent />
           <StateButtonComponent />
           <ChannelComponent />
+          <SearchBarComponent />
           <View
             style={{
               marginBottom: 8,
@@ -407,16 +475,39 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colorAiryBlue,
   },
-  headerTitle: {
-    position: 'relative',
-    left: 0,
-    top: -32,
+  headerTitleExpanded: {
     fontSize: 28,
+    fontFamily: 'Lato',
+  },
+  headerTitleCollapsed: {
+    fontSize: 20,
     fontFamily: 'Lato',
   },
   connectedChannelList: {
     height: 110,
     marginBottom: 8,
+  },
+  filterApplied: {
+    backgroundColor: colorAiryLogoBlue,
+    padding: 0,
+    borderRadius: 50,
+  },
+  filterNotApplied: {
+    backgroundColor: 'transparent',
+  },
+  searchBarContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderColor: '#000',
+    backgroundColor: colorBackgroundGray,
+    padding: 5,
+    paddingLeft: 8,
+    borderRadius: 24,
+    marginBottom: 8,
+  },
+  searchBar: {
+    flex: 1,
+    paddingLeft: 4,
   },
 });
 
