@@ -2,20 +2,13 @@ import React, {useRef, useState} from 'react';
 import {TextInput, View, StyleSheet, TouchableOpacity} from 'react-native';
 import {
   colorBackgroundGray,
-  colorRedAlert,
+  colorDarkElementsGray,
   colorTextGray,
 } from '../../assets/colors';
 import SearchIcon from '../../assets/images/icons/search.svg';
 import CloseIcon from '../../assets/images/icons/closeIcon.svg';
 
-type SearchBarComponentProps = {
-  input: string;
-  setInput: (text: string) => void;
-  close: () => void;
-};
-
-export const SearchBarComponent = (props: SearchBarComponentProps) => {
-  const {close} = props;
+export const SearchBarComponent = () => {
   const [searchInput, setSearchInput] = useState('');
   const [searchBarFocused, setSearchBarFocused] = useState(false);
   const searchBarRef = useRef(null);
@@ -25,7 +18,7 @@ export const SearchBarComponent = (props: SearchBarComponentProps) => {
       style={
         searchBarFocused ? styles.searchBarFocused : styles.searchBarContainer
       }>
-      <SearchIcon height={18} width={18} fill={colorRedAlert} />
+      <SearchIcon height={18} width={18} fill={colorDarkElementsGray} />
       <TextInput
         ref={searchBarRef}
         placeholderTextColor={colorTextGray}
@@ -35,7 +28,7 @@ export const SearchBarComponent = (props: SearchBarComponentProps) => {
         value={searchInput}
         onFocus={() => setSearchBarFocused(true)}
       />
-      <TouchableOpacity onPress={close}>
+      <TouchableOpacity onPress={() => setSearchInput('')}>
         <CloseIcon height={24} width={24} fill={colorTextGray} />
       </TouchableOpacity>
     </View>

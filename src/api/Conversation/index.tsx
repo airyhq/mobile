@@ -9,7 +9,6 @@ import {RealmDB} from '../../storage/realm';
 export const fetchFilteredConversations = (cursor?: string) => {
   const realm = RealmDB.getInstance();
   const filter = realm.objects<ConversationFilter>('ConversationFilter');
-  console.log('FILTERS: ', filter);
 
   //   if (filter.length > 0) {
   //     delay(() => {

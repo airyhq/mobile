@@ -90,7 +90,7 @@ export const ChannelComponent = () => {
                 style={{
                   position: 'absolute',
                   right: 4,
-                  alignSelf: 'center',
+                  top: 4,
                 }}>
                 {!selectedChannels.includes(item) && (
                   <Checkmark height={20} width={20} fill={colorSoftGreen} />

@@ -24,17 +24,15 @@ import {ChannelComponent} from './ChannelCompontent';
 import {SearchBarComponent} from './SearchBarComponent';
 import SearchIcon from '../../assets/images/icons/search.svg';
 import CloseCircleIcon from '../../assets/images/icons/closeCircleIcon.svg';
+import {ConversationFilter} from '../../model';
 
 type FilterHeaderBarProps = {};
 
 export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
   const [filterOpen, setFilterOpen] = useState(false);
-  const [filterActive, setFilterActive] = useState(false);
   const [searchBarOpen, setSearchBarOpen] = useState(false);
-  const [searchBarFocused, setSearchBarFocused] = useState(false);
-  const [searchBarInput, setSearchBarInput] = useState('');
   const defaultHeaderHeight = 45;
-  const expandedHeaderHeight = 330;
+  const expandedHeaderHeight = 300;
   const PADDING_COLLAPSEDFILTER = 32;
   const windowWidth = Dimensions.get('window').width;
   const expandAnimation = useRef(
@@ -44,43 +42,22 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
   const conversationsLength =
     realm.objects<Conversation>('Conversation').length;
 
-  useEffect(() => {
-    fetchFilteredConversations();
-    console.log('INPUT: ', searchBarInput);
-  }, [searchBarInput, setSearchBarInput]);
+  const currentFilter =
+    realm.objects<ConversationFilter>('ConversationFilter')[0];
+  console.log('currentFilter: ', currentFilter);
 
-  const onCollapse = () => {
-    Animated.timing(expandAnimation, {
-      toValue: expandedHeaderHeight,
-      duration: 400,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  const onExpand = () => {
-    Animated.timing(expandAnimation, {
-      toValue: defaultHeaderHeight,
-      duration: 400,
-      useNativeDriver: false,
-    }).start();
-  };
+  const filterApplied =
+    currentFilter.byChannels.length > 0 ||
+    currentFilter.isStateOpen !== (undefined || null) ||
+    currentFilter.readOnly !== (undefined || null) ||
+    currentFilter.unreadOnly !== (undefined || null);
 
   const toggleFiltering = () => {
-    filterOpen ? onExpand() : onCollapse();
     setFilterOpen(!filterOpen);
   };
 
   const applyFilters = () => {
-    filterOpen ? onExpand() : onCollapse();
     setFilterOpen(!filterOpen);
-  };
-
-  const inputHandler = (input: string) => {
-    setSearchBarInput(input);
-  };
-
-  const closeSearchBarHandler = () => {
-    setSearchBarOpen(false);
   };
 
   const CollapsedFilterView = () => {
@@ -103,16 +80,11 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
               paddingLeft: 8,
               paddingRight: 8,
               alignItems: 'center',
-              // justifyContent: 'center',
               flexDirection: 'row',
             }}>
-            <SearchBarComponent
-              input={searchBarInput}
-              setInput={() => inputHandler(searchBarInput)}
-              close={closeSearchBarHandler}
-            />
+            <SearchBarComponent />
             <View>
-              <TouchableOpacity onPress={() => console.log('sjd')}>
+              <TouchableOpacity onPress={() => setSearchBarOpen(false)}>
                 <CloseCircleIcon width={32} height={32} fill={colorAiryBlue} />
               </TouchableOpacity>
             </View>
@@ -126,7 +98,7 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
               <TouchableOpacity
                 onPress={() => setSearchBarOpen(true)}
                 style={{padding: 4}}>
-                <SearchIcon height={24} width={24} fill={colorRedAlert} />
+                <SearchIcon height={24} width={24} fill={colorAiryBlue} />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={toggleFiltering}
@@ -134,17 +106,25 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
                   marginRight: 8,
                   marginLeft: 8,
                 }}>
-                <View
-                  style={
-                    filterActive
-                      ? styles.filterApplied
-                      : styles.filterNotApplied
-                  }>
+                <View>
                   <FilterIcon
                     height={32}
                     width={32}
-                    fill={filterActive ? colorRedAlert : colorAiryBlue}
+                    fill={filterApplied ? colorRedAlert : colorAiryBlue}
                   />
+                  {filterApplied && (
+                    <View
+                      style={{
+                        position: 'absolute',
+                        right: 4,
+                        top: 2,
+                        height: 8,
+                        width: 8,
+                        backgroundColor: 'red',
+                        borderRadius: 50,
+                      }}
+                    />
+                  )}
                 </View>
               </TouchableOpacity>
             </View>
@@ -217,14 +197,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Lato',
     marginLeft: 8,
-  },
-  filterApplied: {
-    backgroundColor: colorAiryLogoBlue,
-    padding: 0,
-    borderRadius: 50,
-  },
-  filterNotApplied: {
-    backgroundColor: 'transparent',
   },
 });
 

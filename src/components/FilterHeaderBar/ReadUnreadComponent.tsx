@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {TouchableOpacity, View, Text, StyleSheet} from 'react-native';
 import {
   colorAiryBlue,
@@ -7,9 +7,35 @@ import {
   colorSoftGreen,
   colorTextGray,
 } from '../../assets/colors';
+import {ConversationFilter} from '../../model/ConversationFilter';
+import {RealmDB} from '../../storage/realm';
 
 export const ReadUnreadComponent = () => {
-  const [stateActiveRead, setStateActiveRead] = useState(0);
+  const realm = RealmDB.getInstance();
+  const currentFilter =
+    realm.objects<ConversationFilter>('ConversationFilter')[0];
+  const [stateActiveRead, setStateActiveRead] = useState<boolean>(
+    currentFilter.readOnly,
+  );
+  const [stateActiveUnRead, setStateActiveUnRead] = useState<boolean>(
+    currentFilter.unreadOnly,
+  );
+
+  useEffect(() => {
+    if (currentFilter) {
+      realm.write(() => {
+        currentFilter.readOnly = stateActiveRead;
+        currentFilter.unreadOnly = stateActiveUnRead;
+      });
+    } else {
+      realm.write(() => {
+        realm.create<ConversationFilter>('ConversationFilter', {
+          readOnly: stateActiveRead,
+          unreadOnly: stateActiveUnRead,
+        });
+      });
+    }
+  }, [stateActiveRead, setStateActiveRead]);
 
   return (
     <View
@@ -24,7 +50,9 @@ export const ReadUnreadComponent = () => {
       <View style={{flexDirection: 'row', alignSelf: 'flex-start'}}>
         <TouchableOpacity
           style={[
-            stateActiveRead === 0 ? styles.buttonActive : styles.buttonInactive,
+            stateActiveRead === undefined
+              ? styles.buttonActive
+              : styles.buttonInactive,
             {
               flex: 1,
               height: 24,
@@ -34,15 +62,21 @@ export const ReadUnreadComponent = () => {
               borderBottomLeftRadius: 24,
             },
           ]}
-          onPress={() => setStateActiveRead(0)}>
+          onPress={() => {
+            setStateActiveRead(undefined), setStateActiveUnRead(undefined);
+          }}>
           <Text
-            style={{color: stateActiveRead === 0 ? 'white' : colorContrast}}>
+            style={{
+              color: stateActiveRead === undefined ? 'white' : colorContrast,
+            }}>
             All
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
-            stateActiveRead === 1 ? styles.buttonActive : styles.buttonInactive,
+            stateActiveRead === true
+              ? styles.buttonActive
+              : styles.buttonInactive,
             {
               flex: 1,
               height: 24,
@@ -52,15 +86,19 @@ export const ReadUnreadComponent = () => {
               borderRightColor: 'transparent',
             },
           ]}
-          onPress={() => setStateActiveRead(1)}>
+          onPress={() => {
+            setStateActiveRead(true), setStateActiveUnRead(false);
+          }}>
           <Text
-            style={{color: stateActiveRead === 1 ? 'white' : colorRedAlert}}>
+            style={{color: stateActiveRead === true ? 'white' : colorRedAlert}}>
             Unread
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
-            stateActiveRead === 2 ? styles.buttonActive : styles.buttonInactive,
+            stateActiveRead === false
+              ? styles.buttonActive
+              : styles.buttonInactive,
             {
               flex: 1,
               height: 24,
@@ -70,9 +108,13 @@ export const ReadUnreadComponent = () => {
               borderBottomRightRadius: 24,
             },
           ]}
-          onPress={() => setStateActiveRead(2)}>
+          onPress={() => {
+            setStateActiveRead(false), setStateActiveUnRead(true);
+          }}>
           <Text
-            style={{color: stateActiveRead === 2 ? 'white' : colorSoftGreen}}>
+            style={{
+              color: stateActiveRead === false ? 'white' : colorSoftGreen,
+            }}>
             Read
           </Text>
         </TouchableOpacity>

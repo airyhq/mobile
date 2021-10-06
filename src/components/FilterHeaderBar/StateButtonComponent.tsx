@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {TouchableOpacity, View, Text, StyleSheet} from 'react-native';
 import {
   colorAiryBlue,
@@ -6,9 +6,30 @@ import {
   colorRedAlert,
   colorSoftGreen,
 } from '../../assets/colors';
+import {ConversationFilter} from '../../model';
+import {RealmDB} from '../../storage/realm';
 
 export const StateButtonComponent = () => {
-  const [stateActiveOpen, setStateActiveOpen] = useState(0);
+  const realm = RealmDB.getInstance();
+  const currentFilter =
+    realm.objects<ConversationFilter>('ConversationFilter')[0];
+  const [stateActiveOpen, setStateActiveOpen] = useState<boolean>(
+    currentFilter.isStateOpen,
+  );
+
+  useEffect(() => {
+    if (currentFilter) {
+      realm.write(() => {
+        currentFilter.isStateOpen = stateActiveOpen;
+      });
+    } else {
+      realm.write(() => {
+        realm.create<ConversationFilter>('ConversationFilter', {
+          readOnly: stateActiveOpen,
+        });
+      });
+    }
+  }, [stateActiveOpen, setStateActiveOpen]);
 
   return (
     <View
@@ -18,7 +39,9 @@ export const StateButtonComponent = () => {
       <View style={{flexDirection: 'row', alignSelf: 'flex-start'}}>
         <TouchableOpacity
           style={[
-            stateActiveOpen === 0 ? styles.buttonActive : styles.buttonInactive,
+            stateActiveOpen === undefined
+              ? styles.buttonActive
+              : styles.buttonInactive,
             {
               flex: 1,
               height: 24,
@@ -28,15 +51,19 @@ export const StateButtonComponent = () => {
               borderBottomLeftRadius: 24,
             },
           ]}
-          onPress={() => setStateActiveOpen(0)}>
+          onPress={() => setStateActiveOpen(undefined)}>
           <Text
-            style={{color: stateActiveOpen === 0 ? 'white' : colorContrast}}>
+            style={{
+              color: stateActiveOpen === undefined ? 'white' : colorContrast,
+            }}>
             All
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
-            stateActiveOpen === 1 ? styles.buttonActive : styles.buttonInactive,
+            stateActiveOpen === true
+              ? styles.buttonActive
+              : styles.buttonInactive,
             {
               flex: 1,
               height: 24,
@@ -46,15 +73,17 @@ export const StateButtonComponent = () => {
               borderRightColor: 'transparent',
             },
           ]}
-          onPress={() => setStateActiveOpen(1)}>
+          onPress={() => setStateActiveOpen(true)}>
           <Text
-            style={{color: stateActiveOpen === 1 ? 'white' : colorRedAlert}}>
+            style={{color: stateActiveOpen === true ? 'white' : colorRedAlert}}>
             Open
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
-            stateActiveOpen === 2 ? styles.buttonActive : styles.buttonInactive,
+            stateActiveOpen === false
+              ? styles.buttonActive
+              : styles.buttonInactive,
             {
               flex: 1,
               height: 24,
@@ -64,9 +93,11 @@ export const StateButtonComponent = () => {
               borderBottomRightRadius: 24,
             },
           ]}
-          onPress={() => setStateActiveOpen(2)}>
+          onPress={() => setStateActiveOpen(false)}>
           <Text
-            style={{color: stateActiveOpen === 2 ? 'white' : colorSoftGreen}}>
+            style={{
+              color: stateActiveOpen === false ? 'white' : colorSoftGreen,
+            }}>
             Done
           </Text>
         </TouchableOpacity>
