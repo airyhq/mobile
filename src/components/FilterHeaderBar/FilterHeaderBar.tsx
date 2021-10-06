@@ -23,6 +23,7 @@ import {StateButtonComponent} from './StateButtonComponent';
 import {ChannelComponent} from './ChannelCompontent';
 import {SearchBarComponent} from './SearchBarComponent';
 import SearchIcon from '../../assets/images/icons/search.svg';
+import CloseCircleIcon from '../../assets/images/icons/closeCircleIcon.svg';
 
 type FilterHeaderBarProps = {};
 
@@ -34,6 +35,7 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
   const [searchBarInput, setSearchBarInput] = useState('');
   const defaultHeaderHeight = 45;
   const expandedHeaderHeight = 330;
+  const PADDING_COLLAPSEDFILTER = 32;
   const windowWidth = Dimensions.get('window').width;
   const expandAnimation = useRef(
     new Animated.Value(defaultHeaderHeight),
@@ -83,66 +85,71 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
 
   const CollapsedFilterView = () => {
     return (
-      <View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            width: windowWidth,
-            height: defaultHeaderHeight,
-            backgroundColor: 'white',
-            borderBottomWidth: 1,
-            borderBottomColor: colorLightGray,
-          }}>
-          {searchBarOpen ? (
-            <View
-              style={{
-                width: windowWidth,
-                paddingLeft: 8,
-                paddingRight: 8,
-                justifyContent: 'center',
-              }}>
-              <SearchBarComponent
-                input={searchBarInput}
-                setInput={() => inputHandler(searchBarInput)}
-                close={closeSearchBarHandler}
-              />
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: windowWidth,
+          height: defaultHeaderHeight,
+          backgroundColor: 'white',
+          borderBottomWidth: 1,
+          borderBottomColor: colorLightGray,
+        }}>
+        {searchBarOpen ? (
+          <View
+            style={{
+              width: windowWidth - PADDING_COLLAPSEDFILTER,
+              paddingLeft: 8,
+              paddingRight: 8,
+              alignItems: 'center',
+              // justifyContent: 'center',
+              flexDirection: 'row',
+            }}>
+            <SearchBarComponent
+              input={searchBarInput}
+              setInput={() => inputHandler(searchBarInput)}
+              close={closeSearchBarHandler}
+            />
+            <View>
+              <TouchableOpacity onPress={() => console.log('sjd')}>
+                <CloseCircleIcon width={32} height={32} fill={colorAiryBlue} />
+              </TouchableOpacity>
             </View>
-          ) : (
-            <>
-              <Text style={styles.headerTitleCollapsed}>
-                Inbox: {conversationsLength}
-              </Text>
-              <View style={{flexDirection: 'row'}}>
-                <TouchableOpacity
-                  onPress={() => setSearchBarOpen(true)}
-                  style={{padding: 4}}>
-                  <SearchIcon height={24} width={24} fill={colorRedAlert} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={toggleFiltering}
-                  style={{
-                    marginRight: 8,
-                    marginLeft: 8,
-                  }}>
-                  <View
-                    style={
-                      filterActive
-                        ? styles.filterApplied
-                        : styles.filterNotApplied
-                    }>
-                    <FilterIcon
-                      height={32}
-                      width={32}
-                      fill={filterActive ? colorRedAlert : colorAiryBlue}
-                    />
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </>
-          )}
-        </View>
+          </View>
+        ) : (
+          <>
+            <Text style={styles.headerTitleCollapsed}>
+              Inbox: {conversationsLength}
+            </Text>
+            <View style={{flexDirection: 'row'}}>
+              <TouchableOpacity
+                onPress={() => setSearchBarOpen(true)}
+                style={{padding: 4}}>
+                <SearchIcon height={24} width={24} fill={colorRedAlert} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={toggleFiltering}
+                style={{
+                  marginRight: 8,
+                  marginLeft: 8,
+                }}>
+                <View
+                  style={
+                    filterActive
+                      ? styles.filterApplied
+                      : styles.filterNotApplied
+                  }>
+                  <FilterIcon
+                    height={32}
+                    width={32}
+                    fill={filterActive ? colorRedAlert : colorAiryBlue}
+                  />
+                </View>
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
       </View>
     );
   };

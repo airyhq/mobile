@@ -92,7 +92,7 @@ export const ChannelComponent = () => {
                   right: 4,
                   alignSelf: 'center',
                 }}>
-                {selectedChannels.includes(item) && (
+                {!selectedChannels.includes(item) && (
                   <Checkmark height={20} width={20} fill={colorSoftGreen} />
                 )}
               </View>
