@@ -88,55 +88,54 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
         <View
           style={{
             flexDirection: 'row',
-            justifyContent: 'flex-end',
+            justifyContent: 'space-between',
             alignItems: 'center',
             width: windowWidth,
             height: defaultHeaderHeight,
-            // backgroundColor: 'purple',
+            backgroundColor: 'white',
             borderBottomWidth: 1,
             borderBottomColor: colorLightGray,
           }}>
-          <View
-            style={{
-              flex: 1,
-              height: defaultHeaderHeight,
-              justifyContent: 'center',
-              alignSelf: 'center',
-              marginLeft: 12,
-              // backgroundColor: 'pink'
-            }}>
-            {searchBarOpen ? (
+          {!searchBarOpen ? (
+            <View style={{width: windowWidth, paddingLeft: 8, paddingRight: 8}}>
               <SearchBarComponent
                 input={searchBarInput}
                 setInput={() => inputHandler(searchBarInput)}
               />
-            ) : (
-              <>
-                <Text style={styles.headerTitleCollapsed}>
-                  Inbox: {conversationsLength}
-                </Text>
+            </View>
+          ) : (
+            <>
+              <Text style={styles.headerTitleCollapsed}>
+                Inbox: {conversationsLength}
+              </Text>
+              <View style={{flexDirection: 'row'}}>
                 <TouchableOpacity
                   onPress={() => setSearchBarOpen(true)}
-                  style={{alignSelf: 'flex-end', backgroundColor: 'blue'}}>
-                  <SearchIcon height={32} width={32} fill={colorRedAlert} />
+                  style={{padding: 4}}>
+                  <SearchIcon height={24} width={24} fill={colorRedAlert} />
                 </TouchableOpacity>
-              </>
-            )}
-          </View>
-          <TouchableOpacity
-            onPress={toggleFiltering}
-            style={{marginRight: 8, marginBottom: 8, marginLeft: 8}}>
-            <View
-              style={
-                filterActive ? styles.filterApplied : styles.filterNotApplied
-              }>
-              <FilterIcon
-                height={32}
-                width={32}
-                fill={filterActive ? colorRedAlert : colorAiryBlue}
-              />
-            </View>
-          </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={toggleFiltering}
+                  style={{
+                    marginRight: 8,
+                    marginLeft: 8,
+                  }}>
+                  <View
+                    style={
+                      filterActive
+                        ? styles.filterApplied
+                        : styles.filterNotApplied
+                    }>
+                    <FilterIcon
+                      height={32}
+                      width={32}
+                      fill={filterActive ? colorRedAlert : colorAiryBlue}
+                    />
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
         </View>
       </View>
     );
@@ -204,6 +203,7 @@ const styles = StyleSheet.create({
   headerTitleCollapsed: {
     fontSize: 20,
     fontFamily: 'Lato',
+    marginLeft: 8,
   },
   filterApplied: {
     backgroundColor: colorAiryLogoBlue,
