@@ -32,9 +32,13 @@ const addMessage = (conversationId: string, message: Message) => {
         message,
         currentConversation.channel.source,
       );
-      currentMessageData.messages = mergeMessages(currentMessageData.messages, [
-        message,
-      ]);
+
+      if (currentMessageData && currentMessageData.messages) {
+        currentMessageData.messages = mergeMessages(
+          currentMessageData.messages,
+          [message],
+        );
+      }
     }
   });
 };

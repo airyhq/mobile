@@ -9,15 +9,12 @@ import {
   Conversation,
   parseToRealmConversation,
   MessageData,
+  Pagination,
 } from '../../../model';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {api} from '../../../components/auth/AuthWrapper';
-import {Pagination} from '../../../model/Pagination';
 
-interface PaginatedResponse<T> {
-  data: T[];
-  paginationData: Pagination;
-}
+declare type PaginatedResponse<T> = typeof import('@airyhq/http-client');
 
 type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
@@ -67,12 +64,13 @@ export const ConversationList = (props: ConversationListProps) => {
         });
     };
 
-    const databaseConversations: any = realm
-      .objects('Conversation')
+    const databaseConversations: Realm.Results<Conversation[]> = realm
+      .objects<Conversation[]>('Conversation')
       .sorted('lastMessage.sentAt', true);
 
     databaseConversations.addListener(() => {
-      setConversations([...databaseConversations]);
+      const conversationsJson = databaseConversations.toJSON();
+      setConversations([...conversationsJson]);
     });
 
     getConversationsList();
@@ -107,7 +105,8 @@ export const ConversationList = (props: ConversationListProps) => {
         });
 
         realm.write(() => {
-          const pagination: any = realm.objects('Pagination')[0];
+          const pagination: Pagination | undefined =
+            realm.objects<Pagination>('Pagination')[0];
           pagination.previousCursor = response.paginationData.previousCursor;
           pagination.nextCursor = response.paginationData.nextCursor;
           pagination.total = response.paginationData.total;

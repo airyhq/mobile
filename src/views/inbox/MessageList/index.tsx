@@ -19,12 +19,8 @@ import {debounce, sortBy, isEqual} from 'lodash-es';
 import {ChatInput} from '../../../components/chat/input/ChatInput';
 import {useHeaderHeight} from '@react-navigation/stack';
 import {api} from '../../../api';
-import {Pagination} from '../../../model/Pagination';
 
-interface PaginatedResponse<T> {
-  data: T[];
-  paginationData: Pagination;
-}
+declare type PaginatedResponse<T> = typeof import('@airyhq/http-client');
 
 interface RouteProps {
   key: string;
@@ -41,7 +37,7 @@ const realm = RealmDB.getInstance();
 const MessageList = (props: MessageListProps) => {
   const {route} = props;
   const conversationId: string = route.params.conversationId;
-  const [messages, setMessages] = useState<Message[] | []>([]);
+  const [messages, setMessages] = useState<[] | Message[]>([]);
   const messageListRef = useRef<FlatList>(null);
   const headerHeight = useHeaderHeight();
   const behavior = Platform.OS === 'ios' ? 'padding' : 'height';
@@ -56,10 +52,11 @@ const MessageList = (props: MessageListProps) => {
   } = conversation;
 
   useEffect(() => {
-    const databaseMessages: any = realm.objectForPrimaryKey<MessageData>(
-      'MessageData',
-      conversationId,
-    );
+    const databaseMessages: (MessageData & Realm.Object) | undefined =
+      realm.objectForPrimaryKey<MessageData>('MessageData', conversationId);
+
+    const databaseMessagesJson: MessageData | undefined =
+      databaseMessages && databaseMessages.toJSON();
 
     const currentConversation: Conversation | undefined =
       realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
@@ -70,8 +67,10 @@ const MessageList = (props: MessageListProps) => {
         .then((response: PaginatedResponse<Message>) => {
           if (databaseMessages) {
             realm.write(() => {
-              databaseMessages.messages = [
-                ...mergeMessages(databaseMessages.messages, [...response.data]),
+              databaseMessagesJson.messages = [
+                ...mergeMessages(databaseMessagesJson.messages, [
+                  ...response.data,
+                ]),
               ];
             });
           } else {
@@ -102,7 +101,8 @@ const MessageList = (props: MessageListProps) => {
 
     if (databaseMessages) {
       databaseMessages.addListener(() => {
-        setMessages([...databaseMessages.messages]);
+        const messagesJson = databaseMessagesJson.messages;
+        setMessages([...messagesJson]);
       });
     }
 
@@ -233,7 +233,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const arePropsEqual = (prevProps, nextProps) => {
+const arePropsEqual = (
+  prevProps: MessageListProps,
+  nextProps: MessageListProps,
+): boolean => {
   return isEqual(prevProps, nextProps);
 };
 
