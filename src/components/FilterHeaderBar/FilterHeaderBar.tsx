@@ -44,7 +44,6 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
 
   useEffect(() => {
     fetchFilteredConversations();
-    console.log('KALALLAA');
     console.log('INPUT: ', searchBarInput);
   }, [searchBarInput, setSearchBarInput]);
 
@@ -96,11 +95,18 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
             borderBottomWidth: 1,
             borderBottomColor: colorLightGray,
           }}>
-          {!searchBarOpen ? (
-            <View style={{width: windowWidth, paddingLeft: 8, paddingRight: 8}}>
+          {searchBarOpen ? (
+            <View
+              style={{
+                width: windowWidth,
+                paddingLeft: 8,
+                paddingRight: 8,
+                justifyContent: 'center',
+              }}>
               <SearchBarComponent
                 input={searchBarInput}
                 setInput={() => inputHandler(searchBarInput)}
+                close={closeSearchBarHandler}
               />
             </View>
           ) : (

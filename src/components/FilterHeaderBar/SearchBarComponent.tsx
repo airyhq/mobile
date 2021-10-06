@@ -11,14 +11,14 @@ import CloseIcon from '../../assets/images/icons/closeIcon.svg';
 type SearchBarComponentProps = {
   input: string;
   setInput: (text: string) => void;
+  close: () => void;
 };
 
 export const SearchBarComponent = (props: SearchBarComponentProps) => {
+  const {close} = props;
   const [searchInput, setSearchInput] = useState('');
   const [searchBarFocused, setSearchBarFocused] = useState(false);
   const searchBarRef = useRef(null);
-
-  console.log(searchInput);
 
   return (
     <View
@@ -35,7 +35,7 @@ export const SearchBarComponent = (props: SearchBarComponentProps) => {
         value={searchInput}
         onFocus={() => setSearchBarFocused(true)}
       />
-      <TouchableOpacity onPress={() => console.log('close')}>
+      <TouchableOpacity onPress={close}>
         <CloseIcon height={24} width={24} fill={colorTextGray} />
       </TouchableOpacity>
     </View>
@@ -51,7 +51,6 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingLeft: 8,
     borderRadius: 24,
-    marginBottom: 8,
     borderWidth: 1,
   },
   searchBar: {
@@ -66,7 +65,6 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingLeft: 8,
     borderRadius: 24,
-    marginBottom: 8,
     borderWidth: 1,
   },
 });
