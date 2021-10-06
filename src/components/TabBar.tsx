@@ -11,7 +11,7 @@ import {CurrentState} from './CurrentState';
 import {Dimensions, SafeAreaView, View} from 'react-native';
 import IconChannel from './IconChannel';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {FilterHeaderBar} from './FilterHeaderBar';
+import {FilterHeaderBar} from './FilterHeaderBar/FilterHeaderBar';
 
 export const TabBar = () => {
   const Tab = createBottomTabNavigator();

@@ -15,6 +15,7 @@ import {
   SuggestedReplySchema,
   SuggestionsSchema,
   MessageDataSchema,
+  ConversationFilterSchema,
 } from '../model';
 
 export class RealmDB {
@@ -29,6 +30,7 @@ export class RealmDB {
         schema: [
           ContactSchema,
           ConversationSchema,
+          ConversationFilterSchema,
           ChannelSchema,
           ContentSchema,
           ChannelMetadataSchema,
