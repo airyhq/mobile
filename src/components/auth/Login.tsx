@@ -62,7 +62,7 @@ export const Login = () => {
   let [domain, setDomain] = useState('');
   let [domainInput, setDomainInput] = useState('');
   let [showLogoutView, setShowLogoutView] = useState(false);
-  let [loginErr, setLoginErr] = useState('');
+  let [loginErr, setLoginErr] = useState<string>('');
   let [webviewUrl, setWebviewUrl] = useState('');
   const isLogoutSuccessUrl = url => url.indexOf(`${domain}/ui`) !== -1;
 
@@ -75,7 +75,7 @@ export const Login = () => {
     setDomain('');
   };
 
-  const onError = err => {
+  const onError = (err: string) => {
     closeWebview();
     setLoginErr(err);
   };
@@ -95,7 +95,7 @@ export const Login = () => {
       try {
         await getAndStoreUser(authToken);
       } catch (e) {
-        onError(e);
+        onError(e?.toString());
       } finally {
         setShowLogoutView(false);
       }
@@ -136,7 +136,9 @@ export const Login = () => {
                 uri: getAuthUrl(domain),
               }
         }
-        onError={onError}
+        onError={error => {
+          onError(error.nativeEvent.description);
+        }}
         sharedCookiesEnabled
         onNavigationStateChange={onNavigationStateChange}
         onMessage={onMessage}
