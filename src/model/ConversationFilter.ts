@@ -1,8 +1,10 @@
+import {Channel} from '.';
+
 export interface ConversationFilter {
   readOnly?: boolean;
   unreadOnly?: boolean;
   displayName?: string;
-  byChannels?: string[];
+  byChannels?: Channel[];
   isStateOpen?: boolean;
 }
 
@@ -12,14 +14,15 @@ export const ConversationFilterSchema = {
     readOnly: 'bool?',
     unreadOnly: 'bool?',
     displayName: 'string?',
-    byChannels: {type: 'list', objectType: 'string'},
+    byChannels: {type: 'list', objectType: 'Channel'},
     isStateOpen: 'bool?',
   },
 };
 
-export const filterToLuceneSyntax = (
-  filter: ConversationFilter,
-): string | null => {
+export const filterToLuceneSyntax = (filter: ConversationFilter): string | null => {
+
+  console.log('FILTER: ', filter);
+  
   const filterQuery: Array<string> = [];
   if (filter.unreadOnly) {
     filterQuery.push('unread_count:[1 TO *]');

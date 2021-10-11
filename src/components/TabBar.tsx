@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {ConversationList} from '../views/inbox/ConversationList';
 import SettingsView from '../views/settings';
 import InboxIcon from '../assets/images/icons/bubble_icon.svg';

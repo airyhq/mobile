@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   FlatList,
   Text,
@@ -16,24 +16,73 @@ import {Channel} from '../../model/Channel';
 import IconChannel from '../IconChannel';
 import Checkmark from '../../assets/images/icons/checkmark-circle.svg';
 import {RealmDB} from '../../storage/realm';
+import {ConversationFilter} from '../../model/ConversationFilter';
 
-export const ChannelComponent = () => {
-  const selectedChannels: Channel[] = [];
+type ChannelComponentProps = {
+  filterReseted: boolean;
+};
+
+export const ChannelComponent = (props: ChannelComponentProps) => {
+  const {filterReseted} = props;
   const channelListRef = useRef<FlatList>(null);
   const CHANNEL_PADDING = 48;
   const windowWidth = Dimensions.get('window').width;
   const realm = RealmDB.getInstance();
+  const currentFilter =
+    realm.objects<ConversationFilter>('ConversationFilter')[0];
+  const [selectedChannels, setSelectedChannels] = useState<Channel[]>(
+    currentFilter.byChannels || [],
+  );
 
   const connectedChannels = realm
     .objects<Channel>('Channel')
     .filtered('connected == true');
 
+  // const selectedChannelsToggle = (item: Channel) => {
+  //   const index = selectedChannels.indexOf(item);
+  //   index === -1
+  //     ? selectedChannels.push(item)
+  //     : selectedChannels.splice(index, 1);
+
+  //   if (currentFilter) {
+  //     realm.write(() => {
+  //       currentFilter.byChannels = selectedChannels;
+  //     });
+  //   }
+  // };
+
+  console.log('SELECTED CHANNELS: ', selectedChannels);
+
   const selectedChannelsToggle = (item: Channel) => {
-    const index = selectedChannels.indexOf(item);
-    index === -1
-      ? selectedChannels.push(item)
-      : selectedChannels.splice(index, 1);
+    selectedChannels.filter(channel => channel.id === item.id).length > 0
+      ? console.log('DELETED')
+      : setSelectedChannels(selectedChannels => [...selectedChannels, item]);
+
+    if (currentFilter) {
+      realm.write(() => {
+        currentFilter.byChannels = selectedChannels;
+      });
+    }
   };
+
+  useEffect(() => {
+    if (currentFilter) {
+      filterReseted && setSelectedChannels([]);
+      realm.write(() => {
+        currentFilter.byChannels = selectedChannels;
+      });
+    } else {
+      realm.write(() => {
+        realm.create<ConversationFilter>('ConversationFilter', {
+          byChannels: selectedChannels,
+          isStateOpen: null,
+          unreadOnly: null,
+          readOnly: null,
+          displayName: null,
+        });
+      });
+    }
+  }, [selectedChannels]);
 
   return (
     <FlatList
@@ -70,9 +119,9 @@ export const ChannelComponent = () => {
                   borderRadius: 24,
                   maxWidth: (windowWidth - CHANNEL_PADDING) / 2,
                 },
-                !selectedChannels.includes(item) && {
-                  backgroundColor: colorBackgroundBlue,
-                },
+                // selectedChannels.includes(item) && {
+                //   backgroundColor: colorBackgroundBlue,
+                // },
                 // ? {
                 //     backgroundColor: colorBackgroundBlue,
                 //   }
@@ -92,9 +141,9 @@ export const ChannelComponent = () => {
                   right: 4,
                   top: 4,
                 }}>
-                {!selectedChannels.includes(item) && (
+                {/* {selectedChannels.includes(item) && (
                   <Checkmark height={20} width={20} fill={colorSoftGreen} />
-                )}
+                )} */}
               </View>
             </TouchableOpacity>
           </View>

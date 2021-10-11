@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {TextInput, View, StyleSheet, TouchableOpacity} from 'react-native';
 import {
   colorBackgroundGray,
@@ -7,11 +7,34 @@ import {
 } from '../../assets/colors';
 import SearchIcon from '../../assets/images/icons/search.svg';
 import CloseIcon from '../../assets/images/icons/closeIcon.svg';
+import {RealmDB} from '../../storage/realm';
+import {ConversationFilter} from '../../model/ConversationFilter';
 
 export const SearchBarComponent = () => {
   const [searchInput, setSearchInput] = useState('');
   const [searchBarFocused, setSearchBarFocused] = useState(false);
   const searchBarRef = useRef(null);
+  const realm = RealmDB.getInstance();
+  const currentFilter =
+    realm.objects<ConversationFilter>('ConversationFilter')[0];
+
+  useEffect(() => {
+    if (currentFilter) {
+      realm.write(() => {
+        currentFilter.displayName = searchInput;
+      });
+    } else {
+      realm.write(() => {
+        realm.create<ConversationFilter>('ConversationFilter', {
+          byChannels: [],
+          isStateOpen: null,
+          unreadOnly: null,
+          readOnly: null,
+          displayName: searchInput,
+        });
+      });
+    }
+  }, [searchInput, setSearchInput]);
 
   return (
     <View

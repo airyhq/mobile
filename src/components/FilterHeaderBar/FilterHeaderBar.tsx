@@ -1,6 +1,5 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  Animated,
   Dimensions,
   Text,
   TouchableOpacity,
@@ -9,7 +8,6 @@ import {
 } from 'react-native';
 import {
   colorAiryBlue,
-  colorAiryLogoBlue,
   colorLightGray,
   colorRedAlert,
 } from '../../assets/colors';
@@ -17,7 +15,6 @@ import FilterIcon from '../../assets/images/icons/filterIcon.svg';
 import ChevronUpIcon from '../../assets/images/icons/chevronUp.svg';
 import {RealmDB} from '../../storage/realm';
 import {Conversation} from '../../model/Conversation';
-import {fetchFilteredConversations} from '../../api/Conversation';
 import {ReadUnreadComponent} from './ReadUnreadComponent';
 import {StateButtonComponent} from './StateButtonComponent';
 import {ChannelComponent} from './ChannelCompontent';
@@ -31,33 +28,61 @@ type FilterHeaderBarProps = {};
 export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
   const [filterOpen, setFilterOpen] = useState(false);
   const [searchBarOpen, setSearchBarOpen] = useState(false);
+  const [appliedFilters, setAppliedFilters] = useState(false);
+  const [filterReseted, setFilterReseted] = useState(false);
   const defaultHeaderHeight = 45;
   const expandedHeaderHeight = 300;
   const PADDING_COLLAPSEDFILTER = 32;
   const windowWidth = Dimensions.get('window').width;
-  const expandAnimation = useRef(
-    new Animated.Value(defaultHeaderHeight),
-  ).current;
   const realm = RealmDB.getInstance();
   const conversationsLength =
     realm.objects<Conversation>('Conversation').length;
 
   const currentFilter =
     realm.objects<ConversationFilter>('ConversationFilter')[0];
-  console.log('currentFilter: ', currentFilter);
 
-  const filterApplied =
-    currentFilter.byChannels.length > 0 ||
-    currentFilter.isStateOpen !== (undefined || null) ||
-    currentFilter.readOnly !== (undefined || null) ||
-    currentFilter.unreadOnly !== (undefined || null);
+  useEffect(() => {
+    filterApplied();
+    setFilterReseted(false);
+  }, [currentFilter]);
+
+  const filterApplied = () => {
+    console.log('APPLIED:      ', appliedFilters);
+    
+    currentFilter?.displayName !== (null || '') ||
+    currentFilter?.byChannels.length > 0 ||
+    currentFilter?.isStateOpen !== null ||
+    currentFilter?.readOnly !== null ||
+    currentFilter?.unreadOnly !== null
+      ? setAppliedFilters(true)
+      : setAppliedFilters(false);
+  };
 
   const toggleFiltering = () => {
     setFilterOpen(!filterOpen);
   };
 
-  const applyFilters = () => {
+  const applyFiltersHandler = () => {
     setFilterOpen(!filterOpen);
+  };
+
+  const resetFilters = () => {
+    if (filterApplied) {
+      setFilterReseted(true);
+      realm.write(() => {
+        currentFilter.byChannels = [];
+        currentFilter.isStateOpen = null;
+        currentFilter.readOnly = null;
+        currentFilter.unreadOnly = null;
+      });
+    }
+  };
+
+  const closeSearch = () => {
+    setSearchBarOpen(false);
+    realm.write(() => {
+      currentFilter.displayName = '';
+    });
   };
 
   const CollapsedFilterView = () => {
@@ -84,7 +109,7 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
             }}>
             <SearchBarComponent />
             <View>
-              <TouchableOpacity onPress={() => setSearchBarOpen(false)}>
+              <TouchableOpacity onPress={closeSearch}>
                 <CloseCircleIcon width={32} height={32} fill={colorAiryBlue} />
               </TouchableOpacity>
             </View>
@@ -107,12 +132,8 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
                   marginLeft: 8,
                 }}>
                 <View>
-                  <FilterIcon
-                    height={32}
-                    width={32}
-                    fill={filterApplied ? colorRedAlert : colorAiryBlue}
-                  />
-                  {filterApplied && (
+                  <FilterIcon height={32} width={32} fill={colorAiryBlue} />
+                  {appliedFilters && (
                     <View
                       style={{
                         position: 'absolute',
@@ -146,10 +167,28 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
           borderBottomWidth: 1,
         }}>
         <View style={{marginLeft: 12, marginRight: 12}}>
-          <Text style={styles.headerTitleExpanded}>Filter</Text>
-          <ReadUnreadComponent />
-          <StateButtonComponent />
-          <ChannelComponent />
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <Text style={styles.headerTitleExpanded}>Filter</Text>
+            <TouchableOpacity onPress={resetFilters} disabled={!filterApplied}>
+              <Text
+                style={[
+                  appliedFilters
+                    ? {color: colorAiryBlue}
+                    : {color: 'transparent'},
+                  {marginRight: 8},
+                ]}>
+                Reset
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <ReadUnreadComponent filterReseted={filterReseted} />
+          <StateButtonComponent filterReseted={filterReseted} />
+          <ChannelComponent filterReseted={filterReseted} />
           <View
             style={{
               marginBottom: 8,
@@ -168,7 +207,7 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
               <ChevronUpIcon height={48} width={48} fill={colorRedAlert} />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={applyFilters}
+              onPress={applyFiltersHandler}
               style={{
                 height: 30,
                 width: 72,

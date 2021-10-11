@@ -10,19 +10,26 @@ import {
 import {ConversationFilter} from '../../model/ConversationFilter';
 import {RealmDB} from '../../storage/realm';
 
-export const ReadUnreadComponent = () => {
+type ReadUnreadComponentProps = {
+  filterReseted: boolean;
+};
+
+export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
+  const {filterReseted} = props;
   const realm = RealmDB.getInstance();
   const currentFilter =
     realm.objects<ConversationFilter>('ConversationFilter')[0];
   const [stateActiveRead, setStateActiveRead] = useState<boolean>(
-    currentFilter.readOnly,
+    currentFilter?.readOnly || null,
   );
   const [stateActiveUnRead, setStateActiveUnRead] = useState<boolean>(
-    currentFilter.unreadOnly,
+    currentFilter?.unreadOnly || null,
   );
 
   useEffect(() => {
     if (currentFilter) {
+      filterReseted && setStateActiveRead(null);
+      filterReseted && setStateActiveUnRead(null);
       realm.write(() => {
         currentFilter.readOnly = stateActiveRead;
         currentFilter.unreadOnly = stateActiveUnRead;
@@ -32,10 +39,18 @@ export const ReadUnreadComponent = () => {
         realm.create<ConversationFilter>('ConversationFilter', {
           readOnly: stateActiveRead,
           unreadOnly: stateActiveUnRead,
+          byChannels: [],
+          isStateOpen: null,
+          displayName: null,
         });
       });
     }
-  }, [stateActiveRead, setStateActiveRead]);
+  }, [
+    stateActiveRead,
+    setStateActiveRead,
+    stateActiveUnRead,
+    setStateActiveUnRead,
+  ]);
 
   return (
     <View
@@ -50,7 +65,7 @@ export const ReadUnreadComponent = () => {
       <View style={{flexDirection: 'row', alignSelf: 'flex-start'}}>
         <TouchableOpacity
           style={[
-            stateActiveRead === undefined
+            (stateActiveRead || stateActiveUnRead) === null
               ? styles.buttonActive
               : styles.buttonInactive,
             {
@@ -63,18 +78,21 @@ export const ReadUnreadComponent = () => {
             },
           ]}
           onPress={() => {
-            setStateActiveRead(undefined), setStateActiveUnRead(undefined);
+            setStateActiveRead(null), setStateActiveUnRead(null);
           }}>
           <Text
             style={{
-              color: stateActiveRead === undefined ? 'white' : colorContrast,
+              color:
+                (stateActiveRead || stateActiveUnRead) === null
+                  ? 'white'
+                  : colorContrast,
             }}>
             All
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
-            stateActiveRead === true
+            stateActiveUnRead === true
               ? styles.buttonActive
               : styles.buttonInactive,
             {
@@ -87,16 +105,18 @@ export const ReadUnreadComponent = () => {
             },
           ]}
           onPress={() => {
-            setStateActiveRead(true), setStateActiveUnRead(false);
+            setStateActiveRead(false), setStateActiveUnRead(true);
           }}>
           <Text
-            style={{color: stateActiveRead === true ? 'white' : colorRedAlert}}>
+            style={{
+              color: stateActiveUnRead === true ? 'white' : colorRedAlert,
+            }}>
             Unread
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
-            stateActiveRead === false
+            stateActiveRead === true
               ? styles.buttonActive
               : styles.buttonInactive,
             {
@@ -109,11 +129,11 @@ export const ReadUnreadComponent = () => {
             },
           ]}
           onPress={() => {
-            setStateActiveRead(false), setStateActiveUnRead(true);
+            setStateActiveRead(true), setStateActiveUnRead(false);
           }}>
           <Text
             style={{
-              color: stateActiveRead === false ? 'white' : colorSoftGreen,
+              color: stateActiveRead === true ? 'white' : colorSoftGreen,
             }}>
             Read
           </Text>

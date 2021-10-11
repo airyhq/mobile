@@ -25,40 +25,34 @@ export const ConversationList = (props: ConversationListProps) => {
   const [conversations, setConversations] = useState<any>([]);
 
   useEffect(() => {
-    const getConversationsList = () => {
-      HttpClientInstance.listConversations({page_size: 50})
-        .then((response: any) => {
-          realm.write(() => {
-            realm.create('Pagination', response.paginationData);
-
-            for (const conversation of response.data) {
-              const isStored: Conversation | undefined =
-                realm.objectForPrimaryKey('Conversation', conversation.id);
-
-              const isStoredMessageData: MessageData | undefined =
-                realm.objectForPrimaryKey('MessageData', conversation.id);
-
-              if (isStored) {
-                realm.delete(isStored);
-              }
-
-              realm.create(
-                'Conversation',
-                parseToRealmConversation(conversation),
-              );
-              if (!isStoredMessageData) {
-                realm.create('MessageData', {
-                  id: conversation.id,
-                  messages: [],
-                });
-              }
+    HttpClientInstance.listConversations({page_size: 50})
+      .then((response: any) => {
+        realm.write(() => {
+          realm.create('Pagination', response.paginationData);
+          for (const conversation of response.data) {
+            const isStored: Conversation | undefined =
+              realm.objectForPrimaryKey('Conversation', conversation.id);
+            const isStoredMessageData: MessageData | undefined =
+              realm.objectForPrimaryKey('MessageData', conversation.id);
+            if (isStored) {
+              realm.delete(isStored);
             }
-          });
-        })
-        .catch((error: Error) => {
-          console.error(error);
+            realm.create(
+              'Conversation',
+              parseToRealmConversation(conversation),
+            );
+            if (!isStoredMessageData) {
+              realm.create('MessageData', {
+                id: conversation.id,
+                messages: [],
+              });
+            }
+          }
         });
-    };
+      })
+      .catch((error: Error) => {
+        console.error(error);
+      });
 
     const databaseConversations = realm
       .objects('Conversation')
@@ -67,8 +61,6 @@ export const ConversationList = (props: ConversationListProps) => {
     databaseConversations.addListener(() => {
       setConversations([...databaseConversations]);
     });
-
-    getConversationsList();
 
     return () => {
       databaseConversations.removeAllListeners();
