@@ -129,14 +129,14 @@ export const Carousel = ({children}) => {
           ref={buttonLeft}
           style={styles.buttonLeft}
           onPress={moveLeft}>
-          <LeftArrow style={styles.scrollButton} title="Scroll left" />
+          <LeftArrow width={10} height={10} />
         </TouchableOpacity>
         <TouchableOpacity
           accessibilityLabel="Right Arrow button"
           ref={buttonRight}
           style={styles.buttonRight}
           onPress={moveRight}>
-          <RightArrow style={styles.scrollButton} title="Scroll right" />
+          <RightArrow width={10} height={10} />
         </TouchableOpacity>
       </View>
     </View>

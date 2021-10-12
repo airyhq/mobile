@@ -6,3 +6,4 @@ export * from './Message';
 export * from './Metadata';
 export * from './Pagination';
 export * from './SuggestedReply';
+export * from './templates';

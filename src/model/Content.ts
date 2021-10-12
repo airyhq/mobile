@@ -1,10 +1,14 @@
-export type Content = {
-  text: string;
-};
+import {ContentMessage} from './Message';
 
-export const ContentSchema = {
-  name: 'Content',
+export interface TextContent extends ContentMessage {
+  type: 'text';
+  text: string;
+}
+
+export const TextContentSchema = {
+  name: 'TextContent',
   properties: {
+    type: 'string',
     text: 'string',
   },
 };

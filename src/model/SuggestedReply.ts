@@ -1,6 +1,6 @@
-import {Content} from './Content';
+import {TextContent} from './Content';
 export interface SuggestedReply {
-  content: Content;
+  content: TextContent;
 }
 export interface Suggestions {
   [suggestionId: string]: SuggestedReply;
@@ -9,7 +9,7 @@ export interface Suggestions {
 export const SuggestedReplySchema = {
   name: 'SuggestedReply',
   properties: {
-    content: 'Content',
+    content: 'TextContent',
   },
 };
 
