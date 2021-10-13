@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {Carousel} from '../../../../../componentsLib/general/Carousel';
 import {Media} from '../RichCard';
 import {RichCard} from '../RichCard';
@@ -23,11 +23,13 @@ export type RichCardCarouselRenderProps = {
 export const RichCardCarousel = (props: RichCardCarouselRenderProps) => {
   const {cardContents, cardWidth} = props;
 
+  console.log('cardWidth', cardWidth);
+
   return (
-    <Carousel>
+    <Carousel cardWidth={cardWidth}>
       {cardContents.map((card: Card, idx: number) => {
         return (
-          <div key={idx} style={styles.richCard}>
+          <View key={idx} style={styles.richCard}>
             <RichCard
               title={card.title}
               description={card.description}
@@ -36,7 +38,7 @@ export const RichCardCarousel = (props: RichCardCarouselRenderProps) => {
               cardWidth={cardWidth}
               commandCallback={props.commandCallback}
             />
-          </div>
+          </View>
         );
       })}
     </Carousel>

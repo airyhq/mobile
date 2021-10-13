@@ -23,6 +23,8 @@ import {
   RichCardMediaContentInfoSchema,
   RichCardSuggestionsSchema,
   RichCardReplySchema,
+  RichCardCarouselSchema,
+  CarouselCardSchema,
 } from '../model';
 
 export class RealmDB {
@@ -47,6 +49,8 @@ export class RealmDB {
           RichCardMediaContentInfoSchema,
           RichCardSuggestionsSchema,
           RichCardReplySchema,
+          RichCardCarouselSchema,
+          CarouselCardSchema,
           ChannelMetadataSchema,
           MessageSchema,
           MessageDataSchema,

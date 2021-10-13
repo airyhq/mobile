@@ -36,13 +36,6 @@ export interface RichCardContent extends ContentMessage {
 }
 
 //RichCard Schema
-export const RichCardContentSchema = {
-  name: 'RichCardContent',
-  properties: {
-    richCard: 'RichCard',
-  },
-};
-
 export const RichCardSchema = {
   name: 'RichCard',
   properties: {

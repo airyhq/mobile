@@ -46,6 +46,13 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
 function mapContent(message: any): ContentUnion {
   const messageContent = message.content.message ?? message.content;
 
+  if (messageContent?.richCardCarousel?.carouselCard) {
+    console.log(
+      'messageContent',
+      messageContent?.richCardCarousel?.carouselCard,
+    );
+  }
+
   if (messageContent.text) {
     return {
       type: 'text',
@@ -69,11 +76,11 @@ function mapContent(message: any): ContentUnion {
     };
   }
 
-  if (messageContent.richCard?.carouselCard) {
+  if (messageContent.richCardCarousel?.carouselCard) {
     return {
       type: 'richCardCarousel',
-      cardWidth: messageContent.richCard.carouselCard.cardWidth,
-      cardContents: messageContent.richCard.carouselCard.cardContents,
+      cardWidth: messageContent.richCardCarousel.carouselCard.cardWidth,
+      cardContents: messageContent.richCardCarousel.carouselCard.cardContents,
     };
   }
 

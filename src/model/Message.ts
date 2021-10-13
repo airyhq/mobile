@@ -1,11 +1,23 @@
 import {Source} from './Channel';
 import {RichCard} from './templates';
 import {Suggestions} from './SuggestedReply';
+import {RichCardCarousel} from './templates/RichCardCarousel';
 
 export type ContentMessage = {
   type: string;
   text?: string;
   richCard?: RichCard;
+  richCardCarousel?: RichCardCarousel;
+};
+
+export const ContentMessageSchema = {
+  name: 'ContentMessage',
+  properties: {
+    type: 'string',
+    text: 'string?',
+    richCard: 'RichCard?',
+    richCardCarousel: 'RichCardCarousel?',
+  },
 };
 
 export enum MessageType {
@@ -51,12 +63,35 @@ export const parseToRealmMessage = (
     unformattedMessage.content?.postback?.title ??
     unformattedMessage.content;
 
-  if (source === Source.chatplugin && messageContent.richCard) {
+  if (
+    source === Source.chatplugin &&
+    messageContent.richCard &&
+    !messageContent.richCard?.carouselCard
+  ) {
     return {
       id: unformattedMessage.id,
       content: {
         type: 'RichCard',
         richCard: {...messageContent.richCard},
+      },
+      deliveryState: unformattedMessage.deliveryState,
+      fromContact: unformattedMessage.fromContact,
+      sentAt: unformattedMessage.sentAt,
+      metadata: unformattedMessage.metadata,
+    };
+  }
+
+  if (
+    source === Source.chatplugin &&
+    messageContent.richCard &&
+    messageContent.richCard?.carouselCard
+  ) {
+    console.log('carouselCard', messageContent.richCard?.carouselCard);
+    return {
+      id: unformattedMessage.id,
+      content: {
+        type: 'RichCardCarousel',
+        richCardCarousel: {...messageContent.richCard},
       },
       deliveryState: unformattedMessage.deliveryState,
       fromContact: unformattedMessage.fromContact,
@@ -198,15 +233,6 @@ export const MessageDataSchema = {
   properties: {
     id: 'string',
     messages: {type: 'list', objectType: 'Message'},
-  },
-};
-
-export const ContentMessageSchema = {
-  name: 'ContentMessage',
-  properties: {
-    type: 'string',
-    text: 'string?',
-    richCard: 'RichCard?',
   },
 };
 
