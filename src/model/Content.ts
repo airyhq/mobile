@@ -1,10 +1,6 @@
-import {ContentMessage} from './Message';
+export type Content = any;
 
-export interface TextContent extends ContentMessage {
-  type: 'text';
-  text: string;
-}
-
+//text Content Realm Schema
 export const TextContentSchema = {
   name: 'TextContent',
   properties: {

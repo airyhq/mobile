@@ -2,49 +2,54 @@ import React, {useEffect, useState, useRef} from 'react';
 import {View, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import RightArrow from '../../../assets/images/icons/rightArrow.svg';
 import LeftArrow from '../../../assets/images/icons/leftArrow.svg';
-import {colorTextGray} from '../../../assets/colors';
 
-export const Carousel = ({children, cardWidth}) => {
+export const Carousel = ({children, cardWidth, paddingRight}) => {
   const carouselChildren = useRef(null);
-  const buttonLeft = useRef(null);
-  const buttonRight = useRef(null);
-  const [setScrollViewTotalWidth] = useState(0);
-  const [scrollDistance, setScrollDistance] = useState(0);
   const [richCardWidth, setRichCardWidth] = useState(0);
+  const [scrollDistance, setScrollDistance] = useState(0);
+  const [rightButton, setRightButton] = useState(true);
 
   useEffect(() => {
     if (cardWidth === 'SHORT') {
-      setScrollDistance(136);
       setRichCardWidth(136);
     } else {
-      setScrollDistance(320);
-      setRichCardWidth(320);
+      setRichCardWidth(285);
     }
   }, [cardWidth]);
 
-  useEffect(() => {
-    console.log('scrollDistance', scrollDistance);
-  }, [scrollDistance]);
-
   const scrollLeft = () => {
-    if (carouselChildren.current && scrollDistance > 0) {
-      setScrollDistance(distance => distance - richCardWidth);
+    carouselChildren.current.scrollTo({
+      x: scrollDistance - richCardWidth,
+      y: 0,
+      animated: true,
+    });
+  };
+
+  const scrollRight = () => {
+    if (carouselChildren.current) {
       carouselChildren.current.scrollTo({
-        x: scrollDistance,
+        x: scrollDistance + richCardWidth,
         y: 0,
         animated: true,
       });
     }
   };
 
-  const scrollRight = () => {
-    if (carouselChildren.current) {
-      setScrollDistance(distance => distance + richCardWidth);
-      carouselChildren.current.scrollTo({
-        x: scrollDistance,
-        y: 0,
-        animated: true,
-      });
+  const isCloseToScrollViewEnd = event => {
+    return (
+      event.layoutMeasurement.width + event.contentOffset.x >=
+      event.contentSize.width - paddingRight * 3
+    );
+  };
+
+  const handleScroll = (event: any) => {
+    setScrollDistance(event.nativeEvent.contentOffset.x);
+    isCloseToScrollViewEnd(event.nativeEvent);
+
+    if (isCloseToScrollViewEnd(event.nativeEvent)) {
+      setRightButton(false);
+    } else if (!rightButton) {
+      setRightButton(true);
     }
   };
 
@@ -52,28 +57,29 @@ export const Carousel = ({children, cardWidth}) => {
     <View style={styles.wrapper}>
       <ScrollView
         horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        onScroll={handleScroll}
         style={[
           styles.carouselChildren,
           {width: richCardWidth, height: 'auto'},
         ]}
-        ref={carouselChildren}
-        onContentSizeChange={width => setScrollViewTotalWidth(width)}>
+        ref={carouselChildren}>
         {children}
       </ScrollView>
-      {scrollDistance > richCardWidth && (
+
+      {scrollDistance >= richCardWidth - paddingRight && (
         <TouchableOpacity
           accessibilityLabel="Left Arrow button"
-          ref={buttonLeft}
-          style={styles.buttonLeft}
+          style={[styles.buttonScroll, styles.buttonLeft]}
           onPress={scrollLeft}>
           <LeftArrow width={24} height={24} fill="#167FAB" />
         </TouchableOpacity>
       )}
-      {scrollDistance <= richCardWidth * children.length && (
+
+      {rightButton && (
         <TouchableOpacity
           accessibilityLabel="Right Arrow button"
-          ref={buttonRight}
-          style={styles.buttonRight}
+          style={[styles.buttonScroll, styles.buttonRight]}
           onPress={scrollRight}>
           <RightArrow width={24} height={24} fill="#167FAB" />
         </TouchableOpacity>
@@ -84,11 +90,12 @@ export const Carousel = ({children, cardWidth}) => {
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginTop: 5,
     width: '100%',
+    maxWidth: 320,
     height: 'auto',
-    backgroundColor: 'yellow',
-    position: 'relative',
+    overflow: 'hidden',
+    marginRight: 10,
+    marginTop: 5,
   },
   carouselChildren: {
     display: 'flex',
@@ -97,40 +104,24 @@ const styles = StyleSheet.create({
   buttonScroll: {
     width: 30,
     height: 40,
-    top: 20,
+    position: 'absolute',
+    top: '50%',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 0,
-    backgroundColor: '#ffffff',
+    backgroundColor: 'white',
   },
   buttonLeft: {
-    position: 'absolute',
-    top: '50%',
-    width: 30,
-    height: 40,
-    borderWidth: 0,
-    backgroundColor: 'red',
+    left: 0,
     borderTopRightRadius: 12,
     borderBottomRightRadius: 12,
-    left: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   buttonRight: {
-    position: 'absolute',
-    top: '50%',
-    width: 30,
-    height: 40,
-    borderWidth: 0,
-    backgroundColor: 'blue',
+    right: 0,
     borderTopLeftRadius: 12,
     borderBottomLeftRadius: 12,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   scrollButton: {
     width: 24,
-  },
-  messageTime: {
-    color: colorTextGray,
   },
 });

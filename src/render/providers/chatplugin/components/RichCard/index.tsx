@@ -1,14 +1,13 @@
 import React from 'react';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {CommandUnion} from '../../../../props';
-import {RichCardSuggestion} from '../../chatPluginModel';
+import {RichCardSuggestion, MediaHeight} from '../../chatPluginModel';
 import {
   colorLightGray,
   colorTemplateHightlight,
   colorContrast,
   colorAiryBlue,
 } from '../../../../../assets/colors';
-import {MediaHeight} from '../../chatPluginModel';
 import {ImageWithFallback} from '../../../../components/ImageWithFallback';
 
 export type Media = {
@@ -110,9 +109,11 @@ export const RichCard = ({
                   clickSuggestion(suggestion);
                 }}
                 key={idx}>
-                {suggestion.reply?.text && (
-                  <Text> {suggestion.reply?.text} </Text>
-                )}
+                <Text>
+                  {suggestion.reply
+                    ? suggestion.reply.text
+                    : suggestion.action.text}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -124,16 +125,18 @@ export const RichCard = ({
 
 const styles = StyleSheet.create({
   richCardContainer: {
-    height: 'auto',
     width: '100%',
+    maxWidth: 280,
+    height: 'auto',
+    marginTop: 5,
     borderWidth: 1,
     borderColor: colorLightGray,
     borderRadius: 16,
     backgroundColor: colorTemplateHightlight,
-    marginTop: 5,
   },
   mediaContainer: {
     width: '100%',
+    maxWidth: 280,
     height: 'auto',
   },
   textContainer: {
@@ -153,27 +156,28 @@ const styles = StyleSheet.create({
     color: 'black',
     letterSpacing: 0,
     lineHeight: 24,
+    width: '80%',
   },
   suggestionsContainer: {
     display: 'flex',
     alignItems: 'flex-start',
   },
   suggestionButton: {
-    fontFamily: 'Lato',
-    fontSize: 16,
-    overflow: 'hidden',
     height: 40,
     width: 'auto',
     maxWidth: 250,
+    overflow: 'hidden',
     paddingTop: 8,
     paddingBottom: 8,
     paddingLeft: 16,
     paddingRight: 16,
     marginTop: 12,
     alignItems: 'center',
+    fontFamily: 'Lato',
+    fontSize: 16,
     borderWidth: 1,
-    borderColor: colorLightGray,
     borderRadius: 4,
+    borderColor: colorLightGray,
     backgroundColor: colorTemplateHightlight,
     color: colorAiryBlue,
   },
@@ -181,11 +185,12 @@ const styles = StyleSheet.create({
     width: 136,
   },
   big: {
-    width: 320,
+    width: 280,
   },
   mediaImage: {
     width: 'auto',
-    height: 'auto',
+    resizeMode: 'cover',
+    overflow: 'hidden',
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
   },

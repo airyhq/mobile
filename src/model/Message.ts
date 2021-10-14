@@ -1,24 +1,6 @@
+import {Content} from './Content';
 import {Source} from './Channel';
-import {RichCard} from './templates';
 import {Suggestions} from './SuggestedReply';
-import {RichCardCarousel} from './templates/RichCardCarousel';
-
-export type ContentMessage = {
-  type: string;
-  text?: string;
-  richCard?: RichCard;
-  richCardCarousel?: RichCardCarousel;
-};
-
-export const ContentMessageSchema = {
-  name: 'ContentMessage',
-  properties: {
-    type: 'string',
-    text: 'string?',
-    richCard: 'RichCard?',
-    richCardCarousel: 'RichCardCarousel?',
-  },
-};
 
 export enum MessageType {
   audio = 'audio',
@@ -39,7 +21,7 @@ export interface MessageMetadata {
 }
 export interface Message {
   id: string;
-  content: ContentMessage;
+  content: Content;
   deliveryState: DeliveryState;
   fromContact: boolean;
   sentAt: Date;
@@ -50,6 +32,55 @@ export interface Message {
 export type MessageData = {
   id: string;
   messages: Message[];
+};
+
+export const ContentMessageSchema = {
+  name: 'ContentMessage',
+  properties: {
+    type: 'string',
+    text: 'string?',
+    richCard: 'RichCard?',
+    richCardCarousel: 'RichCardCarousel?',
+  },
+};
+
+export const MessageSchema = {
+  name: 'Message',
+  properties: {
+    id: 'string',
+    content: 'ContentMessage',
+    deliveryState: 'string',
+    fromContact: 'bool',
+    sentAt: 'date',
+    metadata: 'MessageMetadata?',
+  },
+};
+
+export const MessageDataSchema = {
+  name: 'MessageData',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    messages: {type: 'list', objectType: 'Message'},
+  },
+};
+
+export const MessageTypeSchema = {
+  name: 'MessageType',
+  properties: {
+    audio: 'string',
+    file: 'string',
+    image: 'string',
+    text: 'string',
+    video: 'string',
+  },
+};
+
+export const MessageMetadataSchema = {
+  name: 'MessageMetadata',
+  properties: {
+    suggestions: 'Suggestions',
+  },
 };
 
 export const parseToRealmMessage = (
@@ -63,6 +94,7 @@ export const parseToRealmMessage = (
     unformattedMessage.content?.postback?.title ??
     unformattedMessage.content;
 
+  //chatplugin templates
   if (
     source === Source.chatplugin &&
     messageContent.richCard &&
@@ -86,7 +118,6 @@ export const parseToRealmMessage = (
     messageContent.richCard &&
     messageContent.richCard?.carouselCard
   ) {
-    console.log('carouselCard', messageContent.richCard?.carouselCard);
     return {
       id: unformattedMessage.id,
       content: {
@@ -100,6 +131,7 @@ export const parseToRealmMessage = (
     };
   }
 
+  //text message: all sources
   if (typeof messageContent === 'object') {
     messageContent = JSON.stringify(messageContent);
   }
@@ -213,43 +245,4 @@ export const parseToRealmMessage = (
     sentAt: unformattedMessage.sentAt,
     metadata: unformattedMessage.metadata,
   };
-};
-
-export const MessageSchema = {
-  name: 'Message',
-  properties: {
-    id: 'string',
-    content: 'ContentMessage',
-    deliveryState: 'string',
-    fromContact: 'bool',
-    sentAt: 'date',
-    metadata: 'MessageMetadata?',
-  },
-};
-
-export const MessageDataSchema = {
-  name: 'MessageData',
-  primaryKey: 'id',
-  properties: {
-    id: 'string',
-    messages: {type: 'list', objectType: 'Message'},
-  },
-};
-
-export const MessageTypeSchema = {
-  name: 'MessageType',
-  properties: {
-    audio: 'string',
-    file: 'string',
-    image: 'string',
-    text: 'string',
-    video: 'string',
-  },
-};
-
-export const MessageMetadataSchema = {
-  name: 'MessageMetadata',
-  properties: {
-    suggestions: 'Suggestions',
-  },
 };

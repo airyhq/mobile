@@ -60,6 +60,18 @@ const MessageList = (props: MessageListProps) => {
 
     const listMessages = () => {
       api.listMessages({conversationId, pageSize: 50}).then((response: any) => {
+        for (let message of response.data) {
+          if (
+            message.content?.richCard &&
+            message.content?.richCard?.standaloneCard
+          ) {
+            console.log(
+              'message',
+              message.content?.richCard?.standaloneCard?.cardContent
+                ?.suggestions,
+            );
+          }
+        }
         if (databaseMessages) {
           realm.write(() => {
             databaseMessages.messages = [
@@ -108,6 +120,7 @@ const MessageList = (props: MessageListProps) => {
     newMessages: Message[],
   ): Message[] {
     newMessages.forEach((message: Message) => {
+      console.log('message', message);
       if (!oldMessages.some((item: Message) => item.id === message.id)) {
         oldMessages.push(parseToRealmMessage(message, message.source));
       }

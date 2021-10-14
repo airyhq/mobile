@@ -1,41 +1,4 @@
-import {ContentMessage} from '../Message';
-
-export interface RichCard {
-  standaloneCard: {
-    cardContent: {
-      title: string;
-      description: string;
-      media: {
-        height: string;
-        contentInfo: {
-          altText: string;
-          fileUrl: string;
-          forceRefresh: boolean;
-        };
-      };
-      suggestions: [
-        {
-          reply: {
-            text: string;
-            postbackData: string;
-          };
-        },
-        {
-          reply?: {
-            text?: string;
-            postbackData?: string;
-          };
-        },
-      ];
-    };
-  };
-}
-
-export interface RichCardContent extends ContentMessage {
-  richCard: RichCard;
-}
-
-//RichCard Schema
+//RichCard Realm Schema
 export const RichCardSchema = {
   name: 'RichCard',
   properties: {
@@ -81,6 +44,7 @@ export const RichCardSuggestionsSchema = {
   name: 'RichCardSuggestions',
   properties: {
     reply: 'RichCardReply?',
+    action: 'RichCardReply?',
   },
 };
 

@@ -1,8 +1,7 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
 import {Carousel} from '../../../../../componentsLib/general/Carousel';
-import {Media} from '../RichCard';
-import {RichCard} from '../RichCard';
+import {Media, RichCard} from '../RichCard';
 import {RichCardSuggestion} from '../../chatPluginModel';
 import {CommandUnion} from '../../../../props';
 
@@ -23,13 +22,13 @@ export type RichCardCarouselRenderProps = {
 export const RichCardCarousel = (props: RichCardCarouselRenderProps) => {
   const {cardContents, cardWidth} = props;
 
-  console.log('cardWidth', cardWidth);
+  const paddingRight = 25;
 
   return (
-    <Carousel cardWidth={cardWidth}>
+    <Carousel cardWidth={cardWidth} paddingRight={25}>
       {cardContents.map((card: Card, idx: number) => {
         return (
-          <View key={idx} style={styles.richCard}>
+          <View key={idx} style={{paddingRight: paddingRight}}>
             <RichCard
               title={card.title}
               description={card.description}
@@ -44,9 +43,3 @@ export const RichCardCarousel = (props: RichCardCarouselRenderProps) => {
     </Carousel>
   );
 };
-
-const styles = StyleSheet.create({
-  richCard: {
-    paddingRight: 5,
-  },
-});
