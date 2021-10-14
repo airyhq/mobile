@@ -37,7 +37,7 @@ const realm = RealmDB.getInstance();
 const MessageList = (props: MessageListProps) => {
   const {route} = props;
   const conversationId: string = route.params.conversationId;
-  const [messages, setMessages] = useState<any>([]);
+  const [messages, setMessages] = useState<Message[] | []>([]);
   const messageListRef = useRef<FlatList>(null);
   const headerHeight = useHeaderHeight();
   const behavior = Platform.OS === 'ios' ? 'padding' : 'height';
