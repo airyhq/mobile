@@ -1,6 +1,6 @@
 import Realm from 'realm';
 import {UserInfoSchema} from '../model/userInfo';
-import {ConversationSchema} from '../model/Conversation';
+import {ConversationSchema, FilteredConversationSchema} from '../model/Conversation';
 import {
   ChannelMetadataSchema,
   ChannelSchema,
@@ -30,6 +30,7 @@ export class RealmDB {
         schema: [
           ContactSchema,
           ConversationSchema,
+          FilteredConversationSchema,
           ConversationFilterSchema,
           ChannelSchema,
           ContentSchema,

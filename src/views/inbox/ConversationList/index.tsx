@@ -9,9 +9,13 @@ import {getPagination} from '../../../services/Pagination';
 import {
   Conversation,
   parseToRealmConversation,
+  upsertConversation,
 } from '../../../model/Conversation';
 import {NavigationStackProp} from 'react-navigation-stack';
-import {MessageData} from '../../../model/Message';
+import {
+  ConversationFilter,
+  filterToLuceneSyntax,
+} from '../../../model/ConversationFilter';
 
 type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
@@ -23,40 +27,41 @@ export const ConversationList = (props: ConversationListProps) => {
   const {navigation} = props;
   const paginationData = getPagination();
   const [conversations, setConversations] = useState<any>([]);
+  const [filteredConversations, setFilteredConversations] = useState<any>([]);
+  const [applyFilters, setApplyFilters] = useState<boolean>(false);
+
+  const currentFilter =
+    realm.objects<ConversationFilter>('ConversationFilter')[0];
+
+  const filterApplied =
+    currentFilter?.displayName !== '' ||
+    currentFilter?.byChannels.length > 0 ||
+    currentFilter?.isStateOpen !== null ||
+    currentFilter?.readOnly !== null ||
+    currentFilter?.unreadOnly !== null;
+
+  const handleApplyFilters = (applied: boolean) => {
+    setApplyFilters(applied);
+  };
 
   useEffect(() => {
-    HttpClientInstance.listConversations({page_size: 50})
+    HttpClientInstance.listConversations({
+      page_size: 50,
+      filters: currentFilter && filterToLuceneSyntax(currentFilter),
+    })
       .then((response: any) => {
         realm.write(() => {
           realm.create('Pagination', response.paginationData);
-          for (const conversation of response.data) {
-            const isStored: Conversation | undefined =
-              realm.objectForPrimaryKey('Conversation', conversation.id);
-            const isStoredMessageData: MessageData | undefined =
-              realm.objectForPrimaryKey('MessageData', conversation.id);
-            if (isStored) {
-              realm.delete(isStored);
-            }
-            realm.create(
-              'Conversation',
-              parseToRealmConversation(conversation),
-            );
-            if (!isStoredMessageData) {
-              realm.create('MessageData', {
-                id: conversation.id,
-                messages: [],
-              });
-            }
-          }
         });
+        upsertConversation(response.data, realm);
       })
       .catch((error: Error) => {
         console.error(error);
       });
-
     const databaseConversations = realm
       .objects('Conversation')
-      .sorted('lastMessage.sentAt', true);
+      .sorted('lastMessage.sentAt', true)
+      // .filtered('metadata.contact.displayName', currentFilter.displayName);
 
     databaseConversations.addListener(() => {
       setConversations([...databaseConversations]);
@@ -66,6 +71,8 @@ export const ConversationList = (props: ConversationListProps) => {
       databaseConversations.removeAllListeners();
     };
   }, []);
+
+
 
   const getNextConversationList = () => {
     const cursor = paginationData?.nextCursor;

@@ -31,7 +31,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
   const currentFilter =
     realm.objects<ConversationFilter>('ConversationFilter')[0];
   const [selectedChannels, setSelectedChannels] = useState<Channel[]>(
-    currentFilter.byChannels || [],
+    currentFilter?.byChannels || [],
   );
 
   const connectedChannels = realm
@@ -51,11 +51,9 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
   //   }
   // };
 
-  console.log('SELECTED CHANNELS: ', selectedChannels);
-
   const selectedChannelsToggle = (item: Channel) => {
     selectedChannels.filter(channel => channel.id === item.id).length > 0
-      ? console.log('DELETED')
+      ? console.log('')
       : setSelectedChannels(selectedChannels => [...selectedChannels, item]);
 
     if (currentFilter) {
@@ -102,7 +100,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
       style={styles.connectedChannelList}
       data={connectedChannels}
       ref={channelListRef}
-      keyExtractor={item => item.id}
+      keyExtractor={(item, index) => item.id + index}
       renderItem={({item}) => {
         return (
           <View

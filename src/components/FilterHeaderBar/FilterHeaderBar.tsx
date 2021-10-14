@@ -20,16 +20,16 @@ import {StateButtonComponent} from './StateButtonComponent';
 import {ChannelComponent} from './ChannelCompontent';
 import {SearchBarComponent} from './SearchBarComponent';
 import SearchIcon from '../../assets/images/icons/search.svg';
-import CloseCircleIcon from '../../assets/images/icons/closeCircleIcon.svg';
 import {ConversationFilter} from '../../model';
 
 type FilterHeaderBarProps = {};
 
 export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [searchBarOpen, setSearchBarOpen] = useState(false);
-  const [appliedFilters, setAppliedFilters] = useState(false);
-  const [filterReseted, setFilterReseted] = useState(false);
+  const [filterOpen, setFilterOpen] = useState<boolean>(false);
+  const [searchBarOpen, setSearchBarOpen] = useState<boolean>(false);
+  const [appliedFilters, setAppliedFilters] = useState<boolean>(false);
+  const [filterReseted, setFilterReseted] = useState<boolean>(false);
+  const [searchBarFocused, setSearchBarFocused] = useState<boolean>();
   const defaultHeaderHeight = 45;
   const expandedHeaderHeight = 300;
   const PADDING_COLLAPSEDFILTER = 32;
@@ -44,11 +44,10 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
   useEffect(() => {
     filterApplied();
     setFilterReseted(false);
-  }, [currentFilter]);
+    isSearchBarFocused(searchBarFocused);
+  }, [currentFilter, searchBarFocused, searchBarFocused, setSearchBarFocused]);
 
   const filterApplied = () => {
-    console.log('APPLIED:      ', appliedFilters);
-    
     currentFilter?.displayName !== (null || '') ||
     currentFilter?.byChannels.length > 0 ||
     currentFilter?.isStateOpen !== null ||
@@ -74,15 +73,21 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
         currentFilter.isStateOpen = null;
         currentFilter.readOnly = null;
         currentFilter.unreadOnly = null;
+        currentFilter.displayName = '';
       });
     }
   };
 
   const closeSearch = () => {
     setSearchBarOpen(false);
-    realm.write(() => {
-      currentFilter.displayName = '';
-    });
+    currentFilter &&
+      realm.write(() => {
+        currentFilter.displayName = '';
+      });
+  };
+
+  const isSearchBarFocused = (isFocused: boolean) => {
+    setSearchBarFocused(isFocused);
   };
 
   const CollapsedFilterView = () => {
@@ -98,7 +103,7 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
           borderBottomWidth: 1,
           borderBottomColor: colorLightGray,
         }}>
-        {searchBarOpen ? (
+        {searchBarOpen && searchBarFocused ? (
           <View
             style={{
               width: windowWidth - PADDING_COLLAPSEDFILTER,
@@ -107,11 +112,33 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
               alignItems: 'center',
               flexDirection: 'row',
             }}>
-            <SearchBarComponent />
-            <View>
-              <TouchableOpacity onPress={closeSearch}>
-                <CloseCircleIcon width={32} height={32} fill={colorAiryBlue} />
-              </TouchableOpacity>
+            <SearchBarComponent
+              setSearchBarFocus={() => isSearchBarFocused(searchBarFocused)}
+            />
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <View>
+                <TouchableOpacity onPress={() => setFilterOpen(true)}>
+                  <FilterIcon width={32} height={32} fill={colorAiryBlue} />
+                </TouchableOpacity>
+                {appliedFilters && (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      right: 4,
+                      top: 2,
+                      height: 8,
+                      width: 8,
+                      backgroundColor: 'red',
+                      borderRadius: 50,
+                    }}
+                  />
+                )}
+              </View>
             </View>
           </View>
         ) : (
@@ -121,7 +148,9 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
             </Text>
             <View style={{flexDirection: 'row'}}>
               <TouchableOpacity
-                onPress={() => setSearchBarOpen(true)}
+                onPress={() => {
+                  setSearchBarOpen(true), isSearchBarFocused(true);
+                }}
                 style={{padding: 4}}>
                 <SearchIcon height={24} width={24} fill={colorAiryBlue} />
               </TouchableOpacity>
@@ -175,15 +204,11 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
             }}>
             <Text style={styles.headerTitleExpanded}>Filter</Text>
             <TouchableOpacity onPress={resetFilters} disabled={!filterApplied}>
-              <Text
-                style={[
-                  appliedFilters
-                    ? {color: colorAiryBlue}
-                    : {color: 'transparent'},
-                  {marginRight: 8},
-                ]}>
-                Reset
-              </Text>
+              {appliedFilters && (
+                <Text style={{marginRight: 8, color: colorAiryBlue}}>
+                  Reset
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
           <ReadUnreadComponent filterReseted={filterReseted} />

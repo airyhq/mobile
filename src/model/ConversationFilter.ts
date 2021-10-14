@@ -19,10 +19,11 @@ export const ConversationFilterSchema = {
   },
 };
 
-export const filterToLuceneSyntax = (filter: ConversationFilter): string | null => {
-
+export const filterToLuceneSyntax = (
+  filter: ConversationFilter,
+): string | null => {
   console.log('FILTER: ', filter);
-  
+
   const filterQuery: Array<string> = [];
   if (filter.unreadOnly) {
     filterQuery.push('unread_count:[1 TO *]');

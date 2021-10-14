@@ -4,6 +4,8 @@ import {Metadata} from './Metadata';
 import {Channel} from './Channel';
 import {Pagination} from './Pagination';
 import {parseToRealmMessage} from './Message';
+import {RealmDB} from '../storage/realm';
+import {ConversationFilter} from '.';
 
 export type ConversationMetadata = Metadata & {
   contact: Contact;
@@ -36,6 +38,28 @@ export interface Conversation {
   paginationData: Pagination;
 }
 
+export const FilteredConversationSchema = {
+  name: 'FilteredConversation',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    channel: 'Channel',
+    metadata: 'Metadata',
+    createdAt: 'date?',
+    lastMessage: 'Message',
+    paginationData: 'Pagination',
+  },
+};
+
+export interface FilteredConversation {
+  id: string;
+  channel: Channel;
+  metadata: Metadata;
+  createdAt: Date;
+  lastMessage: Message;
+  paginationData: Pagination;
+}
+
 export const parseToRealmConversation = (
   unformattedConversation: Conversation,
 ): Conversation => {
@@ -59,4 +83,36 @@ export const parseToRealmConversation = (
   };
 
   return conversation;
+};
+
+export const upsertConversation = (
+  conversations: Conversation[],
+  realm: Realm,
+) => {
+  conversations.forEach(conversation => {
+    const storedConversation: Conversation | undefined =
+      realm.objectForPrimaryKey('Conversation', conversation.id);
+
+    if (storedConversation) {
+      realm.write(() => {
+        storedConversation.lastMessage = conversation.lastMessage;
+        storedConversation.metadata = conversation.metadata;
+      });
+    } else {
+      const newConversation: Conversation =
+        parseToRealmConversation(conversation);
+      const channel: Channel =
+        RealmDB.getInstance().objectForPrimaryKey<Channel>(
+          'Channel',
+          conversation.channel.id,
+        );
+      realm.write(() => {
+        realm.create('Conversation', {
+          ...newConversation,
+          channel: channel || newConversation.channel,
+        });
+        realm.create('MessageData', {id: conversation.id, messages: []});
+      });
+    }
+  });
 };
