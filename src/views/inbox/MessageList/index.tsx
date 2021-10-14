@@ -37,7 +37,7 @@ const realm = RealmDB.getInstance();
 const MessageList = (props: MessageListProps) => {
   const {route} = props;
   const conversationId: string = route.params.conversationId;
-  const [messages, setMessages] = useState<[] | Message[]>([]);
+  const [messages, setMessages] = useState<any>([]);
   const messageListRef = useRef<FlatList>(null);
   const headerHeight = useHeaderHeight();
   const behavior = Platform.OS === 'ios' ? 'padding' : 'height';
@@ -55,9 +55,6 @@ const MessageList = (props: MessageListProps) => {
     const databaseMessages: (MessageData & Realm.Object) | undefined =
       realm.objectForPrimaryKey<MessageData>('MessageData', conversationId);
 
-    const databaseMessagesJson: MessageData | undefined =
-      databaseMessages && databaseMessages.toJSON();
-
     const currentConversation: Conversation | undefined =
       realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
 
@@ -67,10 +64,8 @@ const MessageList = (props: MessageListProps) => {
         .then((response: PaginatedResponse<Message>) => {
           if (databaseMessages) {
             realm.write(() => {
-              databaseMessagesJson.messages = [
-                ...mergeMessages(databaseMessagesJson.messages, [
-                  ...response.data,
-                ]),
+              databaseMessages.messages = [
+                ...mergeMessages(databaseMessages.messages, [...response.data]),
               ];
             });
           } else {
@@ -101,8 +96,7 @@ const MessageList = (props: MessageListProps) => {
 
     if (databaseMessages) {
       databaseMessages.addListener(() => {
-        const messagesJson = databaseMessagesJson.messages;
-        setMessages([...messagesJson]);
+        setMessages([...databaseMessages.messages]);
       });
     }
 
