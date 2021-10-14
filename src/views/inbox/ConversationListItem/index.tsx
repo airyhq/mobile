@@ -145,14 +145,13 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
                 pressable={false}
               />
             </View>
-            <Text
-              numberOfLines={1}
+            <View
               style={[
                 {width: '85%', height: 38},
                 unread ? styles.unreadMessage : styles.message,
               ]}>
               <SourceMessagePreview conversation={conversation} />
-            </Text>
+            </View>
             <View style={styles.channelTimeContainer}>
               <View style={styles.iconChannel}>
                 <IconChannel
