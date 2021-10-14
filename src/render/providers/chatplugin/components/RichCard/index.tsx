@@ -8,7 +8,7 @@ import {
   colorContrast,
   colorAiryBlue,
 } from '../../../../../assets/colors';
-import {ImageWithFallback} from '../../../../components/ImageWithFallback';
+import {Media} from './Media';
 
 export type Media = {
   height: MediaHeight;
@@ -75,27 +75,14 @@ export const RichCard = ({
     }
   };
 
-  const getHeight = (height: MediaHeight): any => {
-    switch (height) {
-      case MediaHeight.short:
-        return styles.short;
-      case MediaHeight.medium:
-        return styles.medium;
-      case MediaHeight.tall:
-        return styles.tall;
-      default:
-        return styles.medium;
-    }
-  };
-
   return (
     <>
       <View style={{...styles.richCardContainer, ...{size}}}>
         <View style={styles.mediaContainer}>
-          <ImageWithFallback
-            src={media.contentInfo.fileUrl}
-            alt={media.contentInfo.altText ?? 'richCard template'}
-            imageStyle={{...styles.mediaImage, ...getHeight(media.height)}}
+          <Media
+            height={media.height}
+            fileUrl={media.contentInfo.fileUrl}
+            altText={media.contentInfo.altText}
           />
         </View>
         <View style={styles.textContainer}>
@@ -186,21 +173,5 @@ const styles = StyleSheet.create({
   },
   big: {
     width: 280,
-  },
-  mediaImage: {
-    width: 'auto',
-    resizeMode: 'cover',
-    overflow: 'hidden',
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-  },
-  tall: {
-    height: 210,
-  },
-  medium: {
-    height: 168,
-  },
-  short: {
-    height: 112,
   },
 });

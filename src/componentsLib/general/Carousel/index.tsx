@@ -1,5 +1,12 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {View, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+} from 'react-native';
 import RightArrow from '../../../assets/images/icons/rightArrow.svg';
 import LeftArrow from '../../../assets/images/icons/leftArrow.svg';
 
@@ -35,14 +42,14 @@ export const Carousel = ({children, cardWidth, paddingRight}) => {
     }
   };
 
-  const isCloseToScrollViewEnd = event => {
+  const isCloseToScrollViewEnd = (event: NativeScrollEvent) => {
     return (
       event.layoutMeasurement.width + event.contentOffset.x >=
       event.contentSize.width - paddingRight * 3
     );
   };
 
-  const handleScroll = (event: any) => {
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     setScrollDistance(event.nativeEvent.contentOffset.x);
     isCloseToScrollViewEnd(event.nativeEvent);
 

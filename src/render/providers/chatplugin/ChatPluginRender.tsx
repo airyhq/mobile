@@ -46,13 +46,6 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
 function mapContent(message: any): ContentUnion {
   const messageContent = message.content.message ?? message.content;
 
-  if (messageContent?.richCardCarousel?.carouselCard) {
-    console.log(
-      'messageContent',
-      messageContent?.richCardCarousel?.carouselCard,
-    );
-  }
-
   if (messageContent.text) {
     return {
       type: 'text',
@@ -89,24 +82,3 @@ function mapContent(message: any): ContentUnion {
     text: 'Unknown message type',
   };
 }
-
-// const parseAttachment = (attachment: SimpleAttachment): AttachmentUnion => {
-//   if (attachment.type === 'image') {
-//     return {
-//       type: 'image',
-//       imageUrl: attachment.payload.url,
-//     };
-//   }
-
-//   if (attachment.type === 'video') {
-//     return {
-//       type: 'video',
-//       videoUrl: attachment.payload.url,
-//     };
-//   }
-
-//   return {
-//     type: 'text',
-//     text: 'Unsupported message type',
-//   };
-// };
