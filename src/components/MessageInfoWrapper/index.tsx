@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   },
   contactContent: {
     overflow: 'hidden',
-    maxWidth: '75%',
+    maxWidth: '100%',
     alignItems: 'flex-start',
   },
   member: {
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   },
   memberContent: {
     overflow: 'hidden',
-    maxWidth: '75%',
+    maxWidth: '100%',
     alignItems: 'flex-end',
     flexDirection: 'column',
   },

@@ -22,13 +22,11 @@ export type RichCardCarouselRenderProps = {
 export const RichCardCarousel = (props: RichCardCarouselRenderProps) => {
   const {cardContents, cardWidth} = props;
 
-  const paddingRight = 25;
-
   return (
-    <Carousel cardWidth={cardWidth} paddingRight={25}>
+    <Carousel>
       {cardContents.map((card: Card, idx: number) => {
         return (
-          <View key={idx} style={{paddingRight: paddingRight}}>
+          <View key={idx} style={{paddingRight: 5}}>
             <RichCard
               title={card.title}
               description={card.description}
