@@ -9,9 +9,12 @@ import {
   Conversation,
   parseToRealmConversation,
   MessageData,
+  Pagination,
 } from '../../../model';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {api} from '../../../components/auth/AuthWrapper';
+
+declare type PaginatedResponse<T> = typeof import('@airyhq/http-client');
 
 type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
@@ -22,13 +25,13 @@ const realm = RealmDB.getInstance();
 export const ConversationList = (props: ConversationListProps) => {
   const {navigation} = props;
   const paginationData = getPagination();
-  const [conversations, setConversations] = useState<any>([]);
+  const [conversations, setConversations] = useState<[] | Conversation[]>([]);
 
   useEffect(() => {
     const getConversationsList = () => {
       api
         .listConversations({page_size: 50})
-        .then((response: any) => {
+        .then((response: PaginatedResponse<Conversation>) => {
           realm.write(() => {
             realm.create('Pagination', response.paginationData);
 
@@ -61,12 +64,13 @@ export const ConversationList = (props: ConversationListProps) => {
         });
     };
 
-    const databaseConversations = realm
-      .objects('Conversation')
+    const databaseConversations: Realm.Results<Conversation[]> = realm
+      .objects<Conversation[]>('Conversation')
       .sorted('lastMessage.sentAt', true);
 
     databaseConversations.addListener(() => {
-      setConversations([...databaseConversations]);
+      const conversationsJson = databaseConversations.toJSON();
+      setConversations([...conversationsJson]);
     });
 
     getConversationsList();
@@ -78,9 +82,10 @@ export const ConversationList = (props: ConversationListProps) => {
 
   const getNextConversationList = () => {
     const cursor = paginationData?.nextCursor;
+
     api
       .listConversations({cursor: cursor, page_size: 50})
-      .then((response: any) => {
+      .then((response: PaginatedResponse<Conversation>) => {
         realm.write(() => {
           for (const conversation of response.data) {
             const isStored = realm.objectForPrimaryKey(
@@ -100,7 +105,8 @@ export const ConversationList = (props: ConversationListProps) => {
         });
 
         realm.write(() => {
-          const pagination: any = realm.objects('Pagination')[0];
+          const pagination: Pagination | undefined =
+            realm.objects<Pagination>('Pagination')[0];
           pagination.previousCursor = response.paginationData.previousCursor;
           pagination.nextCursor = response.paginationData.nextCursor;
           pagination.total = response.paginationData.total;

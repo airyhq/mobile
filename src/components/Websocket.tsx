@@ -32,9 +32,13 @@ const addMessage = (conversationId: string, message: Message) => {
         message,
         currentConversation.channel.source,
       );
-      currentMessageData.messages = mergeMessages(currentMessageData.messages, [
-        message,
-      ]);
+
+      if (currentMessageData && currentMessageData.messages) {
+        currentMessageData.messages = mergeMessages(
+          currentMessageData.messages,
+          [message],
+        );
+      }
     }
   });
 };
@@ -46,7 +50,7 @@ const getInfoNewConversation = (conversationId: string, retries: number) => {
   }
   api
     .getConversationInfo(conversationId)
-    .then((response: any) => {
+    .then((response: Conversation) => {
       realm.write(() => {
         realm.create('Conversation', parseToRealmConversation(response));
         realm.create('MessageData', {id: conversationId, messages: []});

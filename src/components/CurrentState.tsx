@@ -15,13 +15,14 @@ import {Conversation} from '../model/Conversation';
 import {Avatar} from './Avatar';
 import IconChannel from './IconChannel';
 import {api} from '../api';
+import {NavigationStackProp} from 'react-navigation-stack';
 
 type CurrentStateProps = {
   state: string;
   conversationId: string;
   pressable: boolean;
   style?: StyleProp<ViewStyle>;
-  navigation?: any;
+  navigation?: NavigationStackProp<{conversationId: string}>;
 };
 
 export const CurrentState = (props: CurrentStateProps) => {
@@ -85,11 +86,12 @@ export const CurrentState = (props: CurrentStateProps) => {
       })
       .then(() => {
         realm.write(() => {
-          const changedConversation: any = realm.objectForPrimaryKey(
-            'Conversation',
-            conversationId,
-          );
-          changedConversation.metadata.state = newState;
+          const changedConversation: Conversation | undefined =
+            realm.objectForPrimaryKey('Conversation', conversationId);
+
+          if (changedConversation?.metadata?.state) {
+            changedConversation.metadata.state = newState;
+          }
         });
       });
   };

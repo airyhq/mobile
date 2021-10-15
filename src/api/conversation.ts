@@ -1,5 +1,6 @@
 import {RealmDB} from '../storage/realm';
 import {api} from '../api';
+import {Message} from '../Model';
 
 export const sendMessage = (conversationId: string, message: any) => {
   api
@@ -7,7 +8,7 @@ export const sendMessage = (conversationId: string, message: any) => {
       conversationId,
       message,
     })
-    .then((response: any) => {
+    .then((response: Message) => {
       const realm = RealmDB.getInstance();
       realm.write(() => {
         realm.create('Message', {
