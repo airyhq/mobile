@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Image} from 'react-native';
+import {Image, StyleProp, ImageStyle} from 'react-native';
 import {SvgUri} from 'react-native-svg';
 
 type ImageRenderProps = {
   src: string;
   alt?: string;
-  style?: any;
+  imageStyle?: StyleProp<ImageStyle>;
 };
 
 /**
@@ -16,7 +16,7 @@ type ImageRenderProps = {
  */
 const failedUrls = [];
 
-export const ImageWithFallback = ({src, style}: ImageRenderProps) => {
+export const ImageWithFallback = ({src, imageStyle}: ImageRenderProps) => {
   const [imageFailed, setImageFailed] = useState(failedUrls.includes(src));
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export const ImageWithFallback = ({src, style}: ImageRenderProps) => {
         />
       ) : (
         <Image
-          style={style}
+          style={imageStyle}
           source={{
             uri: src,
           }}

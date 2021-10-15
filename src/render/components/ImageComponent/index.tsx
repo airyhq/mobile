@@ -14,15 +14,15 @@ export const ImageComponent = ({imageUrl, images}: ImageRenderProps) => (
       <View style={styles.imagesContainer}>
         {images.map(image => (
           <ImageWithFallback
-            style={`${styles.messageListItemImageBlock} ${styles.images}`}
             src={image.imageUrl}
             key={image.imageUrl}
+            imageStyle={`${styles.messageListItemImageBlock} ${styles.images}`}
           />
         ))}
       </View>
     ) : (
       <ImageWithFallback
-        style={styles.messageListItemImageBlock}
+        imageStyle={styles.messageListItemImageBlock}
         src={imageUrl}
       />
     )}
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   messageListItemImageBlock: {
     width: Dimensions.get('window').width / 2,
     height: 100,
-    resizeMode: 'contain',
     borderRadius: 8,
+    resizeMode: 'cover',
   },
 });
