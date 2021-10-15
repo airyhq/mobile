@@ -47,8 +47,22 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
     isSearchBarFocused(searchBarFocused);
   }, [currentFilter, searchBarFocused, searchBarFocused, setSearchBarFocused]);
 
+  // useEffect(() => {
+  //   const databaseConversationFilter =
+  //     realm.objects<ConversationFilter>('ConversationFilter');
+
+  //   databaseConversationFilter.addListener(() => {
+  //     console.log('CHANGES');
+
+  //   });
+
+  //   return () => {
+  //     databaseConversationFilter.removeAllListeners();
+  //   };
+  // }, []);
+
   const filterApplied = () => {
-    currentFilter?.displayName !== (null || '') ||
+    currentFilter?.displayName !== '' ||
     currentFilter?.byChannels.length > 0 ||
     currentFilter?.isStateOpen !== null ||
     currentFilter?.readOnly !== null ||

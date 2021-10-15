@@ -41,7 +41,7 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
           unreadOnly: stateActiveUnRead,
           byChannels: [],
           isStateOpen: null,
-          displayName: null,
+          displayName: '',
         });
       });
     }

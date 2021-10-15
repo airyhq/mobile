@@ -76,7 +76,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
           isStateOpen: null,
           unreadOnly: null,
           readOnly: null,
-          displayName: null,
+          displayName: '',
         });
       });
     }
