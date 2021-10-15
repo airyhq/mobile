@@ -88,7 +88,10 @@ export const CurrentState = (props: CurrentStateProps) => {
         realm.write(() => {
           const changedConversation: Conversation | undefined =
             realm.objectForPrimaryKey('Conversation', conversationId);
-          changedConversation.metadata.state = newState;
+
+          if (changedConversation?.metadata?.state) {
+            changedConversation.metadata.state = newState;
+          }
         });
       });
   };
