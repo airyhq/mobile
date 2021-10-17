@@ -38,22 +38,11 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
     .objects<Channel>('Channel')
     .filtered('connected == true');
 
-  // const selectedChannelsToggle = (item: Channel) => {
-  //   const index = selectedChannels.indexOf(item);
-  //   index === -1
-  //     ? selectedChannels.push(item)
-  //     : selectedChannels.splice(index, 1);
-
-  //   if (currentFilter) {
-  //     realm.write(() => {
-  //       currentFilter.byChannels = selectedChannels;
-  //     });
-  //   }
-  // };
-
   const selectedChannelsToggle = (item: Channel) => {
     selectedChannels.filter(channel => channel.id === item.id).length > 0
-      ? console.log('')
+      ? setSelectedChannels(
+          selectedChannels.filter(channel => channel.id !== item.id),
+        )
       : setSelectedChannels(selectedChannels => [...selectedChannels, item]);
 
     if (currentFilter) {
@@ -62,6 +51,10 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
       });
     }
   };
+
+  selectedChannels.map(channel => {
+    console.log(channel.sourceChannelId);
+  });
 
   useEffect(() => {
     if (currentFilter) {
@@ -80,7 +73,52 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
         });
       });
     }
-  }, [selectedChannels]);
+  }, [selectedChannels, setSelectedChannels]);
+
+  const ChannelItem = ({item, index}) => {
+    return (
+      <View
+        style={{
+          flex: 1,
+          paddingBottom: 8,
+        }}>
+        <TouchableOpacity
+          onPress={() => selectedChannelsToggle(item)}
+          style={[
+            {
+              flexDirection: 'column',
+              padding: 4,
+              borderRadius: 24,
+              maxWidth: (windowWidth - CHANNEL_PADDING) / 2,
+            },
+            selectedChannels.filter(
+              (channel: Channel) => channel.id === item.id,
+            )
+              ? {backgroundColor: 'white'}
+              : {backgroundColor: 'red'},
+          ]}>
+          <IconChannel
+            source={item.source}
+            sourceChannelId={item.sourceChannelId}
+            metadataName={item.metadata?.name}
+            customWidth={windowWidth / 3}
+            showAvatar
+            showName
+          />
+          <View
+            style={{
+              position: 'absolute',
+              right: 4,
+              top: 4,
+            }}>
+            {selectedChannels.filter(
+              (channel: Channel) => channel.id === item.id,
+            ) && <Checkmark height={20} width={20} fill={colorSoftGreen} />}
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   return (
     <FlatList
@@ -101,51 +139,8 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
       data={connectedChannels}
       ref={channelListRef}
       keyExtractor={(item, index) => item.id + index}
-      renderItem={({item}) => {
-        return (
-          <View
-            style={{
-              flex: 1,
-              paddingBottom: 8,
-            }}>
-            <TouchableOpacity
-              onPress={() => selectedChannelsToggle(item)}
-              style={[
-                {
-                  flexDirection: 'column',
-                  padding: 4,
-                  borderRadius: 24,
-                  maxWidth: (windowWidth - CHANNEL_PADDING) / 2,
-                },
-                // selectedChannels.includes(item) && {
-                //   backgroundColor: colorBackgroundBlue,
-                // },
-                // ? {
-                //     backgroundColor: colorBackgroundBlue,
-                //   }
-                // : {backgroundColor: 'white'},
-              ]}>
-              <IconChannel
-                source={item.source}
-                sourceChannelId={item.sourceChannelId}
-                metadataName={item.metadata?.name}
-                customWidth={windowWidth / 3}
-                showAvatar
-                showName
-              />
-              <View
-                style={{
-                  position: 'absolute',
-                  right: 4,
-                  top: 4,
-                }}>
-                {/* {selectedChannels.includes(item) && (
-                  <Checkmark height={20} width={20} fill={colorSoftGreen} />
-                )} */}
-              </View>
-            </TouchableOpacity>
-          </View>
-        );
+      renderItem={({item, index}) => {
+        return <ChannelItem item={item} index={index} />;
       }}
     />
   );

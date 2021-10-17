@@ -31,46 +31,35 @@ export const ConversationList = (props: ConversationListProps) => {
   const currentFilter =
     realm.objects<ConversationFilter>('ConversationFilter')[0];
 
-  // useEffect(() => {
-  //   const databaseConversationFilter =
-  //     realm.objects<ConversationFilter>('ConversationFilter');
-
-  //   databaseConversationFilter.addListener(() => {
-  //     console.log('CHANGES');
-  //   });
-
-  //   return () => {
-  //     databaseConversationFilter.removeAllListeners();
-  //   };
-  // }, []);
-
   useEffect(() => {
-    const databaseConversations: Realm.Results<Conversation[]> = realm
-      .objects<Conversation[]>('Conversation')
-      .sorted('lastMessage.sentAt', true)
-      .filtered(
-        'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1 && (metadata.unreadCount != $2 || metadata.unreadCount != $3)',
-        currentFilter?.displayName,
-        (currentFilter?.isStateOpen == null && '*') ||
-          (currentFilter?.isStateOpen == true && 'OPEN') ||
-          (currentFilter?.isStateOpen == false && 'CLOSED'),
-        (currentFilter?.readOnly == null && 2) ||
-          (currentFilter?.readOnly == true && 1) ||
-          (currentFilter?.readOnly == false && 0),
-        (currentFilter?.unreadOnly == null && 2) ||
-          (currentFilter?.unreadOnly == true && 1) ||
-          (currentFilter?.unreadOnly == false && 0),
-      );
+    setTimeout(() => {
+      const databaseConversations: Realm.Results<Conversation[]> = realm
+        .objects<Conversation[]>('Conversation')
+        .sorted('lastMessage.sentAt', true)
+        .filtered(
+          'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1 && (metadata.unreadCount != $2 || metadata.unreadCount != $3)',
+          currentFilter?.displayName,
+          (currentFilter?.isStateOpen == null && '*') ||
+            (currentFilter?.isStateOpen == true && 'OPEN') ||
+            (currentFilter?.isStateOpen == false && 'CLOSED'),
+          (currentFilter?.readOnly == null && 2) ||
+            (currentFilter?.readOnly == true && 1) ||
+            (currentFilter?.readOnly == false && 0),
+          (currentFilter?.readOnly == null && 2) ||
+            (currentFilter?.readOnly == true && 1) ||
+            (currentFilter?.readOnly == false && 0),
+        );
 
-    if (databaseConversations) {
-      databaseConversations.addListener(() => {
-        setConversations([...databaseConversations]);
-      });
+      if (databaseConversations) {
+        databaseConversations.addListener(() => {
+          setConversations([...databaseConversations]);
+        });
 
-      return () => {
-        databaseConversations.removeAllListeners();
-      };
-    }
+        return () => {
+          databaseConversations.removeAllListeners();
+        };
+      }
+    }, 100);
   }, [currentFilter]);
 
   useEffect(() => {
@@ -80,15 +69,12 @@ export const ConversationList = (props: ConversationListProps) => {
     if (databaseConversationFilter) {
       databaseConversationFilter.addListener(collection => {
         console.log('-------------------');
-        console.log('COLLECTION: ', collection);
+        console.log('COLLECTION: ', collection[0].byChannels.length);
       });
     }
 
     return () => {
-      // databaseConversationFilter.removeAllListeners();
-      databaseConversationFilter.removeListener(collection => {
-        console.log('dsadjsadalskjdalskdajs', collection);
-      });
+      databaseConversationFilter.removeAllListeners();
     };
   }, []);
 

@@ -31,9 +31,9 @@ export const filterToLuceneSyntax = (
   if (filter.displayName) {
     filterQuery.push('display_name:*' + filter.displayName + '*');
   }
-  if (filter.byChannels && filter.byChannels.length > 0) {
-    filterQuery.push('channel_id:(' + filter.byChannels.join(' OR ') + ')');
-  }
+  // if (filter.byChannels && filter.byChannels.length > 0) {
+  //   filterQuery.push('channel_id:(' + filter.byChannels.join(' OR ') + ')');
+  // }
   if (filter.isStateOpen === true) {
     filterQuery.push('id:* AND NOT metadata.state:CLOSED');
   } else if (filter.isStateOpen !== undefined) {
