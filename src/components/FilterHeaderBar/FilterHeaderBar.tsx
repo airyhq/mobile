@@ -31,7 +31,7 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
   const [filterReseted, setFilterReseted] = useState<boolean>(false);
   const [searchBarFocused, setSearchBarFocused] = useState<boolean>();
   const defaultHeaderHeight = 45;
-  const expandedHeaderHeight = 300;
+  const expandedHeaderHeight = 280;
   const PADDING_COLLAPSEDFILTER = 32;
   const windowWidth = Dimensions.get('window').width;
   const realm = RealmDB.getInstance();
@@ -45,21 +45,7 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
     filterApplied();
     setFilterReseted(false);
     isSearchBarFocused(searchBarFocused);
-  }, [currentFilter, searchBarFocused, searchBarFocused, setSearchBarFocused]);
-
-  // useEffect(() => {
-  //   const databaseConversationFilter =
-  //     realm.objects<ConversationFilter>('ConversationFilter');
-
-  //   databaseConversationFilter.addListener(() => {
-  //     console.log('CHANGES');
-
-  //   });
-
-  //   return () => {
-  //     databaseConversationFilter.removeAllListeners();
-  //   };
-  // }, []);
+  }, [currentFilter, searchBarFocused, setSearchBarFocused]);
 
   const filterApplied = () => {
     currentFilter?.displayName !== '' ||
@@ -244,18 +230,6 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
                 padding: 0,
               }}>
               <ChevronUpIcon height={48} width={48} fill={colorRedAlert} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={applyFiltersHandler}
-              style={{
-                height: 30,
-                width: 72,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: colorAiryBlue,
-                borderRadius: 8,
-              }}>
-              <Text style={{color: 'white', fontFamily: 'Lato'}}>Apply</Text>
             </TouchableOpacity>
           </View>
         </View>

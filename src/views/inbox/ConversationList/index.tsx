@@ -31,59 +31,20 @@ export const ConversationList = (props: ConversationListProps) => {
   const currentFilter =
     realm.objects<ConversationFilter>('ConversationFilter')[0];
 
-  useEffect(() => {
-    const databaseConversationFilter =
-      realm.objects<ConversationFilter>('ConversationFilter');
+  // useEffect(() => {
+  //   const databaseConversationFilter =
+  //     realm.objects<ConversationFilter>('ConversationFilter');
 
-    databaseConversationFilter.addListener(() => {
-    });
+  //   databaseConversationFilter.addListener(() => {
+  //     console.log('CHANGES');
+  //   });
 
-    return () => {
-      databaseConversationFilter.removeAllListeners();
-    };
-  }, []);
-
-  useEffect(() => {
-    const databaseConversations: Realm.Results<Conversation[]> = realm
-      .objects<Conversation[]>('Conversation')
-      .sorted('lastMessage.sentAt', true)
-      .filtered(
-        'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1 && (metadata.unreadCount != $2 || metadata.unreadCount != $3)',
-        currentFilter?.displayName,
-        (currentFilter?.isStateOpen == null && '*') ||
-          (currentFilter?.isStateOpen == true && 'OPEN') ||
-          (currentFilter?.isStateOpen == false && 'CLOSED'),
-        (currentFilter?.readOnly == null && 2) ||
-          (currentFilter?.readOnly == true && 1) ||
-          (currentFilter?.readOnly == false && 0),
-        (currentFilter?.readOnly == null && 2) ||
-          (currentFilter?.readOnly == true && 1) ||
-          (currentFilter?.readOnly == false && 0),
-      );
-
-    databaseConversations.addListener(() => {
-      setConversations([...databaseConversations]);
-    });
-
-    return () => {
-      databaseConversations.removeAllListeners();
-    };
-  }, [currentFilter]);
+  //   return () => {
+  //     databaseConversationFilter.removeAllListeners();
+  //   };
+  // }, []);
 
   useEffect(() => {
-    HttpClientInstance.listConversations({
-      page_size: 50,
-      filters: currentFilter && filterToLuceneSyntax(currentFilter),
-    })
-      .then((response: any) => {
-        realm.write(() => {
-          realm.create('Pagination', response.paginationData);
-        });
-        upsertConversation(response.data, realm);
-      })
-      .catch((error: Error) => {
-        console.error(error);
-      });
     const databaseConversations: Realm.Results<Conversation[]> = realm
       .objects<Conversation[]>('Conversation')
       .sorted('lastMessage.sentAt', true)
@@ -100,15 +61,38 @@ export const ConversationList = (props: ConversationListProps) => {
           (currentFilter?.unreadOnly == true && 1) ||
           (currentFilter?.unreadOnly == false && 0),
       );
-    databaseConversations.addListener(() => {
-      setConversations([...databaseConversations]);
-    });
+
+    if (databaseConversations) {
+      databaseConversations.addListener(() => {
+        setConversations([...databaseConversations]);
+      });
+
+      return () => {
+        databaseConversations.removeAllListeners();
+      };
+    }
+  }, [currentFilter]);
+
+  useEffect(() => {
+    const databaseConversationFilter =
+      realm.objects<ConversationFilter>('ConversationFilter');
+
+    if (databaseConversationFilter) {
+      databaseConversationFilter.addListener(collection => {
+        console.log('-------------------');
+        console.log('COLLECTION: ', collection);
+      });
+    }
+
     return () => {
-      databaseConversations.removeAllListeners();
+      // databaseConversationFilter.removeAllListeners();
+      databaseConversationFilter.removeListener(collection => {
+        console.log('dsadjsadalskjdalskdajs', collection);
+      });
     };
   }, []);
 
-  const fetchConversations = () => {
+  useEffect(() => {
     HttpClientInstance.listConversations({
       page_size: 50,
       filters: currentFilter && filterToLuceneSyntax(currentFilter),
@@ -122,7 +106,7 @@ export const ConversationList = (props: ConversationListProps) => {
       .catch((error: Error) => {
         console.error(error);
       });
-  };
+  }, []);
 
   const getNextConversationList = () => {
     const cursor = paginationData?.nextCursor;
