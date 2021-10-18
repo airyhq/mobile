@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet, Dimensions, SafeAreaView, FlatList} from 'react-native';
 import {debounce} from 'lodash-es';
 import {ConversationListItem} from '../ConversationListItem';
@@ -23,60 +23,13 @@ type ConversationListProps = {
 
 const realm = RealmDB.getInstance();
 
+const currentFilter =
+  realm.objects<ConversationFilter>('ConversationFilter')[0];
+
 export const ConversationList = (props: ConversationListProps) => {
   const {navigation} = props;
   const paginationData = getPagination();
   const [conversations, setConversations] = useState<any>([]);
-
-  const currentFilter =
-    realm.objects<ConversationFilter>('ConversationFilter')[0];
-
-  useEffect(() => {
-    setTimeout(() => {
-      const databaseConversations: Realm.Results<Conversation[]> = realm
-        .objects<Conversation[]>('Conversation')
-        .sorted('lastMessage.sentAt', true)
-        .filtered(
-          'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1 && (metadata.unreadCount != $2 || metadata.unreadCount != $3)',
-          currentFilter?.displayName,
-          (currentFilter?.isStateOpen == null && '*') ||
-            (currentFilter?.isStateOpen == true && 'OPEN') ||
-            (currentFilter?.isStateOpen == false && 'CLOSED'),
-          (currentFilter?.readOnly == null && 2) ||
-            (currentFilter?.readOnly == true && 1) ||
-            (currentFilter?.readOnly == false && 0),
-          (currentFilter?.readOnly == null && 2) ||
-            (currentFilter?.readOnly == true && 1) ||
-            (currentFilter?.readOnly == false && 0),
-        );
-
-      if (databaseConversations) {
-        databaseConversations.addListener(() => {
-          setConversations([...databaseConversations]);
-        });
-
-        return () => {
-          databaseConversations.removeAllListeners();
-        };
-      }
-    }, 100);
-  }, [currentFilter]);
-
-  useEffect(() => {
-    const databaseConversationFilter =
-      realm.objects<ConversationFilter>('ConversationFilter');
-
-    if (databaseConversationFilter) {
-      databaseConversationFilter.addListener(collection => {
-        console.log('-------------------');
-        console.log('COLLECTION: ', collection[0].byChannels.length);
-      });
-    }
-
-    return () => {
-      databaseConversationFilter.removeAllListeners();
-    };
-  }, []);
 
   useEffect(() => {
     HttpClientInstance.listConversations({
@@ -88,11 +41,49 @@ export const ConversationList = (props: ConversationListProps) => {
           realm.create('Pagination', response.paginationData);
         });
         upsertConversation(response.data, realm);
+
+        const databaseConversations: Realm.Results<Conversation[]> = realm
+          .objects<Conversation[]>('Conversation')
+          .sorted('lastMessage.sentAt', true);
+
+        if (databaseConversations) {
+          databaseConversations.addListener(() => {
+            setConversations([...databaseConversations]);
+          });
+
+          return () => {
+            databaseConversations.removeAllListeners();
+          };
+        }
       })
       .catch((error: Error) => {
         console.error(error);
       });
   }, []);
+
+  useEffect(() => {
+    const databaseConversations: Realm.Results<Conversation[]> = realm
+      .objects<Conversation[]>('Conversation')
+      .sorted('lastMessage.sentAt', true)
+      .filtered(
+        'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1 && (metadata.unreadCount != $2 || metadata.unreadCount != $3)',
+        currentFilter?.displayName,
+        (currentFilter?.isStateOpen == null && '*') ||
+          (currentFilter?.isStateOpen == true && 'OPEN') ||
+          (currentFilter?.isStateOpen == false && 'CLOSED'),
+        (currentFilter?.readOnly == null && 2) ||
+          (currentFilter?.readOnly == true && 1) ||
+          (currentFilter?.readOnly == false && 0),
+        (currentFilter?.readOnly == null && 2) ||
+          (currentFilter?.readOnly == true && 1) ||
+          (currentFilter?.readOnly == false && 0),
+      );
+
+    setConversations([...databaseConversations]);
+
+    console.log('FUCK IT');
+    console.log('CURRENTFILTER: ', currentFilter);
+  }, [currentFilter]);
 
   const getNextConversationList = () => {
     const cursor = paginationData?.nextCursor;

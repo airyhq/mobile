@@ -52,10 +52,6 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
     }
   };
 
-  selectedChannels.map(channel => {
-    console.log(channel.sourceChannelId);
-  });
-
   useEffect(() => {
     if (currentFilter) {
       filterReseted && setSelectedChannels([]);
@@ -75,7 +71,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
     }
   }, [selectedChannels, setSelectedChannels]);
 
-  const ChannelItem = ({item, index}) => {
+  const ChannelItem = ({item}) => {
     return (
       <View
         style={{
@@ -94,8 +90,8 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
             selectedChannels.filter(
               (channel: Channel) => channel.id === item.id,
             )
-              ? {backgroundColor: 'white'}
-              : {backgroundColor: 'red'},
+              ? {backgroundColor: colorBackgroundBlue}
+              : {backgroundColor: 'white'},
           ]}>
           <IconChannel
             source={item.source}
@@ -140,7 +136,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
       ref={channelListRef}
       keyExtractor={(item, index) => item.id + index}
       renderItem={({item, index}) => {
-        return <ChannelItem item={item} index={index} />;
+        return <ChannelItem item={item} />;
       }}
     />
   );
