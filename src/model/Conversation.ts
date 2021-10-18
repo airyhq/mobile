@@ -1,10 +1,10 @@
 import {Contact} from './Contact';
-import {Message, MessageData} from './Message';
+import {Message} from './Message';
 import {Metadata} from './Metadata';
 import {Channel} from './Channel';
 import {Pagination} from './Pagination';
 import {parseToRealmMessage} from './Message';
-import { RealmDB } from '../storage/realm';
+import {RealmDB} from '../storage/realm';
 
 export type ConversationMetadata = Metadata & {
   contact: Contact;
@@ -29,6 +29,28 @@ export const ConversationSchema = {
 };
 
 export interface Conversation {
+  id: string;
+  channel: Channel;
+  metadata: Metadata;
+  createdAt: Date;
+  lastMessage: Message;
+  paginationData: Pagination;
+}
+
+export const FilteredConversationSchema = {
+  name: 'FilteredConversation',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    channel: 'Channel',
+    metadata: 'Metadata',
+    createdAt: 'date?',
+    lastMessage: 'Message',
+    paginationData: 'Pagination',
+  },
+};
+
+export interface FilteredConversation {
   id: string;
   channel: Channel;
   metadata: Metadata;

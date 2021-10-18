@@ -19,10 +19,9 @@ export const ConversationFilterSchema = {
   },
 };
 
-export const filterToLuceneSyntax = (filter: ConversationFilter): string | null => {
-
-  console.log('FILTER: ', filter);
-  
+export const filterToLuceneSyntax = (
+  filter: ConversationFilter,
+): string | null => {
   const filterQuery: Array<string> = [];
   if (filter.unreadOnly) {
     filterQuery.push('unread_count:[1 TO *]');
@@ -33,7 +32,7 @@ export const filterToLuceneSyntax = (filter: ConversationFilter): string | null 
     filterQuery.push('display_name:*' + filter.displayName + '*');
   }
   if (filter.byChannels && filter.byChannels.length > 0) {
-    filterQuery.push('channel_id:(' + filter.byChannels.join(' OR ') + ')');
+    // filterQuery.push('channel_id:(' + filter.byChannels.join(' OR ') + ')');
   }
   if (filter.isStateOpen === true) {
     filterQuery.push('id:* AND NOT metadata.state:CLOSED');

@@ -1,6 +1,7 @@
 import Realm from 'realm';
 import {UserInfoSchema} from '../model/userInfo';
 import {ConversationSchema} from '../model/Conversation';
+import {ConversationFilterSchema} from '../model/ConversationFilter';
 import {
   ChannelMetadataSchema,
   ChannelSchema,
@@ -15,7 +16,6 @@ import {
   SuggestedReplySchema,
   SuggestionsSchema,
   MessageDataSchema,
-  ConversationFilterSchema,
 } from '../model';
 
 export class RealmDB {

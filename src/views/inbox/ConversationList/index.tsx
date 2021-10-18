@@ -7,10 +7,15 @@ import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {getPagination} from '../../../services/Pagination';
 import {
+  Conversation,
   parseToRealmConversation,
   upsertConversations,
 } from '../../../model/Conversation';
 import {NavigationStackProp} from 'react-navigation-stack';
+import {
+  ConversationFilter,
+  filterToLuceneSyntax,
+} from '../../../model/ConversationFilter';
 
 type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
@@ -18,13 +23,19 @@ type ConversationListProps = {
 
 const realm = RealmDB.getInstance();
 
+const currentFilter =
+  realm.objects<ConversationFilter>('ConversationFilter')[0];
+
 export const ConversationList = (props: ConversationListProps) => {
   const {navigation} = props;
   const paginationData = getPagination();
   const [conversations, setConversations] = useState<any>([]);
 
   useEffect(() => {
-    HttpClientInstance.listConversations({page_size: 50})
+    HttpClientInstance.listConversations({
+      page_size: 50,
+      filters: currentFilter && filterToLuceneSyntax(currentFilter),
+    })
       .then((response: any) => {
         realm.write(() => {
           realm.create('Pagination', response.paginationData);          
@@ -34,19 +45,31 @@ export const ConversationList = (props: ConversationListProps) => {
       .catch((error: Error) => {
         console.error(error);
       });
-
-    const databaseConversations = realm
-      .objects('Conversation')
-      .sorted('lastMessage.sentAt', true);
-
-    databaseConversations.addListener(() => {
-      setConversations([...databaseConversations]);
-    });
-
-    return () => {
-      databaseConversations.removeAllListeners();
-    };
   }, []);
+
+  useEffect(() => {
+    const databaseConversations: Realm.Results<Conversation[]> = realm
+      .objects<Conversation[]>('Conversation')
+      .sorted('lastMessage.sentAt', true)
+      .filtered(
+        'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1 && (metadata.unreadCount != $2 || metadata.unreadCount != $3)',
+        currentFilter?.displayName,
+        (currentFilter?.isStateOpen == null && '*') ||
+          (currentFilter?.isStateOpen == true && 'OPEN') ||
+          (currentFilter?.isStateOpen == false && 'CLOSED'),
+        (currentFilter?.readOnly == null && 2) ||
+          (currentFilter?.readOnly == true && 1) ||
+          (currentFilter?.readOnly == false && 0),
+        (currentFilter?.readOnly == null && 2) ||
+          (currentFilter?.readOnly == true && 1) ||
+          (currentFilter?.readOnly == false && 0),
+      );
+
+    setConversations([...databaseConversations]);
+
+    console.log('FUCK IT');
+    console.log('CURRENTFILTER: ', currentFilter);
+  }, [currentFilter]);
 
   const getNextConversationList = () => {
     const cursor = paginationData?.nextCursor;

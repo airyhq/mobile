@@ -35,7 +35,7 @@ export const StateButtonComponent = (props: StateButtonCompontentProps) => {
           unreadOnly: null,
           readOnly: null,
           byChannels: [],
-          displayName: null,
+          displayName: '',
         });
       });
     }

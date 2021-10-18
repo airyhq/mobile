@@ -10,15 +10,27 @@ import CloseIcon from '../../assets/images/icons/closeIcon.svg';
 import {RealmDB} from '../../storage/realm';
 import {ConversationFilter} from '../../model/ConversationFilter';
 
-export const SearchBarComponent = () => {
-  const [searchInput, setSearchInput] = useState('');
-  const [searchBarFocused, setSearchBarFocused] = useState(false);
-  const searchBarRef = useRef(null);
+type SearchBarComponentProps = {
+  setSearchBarFocus?: (isFocused: boolean) => void;
+};
+
+export const SearchBarComponent = (props: SearchBarComponentProps) => {
+  const {setSearchBarFocus} = props;
+  const searchBarRef = useRef<TextInput>(null);
   const realm = RealmDB.getInstance();
   const currentFilter =
     realm.objects<ConversationFilter>('ConversationFilter')[0];
+  const [searchInput, setSearchInput] = useState(
+    currentFilter?.displayName || '',
+  );
 
   useEffect(() => {
+    if (searchBarRef.current.isFocused() === true) {
+      setSearchBarFocus(true);
+    } else {
+      setSearchBarFocus(false);
+    }
+
     if (currentFilter) {
       realm.write(() => {
         currentFilter.displayName = searchInput;
@@ -34,13 +46,10 @@ export const SearchBarComponent = () => {
         });
       });
     }
-  }, [searchInput, setSearchInput]);
+  }, [searchInput, setSearchInput, searchBarRef?.current?.isFocused()]);
 
   return (
-    <View
-      style={
-        searchBarFocused ? styles.searchBarFocused : styles.searchBarContainer
-      }>
+    <View style={styles.searchBarContainer}>
       <SearchIcon height={18} width={18} fill={colorDarkElementsGray} />
       <TextInput
         ref={searchBarRef}
@@ -49,11 +58,13 @@ export const SearchBarComponent = () => {
         style={styles.searchBar}
         onChangeText={(text: string) => setSearchInput(text)}
         value={searchInput}
-        onFocus={() => setSearchBarFocused(true)}
+        autoFocus={true}
       />
-      <TouchableOpacity onPress={() => setSearchInput('')}>
-        <CloseIcon height={24} width={24} fill={colorTextGray} />
-      </TouchableOpacity>
+      {searchInput !== '' && (
+        <TouchableOpacity onPress={() => setSearchInput('')}>
+          <CloseIcon height={24} width={24} fill={colorTextGray} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -72,13 +83,14 @@ const styles = StyleSheet.create({
   searchBar: {
     flex: 1,
     paddingLeft: 4,
+    padding: 3,
   },
   searchBarFocused: {
     flexDirection: 'row',
     alignItems: 'center',
     borderColor: 'transparent',
     backgroundColor: colorBackgroundGray,
-    padding: 5,
+    padding: 3,
     paddingLeft: 8,
     borderRadius: 24,
     borderWidth: 1,

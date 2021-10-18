@@ -30,7 +30,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
   const realm = RealmDB.getInstance();
   const currentFilter =
     realm.objects<ConversationFilter>('ConversationFilter')[0];
-  const [selectedChannels, setSelectedChannels] = useState<string[]>(
+  const [selectedChannels, setSelectedChannels] = useState<Channel[]>(
     currentFilter?.byChannels || [],
   );
 
@@ -38,25 +38,12 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
     .objects<Channel>('Channel')
     .filtered('connected == true');
 
-  // const selectedChannelsToggle = (item: Channel) => {
-  //   const index = selectedChannels.indexOf(item);
-  //   index === -1
-  //     ? selectedChannels.push(item)
-  //     : selectedChannels.splice(index, 1);
-
-  //   if (currentFilter) {
-  //     realm.write(() => {
-  //       currentFilter.byChannels = selectedChannels;
-  //     });
-  //   }
-  // };
-
-  console.log('SELECTED CHANNELS: ', selectedChannels);
-
   const selectedChannelsToggle = (item: Channel) => {
-    selectedChannels.filter(channelId => channelId === item.id).length > 0
-      ? console.log('DELETED')
-      : setSelectedChannels(selectedChannels => [...selectedChannels, item.id]);
+    selectedChannels.filter(channel => channel.id === item.id).length > 0
+      ? setSelectedChannels(
+          selectedChannels.filter(channel => channel.id !== item.id),
+        )
+      : setSelectedChannels(selectedChannels => [...selectedChannels, item]);
 
     if (currentFilter) {
       realm.write(() => {
@@ -78,11 +65,56 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
           isStateOpen: null,
           unreadOnly: null,
           readOnly: null,
-          displayName: null,
+          displayName: '',
         });
       });
     }
-  }, [selectedChannels]);
+  }, [selectedChannels, setSelectedChannels]);
+
+  const ChannelItem = ({item}) => {
+    return (
+      <View
+        style={{
+          flex: 1,
+          paddingBottom: 8,
+        }}>
+        <TouchableOpacity
+          onPress={() => selectedChannelsToggle(item)}
+          style={[
+            {
+              flexDirection: 'column',
+              padding: 4,
+              borderRadius: 24,
+              maxWidth: (windowWidth - CHANNEL_PADDING) / 2,
+            },
+            selectedChannels.filter(
+              (channel: Channel) => channel.id === item.id,
+            )
+              ? {backgroundColor: colorBackgroundBlue}
+              : {backgroundColor: 'white'},
+          ]}>
+          <IconChannel
+            source={item.source}
+            sourceChannelId={item.sourceChannelId}
+            metadataName={item.metadata?.name}
+            customWidth={windowWidth / 3}
+            showAvatar
+            showName
+          />
+          <View
+            style={{
+              position: 'absolute',
+              right: 4,
+              top: 4,
+            }}>
+            {selectedChannels.filter(
+              (channel: Channel) => channel.id === item.id,
+            ) && <Checkmark height={20} width={20} fill={colorSoftGreen} />}
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   return (
     <FlatList
@@ -102,52 +134,9 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
       style={styles.connectedChannelList}
       data={connectedChannels}
       ref={channelListRef}
-      keyExtractor={item => item.id}
-      renderItem={({item}) => {
-        return (
-          <View
-            style={{
-              flex: 1,
-              paddingBottom: 8,
-            }}>
-            <TouchableOpacity
-              onPress={() => selectedChannelsToggle(item)}
-              style={[
-                {
-                  flexDirection: 'column',
-                  padding: 4,
-                  borderRadius: 24,
-                  maxWidth: (windowWidth - CHANNEL_PADDING) / 2,
-                },
-                // selectedChannels.includes(item) && {
-                //   backgroundColor: colorBackgroundBlue,
-                // },
-                // ? {
-                //     backgroundColor: colorBackgroundBlue,
-                //   }
-                // : {backgroundColor: 'white'},
-              ]}>
-              <IconChannel
-                source={item.source}
-                sourceChannelId={item.sourceChannelId}
-                metadataName={item.metadata?.name}
-                customWidth={windowWidth / 3}
-                showAvatar
-                showName
-              />
-              <View
-                style={{
-                  position: 'absolute',
-                  right: 4,
-                  top: 4,
-                }}>
-                {/* {selectedChannels.includes(item) && (
-                  <Checkmark height={20} width={20} fill={colorSoftGreen} />
-                )} */}
-              </View>
-            </TouchableOpacity>
-          </View>
-        );
+      keyExtractor={(item, index) => item.id + index}
+      renderItem={({item, index}) => {
+        return <ChannelItem item={item} />;
       }}
     />
   );
