@@ -6,7 +6,7 @@ import {NoConversations} from '../NoConversations';
 import {RealmDB} from '../../../storage/realm';
 import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {getPagination} from '../../../services/Pagination';
-import {
+import {  
   Conversation,
   parseToRealmConversation,
   upsertConversations,
@@ -16,6 +16,7 @@ import {
   ConversationFilter,
   filterToLuceneSyntax,
 } from '../../../model/ConversationFilter';
+import { Collection } from 'realm';
 
 type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
@@ -23,52 +24,52 @@ type ConversationListProps = {
 
 const realm = RealmDB.getInstance();
 
-const currentFilter =
-  realm.objects<ConversationFilter>('ConversationFilter')[0];
-
 export const ConversationList = (props: ConversationListProps) => {
   const {navigation} = props;
   const paginationData = getPagination();
   const [conversations, setConversations] = useState<any>([]);
+  const [currentFilter, setCurrentFilter] = useState<ConversationFilter>();
 
-  useEffect(() => {
+  const onFilterUpdated = (filters: Collection<ConversationFilter & Object>) => {  
+    setCurrentFilter(filters[0]);
+  };
+
+  useEffect(() => {    
     HttpClientInstance.listConversations({
       page_size: 50,
       filters: currentFilter && filterToLuceneSyntax(currentFilter),
-    })
-      .then((response: any) => {
-        realm.write(() => {
-          realm.create('Pagination', response.paginationData);          
-        });
-        upsertConversations(response.data, realm);
-      })
-      .catch((error: Error) => {
-        console.error(error);
-      });
+    }).then((response: any) => {
+      console.log('lucene ', filterToLuceneSyntax(currentFilter));
+      
+      realm.write(() => {
+        realm.create('Pagination', response.paginationData);          
+      });                  
+      upsertConversations(response.data, realm);
+    }).catch((error: Error) => {
+      console.error(error);
+    });
+    realm.objects<ConversationFilter>('ConversationFilter').addListener(onFilterUpdated);   
   }, []);
 
-  useEffect(() => {
-    const databaseConversations: Realm.Results<Conversation[]> = realm
+  useEffect(() => {    
+    const databaseConversations = realm
       .objects<Conversation[]>('Conversation')
       .sorted('lastMessage.sentAt', true)
       .filtered(
         'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1 && (metadata.unreadCount != $2 || metadata.unreadCount != $3)',
-        currentFilter?.displayName,
+        currentFilter?.displayName || '',
         (currentFilter?.isStateOpen == null && '*') ||
-          (currentFilter?.isStateOpen == true && 'OPEN') ||
-          (currentFilter?.isStateOpen == false && 'CLOSED'),
+        (currentFilter?.isStateOpen == true && 'OPEN') ||
+        (currentFilter?.isStateOpen == false && 'CLOSED'),
         (currentFilter?.readOnly == null && 2) ||
-          (currentFilter?.readOnly == true && 1) ||
-          (currentFilter?.readOnly == false && 0),
+        (currentFilter?.readOnly == true && 1) ||
+        (currentFilter?.readOnly == false && 0),
         (currentFilter?.readOnly == null && 2) ||
-          (currentFilter?.readOnly == true && 1) ||
-          (currentFilter?.readOnly == false && 0),
+        (currentFilter?.readOnly == true && 1) ||
+        (currentFilter?.readOnly == false && 0),
       );
 
-    setConversations([...databaseConversations]);
-
-    console.log('FUCK IT');
-    console.log('CURRENTFILTER: ', currentFilter);
+    setConversations([...databaseConversations]);    
   }, [currentFilter]);
 
   const getNextConversationList = () => {

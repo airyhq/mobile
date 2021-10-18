@@ -62,7 +62,7 @@ export interface FilteredConversation {
 export const parseToRealmConversation = (
   unformattedConversation: Conversation,
 ): Conversation => {
-  let conversation: Conversation;
+  let conversation: Conversation;    
   conversation = {
     id: unformattedConversation.id,
     channel: unformattedConversation.channel,
@@ -93,18 +93,20 @@ export const upsertConversations = (conversations: Conversation[], realm: Realm)
         storedConversation.metadata = conversation.metadata;
       })
     } else {      
-      const newConversation: Conversation = parseToRealmConversation(conversation);
-      const channel: Channel = RealmDB.getInstance().objectForPrimaryKey<Channel>('Channel', conversation.channel.id);
-      realm.create(
-        'Conversation',
-        { ...newConversation,
-          channel: channel || newConversation.channel
-        }
-      );    
-      realm.create('MessageData', {
-        id: conversation.id,
-        messages: [],
-      });    
+      realm.write(() => {
+        const newConversation: Conversation = parseToRealmConversation(conversation);
+        const channel: Channel = RealmDB.getInstance().objectForPrimaryKey<Channel>('Channel', conversation.channel.id);
+        realm.create(
+          'Conversation',
+          { ...newConversation,
+            channel: channel || newConversation.channel
+          }
+        );    
+        realm.create('MessageData', {
+          id: conversation.id,
+          messages: [],
+        });
+      })    
     }   
   });
 }

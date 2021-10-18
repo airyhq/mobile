@@ -35,9 +35,11 @@ export const filterToLuceneSyntax = (
     // filterQuery.push('channel_id:(' + filter.byChannels.join(' OR ') + ')');
   }
   if (filter.isStateOpen === true) {
+    console.log('OPEN');
     filterQuery.push('id:* AND NOT metadata.state:CLOSED');
-  } else if (filter.isStateOpen !== undefined) {
+  } else if (filter.isStateOpen !== null) {
+    console.log('CLOSED');
     filterQuery.push('metadata.state:CLOSED');
   }
-  return !filterQuery.length ? null : filterQuery.join(' AND ');
+  return !filterQuery.length ? undefined : filterQuery.join(' AND ');
 };
