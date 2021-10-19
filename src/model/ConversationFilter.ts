@@ -23,23 +23,23 @@ export const filterToLuceneSyntax = (
   filter: ConversationFilter,
 ): string | null => {
   const filterQuery: Array<string> = [];
-  if (filter.unreadOnly) {
+  if (filter?.unreadOnly) {
     filterQuery.push('unread_count:[1 TO *]');
-  } else if (filter.readOnly) {
+  } else if (filter?.readOnly) {
     filterQuery.push('unread_count:0');
   }
-  if (filter.displayName) {
+  if (filter?.displayName) {
     filterQuery.push('display_name:*' + filter.displayName + '*');
   }
-  if (filter.byChannels && filter.byChannels.length > 0) {
-    // filterQuery.push('channel_id:(' + filter.byChannels.join(' OR ') + ')');
+  if (filter?.byChannels && filter.byChannels.length > 0) {
+    filterQuery.push('channel_id:(' + filter.byChannels.join(' OR ') + ')');    
   }
-  if (filter.isStateOpen === true) {
-    console.log('OPEN');
+  if (filter?.isStateOpen === true) {
     filterQuery.push('id:* AND NOT metadata.state:CLOSED');
-  } else if (filter.isStateOpen !== null) {
-    console.log('CLOSED');
+  } else if (filter?.isStateOpen !== null) {
     filterQuery.push('metadata.state:CLOSED');
   }
+  console.log('FILTER QUERY: ', filterQuery);
+
   return !filterQuery.length ? undefined : filterQuery.join(' AND ');
 };

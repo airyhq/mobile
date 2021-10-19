@@ -35,11 +35,25 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
   const PADDING_COLLAPSEDFILTER = 32;
   const windowWidth = Dimensions.get('window').width;
   const realm = RealmDB.getInstance();
-  const conversationsLength =
-    realm.objects<Conversation>('Conversation').length;
-
   const currentFilter =
     realm.objects<ConversationFilter>('ConversationFilter')[0];
+  const conversationsLength =
+    realm.objects<Conversation>('Conversation').length;
+  const filteredConversationsLength = realm
+    .objects<Conversation>('Conversation')
+    .filtered(
+      'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1 && (metadata.unreadCount != $2 || metadata.unreadCount != $3)',
+      currentFilter?.displayName || '',
+      (currentFilter?.isStateOpen == null && '*') ||
+        (currentFilter?.isStateOpen == true && 'OPEN') ||
+        (currentFilter?.isStateOpen == false && 'CLOSED'),
+      (currentFilter?.readOnly == null && 2) ||
+        (currentFilter?.readOnly == true && 1) ||
+        (currentFilter?.readOnly == false && 0),
+      (currentFilter?.readOnly == null && 2) ||
+        (currentFilter?.readOnly == true && 1) ||
+        (currentFilter?.readOnly == false && 0),
+    ).length;
 
   useEffect(() => {
     filterApplied();
@@ -61,12 +75,8 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
     setFilterOpen(!filterOpen);
   };
 
-  const applyFiltersHandler = () => {
-    setFilterOpen(!filterOpen);
-  };
-
   const resetFilters = () => {
-    if (filterApplied) {
+    if (appliedFilters) {
       setFilterReseted(true);
       realm.write(() => {
         currentFilter.byChannels = [];
@@ -144,7 +154,10 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
         ) : (
           <>
             <Text style={styles.headerTitleCollapsed}>
-              Inbox: {conversationsLength}
+              Inbox:{' '}
+              {filteredConversationsLength != conversationsLength
+                ? `${filteredConversationsLength} / ${conversationsLength}`
+                : conversationsLength}
             </Text>
             <View style={{flexDirection: 'row'}}>
               <TouchableOpacity

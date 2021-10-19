@@ -87,9 +87,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
               borderRadius: 24,
               maxWidth: (windowWidth - CHANNEL_PADDING) / 2,
             },
-            selectedChannels.filter(
-              (channel: Channel) => channel.id === item.id,
-            )
+            selectedChannels.find(channel => channel.id === item.id)
               ? {backgroundColor: colorBackgroundBlue}
               : {backgroundColor: 'white'},
           ]}>
@@ -107,9 +105,9 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
               right: 4,
               top: 4,
             }}>
-            {selectedChannels.filter(
-              (channel: Channel) => channel.id === item.id,
-            ) && <Checkmark height={20} width={20} fill={colorSoftGreen} />}
+            {selectedChannels.find(channel => channel.id === item.id) && (
+              <Checkmark height={20} width={20} fill={colorSoftGreen} />
+            )}
           </View>
         </TouchableOpacity>
       </View>
@@ -135,7 +133,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
       data={connectedChannels}
       ref={channelListRef}
       keyExtractor={(item, index) => item.id + index}
-      renderItem={({item, index}) => {
+      renderItem={({item}) => {
         return <ChannelItem item={item} />;
       }}
     />
