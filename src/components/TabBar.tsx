@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {ConversationList} from '../views/inbox/ConversationList';
 import SettingsView from '../views/settings';
 import InboxIcon from '../assets/images/icons/bubble_icon.svg';
@@ -8,12 +8,10 @@ import MessageList from '../views/inbox/MessageList';
 import {colorAiryBlue, colorTextGray} from '../assets/colors';
 import {Avatar} from './Avatar';
 import {CurrentState} from './CurrentState';
-import {Dimensions, SafeAreaView, View, Text} from 'react-native';
+import {Dimensions, SafeAreaView, View} from 'react-native';
 import IconChannel from './IconChannel';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {FilterHeaderBar} from './FilterHeaderBar/FilterHeaderBar';
-import { RealmDB } from '../storage/realm';
-import { Conversation } from '../model/Conversation';
 
 export const TabBar = () => {
   const Tab = createBottomTabNavigator();
@@ -22,8 +20,6 @@ export const TabBar = () => {
   const marginRightAvatar = width * 0.84;
   const marginRightIconChannel = width * 0.76;
   const SettingsStack = createStackNavigator();
-  const realm = RealmDB.getInstance();
-  const unreadMessageCount = realm.objects<Conversation>('Conversation').filtered('metadata.unreadCount != $0', 0).length
 
   const InboxScreen = () => {
     return (
@@ -62,12 +58,7 @@ export const TabBar = () => {
             }
 
             if (route.name === 'Inbox') {
-              return (
-              <>
-                <InboxIcon height={32} width={32} fill={iconColor} />
-                {unreadMessageCount > 0 && <View style={{backgroundColor: 'red', position: 'absolute', height: 20, width: 20, borderRadius: 50, alignItems: 'center', justifyContent: 'center'}}><Text style={{color: 'white'}}>{unreadMessageCount}</Text>
-                  </View>}
-              </>);
+              return <InboxIcon height={32} width={32} fill={iconColor} />;
             }
           },
         })}
