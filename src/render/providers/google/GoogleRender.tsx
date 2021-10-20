@@ -2,6 +2,7 @@ import React from 'react';
 import {RenderPropsUnion} from '../../props';
 import {ContentUnion} from './googleModel';
 import {TextComponent} from '../../components/Text';
+import {ImageComponent} from '../../components/ImageComponent';
 
 export const GoogleRender = (props: RenderPropsUnion) => {
   const message = props.message;
@@ -20,11 +21,26 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
           text={content.text}
         />
       );
+    case 'image':
+      return (
+        <ImageComponent
+          imageUrl={content.imageUrl}
+          altText="sent via Google Business Messages"
+        />
+      );
   }
 }
 
 function googleInbound(message: any): ContentUnion {
   const messageJson = message.content.message ?? message.content;
+
+  if (messageJson.image) {
+    return {
+      type: 'image',
+      imageUrl: messageJson.image.contentInfo.fileUrl,
+      altText: messageJson.image.contentInfo.altText,
+    };
+  }
 
   if (messageJson.text) {
     return {
@@ -41,6 +57,14 @@ function googleInbound(message: any): ContentUnion {
 
 function googleOutbound(message: any): ContentUnion {
   const messageJson = message.content.message ?? message.content;
+
+  if (messageJson.image) {
+    return {
+      type: 'image',
+      imageUrl: messageJson.image.contentInfo.fileUrl,
+      altText: messageJson.image.contentInfo.altText,
+    };
+  }
 
   if (messageJson.text) {
     return {

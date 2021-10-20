@@ -1,6 +1,10 @@
 import React from 'react';
 import {RenderPropsUnion} from '../../props';
-import {ContentUnion, SimpleAttachment, AttachmentUnion} from './chatPluginModel';
+import {
+  ContentUnion,
+  SimpleAttachment,
+  AttachmentUnion,
+} from './chatPluginModel';
 import {TextComponent} from '../../components/Text';
 import {RichCard, RichCardCarousel, QuickReplies} from './components';
 
@@ -41,20 +45,19 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
         />
       );
     case 'quickReplies':
-        return (
-          <QuickReplies
-            {...propsToUse}
-            text={content.text}
-            attachment={content.attachment}
-            quickReplies={content.quickReplies}
-          />
-        );
+      return (
+        <QuickReplies
+          {...propsToUse}
+          text={content.text}
+          attachment={content.attachment}
+          quickReplies={content.quickReplies}
+        />
+      );
   }
 }
 
 function mapContent(message: any): ContentUnion {
-  const messageContent = message.content.message ?? message.content;
-
+  const messageContent = message.content.message ?? message.content ?? message;
 
   if (messageContent.quick_replies) {
     if (messageContent.quick_replies.length > 13) {
@@ -64,7 +67,9 @@ function mapContent(message: any): ContentUnion {
     if (messageContent.attachment || messageContent.attachments) {
       return {
         type: 'quickReplies',
-        attachment: parseAttachment(messageContent.attachment || messageContent.attachments),
+        attachment: parseAttachment(
+          messageContent.attachment || messageContent.attachments,
+        ),
         quickReplies: messageContent.quick_replies,
       };
     }
@@ -112,7 +117,6 @@ function mapContent(message: any): ContentUnion {
     text: 'Unknown message type',
   };
 }
-
 
 const parseAttachment = (attachment: SimpleAttachment): AttachmentUnion => {
   if (attachment.type === 'image') {

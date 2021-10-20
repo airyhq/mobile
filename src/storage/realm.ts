@@ -25,6 +25,13 @@ import {
   RichCardReplySchema,
   RichCardCarouselSchema,
   CarouselCardSchema,
+  QuickRepliesChatPluginSchema,
+  QuickRepliesChatPluginContentSchema,
+  QuickReplyChatPluginCommandSchema,
+  QuickRepliesFacebookSchema,
+  QuickRepliesFacebookContentSchema,
+  SimpleAttachmentSchema,
+  AttachmentPayloadSchema,
 } from '../model';
 
 export class RealmDB {
@@ -51,6 +58,13 @@ export class RealmDB {
           RichCardReplySchema,
           RichCardCarouselSchema,
           CarouselCardSchema,
+          QuickRepliesChatPluginSchema,
+          QuickRepliesChatPluginContentSchema,
+          QuickReplyChatPluginCommandSchema,
+          QuickRepliesFacebookSchema,
+          QuickRepliesFacebookContentSchema,
+          SimpleAttachmentSchema,
+          AttachmentPayloadSchema,
           ChannelMetadataSchema,
           MessageSchema,
           MessageDataSchema,

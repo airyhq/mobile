@@ -1,11 +1,13 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-
+import {StyleSheet, View, TouchableOpacity, Text} from 'react-native';
 import {TextComponent} from '../../../../components/Text';
 import {VideoComponent} from '../../../../components/VideoComponent';
 import {ImageComponent} from '../../../../components/ImageComponent';
 import {ImageWithFallback} from '../../../../components/ImageWithFallback';
-import { colorAiryBlue, colorTemplateHightlight} from '../../../../../assets/colors';
+import {
+  colorAiryBlue,
+  colorTemplateHightlight,
+} from '../../../../../assets/colors';
 import {QuickReply, AttachmentUnion} from '../../chatPluginModel';
 import {CommandUnion} from '../../../../props';
 
@@ -51,12 +53,18 @@ export const QuickReplies = ({
         <VideoComponent videoUrl={attachment.videoUrl} />
       )}
 
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          fromContact
+            ? styles.quickRepliesFromContact
+            : styles.quickRepliesNotFromContact,
+        ]}>
         {quickReplies.map((reply: QuickReply) => (
-          <button
+          <TouchableOpacity
             key={reply.title}
             style={styles.replyButton}
-            onClick={() => clickPostback(reply)}>
+            onPress={() => clickPostback(reply)}>
             {reply.image_url && (
               <ImageWithFallback
                 imageStyle={styles.quickReplyImage}
@@ -64,10 +72,10 @@ export const QuickReplies = ({
                 src={reply.image_url}
               />
             )}
-            <h1 key={reply.title} style={styles.title}>
+            <Text key={reply.title} style={styles.title}>
               {reply.title}
-            </h1>
-          </button>
+            </Text>
+          </TouchableOpacity>
         ))}
       </View>
     </View>
@@ -76,23 +84,28 @@ export const QuickReplies = ({
 
 const styles = StyleSheet.create({
   wrapper: {
-    flexDirection: 'column',
     marginTop: 5,
-    alignItems: 'flex-end',
+    marginBottom: 5,
+    height: '100%',
   },
   container: {
+    flexDirection: 'row',
     flexWrap: 'wrap',
-    marginTop: 5,
+  },
+  quickRepliesFromContact: {
+    justifyContent: 'flex-start',
+  },
+  quickRepliesNotFromContact: {
     justifyContent: 'flex-end',
   },
   replyButton: {
     width: 'auto',
     height: 'auto',
-    display: 'flex',
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 5,
     marginBottom: 5,
+    marginLeft: 5,
     paddingTop: 4,
     paddingBottom: 4,
     paddingRight: 8,

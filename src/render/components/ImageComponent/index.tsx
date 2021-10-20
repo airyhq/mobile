@@ -6,28 +6,37 @@ import {ImageContent} from '../../providers/facebook/facebookModel';
 type ImageRenderProps = {
   imageUrl?: string;
   images?: ImageContent[];
+  altText?: string;
 };
 
-export const ImageComponent = ({imageUrl, images}: ImageRenderProps) => (
-  <View style={styles.wrapper}>
-    {images ? (
-      <View style={styles.imagesContainer}>
-        {images.map(image => (
-          <ImageWithFallback
-            src={image.imageUrl}
-            key={image.imageUrl}
-            imageStyle={`${styles.messageListItemImageBlock} ${styles.images}`}
-          />
-        ))}
-      </View>
-    ) : (
-      <ImageWithFallback
-        imageStyle={styles.messageListItemImageBlock}
-        src={imageUrl}
-      />
-    )}
-  </View>
-);
+export const ImageComponent = ({
+  imageUrl,
+  altText,
+  images,
+}: ImageRenderProps) => {
+  return (
+    <View style={styles.wrapper}>
+      {images ? (
+        <View style={styles.imagesContainer}>
+          {images.map(image => (
+            <ImageWithFallback
+              src={image.imageUrl}
+              key={image.imageUrl}
+              alt={image.altText ?? 'conversation in Airy Inbox'}
+              imageStyle={`${styles.messageListItemImageBlock} ${styles.images}`}
+            />
+          ))}
+        </View>
+      ) : (
+        <ImageWithFallback
+          imageStyle={styles.messageListItemImageBlock}
+          src={imageUrl}
+          alt={altText ?? 'conversation in Airy Inbox'}
+        />
+      )}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   wrapper: {
