@@ -96,10 +96,16 @@ export const upsertConversations = (conversations: Conversation[], realm: Realm)
       realm.write(() => {
         const newConversation: Conversation = parseToRealmConversation(conversation);
         const channel: Channel = RealmDB.getInstance().objectForPrimaryKey<Channel>('Channel', conversation.channel.id);
+        const newConversationState = newConversation.metadata.state || 'OPEN';        
+        
         realm.create(
           'Conversation',
           { ...newConversation,
-            channel: channel || newConversation.channel
+            channel: channel || newConversation.channel,
+            metadata: {
+              ...newConversation.metadata,
+              state: newConversationState
+            }
           }
         );    
         realm.create('MessageData', {

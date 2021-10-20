@@ -25,12 +25,13 @@ export const SearchBarComponent = (props: SearchBarComponentProps) => {
   );
 
   useEffect(() => {
-    if (searchBarRef.current.isFocused() === true) {
-      setSearchBarFocus(true);
-    } else {
-      setSearchBarFocus(false);
-    }
+    // if (searchBarRef.current.isFocused() === true) {
+    //   setSearchBarFocus(true);
+    // } else {
+    //   setSearchBarFocus(false);
+    // }
 
+    setSearchBarFocus(true);
     if (currentFilter) {
       realm.write(() => {
         currentFilter.displayName = searchInput;
@@ -58,7 +59,7 @@ export const SearchBarComponent = (props: SearchBarComponentProps) => {
         style={styles.searchBar}
         onChangeText={(text: string) => setSearchInput(text)}
         value={searchInput}
-        autoFocus={true}
+        autoFocus={false}
       />
       {searchInput !== '' && (
         <TouchableOpacity onPress={() => setSearchInput('')}>

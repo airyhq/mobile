@@ -15,6 +15,10 @@ import {NavigationStackProp} from 'react-navigation-stack';
 import {
   ConversationFilter,
   filterToLuceneSyntax,
+  getDisplayNameForRealmFilter,
+  getStateForRealmFilter,  
+  isFilterReadOnly,
+  isFilterUnreadOnly,
 } from '../../../model/ConversationFilter';
 import {Collection} from 'realm';
 import {EmptyFilterResults} from '../../../components/EmptyFilterResults';
@@ -101,28 +105,36 @@ export const ConversationList = (props: ConversationListProps) => {
   };
 
   useEffect(() => {
-    const databaseConversations = realm
+    
+    let databaseConversations = realm
       .objects<Conversation[]>('Conversation')
-      .sorted('lastMessage.sentAt', true)
-      .filtered(
-        'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1 && (metadata.unreadCount != $2 || metadata.unreadCount != $3) && $4 CONTAINS[c] channel.id',
-        currentFilter?.displayName || '',
-        (currentFilter?.isStateOpen == null && '*') ||
-          (currentFilter?.isStateOpen == true && 'OPEN') ||
-          (currentFilter?.isStateOpen == false && 'CLOSED'),
-        (currentFilter?.readOnly == null && 2) ||
-          (currentFilter?.readOnly == true && 1) ||
-          (currentFilter?.readOnly == false && 0),
-        (currentFilter?.readOnly == null && 2) ||
-          (currentFilter?.readOnly == true && 1) ||
-          (currentFilter?.readOnly == false && 0),
-        filteredChannels(),
-      );
-
+      .sorted('lastMessage.sentAt', true);
+    
+    if (currentFilter) {
+      databaseConversations = databaseConversations.filtered(
+          'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1 && $2 CONTAINS[c] channel.id',
+          getDisplayNameForRealmFilter(currentFilter),
+          getStateForRealmFilter(currentFilter),        
+          filteredChannels(),
+        );
+      
+      if (isFilterReadOnly(currentFilter)) {
+        databaseConversations = databaseConversations.filtered(
+          'metadata.unreadCount = 0'
+        );
+      }  
+      
+      if (isFilterUnreadOnly(currentFilter)) {
+        databaseConversations = databaseConversations.filtered(
+          'metadata.unreadCount != 0'
+        );            
+      }
+    }    
+      
     filterApplied();
 
     if (databaseConversations) {
-      databaseConversations.addListener(() => {
+      databaseConversations.addListener(() => {        
         setConversations([...databaseConversations]);
       });
     }
@@ -179,7 +191,7 @@ export const ConversationList = (props: ConversationListProps) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {conversations && conversations.length > 0 && currentFilter ? (
+      {conversations && conversations.length > 0 ? (
         conversations.length === 0 ? (
           <NoConversations conversations={conversations.length} />
         ) : (
