@@ -56,19 +56,24 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
     ).length;
 
   useEffect(() => {
-    filterApplied();
     setFilterReseted(false);
+  }, []);
+
+  useEffect(() => {
+    filterApplied();
     isSearchBarFocused(searchBarFocused);
   }, [currentFilter, searchBarFocused, setSearchBarFocused]);
 
   const filterApplied = () => {
-    currentFilter?.displayName !== '' ||
-    currentFilter?.byChannels.length > 0 ||
-    currentFilter?.isStateOpen !== null ||
-    currentFilter?.readOnly !== null ||
-    currentFilter?.unreadOnly !== null
-      ? setAppliedFilters(true)
-      : setAppliedFilters(false);
+    if (currentFilter !== undefined) {
+      currentFilter?.displayName !== '' ||
+      currentFilter?.byChannels.length > 0 ||
+      currentFilter?.isStateOpen !== null ||
+      currentFilter?.readOnly !== null ||
+      currentFilter?.unreadOnly !== null
+        ? setAppliedFilters(true)
+        : setAppliedFilters(false);
+    }
   };
 
   const toggleFiltering = () => {
@@ -154,10 +159,11 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
         ) : (
           <>
             <Text style={styles.headerTitleCollapsed}>
-              Inbox:{' '}
+              Inbox (
               {filteredConversationsLength != conversationsLength
                 ? `${filteredConversationsLength} / ${conversationsLength}`
                 : conversationsLength}
+              )
             </Text>
             <View style={{flexDirection: 'row'}}>
               <TouchableOpacity
