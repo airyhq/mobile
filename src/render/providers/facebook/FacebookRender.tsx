@@ -1,6 +1,7 @@
 import React from 'react';
 import {RenderPropsUnion} from '../../props';
 import {TextComponent} from '../../components/Text';
+import {ButtonTemplate} from './components/ButtonTemplate';
 import {
   ContentUnion,
   SimpleAttachment,
@@ -57,6 +58,9 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
           quickReplies={content.quickReplies}
         />
       );
+
+    case 'buttonTemplate':
+      return <ButtonTemplate template={content} />;
 
     default:
       return null;

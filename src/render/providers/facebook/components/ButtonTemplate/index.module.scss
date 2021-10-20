@@ -1,0 +1,22 @@
+@import 'assets/scss/fonts.scss';
+@import 'assets/scss/colors.scss';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  margin: 5px 0px;
+}
+
+.template {
+  background-color: var(--color-template-gray);
+  border-radius: 16px;
+  width: 320px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  padding: 16px;
+}
+
+.messageTime {
+  @include font-s;
+  color: var(--color-text-gray);
+}
