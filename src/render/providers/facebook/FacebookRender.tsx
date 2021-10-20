@@ -241,6 +241,15 @@ function facebookOutbound(message): ContentUnion {
     };
   }
 
+  if (messageJson.attachments && messageJson.attachments[0].type === 'image') {
+    return {
+      type: 'images',
+      images: messageJson.attachments.map(image => {
+        return parseAttachment(image);
+      }),
+    };
+  }
+
   if (messageJson.attachment || messageJson.attachments) {
     return parseAttachment(
       messageJson.attachment || messageJson.attachments[0],

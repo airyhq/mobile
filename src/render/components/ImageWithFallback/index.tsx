@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Image, StyleProp} from 'react-native';
+import {Image, StyleProp, ImageStyle} from 'react-native';
 import {SvgUri} from 'react-native-svg';
 
 type ImageRenderProps = {
   src: string;
   alt?: string;
-  imageStyle?: StyleProp<any>;
+  imageStyle?: StyleProp<ImageStyle>;
 };
 
 /**

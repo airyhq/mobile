@@ -18,20 +18,25 @@ export const ImageComponent = ({
     <View style={styles.wrapper}>
       {images ? (
         <View style={styles.imagesContainer}>
-          {images.map(image => (
-            <ImageWithFallback
-              src={image.imageUrl}
-              key={image.imageUrl}
-              alt={image.altText ?? 'conversation in Airy Inbox'}
-              imageStyle={`${styles.messageListItemImageBlock} ${styles.images}`}
-            />
-          ))}
+          {images.map(image => {
+            return (
+              <ImageWithFallback
+                src={image.imageUrl}
+                key={image.imageUrl}
+                alt={image.altText ?? 'image in a conversation in Airy Inbox'}
+                imageStyle={{
+                  ...styles.messageListItemImageBlock,
+                  ...styles.image,
+                }}
+              />
+            );
+          })}
         </View>
       ) : (
         <ImageWithFallback
           imageStyle={styles.messageListItemImageBlock}
           src={imageUrl}
-          alt={altText ?? 'conversation in Airy Inbox'}
+          alt={altText ?? 'image in a conversation in Airy Inbox'}
         />
       )}
     </View>
@@ -40,15 +45,14 @@ export const ImageComponent = ({
 
 const styles = StyleSheet.create({
   wrapper: {
-    display: 'flex',
-    flex: 1,
     marginTop: 5,
+    width: 'auto',
   },
   imagesContainer: {
-    display: 'flex',
+    height: '100%',
   },
-  images: {
-    marginTop: 5,
+  image: {
+    marginTop: 8,
   },
   messageListItemImageBlock: {
     width: Dimensions.get('window').width / 2,
