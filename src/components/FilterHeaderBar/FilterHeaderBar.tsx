@@ -26,7 +26,7 @@ export const FilterHeaderBar = () => {
   const [appliedFilters, setAppliedFilters] = useState<boolean>(false);
   const [filterReset, setFilterReset] = useState<boolean>(false);
   const defaultHeaderHeight = 45;
-  const expandedHeaderHeight = 260;
+  const expandedHeaderHeight = 272;
   const PADDING_COLLAPSEDFILTER = 32;
   const windowWidth = Dimensions.get('window').width;
   const realm = RealmDB.getInstance();
@@ -174,7 +174,8 @@ export const FilterHeaderBar = () => {
           <ChannelComponent filterReset={filterReset} />
           <View
             style={{
-              marginBottom: 8,
+              marginBottom: 16,
+              marginTop: 8,
               justifyContent: 'flex-end',
               alignItems: 'flex-end',
               flexDirection: 'row',
