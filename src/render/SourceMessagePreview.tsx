@@ -54,7 +54,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       }
     }
 
-    if (lastMessageContent.richCard) {
+    if (lastMessageContent.richCard || lastMessageContent.richCardCarousel) {
       return (
         <View style={styles.richCard}>
           <RichCardIcon width={24} height={24} fill="#737373" />
