@@ -16,7 +16,7 @@ import {
   ConversationFilter,
   filterToLuceneSyntax,
   getDisplayNameForRealmFilter,
-  getStateForRealmFilter,  
+  getStateForRealmFilter,
   isFilterReadOnly,
   isFilterUnreadOnly,
 } from '../../../model/ConversationFilter';
@@ -60,9 +60,6 @@ export const ConversationList = (props: ConversationListProps) => {
       filters: appliedFilters && filterToLuceneSyntax(currentFilter),
     })
       .then((response: any) => {
-
-        console.log('REPONSE: ', response.data.length );
-        
         realm.write(() => {
           realm.create('Pagination', response.paginationData);
         });
@@ -80,32 +77,32 @@ export const ConversationList = (props: ConversationListProps) => {
     let databaseConversations = realm
       .objects<Conversation[]>('Conversation')
       .sorted('lastMessage.sentAt', true);
-    
+
     if (currentFilter) {
       databaseConversations = databaseConversations.filtered(
-          'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1 && $2 CONTAINS[c] channel.id',
-          getDisplayNameForRealmFilter(currentFilter),
-          getStateForRealmFilter(currentFilter),        
-          filteredChannels(),
-        );
-      
+        'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1 && $2 CONTAINS[c] channel.id',
+        getDisplayNameForRealmFilter(currentFilter),
+        getStateForRealmFilter(currentFilter),
+        filteredChannels(),
+      );
+
       if (isFilterReadOnly(currentFilter)) {
         databaseConversations = databaseConversations.filtered(
-          'metadata.unreadCount = 0'
+          'metadata.unreadCount = 0',
         );
-      }  
-      
+      }
+
       if (isFilterUnreadOnly(currentFilter)) {
         databaseConversations = databaseConversations.filtered(
-          'metadata.unreadCount != 0'
-        );            
+          'metadata.unreadCount != 0',
+        );
       }
-    }    
-      
+    }
+
     filterApplied();
 
     if (databaseConversations) {
-      databaseConversations.addListener(() => {        
+      databaseConversations.addListener(() => {
         setConversations([...databaseConversations]);
       });
     }
