@@ -19,11 +19,11 @@ import {RealmDB} from '../../storage/realm';
 import {ConversationFilter} from '../../model/ConversationFilter';
 
 type ChannelComponentProps = {
-  filterReseted: boolean;
+  filterReset: boolean;
 };
 
 export const ChannelComponent = (props: ChannelComponentProps) => {
-  const {filterReseted} = props;
+  const {filterReset} = props;
   const channelListRef = useRef<FlatList>(null);
   const CHANNEL_PADDING = 48;
   const windowWidth = Dimensions.get('window').width;
@@ -54,7 +54,6 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
 
   useEffect(() => {
     if (currentFilter) {
-      filterReseted && setSelectedChannels([]);
       realm.write(() => {
         currentFilter.byChannels = selectedChannels;
       });
@@ -70,6 +69,15 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
       });
     }
   }, [selectedChannels, setSelectedChannels]);
+
+  useEffect(() => {
+    if (filterReset) {
+      setSelectedChannels([]);
+      realm.write(() => {
+        currentFilter.byChannels = selectedChannels;
+      });
+    }
+  }, [filterReset]);
 
   const ChannelItem = ({item}) => {
     return (
@@ -142,7 +150,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
 
 const styles = StyleSheet.create({
   connectedChannelList: {
-    height: 110,
+    height: 100,
     marginBottom: 8,
   },
 });

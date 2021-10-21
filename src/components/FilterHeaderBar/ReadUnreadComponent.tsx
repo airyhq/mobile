@@ -11,11 +11,11 @@ import {ConversationFilter} from '../../model/ConversationFilter';
 import {RealmDB} from '../../storage/realm';
 
 type ReadUnreadComponentProps = {
-  filterReseted: boolean;
+  filterReset: boolean;
 };
 
 export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
-  const {filterReseted} = props;
+  const {filterReset} = props;
   const realm = RealmDB.getInstance();
   const currentFilter =
     realm.objects<ConversationFilter>('ConversationFilter')[0];
@@ -28,8 +28,6 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
 
   useEffect(() => {
     if (currentFilter) {
-      filterReseted && setStateActiveRead(null);
-      filterReseted && setStateActiveUnRead(null);
       realm.write(() => {
         currentFilter.readOnly = stateActiveRead;
         currentFilter.unreadOnly = stateActiveUnRead;
@@ -51,6 +49,17 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
     stateActiveUnRead,
     setStateActiveUnRead,
   ]);
+
+  useEffect(() => {
+    if (filterReset) {
+      setStateActiveRead(null);
+      setStateActiveUnRead(null);
+      realm.write(() => {
+        currentFilter.readOnly = stateActiveRead;
+        currentFilter.unreadOnly = stateActiveUnRead;
+      });
+    }
+  }, [filterReset]);
 
   return (
     <View

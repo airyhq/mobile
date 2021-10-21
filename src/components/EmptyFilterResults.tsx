@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato',
     fontSize: 24,
     fontWeight: 'bold',
+    marginBottom: 8
   },
   subtitle: {
     fontFamily: 'Lato',

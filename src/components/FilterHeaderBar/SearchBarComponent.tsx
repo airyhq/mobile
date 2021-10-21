@@ -11,11 +11,11 @@ import {RealmDB} from '../../storage/realm';
 import {ConversationFilter} from '../../model/ConversationFilter';
 
 type SearchBarComponentProps = {
-  setSearchBarFocus?: (isFocused: boolean) => void;
+  filterReset: boolean;
 };
 
 export const SearchBarComponent = (props: SearchBarComponentProps) => {
-  const {setSearchBarFocus} = props;
+  const {filterReset} = props;
   const searchBarRef = useRef<TextInput>(null);
   const realm = RealmDB.getInstance();
   const currentFilter =
@@ -25,13 +25,6 @@ export const SearchBarComponent = (props: SearchBarComponentProps) => {
   );
 
   useEffect(() => {
-    // if (searchBarRef.current.isFocused() === true) {
-    //   setSearchBarFocus(true);
-    // } else {
-    //   setSearchBarFocus(false);
-    // }
-
-    setSearchBarFocus(true);
     if (currentFilter) {
       realm.write(() => {
         currentFilter.displayName = searchInput;
@@ -47,7 +40,16 @@ export const SearchBarComponent = (props: SearchBarComponentProps) => {
         });
       });
     }
-  }, [searchInput, setSearchInput, searchBarRef?.current?.isFocused()]);
+  }, [searchInput, setSearchInput]);
+
+  useEffect(() => {
+    if (filterReset) {
+      setSearchInput('');
+      realm.write(() => {
+        currentFilter.displayName = searchInput;
+      });
+    }
+  }, [filterReset]);
 
   return (
     <View style={styles.searchBarContainer}>

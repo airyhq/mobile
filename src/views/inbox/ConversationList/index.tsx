@@ -60,6 +60,9 @@ export const ConversationList = (props: ConversationListProps) => {
       filters: appliedFilters && filterToLuceneSyntax(currentFilter),
     })
       .then((response: any) => {
+
+        console.log('REPONSE: ', response.data.length );
+        
         realm.write(() => {
           realm.create('Pagination', response.paginationData);
         });
@@ -73,39 +76,7 @@ export const ConversationList = (props: ConversationListProps) => {
       .addListener(onFilterUpdated);
   }, []);
 
-  const filteredChannels = (): string => {
-    currentFilter?.byChannels.forEach((item: Channel) => {
-      currentFilter?.byChannels.find((channel: Channel) => {
-        if (channel.id == item.id) {
-          filteredChannelArray.push(channel.id);
-        }
-      });
-    });
-
-    let newArray = JSON.stringify(filteredChannelArray.join());
-
-    if (newArray.length == 2) {
-      newArray = addAllChannels();
-    }
-
-    return newArray;
-  };
-
-  const addAllChannels = () => {
-    realm.objects<Conversation>('Conversation').filtered(
-      'channel.connected == true',
-      realm.objects<Channel>('Channel').forEach((channel: Channel) => {
-        filteredChannelArray.push(channel.id);
-      }),
-    );
-
-    const newArray = JSON.stringify(filteredChannelArray.join());
-
-    return newArray;
-  };
-
   useEffect(() => {
-    
     let databaseConversations = realm
       .objects<Conversation[]>('Conversation')
       .sorted('lastMessage.sentAt', true);
@@ -143,6 +114,37 @@ export const ConversationList = (props: ConversationListProps) => {
       databaseConversations.removeAllListeners();
     };
   }, [currentFilter]);
+
+  const filteredChannels = (): string => {
+    currentFilter?.byChannels.forEach((item: Channel) => {
+      currentFilter?.byChannels.find((channel: Channel) => {
+        if (channel.id == item.id) {
+          filteredChannelArray.push(channel.id);
+        }
+      });
+    });
+
+    let newArray = JSON.stringify(filteredChannelArray.join());
+
+    if (newArray.length == 2) {
+      newArray = addAllChannels();
+    }
+
+    return newArray;
+  };
+
+  const addAllChannels = () => {
+    realm.objects<Conversation>('Conversation').filtered(
+      'channel.connected == true',
+      realm.objects<Channel>('Channel').forEach((channel: Channel) => {
+        filteredChannelArray.push(channel.id);
+      }),
+    );
+
+    const newArray = JSON.stringify(filteredChannelArray.join());
+
+    return newArray;
+  };
 
   const getNextConversationList = () => {
     const cursor = paginationData?.nextCursor;
