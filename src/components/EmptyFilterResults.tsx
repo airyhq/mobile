@@ -27,11 +27,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato',
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 8
+    marginBottom: 8,
   },
   subtitle: {
     fontFamily: 'Lato',
     fontSize: 14,
-    textAlign: 'center'
+    textAlign: 'center',
   },
 });

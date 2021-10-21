@@ -36,6 +36,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
 
   const connectedChannels = realm
     .objects<Channel>('Channel')
+    .sorted('metadata.name', false)
     .filtered('connected == true');
 
   const selectedChannelsToggle = (item: Channel) => {

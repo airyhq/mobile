@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
   Text,
   TouchableOpacity,
   View,
   StyleSheet,
+  Animated,
 } from 'react-native';
 import {
   colorAiryBlue,
@@ -20,19 +21,22 @@ import {ChannelComponent} from './ChannelCompontent';
 import {SearchBarComponent} from './SearchBarComponent';
 import {ConversationFilter} from '../../model';
 
-type FilterHeaderBarProps = {};
-
-export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
+export const FilterHeaderBar = () => {
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
   const [appliedFilters, setAppliedFilters] = useState<boolean>(false);
   const [filterReset, setFilterReset] = useState<boolean>(false);
   const defaultHeaderHeight = 45;
-  const expandedHeaderHeight = 280;
+  const expandedHeaderHeight = 260;
   const PADDING_COLLAPSEDFILTER = 32;
   const windowWidth = Dimensions.get('window').width;
   const realm = RealmDB.getInstance();
   const currentFilter =
     realm.objects<ConversationFilter>('ConversationFilter')[0];
+
+  const expandAnimation = useRef(
+    new Animated.Value(defaultHeaderHeight),
+  ).current;
+  const fadeAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     filterApplied();
@@ -50,8 +54,34 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
     }
   };
 
+  const growAnimation = () => {
+    Animated.timing(expandAnimation, {
+      toValue: expandedHeaderHeight,
+      duration: 400,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const shrinkAnimation = () => {
+    Animated.timing(expandAnimation, {
+      toValue: defaultHeaderHeight,
+      duration: 400,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const fadeInAnimation = () => {
+    Animated.timing(fadeAnimation, {
+      toValue: 1,
+      duration: 400,
+      useNativeDriver: false,
+    }).start();
+  };
+
   const toggleFiltering = () => {
     setFilterOpen(!filterOpen);
+    filterOpen ? shrinkAnimation() : growAnimation();
+    !filterOpen ? fadeInAnimation() : fadeAnimation.setValue(0);
     !appliedFilters && setFilterReset(false);
   };
 
@@ -61,13 +91,13 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
 
   const CollapsedFilterView = () => {
     return (
-      <View
+      <Animated.View
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
           width: windowWidth,
-          height: defaultHeaderHeight,
+          height: expandAnimation,
           backgroundColor: 'white',
           borderBottomWidth: 1,
           borderBottomColor: colorLightGray,
@@ -107,15 +137,16 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
             </View>
           </View>
         </View>
-      </View>
+      </Animated.View>
     );
   };
 
   const ExpandedFilterView = () => {
     return (
-      <View
+      <Animated.View
         style={{
-          height: expandedHeaderHeight,
+          height: expandAnimation,
+          opacity: fadeAnimation,
           backgroundColor: 'white',
           width: windowWidth,
           justifyContent: 'flex-end',
@@ -160,7 +191,7 @@ export const FilterHeaderBar = (props: FilterHeaderBarProps) => {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </Animated.View>
     );
   };
 

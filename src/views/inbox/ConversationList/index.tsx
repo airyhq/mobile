@@ -102,9 +102,11 @@ export const ConversationList = (props: ConversationListProps) => {
     filterApplied();
 
     if (databaseConversations) {
-      databaseConversations.addListener(() => {
-        setConversations([...databaseConversations]);
-      });
+      if (!realm.isInTransaction) {
+        databaseConversations.addListener(() => {
+          setConversations([...databaseConversations]);
+        });
+      }
     }
 
     return () => {
@@ -115,7 +117,7 @@ export const ConversationList = (props: ConversationListProps) => {
   const filteredChannels = (): string => {
     currentFilter?.byChannels.forEach((item: Channel) => {
       currentFilter?.byChannels.find((channel: Channel) => {
-        if (channel.id == item.id) {
+        if (channel.id === item.id) {
           filteredChannelArray.push(channel.id);
         }
       });
@@ -123,7 +125,7 @@ export const ConversationList = (props: ConversationListProps) => {
 
     let newArray = JSON.stringify(filteredChannelArray.join());
 
-    if (newArray.length == 2) {
+    if (newArray.length === 2) {
       newArray = addAllChannels();
     }
 

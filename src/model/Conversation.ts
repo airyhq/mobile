@@ -62,7 +62,7 @@ export interface FilteredConversation {
 export const parseToRealmConversation = (
   unformattedConversation: Conversation,
 ): Conversation => {
-  let conversation: Conversation;    
+  let conversation: Conversation;
   conversation = {
     id: unformattedConversation.id,
     channel: unformattedConversation.channel,
@@ -83,36 +83,43 @@ export const parseToRealmConversation = (
   return conversation;
 };
 
-export const upsertConversations = (conversations: Conversation[], realm: Realm) => {
-  conversations.forEach(conversation => {      
-    const storedConversation: Conversation | undefined = realm.objectForPrimaryKey('Conversation', conversation.id);
-    
+export const upsertConversations = (
+  conversations: Conversation[],
+  realm: Realm,
+) => {
+  conversations.forEach(conversation => {
+    const storedConversation: Conversation | undefined =
+      realm.objectForPrimaryKey('Conversation', conversation.id);
+
     if (storedConversation) {
       realm.write(() => {
         storedConversation.lastMessage = conversation.lastMessage;
         storedConversation.metadata = conversation.metadata;
-      })
-    } else {      
+      });
+    } else {
       realm.write(() => {
-        const newConversation: Conversation = parseToRealmConversation(conversation);
-        const channel: Channel = RealmDB.getInstance().objectForPrimaryKey<Channel>('Channel', conversation.channel.id);
-        const newConversationState = newConversation.metadata.state || 'OPEN';        
-        
-        realm.create(
-          'Conversation',
-          { ...newConversation,
-            channel: channel || newConversation.channel,
-            metadata: {
-              ...newConversation.metadata,
-              state: newConversationState
-            }
-          }
-        );    
+        const newConversation: Conversation =
+          parseToRealmConversation(conversation);
+        const channel: Channel =
+          RealmDB.getInstance().objectForPrimaryKey<Channel>(
+            'Channel',
+            conversation.channel.id,
+          );
+        const newConversationState = newConversation.metadata.state || 'OPEN';
+
+        realm.create('Conversation', {
+          ...newConversation,
+          channel: channel || newConversation.channel,
+          metadata: {
+            ...newConversation.metadata,
+            state: newConversationState,
+          },
+        });
         realm.create('MessageData', {
           id: conversation.id,
           messages: [],
         });
-      })    
-    }   
+      });
+    }
   });
-}
+};

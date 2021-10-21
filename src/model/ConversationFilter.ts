@@ -42,36 +42,43 @@ export const filterToLuceneSyntax = (
   return !filterQuery.length ? undefined : filterQuery.join(' AND ');
 };
 
-export const isFilterReadOnly = (filter: ConversationFilter):boolean => {
+export const isFilterReadOnly = (filter: ConversationFilter): boolean => {
   return filter?.readOnly === true && filter?.unreadOnly === false;
-}
+};
 
-export const isFilterUnreadOnly = (filter: ConversationFilter):boolean => {
+export const isFilterUnreadOnly = (filter: ConversationFilter): boolean => {
   return filter?.readOnly === false && filter?.unreadOnly === true;
-}
+};
 
-export const isFilterReadUnreadUndefined = (filter: ConversationFilter):boolean => {
-  return (filter?.readOnly === undefined || filter?.readOnly === false) && (filter.unreadOnly === undefined || filter.unreadOnly === false);
-}
+export const isFilterReadUnreadUndefined = (
+  filter: ConversationFilter,
+): boolean => {
+  return (
+    (filter?.readOnly === undefined || filter?.readOnly === false) &&
+    (filter.unreadOnly === undefined || filter.unreadOnly === false)
+  );
+};
 
-export const isFilterStateClose = (filter: ConversationFilter):boolean => {
+export const isFilterStateClose = (filter: ConversationFilter): boolean => {
   return filter?.isStateOpen === false;
-}
+};
 
-export const isFilterStateOpen = (filter: ConversationFilter):boolean => {
+export const isFilterStateOpen = (filter: ConversationFilter): boolean => {
   return filter?.isStateOpen === true;
-}
+};
 
-export const isFilterStateUndefined = (filter: ConversationFilter):boolean => {
+export const isFilterStateUndefined = (filter: ConversationFilter): boolean => {
   return filter?.isStateOpen === undefined;
-}
+};
 
-export const getDisplayNameForRealmFilter = (filter: ConversationFilter):string => {
+export const getDisplayNameForRealmFilter = (
+  filter: ConversationFilter,
+): string => {
   return filter?.displayName || '';
-}
+};
 
-export const getStateForRealmFilter = (filter: ConversationFilter):string => {  
-  if(filter?.isStateOpen === true) return 'OPEN';
-  if(filter?.isStateOpen === false) return 'CLOSED';  
+export const getStateForRealmFilter = (filter: ConversationFilter): string => {
+  if (filter?.isStateOpen === true) return 'OPEN';
+  if (filter?.isStateOpen === false) return 'CLOSED';
   return '*';
-}
+};
