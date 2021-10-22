@@ -2,6 +2,8 @@ import React from 'react';
 import {RenderPropsUnion} from '../../props';
 import {TextComponent} from '../../components/Text';
 import {ButtonTemplate} from './components/ButtonTemplate';
+import {GenericTemplate} from './components/GenericTemplate';
+import {MediaTemplate} from './components/MediaTemplate';
 import {
   ContentUnion,
   SimpleAttachment,
@@ -61,6 +63,12 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
 
     case 'buttonTemplate':
       return <ButtonTemplate template={content} />;
+
+    case 'genericTemplate':
+      return <GenericTemplate template={content} />;
+
+    case 'mediaTemplate':
+      return <MediaTemplate template={content} />;
 
     default:
       return null;

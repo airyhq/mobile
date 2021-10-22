@@ -17,6 +17,8 @@ import {
   MessageDataSchema,
   ContentMessageSchema,
   RichCardSchema,
+  ButtonTemplateAttachmentSchema,
+  ButtonSchema,
   StandaloneCardSchema,
   CardContentSchema,
   RichCardMediaSchema,
@@ -32,6 +34,9 @@ import {
   QuickRepliesFacebookContentSchema,
   SimpleAttachmentSchema,
   AttachmentPayloadSchema,
+  GenericAttachmentSchema,
+  ElementSchema,
+  DefaultActionSchema,
 } from '../model';
 
 export class RealmDB {
@@ -65,6 +70,11 @@ export class RealmDB {
           QuickRepliesFacebookContentSchema,
           SimpleAttachmentSchema,
           AttachmentPayloadSchema,
+          ButtonTemplateAttachmentSchema,
+          ButtonSchema,
+          GenericAttachmentSchema,
+          ElementSchema,
+          DefaultActionSchema,
           ChannelMetadataSchema,
           MessageSchema,
           MessageDataSchema,
