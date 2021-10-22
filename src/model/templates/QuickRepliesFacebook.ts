@@ -3,7 +3,8 @@ export const QuickRepliesFacebookSchema = {
   name: 'QuickRepliesFacebook',
   properties: {
     text: 'string?',
-    attachment: 'SimpleAttachment?',
+    attachment: 'Attachment?',
+    attachments: 'Attachments?',
     quickReplies: 'QuickRepliesFacebookContent[]',
   },
 };

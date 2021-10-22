@@ -3,7 +3,8 @@ export const QuickRepliesChatPluginSchema = {
   name: 'QuickRepliesChatPlugin',
   properties: {
     text: 'string?',
-    attachment: 'SimpleAttachment?',
+    attachment: 'Attachment?',
+    attachments: 'Attachments?',
     quickReplies: 'QuickRepliesChatPluginContent[]',
   },
 };

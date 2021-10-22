@@ -6,3 +6,4 @@ export * from './RichCard';
 export * from './Attachment';
 export * from './Button';
 export * from './Generic';
+export * from './MediaTemplate';
