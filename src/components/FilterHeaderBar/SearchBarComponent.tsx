@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {TextInput, View, StyleSheet, TouchableOpacity} from 'react-native';
 import {
   colorBackgroundGray,
@@ -16,7 +16,6 @@ type SearchBarComponentProps = {
 
 export const SearchBarComponent = (props: SearchBarComponentProps) => {
   const {filterReset} = props;
-  const searchBarRef = useRef<TextInput>(null);
   const realm = RealmDB.getInstance();
   const currentFilter =
     realm.objects<ConversationFilter>('ConversationFilter')[0];
@@ -55,7 +54,6 @@ export const SearchBarComponent = (props: SearchBarComponentProps) => {
     <View style={styles.searchBarContainer}>
       <SearchIcon height={18} width={18} fill={colorDarkElementsGray} />
       <TextInput
-        ref={searchBarRef}
         placeholderTextColor={colorTextGray}
         placeholder="Search Conversation..."
         style={styles.searchBar}

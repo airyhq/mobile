@@ -6,6 +6,7 @@ import {
   View,
   StyleSheet,
   Animated,
+  Vibration,
 } from 'react-native';
 import {
   colorAiryBlue,
@@ -19,23 +20,30 @@ import {ReadUnreadComponent} from './ReadUnreadComponent';
 import {StateButtonComponent} from './StateButtonComponent';
 import {ChannelComponent} from './ChannelCompontent';
 import {SearchBarComponent} from './SearchBarComponent';
-import {ConversationFilter} from '../../model';
+import {Channel, ConversationFilter} from '../../model';
 
 export const FilterHeaderBar = () => {
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
   const [appliedFilters, setAppliedFilters] = useState<boolean>(false);
   const [filterReset, setFilterReset] = useState<boolean>(false);
   const defaultHeaderHeight = 45;
-  const expandedHeaderHeight = 272;
+  const defaultHeaderHeightExpanded = 290;
+  const CHANNEL_COMPONENT_HEIGHT = 100;
   const PADDING_COLLAPSEDFILTER = 32;
   const windowWidth = Dimensions.get('window').width;
   const realm = RealmDB.getInstance();
   const currentFilter =
     realm.objects<ConversationFilter>('ConversationFilter')[0];
 
-  const expandAnimation = useRef(
-    new Animated.Value(defaultHeaderHeight),
-  ).current;
+  const connectedChannels = realm
+    .objects<Channel>('Channel')
+    .filtered('connected == true');
+
+  const expandedHeaderHeight =
+    connectedChannels.length > 0
+      ? defaultHeaderHeightExpanded
+      : defaultHeaderHeightExpanded - CHANNEL_COMPONENT_HEIGHT;
+
   const fadeAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -54,39 +62,24 @@ export const FilterHeaderBar = () => {
     }
   };
 
-  const growAnimation = () => {
-    Animated.timing(expandAnimation, {
-      toValue: expandedHeaderHeight,
-      duration: 400,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  const shrinkAnimation = () => {
-    Animated.timing(expandAnimation, {
-      toValue: defaultHeaderHeight,
-      duration: 400,
-      useNativeDriver: false,
-    }).start();
-  };
-
   const fadeInAnimation = () => {
     Animated.timing(fadeAnimation, {
       toValue: 1,
-      duration: 400,
-      useNativeDriver: false,
+      duration: 600,
+      useNativeDriver: true,
     }).start();
   };
 
   const toggleFiltering = () => {
     setFilterOpen(!filterOpen);
-    filterOpen ? shrinkAnimation() : growAnimation();
     !filterOpen ? fadeInAnimation() : fadeAnimation.setValue(0);
     !appliedFilters && setFilterReset(false);
   };
 
   const resetFilters = () => {
-    appliedFilters && setFilterReset(true);
+    setFilterReset(true);
+    Vibration.vibrate();
+    setAppliedFilters(false);
   };
 
   const CollapsedFilterView = () => {
@@ -97,9 +90,9 @@ export const FilterHeaderBar = () => {
           justifyContent: 'space-between',
           alignItems: 'center',
           width: windowWidth,
-          height: expandAnimation,
+          height: defaultHeaderHeight,
           backgroundColor: 'white',
-          borderBottomWidth: 1,
+          borderBottomWidth: 0.5,
           borderBottomColor: colorLightGray,
         }}>
         <View
@@ -145,13 +138,13 @@ export const FilterHeaderBar = () => {
     return (
       <Animated.View
         style={{
-          height: expandAnimation,
+          height: expandedHeaderHeight,
           opacity: fadeAnimation,
           backgroundColor: 'white',
           width: windowWidth,
           justifyContent: 'flex-end',
           borderBottomColor: colorLightGray,
-          borderBottomWidth: 1,
+          borderBottomWidth: 0.5,
         }}>
         <View style={{marginLeft: 12, marginRight: 12}}>
           <View
@@ -161,17 +154,19 @@ export const FilterHeaderBar = () => {
               justifyContent: 'space-between',
             }}>
             <Text style={styles.headerTitleExpanded}>Filter</Text>
-            <TouchableOpacity onPress={resetFilters} disabled={!filterApplied}>
-              {appliedFilters && (
+            {appliedFilters && (
+              <TouchableOpacity onPress={resetFilters}>
                 <Text style={{marginRight: 8, color: colorAiryBlue}}>
                   Reset
                 </Text>
-              )}
-            </TouchableOpacity>
+              </TouchableOpacity>
+            )}
           </View>
           <ReadUnreadComponent filterReset={filterReset} />
           <StateButtonComponent filterReset={filterReset} />
-          <ChannelComponent filterReset={filterReset} />
+          {connectedChannels.length > 0 && (
+            <ChannelComponent filterReset={filterReset} />
+          )}
           <View
             style={{
               marginBottom: 16,

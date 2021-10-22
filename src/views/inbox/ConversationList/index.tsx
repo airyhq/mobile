@@ -192,24 +192,22 @@ export const ConversationList = (props: ConversationListProps) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {conversations && conversations.length > 0 ? (
-        conversations.length === 0 ? (
-          <NoConversations conversations={conversations.length} />
-        ) : (
-          <FlatList
-            data={conversations}
-            onEndReached={debouncedListPreviousConversations}
-            renderItem={({item}) => {
-              return (
-                <ConversationListItem
-                  key={item.id}
-                  conversation={item}
-                  navigation={navigation}
-                />
-              );
-            }}
-          />
-        )
+      {conversations && conversations.length === 0 && !appliedFilters ? (
+        <NoConversations conversations={conversations.length} />
+      ) : conversations && conversations.length > 0 ? (
+        <FlatList
+          data={conversations}
+          onEndReached={debouncedListPreviousConversations}
+          renderItem={({item}) => {
+            return (
+              <ConversationListItem
+                key={item.id}
+                conversation={item}
+                navigation={navigation}
+              />
+            );
+          }}
+        />
       ) : (
         <EmptyFilterResults />
       )}
