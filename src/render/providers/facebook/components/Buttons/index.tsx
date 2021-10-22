@@ -59,7 +59,7 @@ export const Buttons = ({buttons, mediaTemplate}: ButtonsProps) => {
 
 const styles = StyleSheet.create({
   button: {
-    fontWeight: 700,
+    fontWeight: '700',
     backgroundColor: colorTemplateHightlight,
     borderRadius: 8,
     textAlign: 'center',
@@ -72,7 +72,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: colorContrast,
-    textDecoration: 'none',
     paddingTop: 8,
     paddingBottom: 8,
     paddingRight: 8,

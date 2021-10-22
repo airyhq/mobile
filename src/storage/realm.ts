@@ -72,6 +72,7 @@ export class RealmDB {
           AttachmentPayloadSchema,
           ButtonTemplateAttachmentSchema,
           ButtonSchema,
+          ButtonTemplateAttachmentSchema,
           GenericAttachmentSchema,
           ElementSchema,
           DefaultActionSchema,
