@@ -1,6 +1,6 @@
 name: CI
 
-on: push
+on: pull_request
 
 jobs:
   build:
@@ -12,23 +12,25 @@ jobs:
         with:
           node-version: '14'
 
+      - name: Cache Node Modules
+        id: cache-node-modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: node-modules-${{ hashFiles('yarn.lock') }}
+
       - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
         run: yarn install
 
       - name: Lint
         run: yarn run eslint . --ext .js,.jsx,.ts,.tsx
 
-      - name: Install Cocoapods
-        run: sudo gem install cocoapods
-
-      - name: Set up XCode
-        run: xcode-select -p
-
-      - name: Install pod dependencies 
+      - name: Install iOS pod dependencies 
         run: pod install
         working-directory: ios
 
-      - name: Build IOS
+      - name: Build iOS
         run: yarn run react-native run-ios
 
       - name: Build Android

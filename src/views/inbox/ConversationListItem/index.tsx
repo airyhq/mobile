@@ -8,11 +8,10 @@ import {
   TouchableOpacity,
   Animated,
 } from 'react-native';
-import {Conversation} from '../../../model/Conversation';
+import {Conversation} from '../../../model';
 import IconChannel from '../../../components/IconChannel';
 import {formatTimeOfMessage} from '../../../services/format/date';
 import RightArrow from '../../../assets/images/icons/rightArrow.svg';
-import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {Avatar} from '../../../components/Avatar';
 import {SourceMessagePreview} from '../../../render/SourceMessagePreview';
 import {RealmDB} from '../../../storage/realm';
@@ -27,6 +26,7 @@ import {
 } from '../../../assets/colors';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {CurrentState} from '../../../components/CurrentState';
+import {api} from '../../../api';
 
 type ConversationListItemProps = {
   conversation: Conversation;
@@ -71,27 +71,24 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
 
   const changeState = () => {
     const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
-    HttpClientInstance.setStateConversation({
-      conversationId: conversation.id,
-      state: newState,
-    })
+    api
+      .setStateConversation({
+        conversationId: conversation.id,
+        state: newState,
+      })
       .then(() => {
         realm.write(() => {
-          const changedConversation: any = realm.objectForPrimaryKey(
-            'Conversation',
-            conversation.id,
-          );
+          const changedConversation: Conversation = realm
+            .objectForPrimaryKey('Conversation', conversation.id)
+            .toJSON();
           changedConversation.metadata.state = newState;
         });
-      })
-      .catch((error: Error) => {
-        console.log('Error: ', error);
       });
   };
 
   const markAsRead = () => {
     if (unread) {
-      HttpClientInstance.readConversations(conversation.id);
+      api.readConversations(conversation.id);
     }
   };
 
@@ -147,14 +144,13 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
                 pressable={false}
               />
             </View>
-            <Text
-              numberOfLines={1}
+            <View
               style={[
                 {width: '85%', height: 38},
                 unread ? styles.unreadMessage : styles.message,
               ]}>
               <SourceMessagePreview conversation={conversation} />
-            </Text>
+            </View>
             <View style={styles.channelTimeContainer}>
               <View style={styles.iconChannel}>
                 <IconChannel

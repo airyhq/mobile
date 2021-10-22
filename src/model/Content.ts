@@ -1,10 +1,10 @@
-export type Content = {
-  text: string;
-};
+export type Content = any;
 
-export const ContentSchema = {
-  name: 'Content',
+//text Content Realm Schema
+export const TextContentSchema = {
+  name: 'TextContent',
   properties: {
+    type: 'string',
     text: 'string',
   },
 };

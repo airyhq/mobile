@@ -7,7 +7,7 @@ import {RenderPropsUnion} from './props';
 
 type Provider = (messageRenderProps: RenderPropsUnion) => JSX.Element;
 
-export const renderProviders: {[key: string]: any} = {
+export const renderProviders: {[key: string]: Provider} = {
   facebook: FacebookRender,
   instagram: FacebookRender,
   chatplugin: ChatPluginRender,

@@ -124,6 +124,7 @@ export interface TextContent extends Content {
 export interface ImageContent extends Content {
   type: 'image';
   imageUrl: string;
+  altText?: string;
 }
 
 export interface AudioContent extends Content {

@@ -1,6 +1,8 @@
 import React from 'react';
-import {Text} from 'react-native';
+import {Text, View, StyleSheet} from 'react-native';
 import {Conversation} from '../model';
+import RichCardIcon from '../assets/images/icons/richCardIcon.svg';
+
 interface SourceMessagePreviewProps {
   conversation: Conversation;
 }
@@ -52,21 +54,44 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       }
     }
 
+    if (lastMessageContent.richCard || lastMessageContent.richCardCarousel) {
+      return (
+        <View style={styles.richCard}>
+          <RichCardIcon width={24} height={24} fill="#737373" />
+        </View>
+      );
+    }
+
     if (
       (lastMessageContent.text || lastMessageContent.message?.text) &&
       !isImageFromGoogleSource(lastMessageContent.message?.text)
     ) {
       return (
-        <Text>
+        <Text numberOfLines={1}>
           {lastMessageContent?.message?.text || lastMessageContent?.text}
         </Text>
       );
-    } else if (lastMessageContent.suggestionResponse) {
-      return <Text>{lastMessageContent.suggestionResponse?.text}</Text>;
-    } else {
-      return <Text> Type not supported </Text>;
     }
+
+    if (lastMessageContent.suggestionResponse) {
+      return (
+        <Text numberOfLines={1}>
+          {lastMessageContent.suggestionResponse?.text}
+        </Text>
+      );
+    }
+
+    return <Text numberOfLines={1}> Type not supported </Text>;
   };
 
   return <>{lastMessageIsText(conversation)}</>;
 };
+
+const styles = StyleSheet.create({
+  richCard: {
+    margin: 0,
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+  },
+});

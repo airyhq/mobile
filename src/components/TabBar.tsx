@@ -12,6 +12,7 @@ import {Dimensions, SafeAreaView, View} from 'react-native';
 import IconChannel from './IconChannel';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {FilterHeaderBar} from './FilterHeaderBar/FilterHeaderBar';
+import {NavigationStackProp} from 'react-navigation-stack';
 
 export const TabBar = () => {
   const Tab = createBottomTabNavigator();
@@ -86,7 +87,7 @@ export const TabBar = () => {
       <Stack.Screen
         name="MessageList"
         component={MessageList}
-        options={({route, navigation}: any) => ({
+        options={({route, navigation}: NavigationStackProp) => ({
           title: `${route.params.displayName}`,
           headerTitleAlign: 'left',
           headerTitleStyle: {fontFamily: 'Lato', marginBottom: 20},

@@ -8,7 +8,6 @@ import {
   Platform,
 } from 'react-native';
 import {RealmDB} from '../../../storage/realm';
-import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {
   parseToRealmMessage,
   Message,
@@ -17,8 +16,11 @@ import {
 } from '../../../model';
 import {MessageComponent} from './MessageComponent';
 import {debounce, sortBy, isEqual} from 'lodash-es';
-import {MessageBar} from '../../../components/MessageBar';
+import {ChatInput} from '../../../components/chat/input/ChatInput';
 import {useHeaderHeight} from '@react-navigation/stack';
+import {api} from '../../../api';
+
+declare type PaginatedResponse<T> = typeof import('@airyhq/http-client');
 
 interface RouteProps {
   key: string;
@@ -50,17 +52,16 @@ const MessageList = (props: MessageListProps) => {
   } = conversation;
 
   useEffect(() => {
-    const databaseMessages: any = realm.objectForPrimaryKey<MessageData>(
-      'MessageData',
-      conversationId,
-    );
+    const databaseMessages: (MessageData & Realm.Object) | undefined =
+      realm.objectForPrimaryKey<MessageData>('MessageData', conversationId);
 
     const currentConversation: Conversation | undefined =
       realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
 
     const listMessages = () => {
-      HttpClientInstance.listMessages({conversationId, pageSize: 50})
-        .then((response: any) => {
+      api
+        .listMessages({conversationId, pageSize: 50})
+        .then((response: PaginatedResponse<Message>) => {
           if (databaseMessages) {
             realm.write(() => {
               databaseMessages.messages = [
@@ -88,9 +89,6 @@ const MessageList = (props: MessageListProps) => {
                 response.paginationData?.total ?? null;
             });
           }
-        })
-        .catch((error: Error) => {
-          console.log('Error: ', error);
         });
     };
 
@@ -132,12 +130,13 @@ const MessageList = (props: MessageListProps) => {
   const listPreviousMessages = () => {
     const cursor = paginationData && paginationData.nextCursor;
 
-    HttpClientInstance.listMessages({
-      conversationId,
-      pageSize: 50,
-      cursor: cursor,
-    })
-      .then((response: any) => {
+    api
+      .listMessages({
+        conversationId,
+        pageSize: 50,
+        cursor: cursor,
+      })
+      .then((response: PaginatedResponse<Message>) => {
         const storedConversationMessages: MessageData | undefined =
           realm.objectForPrimaryKey<MessageData>(
             'MessageData',
@@ -173,9 +172,6 @@ const MessageList = (props: MessageListProps) => {
               response.paginationData?.total ?? null;
           });
         }
-      })
-      .catch((error: Error) => {
-        console.log('Error: ', error);
       });
   };
 
@@ -187,8 +183,8 @@ const MessageList = (props: MessageListProps) => {
         <View style={styles.container}>
           <FlatList
             style={styles.flatlist}
-            data={messages.reverse()}
-            inverted={true}
+            data={messages}
+            inverted={false}
             ref={messageListRef}
             onEndReached={debouncedListPreviousMessages}
             initialNumToRender={25}
@@ -205,8 +201,8 @@ const MessageList = (props: MessageListProps) => {
               );
             }}
           />
-          <View style={styles.messageBar}>
-            <MessageBar conversationId={route.params.conversationId} />
+          <View style={styles.chatInput}>
+            <ChatInput conversationId={route.params.conversationId} />
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -223,7 +219,7 @@ const styles = StyleSheet.create({
   flatlist: {
     backgroundColor: 'white',
   },
-  messageBar: {
+  chatInput: {
     alignSelf: 'flex-start',
     backgroundColor: 'white',
     marginBottom: 5,
@@ -231,7 +227,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const arePropsEqual = (prevProps: any, nextProps: any) => {
+const arePropsEqual = (
+  prevProps: MessageListProps,
+  nextProps: MessageListProps,
+): boolean => {
   return isEqual(prevProps, nextProps);
 };
 

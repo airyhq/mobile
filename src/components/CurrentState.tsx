@@ -9,19 +9,20 @@ import {
   Dimensions,
 } from 'react-native';
 import {colorSoftGreen, colorStateRed} from '../assets/colors';
-import {HttpClientInstance} from '../InitializeAiryApi';
 import {RealmDB} from '../storage/realm';
 import Checkmark from '../assets/images/icons/checkmark-circle.svg';
 import {Conversation} from '../model/Conversation';
 import {Avatar} from './Avatar';
 import IconChannel from './IconChannel';
+import {api} from '../api';
+import {NavigationStackProp} from 'react-navigation-stack';
 
 type CurrentStateProps = {
   state: string;
   conversationId: string;
   pressable: boolean;
   style?: StyleProp<ViewStyle>;
-  navigation?: any;
+  navigation?: NavigationStackProp<{conversationId: string}>;
 };
 
 export const CurrentState = (props: CurrentStateProps) => {
@@ -78,21 +79,20 @@ export const CurrentState = (props: CurrentStateProps) => {
       },
     });
     const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
-    HttpClientInstance.setStateConversation({
-      conversationId: conversationId,
-      state: newState,
-    })
+    api
+      .setStateConversation({
+        conversationId: conversationId,
+        state: newState,
+      })
       .then(() => {
         realm.write(() => {
-          const changedConversation: any = realm.objectForPrimaryKey(
-            'Conversation',
-            conversationId,
-          );
-          changedConversation.metadata.state = newState;
+          const changedConversation: Conversation | undefined =
+            realm.objectForPrimaryKey('Conversation', conversationId);
+
+          if (changedConversation?.metadata?.state) {
+            changedConversation.metadata.state = newState;
+          }
         });
-      })
-      .catch((error: Error) => {
-        console.log('Error: ', error);
       });
   };
 

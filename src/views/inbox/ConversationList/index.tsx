@@ -4,7 +4,6 @@ import {debounce} from 'lodash-es';
 import {ConversationListItem} from '../ConversationListItem';
 import {NoConversations} from '../NoConversations';
 import {RealmDB} from '../../../storage/realm';
-import {HttpClientInstance} from '../../../InitializeAiryApi';
 import {getPagination} from '../../../services/Pagination';
 import {
   Conversation,
@@ -22,7 +21,11 @@ import {
 } from '../../../model/ConversationFilter';
 import {Collection} from 'realm';
 import {EmptyFilterResults} from '../../../components/EmptyFilterResults';
-import {Channel} from '../../../model/Channel';
+import {Channel} from '../../../model/Channel';  
+import { Pagination } from '../../../model';
+import { api } from '../../../api';
+
+declare type PaginatedResponse<T> = typeof import('@airyhq/http-client');
 
 type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
@@ -55,22 +58,28 @@ export const ConversationList = (props: ConversationListProps) => {
   };
 
   useEffect(() => {
-    HttpClientInstance.listConversations({
-      page_size: 50,
-      filters: appliedFilters && filterToLuceneSyntax(currentFilter),
-    })
-      .then((response: any) => {
-        realm.write(() => {
-          realm.create('Pagination', response.paginationData);
-        });
-        upsertConversations(response.data, realm);
-      })
-      .catch((error: Error) => {
-        console.error(error);
-      });
     realm
-      .objects<ConversationFilter>('ConversationFilter')
-      .addListener(onFilterUpdated);
+        .objects<ConversationFilter>('ConversationFilter')
+        .addListener(onFilterUpdated);  
+    setTimeout(() => {
+      console.log('LOAD CONVOS!');      
+      api.listConversations({
+        page_size: 50,
+        filters: appliedFilters && filterToLuceneSyntax(currentFilter),
+      })
+        .then((response: any) => {
+          console.log('response: ', response);
+          
+          realm.write(() => {
+            realm.create('Pagination', response.paginationData);
+          });
+          upsertConversations(response.data, realm);
+        })
+        .catch((error: Error) => {
+          console.error(error);
+          console.log('error');
+        });      
+    }, 1000)      
   }, []);
 
   useEffect(() => {
@@ -148,7 +157,7 @@ export const ConversationList = (props: ConversationListProps) => {
   const getNextConversationList = () => {
     const cursor = paginationData?.nextCursor;
 
-    HttpClientInstance.listConversations({
+    api.listConversations({
       cursor: cursor,
       page_size: 50,
       filters: appliedFilters && filterToLuceneSyntax(currentFilter),
@@ -173,7 +182,8 @@ export const ConversationList = (props: ConversationListProps) => {
         });
 
         realm.write(() => {
-          const pagination: any = realm.objects('Pagination')[0];
+          const pagination: Pagination | undefined =
+            realm.objects<Pagination>('Pagination')[0];
           pagination.previousCursor = response.paginationData.previousCursor;
           pagination.nextCursor = response.paginationData.nextCursor;
           pagination.total = response.paginationData.total;

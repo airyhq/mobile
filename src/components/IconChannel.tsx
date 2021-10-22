@@ -28,7 +28,7 @@ type IconChannelProps = {
   customWidth?: number;
 };
 
-const SOURCE_INFO: any = {
+const SOURCE_INFO = {
   facebook: {
     text: 'Facebook page',
     icon: () => <FacebookIcon />,
