@@ -147,24 +147,18 @@ const parseAttachment = (
 function facebookInbound(message): ContentUnion {
   const messageJson = message.content.message ?? message.content;
 
-  console.log('messageJson - inbound', messageJson)
+  console.log('messageJson - inbound', messageJson);
 
-  if(messageJson.type === 'button'){
-    return parseAttachment(
-      messageJson.buttonAttachment,
-    );
+  if (messageJson.type === 'button') {
+    return parseAttachment(messageJson.buttonAttachment);
   }
 
-  if(messageJson.type === 'generic'){
-    return parseAttachment(
-      messageJson.genericAttachment,
-    );
+  if (messageJson.type === 'generic') {
+    return parseAttachment(messageJson.genericAttachment);
   }
 
-  if(messageJson.type === 'media'){
-    return parseAttachment(
-      messageJson.mediaAttachment,
-    );
+  if (messageJson.type === 'media') {
+    return parseAttachment(messageJson.mediaAttachment);
   }
 
   // if (messageJson.quick_replies) {
@@ -241,24 +235,18 @@ function facebookInbound(message): ContentUnion {
 function facebookOutbound(message): ContentUnion {
   const messageJson = message.content.message ?? message.content;
 
-  console.log('messageJson - outbound', messageJson)
+  console.log('outbound, messageJson', messageJson);
 
-  if(messageJson.type === 'button'){
-    return parseAttachment(
-      messageJson.buttonAttachment,
-    );
+  if (messageJson.type === 'button') {
+    return parseAttachment(messageJson.buttonAttachment);
   }
 
-  if(messageJson.type === 'generic'){
-    return parseAttachment(
-      messageJson.genericAttachment,
-    );
+  if (messageJson.type === 'generic') {
+    return parseAttachment(messageJson.genericAttachment);
   }
 
-  if(messageJson.type === 'media'){
-    return parseAttachment(
-      messageJson.mediaAttachment,
-    );
+  if (messageJson.type === 'media') {
+    return parseAttachment(messageJson.mediaAttachment);
   }
 
   if (messageJson.quick_replies) {

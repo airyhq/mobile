@@ -28,7 +28,7 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
         <ImageComponent
           imageUrl={content.imageUrl}
           altText="sent via Google Business Messages"
-      />
+        />
       );
     case 'richCard':
       return (
@@ -58,7 +58,7 @@ function googleInbound(message: any): ContentUnion {
       type: 'image',
       imageUrl: messageJson.image.contentInfo.fileUrl,
       altText: messageJson.image.contentInfo.altText,
-    }
+    };
   }
 
   if (messageJson.richCard?.standaloneCard) {

@@ -2,7 +2,15 @@
 export const GenericAttachmentSchema = {
   name: 'GenericAttachment',
   properties: {
-    text: 'string',
+    type: 'string',
+    payload: 'GenericPayload',
+  },
+};
+
+export const GenericPayloadSchema = {
+  name: 'GenericPayload',
+  properties: {
+    text: 'string?',
     template_type: 'string',
     elements: 'Element[]',
   },

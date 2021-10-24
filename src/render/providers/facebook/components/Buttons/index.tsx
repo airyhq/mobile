@@ -44,11 +44,11 @@ export const Buttons = ({buttons, mediaTemplate}: ButtonsProps) => {
                 {button.title}
               </Text>
             ) : button.type === 'account_link' ? (
-              <View style={styles.buttonText}>Log In</View>
+              <Text style={styles.buttonText}>Log In</Text>
             ) : button.type === 'account_unlink' ? (
-              <View style={styles.buttonText}>Log Out</View>
+              <Text style={styles.buttonText}>Log Out</Text>
             ) : (
-              <View style={styles.buttonText}>{button.title}</View>
+              <Text style={styles.buttonText}>{button.title}</Text>
             )}
           </View>
         );
@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: colorContrast,
+    textAlign: 'center',
     paddingTop: 8,
     paddingBottom: 8,
     paddingRight: 8,

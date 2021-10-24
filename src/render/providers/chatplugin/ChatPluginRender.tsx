@@ -61,7 +61,8 @@ function mapContent(message: any): ContentUnion {
 
   if (messageContent.quickRepliesChatPlugin) {
     if (messageContent.quickRepliesChatPlugin.length > 13) {
-      messageContent.quickRepliesChatPlugin = messageContent.quickRepliesChatPlugin.slice(0, 13);
+      messageContent.quickRepliesChatPlugin =
+        messageContent.quickRepliesChatPlugin.slice(0, 13);
     }
 
     if (messageContent.attachment || messageContent.attachments) {

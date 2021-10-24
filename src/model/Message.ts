@@ -34,9 +34,6 @@ export type MessageData = {
   messages: Message[];
 };
 
-//attachment message: distinguish btw all types of attachments
-// + template attachments
-
 export const ContentMessageSchema = {
   name: 'ContentMessage',
   properties: {
@@ -45,7 +42,11 @@ export const ContentMessageSchema = {
     richCard: 'RichCard?',
     richCardCarousel: 'RichCardCarousel?',
     attachment: 'Attachment?',
-    attachments: 'Attachments?',
+    attachments: {
+      type: 'list',
+      objectType: 'Attachment?',
+      optional: true,
+    },
     genericAttachment: 'GenericAttachment?',
     mediaAttachment: 'MediaAttachment?',
     buttonAttachment: 'ButtonAttachment?',
@@ -105,7 +106,10 @@ export const parseToRealmMessage = (
     unformattedMessage.content?.message?.text ??
     unformattedMessage.content?.postback?.title ??
     unformattedMessage.content?.message ??
-    unformattedMessage.content
+    unformattedMessage.content;
+
+  const attachmentMessage =
+    messageContent?.attachment || messageContent?.attachments?.[0];
 
   //chatplugin templates
   if (source === Source.chatplugin) {
@@ -203,21 +207,14 @@ export const parseToRealmMessage = (
 
   //facebook templates
   if (source === Source.facebook) {
-    const attachmentMessage =
-      messageContent?.message?.attachment ||
-      messageContent?.message?.attachments?.[0]
+    //move this up the sources
 
     console.log('parse fb', messageContent);
+    console.log('fb attachmentMessage', attachmentMessage);
 
-    if (
-      messageContent?.quick_replies ||
-      messageContent?.message?.quick_replies
-    ) {
-      if (
-        messageContent?.message?.attachment ||
-        messageContent?.message?.attachments
-      ) {
-        if (messageContent?.message?.attachment) {
+    if (messageContent?.quick_replies) {
+      if (attachmentMessage) {
+        if (messageContent?.attachment) {
           return {
             id: unformattedMessage.id,
             content: {
@@ -235,7 +232,7 @@ export const parseToRealmMessage = (
           };
         }
 
-        if (messageContent?.message?.attachments) {
+        if (messageContent?.attachments) {
           return {
             id: unformattedMessage.id,
             content: {
@@ -261,8 +258,7 @@ export const parseToRealmMessage = (
             type: 'QuickReplies',
             text: messageContent.text,
             quickReplies: {
-              ...(messageContent?.quick_replies ||
-                messageContent?.message?.quick_replies),
+              ...messageContent?.quick_replies,
             },
           },
           deliveryState: unformattedMessage.deliveryState,
@@ -277,8 +273,7 @@ export const parseToRealmMessage = (
         content: {
           type: 'QuickReplies',
           quickReplies: {
-            ...(messageContent?.quick_replies ||
-              messageContent?.message?.quick_replies),
+            ...messageContent?.quick_replies,
           },
         },
         deliveryState: unformattedMessage.deliveryState,
@@ -308,7 +303,7 @@ export const parseToRealmMessage = (
 
     //TEMPLATES
     if (attachmentMessage && attachmentMessage.type === 'template') {
-      console.log('template', attachmentMessage?.payload);
+      //console.log('template', attachmentMessage?.payload);
       //buttonTemplate
       if (attachmentMessage?.payload?.template_type === 'button') {
         return {
@@ -354,12 +349,10 @@ export const parseToRealmMessage = (
     }
 
     //attachment or attachment
-    if (
-      attachmentMessage
-    ) {
-      console.log('attachment', attachmentMessage);
+    if (attachmentMessage) {
+      console.log('attachment FB', attachmentMessage);
 
-      if (messageContent?.message?.attachment) {
+      if (messageContent?.attachment) {
         return {
           id: unformattedMessage.id,
           content: {
@@ -373,7 +366,7 @@ export const parseToRealmMessage = (
         };
       }
 
-      if (messageContent?.message?.attachments) {
+      if (messageContent?.attachments) {
         return {
           id: unformattedMessage.id,
           content: {

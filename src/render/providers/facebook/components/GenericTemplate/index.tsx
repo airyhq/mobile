@@ -12,46 +12,53 @@ type GenericTemplateRendererProps = {
 };
 
 export const GenericTemplate = ({template}: GenericTemplateRendererProps) => {
+  console.log('template generic elements', template?.elements);
   return (
     <Carousel>
-      {template.elements.map((element, idx) => (
-        <View key={`template-${idx}`} style={styles.template}>
-          {element.image_url?.length && (
-            <ImageWithFallback
-              imageStyle={styles.templateImage}
-              src={element.image_url}
-            />
-          )}
-          <View style={styles.innerTemplate}>
-            <Text style={styles.templateTitle}>{element.title}</Text>
-            <Text style={styles.templateSubtitle}>{element.subtitle}</Text>
-            <Buttons buttons={element.buttons} />
+      {template.elements.map((element, idx) => {
+        console.log('element', element);
+        return (
+          <View key={`template-${idx}`} style={styles.template}>
+            {element.image_url && (
+              <ImageWithFallback
+                imageStyle={styles.templateImage}
+                src={element.image_url}
+              />
+            )}
+            <View style={styles.innerTemplate}>
+              <Text style={styles.templateTitle}>{element.title}</Text>
+              <Text style={styles.templateSubtitle}>{element.subtitle}</Text>
+              <Buttons buttons={element.buttons} />
+            </View>
           </View>
-        </View>
-      ))}
+        );
+      })}
     </Carousel>
   );
 };
 
 const styles = StyleSheet.create({
   template: {
+    width: '100%',
+    maxWidth: 280,
+    marginLeft: 8,
     backgroundColor: colorTemplateGray,
     borderRadius: 16,
-    width: 320,
     flexShrink: 0,
-    marginLeft: 8,
   },
   templateTitle: {
     fontWeight: '700',
+    paddingBottom: 5,
   },
   templateSubtitle: {
     fontWeight: '400',
   },
   templateImage: {
     width: '100%',
+    maxWidth: 280,
+    height: 'auto',
     borderTopRightRadius: 16,
     borderTopLeftRadius: 16,
-    overflow: 'hidden',
   },
   innerTemplate: {
     paddingTop: 8,

@@ -1,14 +1,8 @@
 export const AttachmentSchema = {
   name: 'Attachment',
   properties: {
+    type: 'string',
     payload: 'AttachmentPayload',
-  },
-};
-
-export const AttachmentsSchema = {
-  name: 'Attachments',
-  properties: {
-    payload: 'AttachmentPayload[]',
   },
 };
 
@@ -19,6 +13,3 @@ export const AttachmentPayloadSchema = {
     url: 'string?',
   },
 };
-
-
-
