@@ -1,6 +1,5 @@
 import React from 'react';
 import {StyleSheet, View, Text} from 'react-native';
-
 import {Carousel} from '../../../../../componentsLib';
 import {GenericTemplate as GenericTemplateModel} from '../../facebookModel';
 import {ImageWithFallback} from '../../../../components/ImageWithFallback';
@@ -43,7 +42,6 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     backgroundColor: colorTemplateGray,
     borderRadius: 16,
-    flexShrink: 0,
   },
   templateTitle: {
     fontWeight: '700',
