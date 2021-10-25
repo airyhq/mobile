@@ -159,33 +159,33 @@ function facebookInbound(message): ContentUnion {
     return parseAttachment(messageJson.mediaAttachment);
   }
 
-  // if (messageJson.quick_replies) {
-  //   if (messageJson.quick_replies.length > 13) {
-  //     messageJson.quick_replies = messageJson.quick_replies.slice(0, 13);
-  //   }
+  if (messageJson.quick_replies) {
+    if (messageJson.quick_replies.length > 13) {
+      messageJson.quick_replies = messageJson.quick_replies.slice(0, 13);
+    }
 
-  //   if (messageJson.attachment || messageJson.attachments) {
-  //     return {
-  //       type: 'quickReplies',
-  //       attachment: parseAttachment(
-  //         messageJson.attachment || messageJson.attachments,
-  //       ),
-  //       quickReplies: messageJson.quick_replies,
-  //     };
-  //   }
+    if (messageJson.attachment || messageJson.attachments) {
+      return {
+        type: 'quickReplies',
+        attachment: parseAttachment(
+          messageJson.attachment || messageJson.attachments,
+        ),
+        quickReplies: messageJson.quick_replies,
+      };
+    }
 
-  //   return {
-  //     type: 'quickReplies',
-  //     text: messageJson.text,
-  //     quickReplies: messageJson.quick_replies,
-  //   };
-  // }
+    return {
+      type: 'quickReplies',
+      text: messageJson.text,
+      quickReplies: messageJson.quick_replies,
+    };
+  }
 
   if (
-    messageJson.attachment?.type === 'fallback' ||
-    (messageJson.attachments &&
-      messageJson.attachments.length > 0 &&
-      messageJson.attachments?.[0].type === 'fallback')
+    messageJson?.attachment?.type === 'fallback' ||
+    (messageJson?.attachments &&
+      messageJson?.attachments.length > 0 &&
+      messageJson?.attachments?.[0].type === 'fallback')
   ) {
     return {
       text: messageJson.text ?? null,
@@ -194,9 +194,9 @@ function facebookInbound(message): ContentUnion {
   }
 
   if (
-    messageJson.attachments &&
-    messageJson.attachments.length > 0 &&
-    messageJson.attachments?.[0].type === 'image'
+    messageJson?.attachments &&
+    messageJson?.attachments.length > 0 &&
+    messageJson?.attachments?.[0].type === 'image'
   ) {
     return {
       type: 'images',
@@ -214,17 +214,6 @@ function facebookInbound(message): ContentUnion {
       messageJson.attachment || messageJson?.attachments[0],
     );
   }
-
-  // if (messageJson.postback) {
-  //   return {
-  //     type: 'postback',
-  //     title:
-  //       messageJson.postback.title === false
-  //         ? null
-  //         : messageJson.postback.title,
-  //     payload: messageJson.postback.payload,
-  //   };
-  // }
 
   if (messageJson.text) {
     return {
@@ -277,24 +266,32 @@ function facebookOutbound(message): ContentUnion {
     };
   }
 
-  // if (
-  //   (messageJson.attachment && messageJson.attachment?.type === 'fallback') ||
-  //  (messageJson.attachments && messageJson.attachments?.length > 0 && messageJson.attachments[0] && messageJson.attachments[0].type && messageJson.attachments[0].type === 'fallback')
-  // ) {
-  //   return {
-  //     text: messageJson.text ?? null,
-  //     ...parseAttachment(messageJson.attachment || messageJson.attachments[0]),
-  //   };
-  // }
+  if (
+    (messageJson?.attachment && messageJson?.attachment?.type === 'fallback') ||
+    (messageJson?.attachments &&
+      messageJson?.attachments?.length > 0 &&
+      messageJson?.attachments?.[0] &&
+      messageJson?.attachments?.[0].type &&
+      messageJson.attachments[0].type === 'fallback')
+  ) {
+    return {
+      text: messageJson.text ?? null,
+      ...parseAttachment(messageJson.attachment || messageJson.attachments[0]),
+    };
+  }
 
-  // if (messageJson.attachments && messageJson.attachments.length > 0 && messageJson.attachments?.[0]?.type === 'image') {
-  //   return {
-  //     type: 'images',
-  //     images: messageJson.attachments.map(image => {
-  //       return parseAttachment(image);
-  //     }),
-  //   };
-  // }
+  if (
+    messageJson?.attachments &&
+    messageJson?.attachments?.length > 0 &&
+    messageJson?.attachments?.[0]?.type === 'image'
+  ) {
+    return {
+      type: 'images',
+      images: messageJson.attachments.map(image => {
+        return parseAttachment(image);
+      }),
+    };
+  }
 
   if (
     messageJson.attachment ||
@@ -303,17 +300,6 @@ function facebookOutbound(message): ContentUnion {
     return parseAttachment(
       messageJson.attachment || messageJson.attachments[0],
     );
-  }
-
-  if (messageJson?.postback) {
-    return {
-      type: 'postback',
-      title:
-        messageJson.postback.title === false
-          ? null
-          : messageJson.postback.title,
-      payload: messageJson.postback.payload,
-    };
   }
 
   if (messageJson.text) {

@@ -1,4 +1,4 @@
-//QuickReplies Facebook Realm Schema
+//QuickReplies Facebook
 export const QuickRepliesFacebookSchema = {
   name: 'QuickRepliesFacebook',
   properties: {

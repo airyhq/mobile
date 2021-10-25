@@ -26,7 +26,6 @@ type ButtonsProps = {
 };
 
 export const Buttons = ({buttons, mediaTemplate}: ButtonsProps) => {
-
   return (
     <>
       {buttons.map((button, idx) => {

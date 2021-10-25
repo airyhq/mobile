@@ -42,10 +42,7 @@ export const ContentMessageSchema = {
     richCard: 'RichCard?',
     richCardCarousel: 'RichCardCarousel?',
     attachment: 'Attachment?',
-    attachments: {
-      type: 'list',
-      objectType: 'Attachment',
-    },
+    attachments: 'Attachment[]',
     genericAttachment: 'GenericAttachment?',
     mediaAttachment: 'MediaAttachment?',
     buttonAttachment: 'ButtonAttachment?',
@@ -93,8 +90,6 @@ export const MessageMetadataSchema = {
   },
 };
 
-//Postabcak Facebook
-
 export const parseToRealmMessage = (
   unformattedMessage: any,
   source: string,
@@ -112,6 +107,7 @@ export const parseToRealmMessage = (
 
   //chatplugin templates
   if (source === Source.chatplugin) {
+    //richCard
     if (messageContent.richCard && !messageContent.richCard?.carouselCard) {
       return {
         id: unformattedMessage.id,
@@ -126,6 +122,7 @@ export const parseToRealmMessage = (
       };
     }
 
+    //richCard Carousel
     if (messageContent.richCard && messageContent.richCard?.carouselCard) {
       return {
         id: unformattedMessage.id,
@@ -140,11 +137,10 @@ export const parseToRealmMessage = (
       };
     }
 
+    //QuickReplies
     if (messageContent.quick_replies) {
-      if (
-        (messageContent.attachment || messageContent.attachments) &&
-        messageContent.quick_replies
-      ) {
+      //QuickReplies with attachment
+      if (messageContent.attachment && messageContent.quick_replies) {
         return {
           id: unformattedMessage.id,
           content: {
@@ -158,27 +154,16 @@ export const parseToRealmMessage = (
           metadata: unformattedMessage.metadata,
         };
       }
+    }
 
-      if (messageContent.text && messageContent.quick_replies) {
-        return {
-          id: unformattedMessage.id,
-          content: {
-            type: 'QuickReplies',
-            text: messageContent.text,
-            quickRepliesChatPlugin: {...messageContent.quick_replies},
-          },
-          deliveryState: unformattedMessage.deliveryState,
-          fromContact: unformattedMessage.fromContact,
-          sentAt: unformattedMessage.sentAt,
-          metadata: unformattedMessage.metadata,
-        };
-      }
-
+    //QuickReplies with attachments
+    if (messageContent.attachments && messageContent.quick_replies) {
       return {
         id: unformattedMessage.id,
         content: {
           type: 'QuickReplies',
-          QuickReplies: {...messageContent.quick_replies},
+          attachments: [...attachmentMessage],
+          quickRepliesChatPlugin: {...messageContent.quick_replies},
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
@@ -187,12 +172,14 @@ export const parseToRealmMessage = (
       };
     }
 
-    if (messageContent.postback) {
+    //QuickReplies with text
+    if (messageContent.text && messageContent.quick_replies) {
       return {
         id: unformattedMessage.id,
         content: {
-          type: 'Postback',
-          Postback: {...messageContent.quick_replies},
+          type: 'QuickReplies',
+          text: messageContent.text,
+          quickRepliesChatPlugin: {...messageContent.quick_replies},
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
@@ -204,50 +191,139 @@ export const parseToRealmMessage = (
 
   //facebook templates
   if (source === Source.facebook) {
-    //move this up the sources
+    if (
+      messageContent?.attachment?.type === 'template' ||
+      messageContent?.attachments?.[0].type === 'template'
+    ) {
+      const attachment =
+        messageContent?.attachment || messageContent?.attachments?.[0];
 
-    // console.log('parse fb', messageContent);
-    // console.log('fb attachmentMessage', attachmentMessage);
-
-    if (messageContent?.quick_replies) {
-      if (attachmentMessage) {
-        if (messageContent?.attachment) {
-          return {
-            id: unformattedMessage.id,
-            content: {
-              type: 'QuickReplies',
-              attachment: {...attachmentMessage},
-              quickReplies: {
-                ...(messageContent?.quick_replies ||
-                  messageContent?.message?.quick_replies),
-              },
-            },
-            deliveryState: unformattedMessage.deliveryState,
-            fromContact: unformattedMessage.fromContact,
-            sentAt: unformattedMessage.sentAt,
-            metadata: unformattedMessage.metadata,
-          };
-        }
-
-        if (messageContent?.attachments) {
-          return {
-            id: unformattedMessage.id,
-            content: {
-              type: 'QuickReplies',
-              attachments: {...messageContent.attachments},
-              quickReplies: {
-                ...(messageContent?.quick_replies ||
-                  messageContent?.message?.quick_replies),
-              },
-            },
-            deliveryState: unformattedMessage.deliveryState,
-            fromContact: unformattedMessage.fromContact,
-            sentAt: unformattedMessage.sentAt,
-            metadata: unformattedMessage.metadata,
-          };
-        }
+      //buttonTemplate
+      if (
+        messageContent?.attachment?.payload?.template_type === 'button' ||
+        messageContent?.attachments?.[0].payload?.template_type === 'button'
+      ) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'button',
+            buttonAttachment: {...attachment},
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
       }
 
+      //generic template
+      if (
+        messageContent?.attachment?.payload?.template_type === 'generic' ||
+        messageContent?.attachments?.[0].payload?.template_type === 'generic'
+      ) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'generic',
+            genericAttachment: {...attachment},
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+
+      //media template
+      if (
+        messageContent?.attachment.payload?.template_type === 'media' ||
+        messageContent?.attachments?.[0].payload?.template_type === 'media'
+      ) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'media',
+            mediaAttachment: {...attachment},
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+    }
+
+    //attachment / attachments
+    if (attachmentMessage) {
+      if (messageContent?.attachment) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'Attachment',
+            attachment: {...attachmentMessage},
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+
+      if (messageContent?.attachments) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'Attachments',
+            attachments: [...messageContent.attachments],
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+    }
+
+    //Quick Replies
+    if (messageContent?.quick_replies) {
+      //QuickReplies with attachment
+      if (messageContent?.attachment) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'QuickReplies',
+            attachment: {...attachmentMessage},
+            quickReplies: {
+              ...(messageContent?.quick_replies ||
+                messageContent?.message?.quick_replies),
+            },
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+
+      //QuickReplies with attachments
+      if (messageContent?.attachments) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'QuickReplies',
+            attachments: [...messageContent.attachments],
+            quickReplies: {
+              ...messageContent?.quick_replies,
+            },
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+
+      //QuickReplies with text
       if (messageContent.messagetext) {
         return {
           id: unformattedMessage.id,
@@ -279,136 +355,11 @@ export const parseToRealmMessage = (
         metadata: unformattedMessage.metadata,
       };
     }
-
-    // if (messageContent.message.postback) {
-    //   return {
-    //     id: unformattedMessage.id,
-    //     content: {
-    //       type: 'Postback',
-    //       Postback: {...messageContent.message.postback},
-    //     },
-    //     deliveryState: unformattedMessage.deliveryState,
-    //     fromContact: unformattedMessage.fromContact,
-    //     sentAt: unformattedMessage.sentAt,
-    //     metadata: unformattedMessage.metadata,
-    //   };
-    // }
-
-    // genericAttachment: 'GenericAttachment?',
-    // mediaAttachment: 'MediaAttachment?',
-    // buttonAttachment: 'ButtonAttachment?',
-
-    //TEMPLATES
-    if (
-      messageContent?.attachment?.type === 'template' ||
-      messageContent?.attachments?.[0].type === 'template'
-    ) {
-      //console.log('template', attachmentMessage?.payload);
-      const attachment =
-        messageContent?.attachment || messageContent?.attachments?.[0];
-      //buttonTemplate
-      if (
-        messageContent?.attachment?.payload?.template_type === 'button' ||
-        messageContent?.attachments?.[0].payload?.template_type === 'button'
-      ) {
-        return {
-          id: unformattedMessage.id,
-          content: {
-            type: 'button',
-            buttonAttachment: {...attachment},
-          },
-          deliveryState: unformattedMessage.deliveryState,
-          fromContact: unformattedMessage.fromContact,
-          sentAt: unformattedMessage.sentAt,
-          metadata: unformattedMessage.metadata,
-        };
-      }
-
-      if (
-        messageContent?.attachment?.payload?.template_type === 'generic' ||
-        messageContent?.attachments?.[0].payload?.template_type === 'generic'
-      ) {
-        return {
-          id: unformattedMessage.id,
-          content: {
-            type: 'generic',
-            genericAttachment: {...attachment},
-          },
-          deliveryState: unformattedMessage.deliveryState,
-          fromContact: unformattedMessage.fromContact,
-          sentAt: unformattedMessage.sentAt,
-          metadata: unformattedMessage.metadata,
-        };
-      }
-
-      if (
-        messageContent?.attachment.payload?.template_type === 'media' ||
-        messageContent?.attachments?.[0].payload?.template_type === 'media'
-      ) {
-        return {
-          id: unformattedMessage.id,
-          content: {
-            type: 'media',
-            mediaAttachment: {...attachment},
-          },
-          deliveryState: unformattedMessage.deliveryState,
-          fromContact: unformattedMessage.fromContact,
-          sentAt: unformattedMessage.sentAt,
-          metadata: unformattedMessage.metadata,
-        };
-      }
-    }
-
-    //attachment or attachment
-    if (attachmentMessage) {
-      //console.log('attachment FB', attachmentMessage);
-
-      if (messageContent?.attachment) {
-        return {
-          id: unformattedMessage.id,
-          content: {
-            type: 'Attachment',
-            attachment: {...attachmentMessage},
-          },
-          deliveryState: unformattedMessage.deliveryState,
-          fromContact: unformattedMessage.fromContact,
-          sentAt: unformattedMessage.sentAt,
-          metadata: unformattedMessage.metadata,
-        };
-      }
-
-      if (messageContent?.attachments) {
-        //console.log(messageContent?.attachments)
-        return {
-          id: unformattedMessage.id,
-          content: {
-            type: 'Attachments',
-            attachments: [...messageContent.attachments],
-          },
-          deliveryState: unformattedMessage.deliveryState,
-          fromContact: unformattedMessage.fromContact,
-          sentAt: unformattedMessage.sentAt,
-          metadata: unformattedMessage.metadata,
-        };
-      }
-    }
   }
 
+  //Google templates
   if (source === Source.google) {
-    if (messageContent.image && messageContent.image?.contentInfo?.fileUrl) {
-      return {
-        id: unformattedMessage.id,
-        content: {
-          type: 'image',
-          image: messageContent,
-        },
-        deliveryState: unformattedMessage.deliveryState,
-        fromContact: unformattedMessage.fromContact,
-        sentAt: unformattedMessage.sentAt,
-        metadata: unformattedMessage.metadata,
-      };
-    }
-
+    //richCard
     if (messageContent.richCard && !messageContent.richCard?.carouselCard) {
       return {
         id: unformattedMessage.id,
@@ -423,12 +374,28 @@ export const parseToRealmMessage = (
       };
     }
 
+    //richCard Carousel
     if (messageContent.richCard && messageContent.richCard?.carouselCard) {
       return {
         id: unformattedMessage.id,
         content: {
           type: 'RichCardCarousel',
           richCardCarousel: {...messageContent.richCard},
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //image attachment
+    if (messageContent.image && messageContent.image?.contentInfo?.fileUrl) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'image',
+          image: messageContent,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,

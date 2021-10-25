@@ -1,5 +1,4 @@
 //Button template Facebook
-
 export const ButtonAttachmentSchema = {
   name: 'ButtonAttachment',
   properties: {

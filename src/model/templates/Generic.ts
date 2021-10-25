@@ -1,4 +1,4 @@
-//Generic template Schema
+//Generic template Facebook
 export const GenericAttachmentSchema = {
   name: 'GenericAttachment',
   properties: {

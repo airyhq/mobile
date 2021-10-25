@@ -1,4 +1,4 @@
-//QuickReplies Realm Schema
+//QuickReplies ChatPlugin
 export const QuickRepliesChatPluginSchema = {
   name: 'QuickRepliesChatPlugin',
   properties: {

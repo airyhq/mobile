@@ -1,4 +1,4 @@
-//Media Template Schema
+//Media Template Facebook
 export const MediaAttachmentSchema = {
   name: 'MediaAttachment',
   properties: {

@@ -1,4 +1,4 @@
-//RichCardCarousel Realm Schema
+//RichCardCarousel template
 export const RichCardCarouselSchema = {
   name: 'RichCardCarousel',
   properties: {

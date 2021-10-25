@@ -53,8 +53,6 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
 function googleInbound(message: any): ContentUnion {
   const messageJson = message.content.message ?? message.content;
 
-  console.log('google messageJson', messageJson);
-
   if (messageJson.image) {
     return {
       type: 'image',
@@ -114,8 +112,6 @@ function googleInbound(message: any): ContentUnion {
 
 function googleOutbound(message: any): ContentUnion {
   const messageJson = message.content.message ?? message.content;
-
-  console.log('outbound google', messageJson);
 
   if (messageJson.richCard?.standaloneCard) {
     const {

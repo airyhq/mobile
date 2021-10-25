@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, Dimensions, SafeAreaView, FlatList} from 'react-native';
 import {debounce} from 'lodash-es';
-import ConversationListItem from '../ConversationListItem';
+import {ConversationListItem} from '../ConversationListItem';
 import {NoConversations} from '../NoConversations';
 import {RealmDB} from '../../../storage/realm';
 import {getPagination} from '../../../services/Pagination';
@@ -123,6 +123,20 @@ export const ConversationList = (props: ConversationListProps) => {
     }
   }, 2000);
 
+  const memoizedRenderItem = React.useMemo(() => {
+    const renderItem = ({item}) => {
+      return (
+        <ConversationListItem
+          key={item.id}
+          conversation={item}
+          navigation={navigation}
+        />
+      );
+    };
+
+    return renderItem;
+  }, [navigation]);
+
   return (
     <SafeAreaView style={styles.container}>
       {conversations && conversations.length === 0 ? (
@@ -131,15 +145,7 @@ export const ConversationList = (props: ConversationListProps) => {
         <FlatList
           data={conversations}
           onEndReached={debouncedListPreviousConversations}
-          renderItem={({item}) => {
-            return (
-              <ConversationListItem
-                key={item.id}
-                conversation={item}
-                navigation={navigation}
-              />
-            );
-          }}
+          renderItem={memoizedRenderItem}
         />
       )}
     </SafeAreaView>
@@ -157,5 +163,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-
-
