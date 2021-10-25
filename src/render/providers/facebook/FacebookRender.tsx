@@ -82,21 +82,21 @@ const parseAttachment = (
     | GenericAttachment
     | MediaAttachment,
 ): AttachmentUnion => {
-  if (attachment.type === 'image') {
+  if (attachment?.type === 'image') {
     return {
       type: 'image',
       imageUrl: attachment.payload.url,
     };
   }
 
-  if (attachment.type === 'video') {
+  if (attachment?.type === 'video') {
     return {
       type: 'video',
       videoUrl: attachment.payload.url,
     };
   }
 
-  if (attachment.type === 'fallback') {
+  if (attachment?.type === 'fallback') {
     return {
       type: 'fallback',
       title: attachment.payload?.title ?? attachment.title,
@@ -105,7 +105,7 @@ const parseAttachment = (
   }
 
   if (
-    attachment.type === 'template' &&
+    attachment?.type === 'template' &&
     attachment.payload.template_type === 'button'
   ) {
     return {
@@ -116,7 +116,7 @@ const parseAttachment = (
   }
 
   if (
-    attachment.type === 'template' &&
+    attachment?.type === 'template' &&
     attachment.payload.template_type === 'generic'
   ) {
     return {
@@ -126,7 +126,7 @@ const parseAttachment = (
   }
 
   if (
-    attachment.type === 'template' &&
+    attachment?.type === 'template' &&
     attachment.payload.template_type === 'media'
   ) {
     return {
@@ -145,19 +145,17 @@ const parseAttachment = (
 };
 
 function facebookInbound(message): ContentUnion {
-  const messageJson = message.content.message ?? message.content;
+  const messageJson = message.content?.message ?? message.content;
 
-  console.log('messageJson - inbound', messageJson);
-
-  if (messageJson.type === 'button') {
+  if (messageJson?.type === 'button') {
     return parseAttachment(messageJson.buttonAttachment);
   }
 
-  if (messageJson.type === 'generic') {
+  if (messageJson?.type === 'generic') {
     return parseAttachment(messageJson.genericAttachment);
   }
 
-  if (messageJson.type === 'media') {
+  if (messageJson?.type === 'media') {
     return parseAttachment(messageJson.mediaAttachment);
   }
 
@@ -183,28 +181,37 @@ function facebookInbound(message): ContentUnion {
   //   };
   // }
 
-  // if (
-  //   messageJson.attachment?.type === 'fallback' ||
-  //   messageJson.attachments?.[0].type === 'fallback'
-  // ) {
-  //   return {
-  //     text: messageJson.text ?? null,
-  //     ...parseAttachment(messageJson.attachment || messageJson.attachments[0]),
-  //   };
-  // }
+  if (
+    messageJson.attachment?.type === 'fallback' ||
+    (messageJson.attachments &&
+      messageJson.attachments.length > 0 &&
+      messageJson.attachments?.[0].type === 'fallback')
+  ) {
+    return {
+      text: messageJson.text ?? null,
+      ...parseAttachment(messageJson.attachment || messageJson.attachments[0]),
+    };
+  }
 
-  // if (messageJson.attachments?.[0].type === 'image') {
-  //   return {
-  //     type: 'images',
-  //     images: messageJson.attachments.map(image => {
-  //       return parseAttachment(image);
-  //     }),
-  //   };
-  // }
+  if (
+    messageJson.attachments &&
+    messageJson.attachments.length > 0 &&
+    messageJson.attachments?.[0].type === 'image'
+  ) {
+    return {
+      type: 'images',
+      images: messageJson.attachments.map(image => {
+        return parseAttachment(image);
+      }),
+    };
+  }
 
-  if (messageJson?.attachment || messageJson?.attachments) {
+  if (
+    messageJson?.attachment ||
+    (messageJson?.attachments && messageJson?.attachments.length > 0)
+  ) {
     return parseAttachment(
-      messageJson.attachment || messageJson.attachments?.[0],
+      messageJson.attachment || messageJson?.attachments[0],
     );
   }
 
@@ -233,33 +240,32 @@ function facebookInbound(message): ContentUnion {
 }
 
 function facebookOutbound(message): ContentUnion {
-  const messageJson = message.content.message ?? message.content;
+  const messageJson = message.content?.message ?? message.content;
 
-  console.log('outbound, messageJson', messageJson);
-
-  if (messageJson.type === 'button') {
+  if (messageJson?.type === 'button') {
     return parseAttachment(messageJson.buttonAttachment);
   }
 
-  if (messageJson.type === 'generic') {
+  if (messageJson?.type === 'generic') {
     return parseAttachment(messageJson.genericAttachment);
   }
 
-  if (messageJson.type === 'media') {
+  if (messageJson?.type === 'media') {
     return parseAttachment(messageJson.mediaAttachment);
   }
 
-  if (messageJson.quick_replies) {
+  if (messageJson?.quick_replies) {
     if (messageJson.quick_replies.length > 13) {
       messageJson.quick_replies = messageJson.quick_replies.slice(0, 13);
     }
 
-    if (messageJson.attachment || messageJson.attachments) {
+    if (
+      messageJson.attachment ||
+      (messageJson.attachments && messageJson.attachments.length > 0)
+    ) {
       return {
         type: 'quickReplies',
-        attachment: parseAttachment(
-          messageJson.attachment || messageJson.attachments,
-        ),
+        attachment: parseAttachment(messageJson.attachment),
         quickReplies: messageJson.quick_replies,
       };
     }
@@ -271,32 +277,35 @@ function facebookOutbound(message): ContentUnion {
     };
   }
 
+  // if (
+  //   (messageJson.attachment && messageJson.attachment?.type === 'fallback') ||
+  //  (messageJson.attachments && messageJson.attachments?.length > 0 && messageJson.attachments[0] && messageJson.attachments[0].type && messageJson.attachments[0].type === 'fallback')
+  // ) {
+  //   return {
+  //     text: messageJson.text ?? null,
+  //     ...parseAttachment(messageJson.attachment || messageJson.attachments[0]),
+  //   };
+  // }
+
+  // if (messageJson.attachments && messageJson.attachments.length > 0 && messageJson.attachments?.[0]?.type === 'image') {
+  //   return {
+  //     type: 'images',
+  //     images: messageJson.attachments.map(image => {
+  //       return parseAttachment(image);
+  //     }),
+  //   };
+  // }
+
   if (
-    messageJson.attachment?.type === 'fallback' ||
-    messageJson.attachments?.[0].type === 'fallback'
+    messageJson.attachment ||
+    (messageJson.attachments && messageJson?.attachments.length > 0)
   ) {
-    return {
-      text: messageJson.text ?? null,
-      ...parseAttachment(messageJson.attachment || messageJson.attachments[0]),
-    };
-  }
-
-  if (messageJson.attachments && messageJson.attachments[0].type === 'image') {
-    return {
-      type: 'images',
-      images: messageJson.attachments.map(image => {
-        return parseAttachment(image);
-      }),
-    };
-  }
-
-  if (messageJson.attachment || messageJson.attachments) {
     return parseAttachment(
       messageJson.attachment || messageJson.attachments[0],
     );
   }
 
-  if (messageJson.postback) {
+  if (messageJson?.postback) {
     return {
       type: 'postback',
       title:

@@ -65,7 +65,7 @@ function mapContent(message: any): ContentUnion {
         messageContent.quickRepliesChatPlugin.slice(0, 13);
     }
 
-    if (messageContent.attachment || messageContent.attachments) {
+    if (messageContent?.attachment || messageContent?.attachments.length > 0) {
       return {
         type: 'quickReplies',
         attachment: parseAttachment(
@@ -120,14 +120,14 @@ function mapContent(message: any): ContentUnion {
 }
 
 const parseAttachment = (attachment: SimpleAttachment): AttachmentUnion => {
-  if (attachment.type === 'image') {
+  if (attachment?.type === 'image') {
     return {
       type: 'image',
       imageUrl: attachment.payload.url,
     };
   }
 
-  if (attachment.type === 'video') {
+  if (attachment?.type === 'video') {
     return {
       type: 'video',
       videoUrl: attachment.payload.url,

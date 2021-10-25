@@ -26,6 +26,7 @@ type ButtonsProps = {
 };
 
 export const Buttons = ({buttons, mediaTemplate}: ButtonsProps) => {
+
   return (
     <>
       {buttons.map((button, idx) => {
@@ -47,6 +48,12 @@ export const Buttons = ({buttons, mediaTemplate}: ButtonsProps) => {
               <Text style={styles.buttonText}>Log In</Text>
             ) : button.type === 'account_unlink' ? (
               <Text style={styles.buttonText}>Log Out</Text>
+            ) : button.type === 'phone_number' ? (
+              <Text
+                style={styles.buttonText}
+                onPress={() => Linking.openURL(`tel://${button.payload}`)}>
+                {button.title}
+              </Text>
             ) : (
               <Text style={styles.buttonText}>{button.title}</Text>
             )}

@@ -101,7 +101,9 @@ const MessageList = (props: MessageListProps) => {
     }
 
     return () => {
+      if (databaseMessages) {
       databaseMessages.removeAllListeners();
+      }
     };
   }, [conversationId]);
 

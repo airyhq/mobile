@@ -12,11 +12,9 @@ type GenericTemplateRendererProps = {
 };
 
 export const GenericTemplate = ({template}: GenericTemplateRendererProps) => {
-  console.log('template generic elements', template?.elements);
   return (
     <Carousel>
       {template.elements.map((element, idx) => {
-        console.log('element', element);
         return (
           <View key={`template-${idx}`} style={styles.template}>
             {element.image_url && (
@@ -40,6 +38,7 @@ export const GenericTemplate = ({template}: GenericTemplateRendererProps) => {
 const styles = StyleSheet.create({
   template: {
     width: '100%',
+    height: 'auto',
     maxWidth: 280,
     marginLeft: 8,
     backgroundColor: colorTemplateGray,
@@ -56,7 +55,7 @@ const styles = StyleSheet.create({
   templateImage: {
     width: '100%',
     maxWidth: 280,
-    height: 'auto',
+    height: 168,
     borderTopRightRadius: 16,
     borderTopLeftRadius: 16,
   },

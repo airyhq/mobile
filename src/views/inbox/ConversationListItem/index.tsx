@@ -27,13 +27,14 @@ import {
 import {NavigationStackProp} from 'react-navigation-stack';
 import {CurrentState} from '../../../components/CurrentState';
 import {api} from '../../../api';
+import {isEqual} from 'lodash-es';
 
 type ConversationListItemProps = {
   conversation: Conversation;
   navigation?: NavigationStackProp<{conversationId: string}>;
 };
 
-export const ConversationListItem = (props: ConversationListItemProps) => {
+const ConversationListItem = (props: ConversationListItemProps) => {
   const {conversation, navigation} = props;
   const participant = conversation.metadata.contact;
   const unread = conversation.metadata.unreadCount > 0;
@@ -299,3 +300,12 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
 });
+
+const arePropsEqual = (
+  prevProps: ConversationListItemProps,
+  nextProps: ConversationListItemProps,
+): boolean => {
+  return isEqual(prevProps, nextProps);
+};
+
+export default React.memo(ConversationListItem, arePropsEqual);

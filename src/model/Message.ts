@@ -44,8 +44,7 @@ export const ContentMessageSchema = {
     attachment: 'Attachment?',
     attachments: {
       type: 'list',
-      objectType: 'Attachment?',
-      optional: true,
+      objectType: 'Attachment',
     },
     genericAttachment: 'GenericAttachment?',
     mediaAttachment: 'MediaAttachment?',
@@ -109,7 +108,7 @@ export const parseToRealmMessage = (
     unformattedMessage.content;
 
   const attachmentMessage =
-    messageContent?.attachment || messageContent?.attachments?.[0];
+    messageContent?.attachment || messageContent?.attachments;
 
   //chatplugin templates
   if (source === Source.chatplugin) {
@@ -146,8 +145,6 @@ export const parseToRealmMessage = (
         (messageContent.attachment || messageContent.attachments) &&
         messageContent.quick_replies
       ) {
-        const attachmentMessage =
-          messageContent.attachment || messageContent.attachments;
         return {
           id: unformattedMessage.id,
           content: {
@@ -209,8 +206,8 @@ export const parseToRealmMessage = (
   if (source === Source.facebook) {
     //move this up the sources
 
-    console.log('parse fb', messageContent);
-    console.log('fb attachmentMessage', attachmentMessage);
+    // console.log('parse fb', messageContent);
+    // console.log('fb attachmentMessage', attachmentMessage);
 
     if (messageContent?.quick_replies) {
       if (attachmentMessage) {
@@ -237,7 +234,7 @@ export const parseToRealmMessage = (
             id: unformattedMessage.id,
             content: {
               type: 'QuickReplies',
-              attachments: {...attachmentMessage},
+              attachments: {...messageContent.attachments},
               quickReplies: {
                 ...(messageContent?.quick_replies ||
                   messageContent?.message?.quick_replies),
@@ -302,15 +299,23 @@ export const parseToRealmMessage = (
     // buttonAttachment: 'ButtonAttachment?',
 
     //TEMPLATES
-    if (attachmentMessage && attachmentMessage.type === 'template') {
+    if (
+      messageContent?.attachment?.type === 'template' ||
+      messageContent?.attachments?.[0].type === 'template'
+    ) {
       //console.log('template', attachmentMessage?.payload);
+      const attachment =
+        messageContent?.attachment || messageContent?.attachments?.[0];
       //buttonTemplate
-      if (attachmentMessage?.payload?.template_type === 'button') {
+      if (
+        messageContent?.attachment?.payload?.template_type === 'button' ||
+        messageContent?.attachments?.[0].payload?.template_type === 'button'
+      ) {
         return {
           id: unformattedMessage.id,
           content: {
             type: 'button',
-            buttonAttachment: {...attachmentMessage},
+            buttonAttachment: {...attachment},
           },
           deliveryState: unformattedMessage.deliveryState,
           fromContact: unformattedMessage.fromContact,
@@ -319,12 +324,15 @@ export const parseToRealmMessage = (
         };
       }
 
-      if (attachmentMessage?.payload?.template_type === 'generic') {
+      if (
+        messageContent?.attachment?.payload?.template_type === 'generic' ||
+        messageContent?.attachments?.[0].payload?.template_type === 'generic'
+      ) {
         return {
           id: unformattedMessage.id,
           content: {
             type: 'generic',
-            genericAttachment: {...attachmentMessage},
+            genericAttachment: {...attachment},
           },
           deliveryState: unformattedMessage.deliveryState,
           fromContact: unformattedMessage.fromContact,
@@ -333,12 +341,15 @@ export const parseToRealmMessage = (
         };
       }
 
-      if (attachmentMessage?.payload?.template_type === 'media') {
+      if (
+        messageContent?.attachment.payload?.template_type === 'media' ||
+        messageContent?.attachments?.[0].payload?.template_type === 'media'
+      ) {
         return {
           id: unformattedMessage.id,
           content: {
             type: 'media',
-            mediaAttachment: {...attachmentMessage},
+            mediaAttachment: {...attachment},
           },
           deliveryState: unformattedMessage.deliveryState,
           fromContact: unformattedMessage.fromContact,
@@ -350,7 +361,7 @@ export const parseToRealmMessage = (
 
     //attachment or attachment
     if (attachmentMessage) {
-      console.log('attachment FB', attachmentMessage);
+      //console.log('attachment FB', attachmentMessage);
 
       if (messageContent?.attachment) {
         return {
@@ -367,11 +378,12 @@ export const parseToRealmMessage = (
       }
 
       if (messageContent?.attachments) {
+        //console.log(messageContent?.attachments)
         return {
           id: unformattedMessage.id,
           content: {
             type: 'Attachments',
-            attachments: {...attachmentMessage},
+            attachments: [...messageContent.attachments],
           },
           deliveryState: unformattedMessage.deliveryState,
           fromContact: unformattedMessage.fromContact,

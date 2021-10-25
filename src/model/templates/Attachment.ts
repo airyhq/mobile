@@ -1,7 +1,7 @@
 export const AttachmentSchema = {
   name: 'Attachment',
   properties: {
-    type: 'string',
+    type: 'string?',
     payload: 'AttachmentPayload',
   },
 };

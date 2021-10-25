@@ -14,10 +14,8 @@ export const Carousel = ({children}) => {
 
 const styles = StyleSheet.create({
   carouselChildren: {
-    width: '100%',
     height: 'auto',
-    display: 'flex',
-    flexDirection: 'row',
     marginTop: 10,
+    width: '100%',
   },
 });

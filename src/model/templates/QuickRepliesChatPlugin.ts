@@ -4,7 +4,10 @@ export const QuickRepliesChatPluginSchema = {
   properties: {
     text: 'string?',
     attachment: 'Attachment?',
-    attachments: 'Attachment[]?',
+    attachments: {
+      type: 'list',
+      objectType: 'Attachment',
+    },
     quickReplies: 'QuickRepliesChatPluginContent[]',
   },
 };
