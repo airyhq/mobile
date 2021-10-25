@@ -26,11 +26,11 @@ export const AuthWrapper = ({children}) => {
   const [user, setUser] = useState<UserInfo>(null);
 
   const logout = useCallback(() => {
-    setIsAuthenticated(false);
-    const realm = RealmDB.getInstance();
-    realm.write(() => {
-      realm.deleteAll();
-    });
+    // setIsAuthenticated(false);
+    // const realm = RealmDB.getInstance();
+    // realm.write(() => {
+    //   realm.deleteAll();
+    // });
   }, []);
 
   const refreshUser = useCallback(
@@ -52,6 +52,7 @@ export const AuthWrapper = ({children}) => {
         console.error('Authentication error. Logging user out.', error);
         logout();
       });
+
       api.getConfig().then(({userProfile}) => {
         const nextUser = {
           token,
@@ -73,10 +74,12 @@ export const AuthWrapper = ({children}) => {
   const onUserChange = useCallback(
     (users: any) => {
       if (users.length > 0) {
-        refreshUser(
-          users[users.length - 1].host,
-          users[users.length - 1].token,
-        );
+        const userChanged = users[users.length - 1];
+        const host = userChanged.host;
+        const token = userChanged.token;
+        if (host && token) {
+          refreshUser(host, token);
+        }
       }
     },
     [refreshUser],

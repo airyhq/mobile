@@ -20,11 +20,12 @@ import {Source} from '../model/Channel';
 type IconChannelProps = {
   source: string;
   sourceChannelId: string;
+  metadataName: string;
   icon?: boolean;
   showAvatar?: boolean;
   showName?: boolean;
   text?: boolean;
-  metadataName: string;
+  customWidth?: number;
 };
 
 const SOURCE_INFO = {
@@ -78,6 +79,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
   showAvatar,
   showName,
   text,
+  customWidth,
 }: IconChannelProps): JSX.Element => {
   const channelInfo = SOURCE_INFO[source] || SOURCE_INFO[Source.unknown];
   const fbFallback = SOURCE_INFO[Source.facebook];
@@ -86,7 +88,9 @@ const IconChannel: React.FC<IconChannelProps> = ({
 
   const ChannelName = () => {
     return (
-      <Text style={styles.text} numberOfLines={1}>
+      <Text
+        numberOfLines={1}
+        style={[styles.text, {width: customWidth || iconChannelTextWidth}]}>
         {metadataName || (isFromTwilioSource ? sourceChannelId : source)}
       </Text>
     );
@@ -114,7 +118,9 @@ const IconChannel: React.FC<IconChannelProps> = ({
     return (
       <View style={styles.iconText}>
         {channelInfo.icon()}
-        <Text style={styles.text}>{channelInfo.text}</Text>
+        <Text numberOfLines={1} style={styles.text}>
+          {channelInfo.text}
+        </Text>
       </View>
     );
   }
@@ -123,7 +129,9 @@ const IconChannel: React.FC<IconChannelProps> = ({
     return (
       <View style={styles.avatarText}>
         {channelInfo.avatar()}
-        <Text style={styles.text}>{channelInfo.text}</Text>
+        <Text numberOfLines={1} style={styles.text}>
+          {channelInfo.text}
+        </Text>
       </View>
     );
   }
@@ -147,7 +155,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
 export default IconChannel;
 
 const {width} = Dimensions.get('window');
-const iconChannelTextWidth = width * 0.5;
+const iconChannelTextWidth = width * 0.48;
 
 const styles = StyleSheet.create({
   iconText: {
