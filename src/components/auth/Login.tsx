@@ -143,7 +143,7 @@ export const Login = () => {
         onNavigationStateChange={onNavigationStateChange}
         onMessage={onMessage}
         scalesPageToFit
-        startInLoadingState={true} 
+        startInLoadingState={true}
         style={styles.webview}
       />
       <TouchableOpacity onPress={closeWebview} style={styles.closeButton}>

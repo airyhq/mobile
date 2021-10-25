@@ -1,11 +1,12 @@
-import { api } from '../../api';
+import {api} from '../../api';
 import {Channel} from '../../model/Channel';
 import {RealmDB} from '../../storage/realm';
 
 const realm = RealmDB.getInstance();
 
 export const listChannels = () => {
-  api.listChannels()
+  api
+    .listChannels()
     .then((response: any) => {
       realm.write(() => {
         for (const channel of response) {

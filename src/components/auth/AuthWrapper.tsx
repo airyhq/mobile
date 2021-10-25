@@ -52,8 +52,8 @@ export const AuthWrapper = ({children}) => {
         console.error('Authentication error. Logging user out.', error);
         logout();
       });
-      
-      api.getConfig().then(({userProfile}) => {        
+
+      api.getConfig().then(({userProfile}) => {
         const nextUser = {
           token,
           host,
@@ -74,15 +74,12 @@ export const AuthWrapper = ({children}) => {
   const onUserChange = useCallback(
     (users: any) => {
       if (users.length > 0) {
-        const user = users[users.length - 1];
-        const host = user.host;
-        const token = user.token;
-        if (host && token) {          
-          refreshUser(
-            host,
-            token,
-          );          
-        }        
+        const userChanged = users[users.length - 1];
+        const host = userChanged.host;
+        const token = userChanged.token;
+        if (host && token) {
+          refreshUser(host, token);
+        }
       }
     },
     [refreshUser],

@@ -5,11 +5,7 @@ import {ConversationListItem} from '../ConversationListItem';
 import {NoConversations} from '../NoConversations';
 import {RealmDB} from '../../../storage/realm';
 import {getPagination} from '../../../services/Pagination';
-import {
-  Conversation,
-  parseToRealmConversation,
-  upsertConversations,
-} from '../../../model/Conversation';
+import {Conversation, upsertConversations} from '../../../model/Conversation';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {
   ConversationFilter,
@@ -72,9 +68,12 @@ export const ConversationList = (props: ConversationListProps) => {
             realm.create('Pagination', response.paginationData);
           });
 
-          conversations.length === 0
-            ? setConversations([...response.data])
-            : upsertConversations(response.data, realm);
+          if (conversations.length === 0) {
+            setConversations([...response.data]),
+              upsertConversations(response.data, realm);
+          } else {
+            upsertConversations(response.data, realm);
+          }
         })
         .catch((error: Error) => {
           console.error(error);
@@ -120,6 +119,7 @@ export const ConversationList = (props: ConversationListProps) => {
     return () => {
       databaseConversations.removeAllListeners();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFilter]);
 
   const filteredChannels = (): string => {
@@ -162,7 +162,7 @@ export const ConversationList = (props: ConversationListProps) => {
         filters: appliedFilters ? filterToLuceneSyntax(currentFilter) : null,
       })
       .then((response: any) => {
-        upsertConversations(response.data, realm);
+        // upsertConversations(response.data, realm);
 
         realm.write(() => {
           const pagination: Pagination | undefined =
@@ -178,6 +178,9 @@ export const ConversationList = (props: ConversationListProps) => {
   };
 
   const debouncedListPreviousConversations = debounce(() => {
+    console.log('paginationData', paginationData);
+    console.log('paginationData.nextCursor', paginationData.nextCursor);
+
     if (paginationData && paginationData.nextCursor) {
       getNextConversationList();
     }
