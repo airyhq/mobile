@@ -69,6 +69,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
         });
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedChannels, setSelectedChannels]);
 
   useEffect(() => {
@@ -78,6 +79,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
         currentFilter.byChannels = selectedChannels;
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterReset]);
 
   const ChannelItem = ({item}) => {

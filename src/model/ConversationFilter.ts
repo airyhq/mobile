@@ -78,7 +78,11 @@ export const getDisplayNameForRealmFilter = (
 };
 
 export const getStateForRealmFilter = (filter: ConversationFilter): string => {
-  if (filter?.isStateOpen === true) return 'OPEN';
-  if (filter?.isStateOpen === false) return 'CLOSED';
+  if (filter?.isStateOpen === true) {
+    return 'OPEN';
+  }
+  if (filter?.isStateOpen === false) {
+    return 'CLOSED';
+  }
   return '*';
 };

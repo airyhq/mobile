@@ -43,6 +43,7 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
         });
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     stateActiveRead,
     setStateActiveRead,
@@ -59,6 +60,7 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
         currentFilter.unreadOnly = stateActiveUnRead;
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterReset]);
 
   return (

@@ -38,6 +38,7 @@ export const StateButtonComponent = (props: StateButtonCompontentProps) => {
         });
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stateActiveOpen, setStateActiveOpen]);
 
   useEffect(() => {
@@ -47,6 +48,7 @@ export const StateButtonComponent = (props: StateButtonCompontentProps) => {
         currentFilter.isStateOpen = stateActiveOpen;
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterReset]);
 
   return (

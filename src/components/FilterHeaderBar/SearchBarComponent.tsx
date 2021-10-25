@@ -39,6 +39,7 @@ export const SearchBarComponent = (props: SearchBarComponentProps) => {
         });
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchInput, setSearchInput]);
 
   useEffect(() => {
@@ -48,6 +49,7 @@ export const SearchBarComponent = (props: SearchBarComponentProps) => {
         currentFilter.displayName = searchInput;
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterReset]);
 
   return (

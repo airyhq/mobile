@@ -21,9 +21,9 @@ import {
 } from '../../../model/ConversationFilter';
 import {Collection} from 'realm';
 import {EmptyFilterResults} from '../../../components/EmptyFilterResults';
-import {Channel} from '../../../model/Channel';  
-import { Pagination } from '../../../model';
-import { api } from '../../../api';
+import {Channel} from '../../../model/Channel';
+import {Pagination} from '../../../model';
+import {api} from '../../../api';
 
 declare type PaginatedResponse<T> = typeof import('@airyhq/http-client');
 
@@ -59,18 +59,16 @@ export const ConversationList = (props: ConversationListProps) => {
 
   useEffect(() => {
     realm
-        .objects<ConversationFilter>('ConversationFilter')
-        .addListener(onFilterUpdated);  
-        
+      .objects<ConversationFilter>('ConversationFilter')
+      .addListener(onFilterUpdated);
+
     setTimeout(() => {
-      console.log('LOAD CONVOS!');      
-      api.listConversations({
-        page_size: 50,
-        filters: appliedFilters && filterToLuceneSyntax(currentFilter),
-      })
+      api
+        .listConversations({
+          page_size: 50,
+          filters: appliedFilters && filterToLuceneSyntax(currentFilter),
+        })
         .then((response: any) => {
-          console.log('response: ', response);
-          
           realm.write(() => {
             realm.create('Pagination', response.paginationData);
           });
@@ -78,9 +76,9 @@ export const ConversationList = (props: ConversationListProps) => {
         })
         .catch((error: Error) => {
           console.error(error);
-          console.log('error');
-        });      
-    }, 1000)      
+        });
+    }, 1000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -122,6 +120,7 @@ export const ConversationList = (props: ConversationListProps) => {
     return () => {
       databaseConversations.removeAllListeners();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFilter]);
 
   const filteredChannels = (): string => {
@@ -158,11 +157,12 @@ export const ConversationList = (props: ConversationListProps) => {
   const getNextConversationList = () => {
     const cursor = paginationData?.nextCursor;
 
-    api.listConversations({
-      cursor: cursor,
-      page_size: 50,
-      filters: appliedFilters && filterToLuceneSyntax(currentFilter),
-    })
+    api
+      .listConversations({
+        cursor: cursor,
+        page_size: 50,
+        filters: appliedFilters && filterToLuceneSyntax(currentFilter),
+      })
       .then((response: any) => {
         realm.write(() => {
           for (const conversation of response.data) {

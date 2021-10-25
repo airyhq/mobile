@@ -48,6 +48,7 @@ export const FilterHeaderBar = () => {
 
   useEffect(() => {
     filterApplied();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFilter]);
 
   const filterApplied = () => {
