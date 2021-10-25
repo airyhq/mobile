@@ -61,6 +61,7 @@ export const ConversationList = (props: ConversationListProps) => {
     realm
         .objects<ConversationFilter>('ConversationFilter')
         .addListener(onFilterUpdated);  
+        
     setTimeout(() => {
       console.log('LOAD CONVOS!');      
       api.listConversations({
