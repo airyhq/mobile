@@ -80,6 +80,7 @@ export const ConversationList = (props: ConversationListProps) => {
           console.log('error');
         });
     }, 1000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
