@@ -15,7 +15,7 @@ import {
   Conversation,
 } from '../../../model';
 import {MessageComponent} from './MessageComponent';
-import {debounce, sortBy, isEqual} from 'lodash-es';
+import {debounce, sortBy} from 'lodash-es';
 import {ChatInput} from '../../../components/chat/input/ChatInput';
 import {useHeaderHeight} from '@react-navigation/stack';
 import {api} from '../../../api';
@@ -34,7 +34,7 @@ type MessageListProps = {
 
 const realm = RealmDB.getInstance();
 
-const MessageList = (props: MessageListProps) => {
+export const MessageList = (props: MessageListProps) => {
   const {route} = props;
   const conversationId: string = route.params.conversationId;
   const [messages, setMessages] = useState<Message[] | []>([]);
@@ -101,7 +101,9 @@ const MessageList = (props: MessageListProps) => {
     }
 
     return () => {
-      databaseMessages.removeAllListeners();
+      if (databaseMessages) {
+        databaseMessages.removeAllListeners();
+      }
     };
   }, [conversationId]);
 
@@ -175,6 +177,23 @@ const MessageList = (props: MessageListProps) => {
       });
   };
 
+  const memoizedRenderItem = React.useMemo(() => {
+    const renderItem = ({item, index}) => {
+      return (
+        <MessageComponent
+          key={item.id}
+          message={item}
+          messages={messages}
+          source={source}
+          contact={contact}
+          index={index}
+        />
+      );
+    };
+
+    return renderItem;
+  }, [contact, messages, source]);
+
   return (
     <SafeAreaView style={{backgroundColor: 'white'}}>
       <KeyboardAvoidingView
@@ -187,19 +206,7 @@ const MessageList = (props: MessageListProps) => {
             inverted={false}
             ref={messageListRef}
             onEndReached={debouncedListPreviousMessages}
-            initialNumToRender={25}
-            renderItem={({item, index}) => {
-              return (
-                <MessageComponent
-                  key={item.id}
-                  message={item}
-                  messages={messages}
-                  source={source}
-                  contact={contact}
-                  index={index}
-                />
-              );
-            }}
+            renderItem={memoizedRenderItem}
           />
           <View style={styles.chatInput}>
             <ChatInput conversationId={route.params.conversationId} />
@@ -226,12 +233,3 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 });
-
-const arePropsEqual = (
-  prevProps: MessageListProps,
-  nextProps: MessageListProps,
-): boolean => {
-  return isEqual(prevProps, nextProps);
-};
-
-export default React.memo(MessageList, arePropsEqual);

@@ -41,6 +41,13 @@ export const ContentMessageSchema = {
     text: 'string?',
     richCard: 'RichCard?',
     richCardCarousel: 'RichCardCarousel?',
+    attachment: 'Attachment?',
+    attachments: 'Attachment[]',
+    genericAttachment: 'GenericAttachment?',
+    mediaAttachment: 'MediaAttachment?',
+    buttonAttachment: 'ButtonAttachment?',
+    quickRepliesChatPlugin: 'QuickRepliesChatPlugin?',
+    quickRepliesFacebook: 'QuickRepliesFacebook?',
   },
 };
 
@@ -92,43 +99,310 @@ export const parseToRealmMessage = (
     unformattedMessage.content?.text ??
     unformattedMessage.content?.message?.text ??
     unformattedMessage.content?.postback?.title ??
+    unformattedMessage.content?.message ??
     unformattedMessage.content;
 
+  const attachmentMessage =
+    messageContent?.attachment || messageContent?.attachments;
+
   //chatplugin templates
-  if (
-    source === Source.chatplugin &&
-    messageContent.richCard &&
-    !messageContent.richCard?.carouselCard
-  ) {
-    return {
-      id: unformattedMessage.id,
-      content: {
-        type: 'RichCard',
-        richCard: {...messageContent.richCard},
-      },
-      deliveryState: unformattedMessage.deliveryState,
-      fromContact: unformattedMessage.fromContact,
-      sentAt: unformattedMessage.sentAt,
-      metadata: unformattedMessage.metadata,
-    };
+  if (source === Source.chatplugin) {
+    //richCard
+    if (messageContent.richCard && !messageContent.richCard?.carouselCard) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'RichCard',
+          richCard: {...messageContent.richCard},
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //richCard Carousel
+    if (messageContent.richCard && messageContent.richCard?.carouselCard) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'RichCardCarousel',
+          richCardCarousel: {...messageContent.richCard},
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //QuickReplies
+    if (messageContent.quick_replies) {
+      //QuickReplies with attachment
+      if (messageContent.attachment && messageContent.quick_replies) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'QuickReplies',
+            attachment: {...attachmentMessage},
+            quickRepliesChatPlugin: {...messageContent.quick_replies},
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+    }
+
+    //QuickReplies with attachments
+    if (messageContent.attachments && messageContent.quick_replies) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'QuickReplies',
+          attachments: [...attachmentMessage],
+          quickRepliesChatPlugin: {...messageContent.quick_replies},
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //QuickReplies with text
+    if (messageContent.text && messageContent.quick_replies) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'QuickReplies',
+          text: messageContent.text,
+          quickRepliesChatPlugin: {...messageContent.quick_replies},
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
   }
 
-  if (
-    source === Source.chatplugin &&
-    messageContent.richCard &&
-    messageContent.richCard?.carouselCard
-  ) {
-    return {
-      id: unformattedMessage.id,
-      content: {
-        type: 'RichCardCarousel',
-        richCardCarousel: {...messageContent.richCard},
-      },
-      deliveryState: unformattedMessage.deliveryState,
-      fromContact: unformattedMessage.fromContact,
-      sentAt: unformattedMessage.sentAt,
-      metadata: unformattedMessage.metadata,
-    };
+  //facebook templates
+  if (source === Source.facebook) {
+    if (
+      messageContent?.attachment?.type === 'template' ||
+      messageContent?.attachments?.[0].type === 'template'
+    ) {
+      const attachment =
+        messageContent?.attachment || messageContent?.attachments?.[0];
+
+      //buttonTemplate
+      if (
+        messageContent?.attachment?.payload?.template_type === 'button' ||
+        messageContent?.attachments?.[0].payload?.template_type === 'button'
+      ) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'button',
+            buttonAttachment: {...attachment},
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+
+      //generic template
+      if (
+        messageContent?.attachment?.payload?.template_type === 'generic' ||
+        messageContent?.attachments?.[0].payload?.template_type === 'generic'
+      ) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'generic',
+            genericAttachment: {...attachment},
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+
+      //media template
+      if (
+        messageContent?.attachment.payload?.template_type === 'media' ||
+        messageContent?.attachments?.[0].payload?.template_type === 'media'
+      ) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'media',
+            mediaAttachment: {...attachment},
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+    }
+
+    //attachment / attachments
+    if (attachmentMessage) {
+      if (messageContent?.attachment) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'Attachment',
+            attachment: {...attachmentMessage},
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+
+      if (messageContent?.attachments) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'Attachments',
+            attachments: [...messageContent.attachments],
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+    }
+
+    //Quick Replies
+    if (messageContent?.quick_replies) {
+      //QuickReplies with attachment
+      if (messageContent?.attachment) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'QuickReplies',
+            attachment: {...attachmentMessage},
+            quickReplies: {
+              ...(messageContent?.quick_replies ||
+                messageContent?.message?.quick_replies),
+            },
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+
+      //QuickReplies with attachments
+      if (messageContent?.attachments) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'QuickReplies',
+            attachments: [...messageContent.attachments],
+            quickReplies: {
+              ...messageContent?.quick_replies,
+            },
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+
+      //QuickReplies with text
+      if (messageContent.messagetext) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'QuickReplies',
+            text: messageContent.text,
+            quickReplies: {
+              ...messageContent?.quick_replies,
+            },
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'QuickReplies',
+          quickReplies: {
+            ...messageContent?.quick_replies,
+          },
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+  }
+
+  //Google templates
+  if (source === Source.google) {
+    //richCard
+    if (messageContent.richCard && !messageContent.richCard?.carouselCard) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'RichCard',
+          richCard: {...messageContent.richCard},
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //richCard Carousel
+    if (messageContent.richCard && messageContent.richCard?.carouselCard) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'RichCardCarousel',
+          richCardCarousel: {...messageContent.richCard},
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //image attachment
+    if (messageContent.image && messageContent.image?.contentInfo?.fileUrl) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'image',
+          image: messageContent,
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
   }
 
   //text message: all sources

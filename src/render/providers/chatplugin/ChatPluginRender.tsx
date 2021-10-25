@@ -59,25 +59,26 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
 function mapContent(message: any): ContentUnion {
   const messageContent = message.content.message ?? message.content ?? message;
 
-  if (messageContent.quick_replies) {
-    if (messageContent.quick_replies.length > 13) {
-      messageContent.quick_replies = messageContent.quick_replies.slice(0, 13);
+  if (messageContent.quickRepliesChatPlugin) {
+    if (messageContent.quickRepliesChatPlugin.length > 13) {
+      messageContent.quickRepliesChatPlugin =
+        messageContent.quickRepliesChatPlugin.slice(0, 13);
     }
 
-    if (messageContent.attachment || messageContent.attachments) {
+    if (messageContent?.attachment || messageContent?.attachments.length > 0) {
       return {
         type: 'quickReplies',
         attachment: parseAttachment(
           messageContent.attachment || messageContent.attachments,
         ),
-        quickReplies: messageContent.quick_replies,
+        quickReplies: messageContent.quickRepliesChatPlugin,
       };
     }
 
     return {
       type: 'quickReplies',
       text: messageContent.text,
-      quickReplies: messageContent.quick_replies,
+      quickReplies: messageContent.quickRepliesChatPlugin,
     };
   }
 
@@ -119,14 +120,14 @@ function mapContent(message: any): ContentUnion {
 }
 
 const parseAttachment = (attachment: SimpleAttachment): AttachmentUnion => {
-  if (attachment.type === 'image') {
+  if (attachment?.type === 'image') {
     return {
       type: 'image',
       imageUrl: attachment.payload.url,
     };
   }
 
-  if (attachment.type === 'video') {
+  if (attachment?.type === 'video') {
     return {
       type: 'video',
       videoUrl: attachment.payload.url,

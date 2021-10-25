@@ -1,9 +1,13 @@
-//QuickReplies Facebook Realm Schema
+//QuickReplies Facebook
 export const QuickRepliesFacebookSchema = {
   name: 'QuickRepliesFacebook',
   properties: {
     text: 'string?',
-    attachment: 'SimpleAttachment?',
+    attachment: 'Attachment?',
+    attachments: {
+      type: 'list',
+      objectType: 'Attachment',
+    },
     quickReplies: 'QuickRepliesFacebookContent[]',
   },
 };

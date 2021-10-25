@@ -40,7 +40,6 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
 
 const styles = StyleSheet.create({
   contact: {
-    flexDirection: 'column',
     justifyContent: 'center',
   },
   contactContent: {
@@ -49,7 +48,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   member: {
-    flexDirection: 'column',
     alignItems: 'flex-end',
   },
   memberContent: {

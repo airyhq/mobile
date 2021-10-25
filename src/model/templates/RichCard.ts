@@ -1,4 +1,4 @@
-//RichCard Realm Schema
+//RichCard template
 export const RichCardSchema = {
   name: 'RichCard',
   properties: {

@@ -187,6 +187,20 @@ export const ConversationList = (props: ConversationListProps) => {
     }
   }, 2000);
 
+  const memoizedRenderItem = React.useMemo(() => {
+    const renderItem = ({item}) => {
+      return (
+        <ConversationListItem
+          key={item.id}
+          conversation={item}
+          navigation={navigation}
+        />
+      );
+    };
+
+    return renderItem;
+  }, [navigation]);
+
   return (
     <SafeAreaView style={styles.container}>
       {conversations && conversations.length === 0 && !appliedFilters ? (
@@ -195,15 +209,7 @@ export const ConversationList = (props: ConversationListProps) => {
         <FlatList
           data={conversations}
           onEndReached={debouncedListPreviousConversations}
-          renderItem={({item}) => {
-            return (
-              <ConversationListItem
-                key={item.id}
-                conversation={item}
-                navigation={navigation}
-              />
-            );
-          }}
+          renderItem={memoizedRenderItem}
         />
       ) : (
         <EmptyFilterResults />

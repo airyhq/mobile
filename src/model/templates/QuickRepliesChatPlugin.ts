@@ -1,9 +1,13 @@
-//QuickReplies Realm Schema
+//QuickReplies ChatPlugin
 export const QuickRepliesChatPluginSchema = {
   name: 'QuickRepliesChatPlugin',
   properties: {
     text: 'string?',
-    attachment: 'SimpleAttachment?',
+    attachment: 'Attachment?',
+    attachments: {
+      type: 'list',
+      objectType: 'Attachment',
+    },
     quickReplies: 'QuickRepliesChatPluginContent[]',
   },
 };

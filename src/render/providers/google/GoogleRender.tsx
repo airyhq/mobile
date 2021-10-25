@@ -3,6 +3,8 @@ import {RenderPropsUnion} from '../../props';
 import {ContentUnion} from './googleModel';
 import {TextComponent} from '../../components/Text';
 import {ImageComponent} from '../../components/ImageComponent';
+import {RichCard} from './components/RichCard';
+import {RichCardCarousel} from './components/RichCardCarousel';
 
 export const GoogleRender = (props: RenderPropsUnion) => {
   const message = props.message;
@@ -28,6 +30,23 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
           altText="sent via Google Business Messages"
         />
       );
+    case 'richCard':
+      return (
+        <RichCard
+          title={content.title}
+          description={content.description}
+          media={content.media}
+          suggestions={content.suggestions}
+        />
+      );
+
+    case 'richCardCarousel':
+      return (
+        <RichCardCarousel
+          cardWidth={content.cardWidth}
+          cardContents={content.cardContents}
+        />
+      );
   }
 }
 
@@ -39,6 +58,42 @@ function googleInbound(message: any): ContentUnion {
       type: 'image',
       imageUrl: messageJson.image.contentInfo.fileUrl,
       altText: messageJson.image.contentInfo.altText,
+    };
+  }
+
+  if (messageJson.richCard?.standaloneCard) {
+    const {
+      richCard: {
+        standaloneCard: {cardContent},
+      },
+    } = messageJson;
+
+    return {
+      type: 'richCard',
+      ...(cardContent.title && {title: cardContent.title}),
+      ...(cardContent.description && {description: cardContent.description}),
+      media: cardContent.media,
+      suggestions: cardContent.suggestions,
+    };
+  }
+
+  if (messageJson.richCardCarousel?.carouselCard) {
+    return {
+      type: 'richCardCarousel',
+      cardWidth: messageJson.richCardCarousel.carouselCard.cardWidth,
+      cardContents: messageJson.richCardCarousel.carouselCard.cardContents,
+    };
+  }
+
+  if (
+    messageJson.text &&
+    messageJson.text.includes('https://storage.googleapis.com') &&
+    messageJson.text.toLowerCase().includes('x-goog-algorithm') &&
+    messageJson.text.toLowerCase().includes('x-goog-credential')
+  ) {
+    return {
+      type: 'image',
+      imageUrl: messageJson.text,
     };
   }
 
@@ -58,7 +113,31 @@ function googleInbound(message: any): ContentUnion {
 function googleOutbound(message: any): ContentUnion {
   const messageJson = message.content.message ?? message.content;
 
-  if (messageJson.image) {
+  if (messageJson.richCard?.standaloneCard) {
+    const {
+      richCard: {
+        standaloneCard: {cardContent},
+      },
+    } = messageJson;
+
+    return {
+      type: 'richCard',
+      ...(cardContent.title && {title: cardContent.title}),
+      ...(cardContent.description && {description: cardContent.description}),
+      media: cardContent.media,
+      suggestions: cardContent.suggestions,
+    };
+  }
+
+  if (messageJson.richCardCarousel?.carouselCard) {
+    return {
+      type: 'richCardCarousel',
+      cardWidth: messageJson.richCardCarousel.carouselCard.cardWidth,
+      cardContents: messageJson.richCardCarousel.carouselCard.cardContents,
+    };
+  }
+
+  if (messageJson.image && messageJson.image?.contentInfo?.fileUrl) {
     return {
       type: 'image',
       imageUrl: messageJson.image.contentInfo.fileUrl,

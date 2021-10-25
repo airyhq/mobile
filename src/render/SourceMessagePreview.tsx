@@ -2,6 +2,7 @@ import React from 'react';
 import {Text, View, StyleSheet} from 'react-native';
 import {Conversation} from '../model';
 import RichCardIcon from '../assets/images/icons/richCardIcon.svg';
+import AttachmentTemplate from '../assets/images/icons/attachmentTemplate.svg';
 
 interface SourceMessagePreviewProps {
   conversation: Conversation;
@@ -81,7 +82,11 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       );
     }
 
-    return <Text numberOfLines={1}> Type not supported </Text>;
+    return (
+      <View>
+        <AttachmentTemplate width={18} height={18} />
+      </View>
+    );
   };
 
   return <>{lastMessageIsText(conversation)}</>;
