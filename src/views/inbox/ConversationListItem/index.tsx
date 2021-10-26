@@ -161,8 +161,8 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
                   showName
                 />
               </View>
-              <View style={styles.timeIcon}>
-                <Text style={styles.channel}>
+              <View style={styles.timeIconContainer}>
+                <Text style={styles.time}>
                   {formatTimeOfMessage(conversation.lastMessage)}
                 </Text>
                 <RightArrow height={12} width={12} fill="black" />
@@ -188,7 +188,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   contentContainer: {
-    display: 'flex',
     marginBottom: 20,
     paddingLeft: 10,
     width: itemContentWidth,
@@ -230,22 +229,13 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     fontFamily: 'Lato',
   },
-  channel: {
-    fontSize: 13,
-    color: colorTextGray,
-    alignSelf: 'center',
-    marginLeft: 4,
-    fontFamily: 'Lato',
-  },
   nameStatus: {
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
     marginRight: 6,
   },
   channelTimeContainer: {
-    display: 'flex',
     flexDirection: 'row',
     width: channelTimeWidth,
     justifyContent: 'space-between',
@@ -255,20 +245,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconChannel: {
-    display: 'flex',
-    flexDirection: 'row',
-    height: 20,
+    flex: 1,
   },
-  timeIcon: {
-    display: 'flex',
+
+  timeIconContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     height: 20,
     marginRight: -3,
   },
+  time: {
+    fontSize: 13,
+    color: colorTextGray,
+    alignSelf: 'center',
+    marginLeft: 4,
+    fontFamily: 'Lato',
+  },
   container: {
-    display: 'flex',
     flexDirection: 'row',
   },
   toggleStateBox: {

@@ -6,16 +6,15 @@ import {
   StyleProp,
   ViewStyle,
   Vibration,
-  Dimensions,
+  SafeAreaView,
 } from 'react-native';
 import {colorSoftGreen, colorStateRed} from '../assets/colors';
 import {RealmDB} from '../storage/realm';
 import Checkmark from '../assets/images/icons/checkmark-circle.svg';
 import {Conversation} from '../model/Conversation';
-import {Avatar} from './Avatar';
-import IconChannel from './IconChannel';
 import {api} from '../api';
 import {NavigationStackProp} from 'react-navigation-stack';
+import {MessageListHeader} from '../views/inbox/MessageList/MessageListHeader';
 
 type CurrentStateProps = {
   state: string;
@@ -23,61 +22,25 @@ type CurrentStateProps = {
   pressable: boolean;
   style?: StyleProp<ViewStyle>;
   navigation?: NavigationStackProp<{conversationId: string}>;
+  setState?: (newState: string) => void;
 };
 
 export const CurrentState = (props: CurrentStateProps) => {
-  const {state, conversationId, pressable, style, navigation} = props;
+  const {state, conversationId, pressable, style, navigation, setState} = props;
   const currentConversationState = state || 'OPEN';
   const realm = RealmDB.getInstance();
-  const {width} = Dimensions.get('window');
-  const marginRightAvatar = width * 0.84;
-  const marginRightIconChannel = width * 0.76;
-
-  const avatarUrl = realm.objectForPrimaryKey<Conversation>(
-    'Conversation',
-    conversationId,
-  )?.metadata.contact.avatarUrl;
-
-  const channel = realm.objectForPrimaryKey<Conversation>(
-    'Conversation',
-    conversationId,
-  )?.channel;
 
   const changeState = () => {
-    navigation.setOptions({
-      headerRight: () => {
+    navigation.setOptions = ({route, navigation}: NavigationStackProp) => ({
+      headerTitle: () => {
         return (
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Avatar
-              avatarUrl={avatarUrl}
-              small={true}
-              style={{
-                position: 'absolute',
-                right: marginRightAvatar,
-                height: 32,
-                width: 32,
-              }}
-            />
-            <View style={{marginRight: marginRightIconChannel, marginTop: 20}}>
-              <IconChannel
-                source={channel.source}
-                sourceChannelId={channel.sourceChannelId}
-                metadataName={channel.metadata.name}
-                showAvatar
-                showName
-              />
-            </View>
-            <CurrentState
-              conversationId={conversationId}
-              state={newState}
-              pressable={true}
-              style={{position: 'absolute', right: 12, top: 3}}
-              navigation={navigation}
-            />
-          </View>
+          <SafeAreaView>
+            <MessageListHeader route={route} navigation={navigation} />
+          </SafeAreaView>
         );
       },
     });
+
     const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
     api
       .setStateConversation({
@@ -94,6 +57,8 @@ export const CurrentState = (props: CurrentStateProps) => {
           }
         });
       });
+
+    setState(newState);
   };
 
   const OpenStateButton = () => {

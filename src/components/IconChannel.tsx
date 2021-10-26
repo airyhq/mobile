@@ -88,9 +88,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
 
   const ChannelName = () => {
     return (
-      <Text
-        numberOfLines={1}
-        style={[styles.text, {width: customWidth || iconChannelTextWidth}]}>
+      <Text numberOfLines={1} style={styles.text}>
         {metadataName || (isFromTwilioSource ? sourceChannelId : source)}
       </Text>
     );
@@ -108,7 +106,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
   if (showAvatar && showName) {
     return (
       <View style={styles.avatarName}>
-        {channelInfo.avatar()}
+        <View style={styles.avatar}>{channelInfo.avatar()}</View>
         <ChannelName />
       </View>
     );
@@ -154,44 +152,38 @@ const IconChannel: React.FC<IconChannelProps> = ({
 
 export default IconChannel;
 
-const {width} = Dimensions.get('window');
-const iconChannelTextWidth = width * 0.45;
-
 const styles = StyleSheet.create({
   iconText: {
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     width: 20,
     height: 20,
   },
   iconName: {
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     width: 20,
     height: 20,
   },
   avatarText: {
-    display: 'flex',
     flexDirection: 'row',
     width: 20,
     height: 20,
     alignItems: 'center',
   },
   avatarName: {
-    display: 'flex',
+    // backgroundColor: 'orange',
     flexDirection: 'row',
-    width: 20,
     height: 20,
     alignItems: 'center',
   },
   text: {
-    width: iconChannelTextWidth,
+    // backgroundColor: 'red',
     marginLeft: 3,
     fontSize: 13,
     color: colorTextGray,
     fontFamily: 'Lato',
+    marginRight: 20,
   },
   icon: {
     width: 20,
