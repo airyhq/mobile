@@ -77,6 +77,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
 
   const changeState = () => {
     const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
+    console.log('change state newState', newState);
     api
       .setStateConversation({
         conversationId: conversation.id,
@@ -107,7 +108,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
       source: conversation.channel.source,
       sourceChannelId: conversation.channel.sourceChannelId,
       metadataName: conversation.channel.metadata.name,
-      setCurrentConversationState: setCurrentConversationState,
+      changeState: changeState,
     });
   };
 
@@ -146,9 +147,9 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
               </Text>
               <CurrentState
                 conversationId={conversation.id}
-                state={currentConversationState || 'OPEN'}
-                setCurrentConversationState={setCurrentConversationState}
                 pressable={false}
+                state={currentConversationState || 'OPEN'}
+                changeState={changeState}
               />
             </View>
             <View

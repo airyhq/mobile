@@ -21,6 +21,7 @@ type CurrentStateProps = {
   conversationId: string;
   pressable: boolean;
   style?: StyleProp<ViewStyle>;
+  changeState: any;
   navigation?: NavigationStackProp<{conversationId: string}>;
   setState?: (newState: string) => void;
 };
@@ -66,7 +67,7 @@ export const CurrentState = (props: CurrentStateProps) => {
       <>
         {pressable ? (
           <Pressable
-            onPress={changeState}
+            onPress={() => changeState}
             onPressIn={() => Vibration.vibrate}
             style={[
               styles.openStateButton,
@@ -84,7 +85,9 @@ export const CurrentState = (props: CurrentStateProps) => {
     return (
       <View style={[styles.closedStateButton, style]}>
         {pressable ? (
-          <Pressable onPress={changeState} onPressIn={() => Vibration.vibrate}>
+          <Pressable
+            onPress={() => changeState}
+            onPressIn={() => Vibration.vibrate}>
             <Checkmark height={30} width={30} fill={colorSoftGreen} />
           </Pressable>
         ) : (
