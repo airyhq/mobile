@@ -54,9 +54,10 @@ export const ConversationList = (props: ConversationListProps) => {
   };
 
   useEffect(() => {
-    realm
-      .objects<ConversationFilter>('ConversationFilter')
-      .addListener(onFilterUpdated);
+    const filterListener =
+      realm.objects<ConversationFilter>('ConversationFilter');
+    filterListener.addListener(onFilterUpdated);
+
     setTimeout(() => {
       api
         .listConversations({
@@ -77,9 +78,12 @@ export const ConversationList = (props: ConversationListProps) => {
         })
         .catch((error: Error) => {
           console.error(error);
-          console.log('error');
         });
-    }, 1000);
+    }, 200);
+
+    return () => {
+      filterListener.removeAllListeners();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

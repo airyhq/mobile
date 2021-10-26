@@ -125,6 +125,9 @@ export const Login = () => {
       onRequestClose={() => {
         closeWebview();
       }}>
+      <View style={styles.webviewHeader}>
+        <AiryLogo height={200} width={200} />
+      </View>
       <WebView
         ref={webViewRef}
         source={
@@ -143,9 +146,8 @@ export const Login = () => {
         onNavigationStateChange={onNavigationStateChange}
         onMessage={onMessage}
         scalesPageToFit
-        startInLoadingState={true}
-        userAgent="Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko"
-        originWhitelist={["https://*", "http://*"]}
+        userAgent="Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko" //needs to be removed
+        originWhitelist={['https://*', 'http://*']}
         style={styles.webview}
       />
       <TouchableOpacity onPress={closeWebview} style={styles.closeButton}>
@@ -164,6 +166,7 @@ export const Login = () => {
           value={domainInput}
           autoCapitalize={'none'}
           placeholder={'my-organization'}
+          placeholderTextColor="lightgray"
           onChangeText={text => setDomainInput(text.toLowerCase())}
         />
         <Text style={styles.domainText}>.airy.co</Text>
@@ -184,8 +187,9 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     flex: 1,
-    padding: 0,
-    margin: 20,
+    width: '100%',
+    padding: 20,
+    margin: 0,
     backgroundColor: 'white',
   },
   infoText: {
@@ -235,6 +239,12 @@ const styles = StyleSheet.create({
     color: colorStateRed,
     fontFamily: 'Lato',
     fontSize: 20,
+    marginTop: 20,
+  },
+  webviewHeader: {
+    backgroundColor: 'white',
+    alignItems: 'center',
+    height: 150,
   },
   webview: {
     flex: 1,
