@@ -182,10 +182,7 @@ export const ConversationList = (props: ConversationListProps) => {
       });
   };
 
-  const debouncedListPreviousConversations = debounce(() => {
-    console.log('paginationData', paginationData);
-    console.log('paginationData.nextCursor', paginationData.nextCursor);
-
+  const debouncedListPreviousConversations = debounce(() => {    
     if (paginationData && paginationData.nextCursor) {
       getNextConversationList();
     }

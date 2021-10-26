@@ -22,6 +22,6 @@ export const sendMessage = (conversationId: string, message: any) => {
       });
     })
     .catch((error: Error) => {
-      console.log('Error: ', error);
+      console.error('Error: ', error);
     });
 };
