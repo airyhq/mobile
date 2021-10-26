@@ -155,7 +155,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
 export default IconChannel;
 
 const {width} = Dimensions.get('window');
-const iconChannelTextWidth = width * 0.48;
+const iconChannelTextWidth = width * 0.45;
 
 const styles = StyleSheet.create({
   iconText: {

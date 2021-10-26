@@ -106,7 +106,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
             source={item.source}
             sourceChannelId={item.sourceChannelId}
             metadataName={item.metadata?.name}
-            customWidth={windowWidth / 3}
+            customWidth={windowWidth / 3.2}
             showAvatar
             showName
           />
