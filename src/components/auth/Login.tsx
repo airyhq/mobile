@@ -144,6 +144,8 @@ export const Login = () => {
         onMessage={onMessage}
         scalesPageToFit
         startInLoadingState={true}
+        userAgent="Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko"
+        originWhitelist={["https://*", "http://*"]}
         style={styles.webview}
       />
       <TouchableOpacity onPress={closeWebview} style={styles.closeButton}>
