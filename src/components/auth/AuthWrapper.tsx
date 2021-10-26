@@ -18,7 +18,9 @@ export interface AuthContext {
 export const AuthContext = React.createContext<AuthContext>({
   isAuthenticated: false,
   user: null,
-  logout: () => {},
+  logout: () => {
+    RealmDB.getInstance().deleteAll();
+  },
 });
 
 export const AuthWrapper = ({children}) => {
@@ -26,11 +28,11 @@ export const AuthWrapper = ({children}) => {
   const [user, setUser] = useState<UserInfo>(null);
 
   const logout = useCallback(() => {
-    // setIsAuthenticated(false);
-    // const realm = RealmDB.getInstance();
-    // realm.write(() => {
-    //   realm.deleteAll();
-    // });
+    setIsAuthenticated(false);
+    const realm = RealmDB.getInstance();
+    realm.write(() => {
+      realm.deleteAll();
+    });
   }, []);
 
   const refreshUser = useCallback(
