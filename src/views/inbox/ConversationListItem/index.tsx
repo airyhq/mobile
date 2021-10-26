@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -37,7 +37,9 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
   const {conversation, navigation} = props;
   const participant = conversation.metadata.contact;
   const unread = conversation.metadata.unreadCount > 0;
-  const currentConversationState = conversation.metadata.state || 'OPEN';
+  const [currentConversationState, setCurrentConversationState] = useState(
+    conversation.metadata.state || 'OPEN',
+  );
   const realm = RealmDB.getInstance();
   const swipeableRef = useRef<Swipeable | null>(null);
 
@@ -47,12 +49,16 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
       outputRange: [0.7, 0],
       extrapolate: 'clamp',
     });
+
+    console.log('swipe', conversation.metadata.state);
     return (
       <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
         <View
           style={[
             styles.toggleStateBox,
-            currentConversationState === 'OPEN' ? styles.closed : styles.open,
+            conversation.metadata.state === 'OPEN'
+              ? styles.closed
+              : styles.open,
           ]}>
           <Animated.Text
             style={{
@@ -60,7 +66,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
               color: colorLightGray,
               textAlign: 'center',
             }}>
-            {currentConversationState === 'OPEN'
+            {conversation.metadata.state === 'OPEN'
               ? 'SET TO CLOSED'
               : 'SET TO OPEN'}
           </Animated.Text>
@@ -78,11 +84,10 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
       })
       .then(() => {
         realm.write(() => {
-          const changedConversation: Conversation = realm
-            .objectForPrimaryKey('Conversation', conversation.id)
-            .toJSON();
-          changedConversation.metadata.state = newState;
+          conversation.metadata.state = newState;
         });
+
+        setCurrentConversationState(newState);
       });
   };
 
@@ -102,6 +107,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
       source: conversation.channel.source,
       sourceChannelId: conversation.channel.sourceChannelId,
       metadataName: conversation.channel.metadata.name,
+      setCurrentConversationState: setCurrentConversationState,
     });
   };
 
@@ -140,7 +146,8 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
               </Text>
               <CurrentState
                 conversationId={conversation.id}
-                state={conversation.metadata.state || 'OPEN'}
+                state={currentConversationState || 'OPEN'}
+                setCurrentConversationState={setCurrentConversationState}
                 pressable={false}
               />
             </View>

@@ -24,7 +24,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
   const {conversation} = props;
 
   const lastMessageIsText = (currentConversation: Conversation) => {
-    const lastMessageContent: any = currentConversation.lastMessage.content;
+    const lastMessageContent: any = currentConversation?.lastMessage?.content;
 
     if (typeof lastMessageContent.text === 'string') {
       if (
