@@ -117,6 +117,10 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
     );
   };
 
+  const keyExtractor = item => item.id;
+
+  const renderItem = ({item}) => <ChannelItem item={item} />;
+
   return (
     <FlatList
       stickyHeaderIndices={[0]}
@@ -135,10 +139,8 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
       style={styles.connectedChannelList}
       data={connectedChannels}
       ref={channelListRef}
-      keyExtractor={(item, index) => item.id + index}
-      renderItem={({item}) => {
-        return <ChannelItem item={item} />;
-      }}
+      keyExtractor={keyExtractor}
+      renderItem={renderItem}
     />
   );
 };
