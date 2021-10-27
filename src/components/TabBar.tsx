@@ -6,20 +6,15 @@ import SettingsIcon from '../assets/images/icons/settings_icon.svg';
 import {createStackNavigator} from '@react-navigation/stack';
 import {MessageList} from '../views/inbox/MessageList';
 import {colorAiryBlue, colorTextGray} from '../assets/colors';
-import {Avatar} from './Avatar';
-import {CurrentState} from './CurrentState';
-import {Dimensions, SafeAreaView, View} from 'react-native';
-import IconChannel from './IconChannel';
+import {SafeAreaView} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {FilterHeaderBar} from './FilterHeaderBar/FilterHeaderBar';
 import {NavigationStackProp} from 'react-navigation-stack';
+import {MessageListHeader} from '../views/inbox/MessageList/MessageListHeader';
 
 export const TabBar = () => {
   const Tab = createBottomTabNavigator();
   const Stack = createStackNavigator();
-  const {width} = Dimensions.get('window');
-  const marginRightAvatar = width * 0.84;
-  const marginRightIconChannel = width * 0.76;
   const SettingsStack = createStackNavigator();
 
   const InboxScreen = () => {
@@ -88,41 +83,13 @@ export const TabBar = () => {
         name="MessageList"
         component={MessageList}
         options={({route, navigation}: NavigationStackProp) => ({
-          title: `${route.params.displayName}`,
           headerTitleAlign: 'left',
-          headerTitleStyle: {fontFamily: 'Lato', marginBottom: 20},
           headerBackTitleVisible: false,
-          headerRight: () => {
+          headerTitle: () => {
             return (
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Avatar
-                  avatarUrl={route.params.avatarUrl}
-                  small={true}
-                  style={{
-                    position: 'absolute',
-                    right: marginRightAvatar,
-                    height: 32,
-                    width: 32,
-                  }}
-                />
-                <View
-                  style={{marginRight: marginRightIconChannel, marginTop: 20}}>
-                  <IconChannel
-                    metadataName={route.params.metadataName}
-                    source={route.params.source}
-                    sourceChannelId={route.params.sourceChannelId}
-                    showAvatar
-                    showName
-                  />
-                </View>
-                <CurrentState
-                  conversationId={route.params.conversationId}
-                  state={route.params.state || 'OPEN'}
-                  pressable={true}
-                  style={{position: 'absolute', right: 12, top: 3}}
-                  navigation={navigation}
-                />
-              </View>
+              <SafeAreaView>
+                <MessageListHeader route={route} navigation={navigation} />
+              </SafeAreaView>
             );
           },
         })}

@@ -84,11 +84,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
 
   const ChannelItem = ({item}) => {
     return (
-      <View
-        style={{
-          flex: 1,
-          paddingBottom: 8,
-        }}>
+      <View style={styles.channelItemContainer}>
         <TouchableOpacity
           onPress={() => selectedChannelsToggle(item)}
           style={[
@@ -102,20 +98,16 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
               ? {backgroundColor: colorBackgroundBlue}
               : {backgroundColor: 'white'},
           ]}>
-          <IconChannel
-            source={item.source}
-            sourceChannelId={item.sourceChannelId}
-            metadataName={item.metadata?.name}
-            customWidth={windowWidth / 3}
-            showAvatar
-            showName
-          />
-          <View
-            style={{
-              position: 'absolute',
-              right: 4,
-              top: 4,
-            }}>
+          <View style={styles.iconChannelCheckmarkContainer}>
+            <View style={styles.iconChannel}>
+              <IconChannel
+                source={item.source}
+                sourceChannelId={item.sourceChannelId}
+                metadataName={item.metadata?.name}
+                showAvatar
+                showName
+              />
+            </View>
             {selectedChannels.find(channel => channel.id === item.id) && (
               <Checkmark height={20} width={20} fill={colorSoftGreen} />
             )}
@@ -124,6 +116,10 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
       </View>
     );
   };
+
+  const keyExtractor = item => item.id;
+
+  const renderItem = ({item}) => <ChannelItem item={item} />;
 
   return (
     <FlatList
@@ -143,17 +139,25 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
       style={styles.connectedChannelList}
       data={connectedChannels}
       ref={channelListRef}
-      keyExtractor={(item, index) => item.id + index}
-      renderItem={({item}) => {
-        return <ChannelItem item={item} />;
-      }}
+      keyExtractor={keyExtractor}
+      renderItem={renderItem}
     />
   );
 };
 
 const styles = StyleSheet.create({
+  channelItemContainer: {
+    flex: 1,
+    paddingBottom: 8,
+  },
   connectedChannelList: {
     height: 100,
     marginBottom: 8,
+  },
+  iconChannelCheckmarkContainer: {
+    flexDirection: 'row',
+  },
+  iconChannel: {
+    flex: 1,
   },
 });

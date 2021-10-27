@@ -1,5 +1,5 @@
 import React from 'react';
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import FacebookIcon from '../assets/images/icons/facebook_rounded.svg';
 import MessengerAvatar from '../assets/images/icons/messenger_avatar.svg';
 import GoogleIcon from '../assets/images/icons/google-messages.svg';
@@ -25,7 +25,6 @@ type IconChannelProps = {
   showAvatar?: boolean;
   showName?: boolean;
   text?: boolean;
-  customWidth?: number;
 };
 
 const SOURCE_INFO = {
@@ -79,7 +78,6 @@ const IconChannel: React.FC<IconChannelProps> = ({
   showAvatar,
   showName,
   text,
-  customWidth,
 }: IconChannelProps): JSX.Element => {
   const channelInfo = SOURCE_INFO[source] || SOURCE_INFO[Source.unknown];
   const fbFallback = SOURCE_INFO[Source.facebook];
@@ -88,9 +86,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
 
   const ChannelName = () => {
     return (
-      <Text
-        numberOfLines={1}
-        style={[styles.text, {width: customWidth || iconChannelTextWidth}]}>
+      <Text numberOfLines={1} style={styles.text}>
         {metadataName || (isFromTwilioSource ? sourceChannelId : source)}
       </Text>
     );
@@ -108,7 +104,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
   if (showAvatar && showName) {
     return (
       <View style={styles.avatarName}>
-        {channelInfo.avatar()}
+        <View style={styles.avatar}>{channelInfo.avatar()}</View>
         <ChannelName />
       </View>
     );
@@ -154,44 +150,36 @@ const IconChannel: React.FC<IconChannelProps> = ({
 
 export default IconChannel;
 
-const {width} = Dimensions.get('window');
-const iconChannelTextWidth = width * 0.48;
-
 const styles = StyleSheet.create({
   iconText: {
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     width: 20,
     height: 20,
   },
   iconName: {
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     width: 20,
     height: 20,
   },
   avatarText: {
-    display: 'flex',
     flexDirection: 'row',
     width: 20,
     height: 20,
     alignItems: 'center',
   },
   avatarName: {
-    display: 'flex',
     flexDirection: 'row',
-    width: 20,
     height: 20,
     alignItems: 'center',
   },
   text: {
-    width: iconChannelTextWidth,
     marginLeft: 3,
     fontSize: 13,
     color: colorTextGray,
     fontFamily: 'Lato',
+    marginRight: 20,
   },
   icon: {
     width: 20,

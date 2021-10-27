@@ -26,7 +26,7 @@ export const FilterHeaderBar = () => {
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
   const [appliedFilters, setAppliedFilters] = useState<boolean>(false);
   const [filterReset, setFilterReset] = useState<boolean>(false);
-  const defaultHeaderHeight = 45;
+  const defaultHeaderHeight = 44;
   const defaultHeaderHeightExpanded = 290;
   const CHANNEL_COMPONENT_HEIGHT = 100;
   const PADDING_COLLAPSEDFILTER = 32;
