@@ -34,8 +34,8 @@ type MessageListProps = {
 
 const realm = RealmDB.getInstance();
 
-export const MessageList = (props: MessageListProps) => {
-  const {route} = props;
+export const MessageList = ({route, navigation}:any) => {
+  //console.log('route', route)
   const conversationId: string = route.params.conversationId;
   const [messages, setMessages] = useState<Message[] | []>([]);
   const messageListRef = useRef<FlatList>(null);

@@ -1,20 +1,45 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Dimensions, View, Text, StyleSheet} from 'react-native';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {Avatar} from '../../../components/Avatar';
 import {CurrentState} from '../../../components/CurrentState';
 import IconChannel from '../../../components/IconChannel';
+import {api} from '../../../api';
+import {RealmDB} from '../../../storage/realm';
+
+const realm = RealmDB.getInstance();
 
 export const MessageListHeader = ({route, navigation}: NavigationStackProp) => {
   const [convState, setConvState] = useState<string>(
     route.params.state || 'OPEN',
   );
 
-  const stateUpdate = () => {
-    const newState = route.params.state === 'OPEN' ? 'CLOSED' : 'OPEN';
-    setConvState(newState);
-    route.params.setState(newState);
-  };
+  useEffect(() => {
+    console.log('convState', convState)
+  }, [convState])
+
+  // const currentConversation: any = realm.objectForPrimaryKey('Conversation', route.params.conversationId);
+
+  // const stateUpdate = () => {
+  //   const newState = route.params.state === 'OPEN' ? 'CLOSED' : 'OPEN';
+
+  //   return api
+  //   .setStateConversation({
+  //     conversationId: route.params.conversationId,
+  //     state: newState,
+  //   })
+  //   .then(() => {
+  //     realm.write(() => {
+        
+  //       if (currentConversation?.metadata?.state) {
+  //         currentConversation.metadata.state = newState;
+  //       console.log('TABAR', currentConversation.metadata.state)
+  //       }
+  //     });
+
+  //     setConvState(newState);
+  //   });
+  // };
 
   return (
     <View style={styles.container}>
@@ -42,7 +67,7 @@ export const MessageListHeader = ({route, navigation}: NavigationStackProp) => {
         pressable={true}
         style={{position: 'absolute', right: 12, top: 3}}
         navigation={navigation}
-        setState={stateUpdate}
+        setState={setConvState}
       />
     </View>
   );

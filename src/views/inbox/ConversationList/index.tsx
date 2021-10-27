@@ -21,21 +21,21 @@ import {Channel} from '../../../model/Channel';
 import {Pagination} from '../../../model';
 import {api} from '../../../api';
 
-declare type PaginatedResponse<T> = typeof import('@airyhq/http-client');
-
 type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
+  route?: NavigationStackProp<{conversationId: string}>;
 };
 
 const realm = RealmDB.getInstance();
 
 export const ConversationList = (props: ConversationListProps) => {
-  const {navigation} = props;
+  const {navigation, route} = props;
   const paginationData = getPagination();
   const [conversations, setConversations] = useState([]);
   const [currentFilter, setCurrentFilter] = useState<ConversationFilter>();
   const [appliedFilters, setAppliedFilters] = useState<boolean>();
   let filteredChannelArray = [];
+
 
   const filterApplied = () => {
     currentFilter?.displayName !== '' ||
@@ -189,11 +189,18 @@ export const ConversationList = (props: ConversationListProps) => {
   }, 2000);
 
   const renderItem = ({item}) => {
+
+
+    // navigation.setParams({
+    //   state: item.metadata.state,
+    // });
+
     return (
       <ConversationListItem
         key={item.id}
         conversation={item}
         navigation={navigation}
+        route={route}
       />
     );
   };

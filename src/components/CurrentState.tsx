@@ -23,21 +23,41 @@ type CurrentStateProps = {
   style?: StyleProp<ViewStyle>;
   changeState?: any;
   navigation?: NavigationStackProp<{conversationId: string}>;
-  hello?: any;
-  setState?: (newState: string) => void;
+  setState?: any;
 };
 
 export const CurrentState = (props: CurrentStateProps) => {
-  const {state, conversationId, pressable, style, navigation, setState, hello} =
+  let {state, conversationId, pressable, style, navigation, setState} =
     props;
-  const [currentConvState, setCurrentConvState] = useState(state || 'OPEN');
+  const [currentConvState, setCurrentConvState] = useState(state);
   const realm = RealmDB.getInstance();
 
-  useEffect(() => {
-    console.log('<CurrentState> state', state);
-    console.log('<CurrentState> currentConvState', currentConvState);
-    console.log('hello', hello);
-  }, [state, currentConvState, hello]);
+  const currentConversation: any  =
+  realm.objectForPrimaryKey('Conversation', conversationId);
+
+
+  // useEffect(() => {
+  //   console.log('CURRENTSTATE currentConvState', currentConvState);
+  // }, [currentConvState]);
+
+  // useEffect(() => {
+
+  //   if(currentConversation){
+  //     currentConversation.addListener(() => {
+
+  //       setCurrentConvState(currentConversation.metadata.state)
+  //      })
+  //   }
+
+
+  //    return () => {
+  //      if( currentConversation){
+  //       currentConversation.removeAllListeners();
+  //      }
+
+  //   };
+
+  // }, [conversationId])
 
   const changeState = () => {
     navigation.setOptions = ({route, navigation}: NavigationStackProp) => ({
@@ -51,24 +71,27 @@ export const CurrentState = (props: CurrentStateProps) => {
     });
 
     const newState = state === 'OPEN' ? 'CLOSED' : 'OPEN';
-    api
+    setCurrentConvState(newState)
+    if(setState){
+      setState(newState);
+   }  
+    return api
       .setStateConversation({
         conversationId: conversationId,
         state: newState,
       })
       .then(() => {
         realm.write(() => {
-          const changedConversation: Conversation | undefined =
-            realm.objectForPrimaryKey('Conversation', conversationId);
-
-          if (changedConversation?.metadata?.state) {
-            changedConversation.metadata.state = newState;
+          
+          if (currentConversation?.metadata?.state) {
+            currentConversation.metadata.state = newState;
+            console.log('newState', currentConversation.metadata.state)
           }
         });
       });
 
-    setState(newState);
-    setCurrentConvState(newState);
+
+
   };
 
   const OpenStateButton = () => {

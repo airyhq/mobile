@@ -31,23 +31,56 @@ import {api} from '../../../api';
 type ConversationListItemProps = {
   conversation: Conversation;
   navigation?: NavigationStackProp<{conversationId: string}>;
+  route: any;
 };
 
 export const ConversationListItem = (props: ConversationListItemProps) => {
-  const {conversation, navigation} = props;
+  const {conversation, navigation, route} = props;
+
   const participant = conversation.metadata.contact;
   const unread = conversation.metadata.unreadCount > 0;
-  const [currentConversationState, setCurrentConversationState] = useState(
-    conversation.metadata.state || 'OPEN',
-  );
-  const [hello, setHello] = useState('');
+
   const realm = RealmDB.getInstance();
   const swipeableRef = useRef<Swipeable | null>(null);
 
+  const currentConversation: any = realm.objectForPrimaryKey('Conversation', conversation.id);
+
+  const [currentConversationState, setCurrentConversationState] = useState(
+    currentConversation?.metadata?.state || 'OPEN'
+  );
+
+  useEffect(() => {
+    //const currentConversation: any = realm.objectForPrimaryKey('Conversation', conversation.id);
+
+    console.log('convlist useEffect')
+
+  }, [])
+
   useEffect(() => {
     console.log('listConv', currentConversationState);
-    setHello(currentConversationState);
+    console.log('currentConversation?.metadata?.state', currentConversation?.metadata?.state)
   }, [currentConversationState]);
+
+  useEffect(() => {
+
+    console.log('effect')
+
+    if(currentConversation){
+      currentConversation.addListener(() => {
+        //console.log('listener', currentConversation.metadata.state)
+        setCurrentConversationState(currentConversation.metadata.state)
+       })
+    }
+
+
+     return () => {
+       if( currentConversation){
+        currentConversation.removeAllListeners();
+       }
+
+    };
+
+  }, [conversation.id])
 
   const LeftSwipe = (dragX: Animated.AnimatedInterpolation) => {
     const scale = dragX.interpolate({
@@ -81,6 +114,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
 
   const changeState = () => {
     const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
+    setCurrentConversationState(newState);
 
     return api
       .setStateConversation({
@@ -89,15 +123,11 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
       })
       .then(() => {
         realm.write(() => {
-          const changedConversation: Conversation | undefined =
-            realm.objectForPrimaryKey('Conversation', conversation.id);
-
-          if (changedConversation?.metadata?.state) {
-            changedConversation.metadata.state = newState;
+          if (currentConversation?.metadata?.state) {
+            currentConversation.metadata.state = newState;
+          console.log('currentConversation.metadata.state', currentConversation.metadata.state)
           }
         });
-
-        setCurrentConversationState(newState);
       });
   };
 
@@ -109,7 +139,8 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
 
   const onSelectItem = () => {
     markAsRead();
-    navigation.push('MessageList', {
+   
+    navigation.push('MessageList',{
       conversationId: conversation.id,
       avatarUrl: conversation.metadata.contact.avatarUrl,
       displayName: conversation.metadata.contact.displayName,
@@ -117,11 +148,10 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
       source: conversation.channel.source,
       sourceChannelId: conversation.channel.sourceChannelId,
       metadataName: conversation.channel.metadata.name,
-      setState: setCurrentConversationState,
-      hello: hello,
     });
 
-    navigation.setOptions({setState: setCurrentConversationState});
+    // navigation.setOptions({setState: setCurrentConversationState});
+
   };
 
   const close = () => {
@@ -160,9 +190,8 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
               <CurrentState
                 conversationId={conversation.id}
                 pressable={false}
-                state={currentConversationState}
+                state={currentConversation?.metadata?.state}
                 setState={setCurrentConversationState}
-                hello={hello}
               />
             </View>
             <View
