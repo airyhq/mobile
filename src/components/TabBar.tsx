@@ -92,60 +92,6 @@ export const TabBar = () => {
               </SafeAreaView>
             );
           },
-          // header: () => {
-          //   return (
-          //     <SafeAreaView>
-          //       <MessageListHeader route={route} navigation={navigation} />
-          //     </SafeAreaView>
-          //   );
-          // },
-
-          // headerRight: () => {
-          //   return (
-          //     <View
-          //       style={{
-          //         flexDirection: 'row',
-          //         alignItems: 'center',
-          //         width: '100%',
-          //         backgroundColor: 'transparent',
-          //       }}>
-          //       <Avatar
-          //         avatarUrl={route.params.avatarUrl}
-          //         small={true}
-          //         style={{
-          //           position: 'absolute',
-          //           right: marginRightAvatar,
-          //           height: 32,
-          //           width: 32,
-          //           backgroundColor: 'red',
-          //         }}
-          //       />
-          //       <View
-          //         // style={{marginRight: marginRightIconChannel, marginTop: 20}}>
-          //         style={{
-          //           marginRight: width * 0.45,
-          //           marginTop: 20,
-          //           backgroundColor: 'lightblue',
-          //           // flex: 1,
-          //         }}>
-          //         <IconChannel
-          //           metadataName={route.params.metadataName}
-          //           source={route.params.source}
-          //           sourceChannelId={route.params.sourceChannelId}
-          //           showAvatar
-          //           showName
-          //         />
-          //       </View>
-          //       <CurrentState
-          //         conversationId={route.params.conversationId}
-          //         state={route.params.state || 'OPEN'}
-          //         pressable={true}
-          //         style={{position: 'absolute', right: 12, top: 3}}
-          //         navigation={navigation}
-          //       />
-          //     </View>
-          //   );
-          // },
         })}
       />
     </Stack.Navigator>
