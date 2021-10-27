@@ -1,5 +1,5 @@
 import React from 'react';
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import FacebookIcon from '../assets/images/icons/facebook_rounded.svg';
 import MessengerAvatar from '../assets/images/icons/messenger_avatar.svg';
 import GoogleIcon from '../assets/images/icons/google-messages.svg';
