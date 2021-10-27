@@ -25,7 +25,6 @@ type IconChannelProps = {
   showAvatar?: boolean;
   showName?: boolean;
   text?: boolean;
-  customWidth?: number;
 };
 
 const SOURCE_INFO = {
@@ -79,7 +78,6 @@ const IconChannel: React.FC<IconChannelProps> = ({
   showAvatar,
   showName,
   text,
-  customWidth,
 }: IconChannelProps): JSX.Element => {
   const channelInfo = SOURCE_INFO[source] || SOURCE_INFO[Source.unknown];
   const fbFallback = SOURCE_INFO[Source.facebook];
@@ -172,13 +170,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   avatarName: {
-    // backgroundColor: 'orange',
     flexDirection: 'row',
     height: 20,
     alignItems: 'center',
   },
   text: {
-    // backgroundColor: 'red',
     marginLeft: 3,
     fontSize: 13,
     color: colorTextGray,
