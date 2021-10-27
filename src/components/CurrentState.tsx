@@ -22,15 +22,22 @@ type CurrentStateProps = {
   pressable: boolean;
   style?: StyleProp<ViewStyle>;
   changeState?: any;
-  setCurrentConversationState?: any;
   navigation?: NavigationStackProp<{conversationId: string}>;
+  hello?: any;
   setState?: (newState: string) => void;
 };
 
 export const CurrentState = (props: CurrentStateProps) => {
-  const {state, conversationId, pressable, style, navigation, setState} = props;
-  const currentConversationState = state || 'OPEN';
+  const {state, conversationId, pressable, style, navigation, setState, hello} =
+    props;
+  const [currentConvState, setCurrentConvState] = useState(state || 'OPEN');
   const realm = RealmDB.getInstance();
+
+  useEffect(() => {
+    console.log('<CurrentState> state', state);
+    console.log('<CurrentState> currentConvState', currentConvState);
+    console.log('hello', hello);
+  }, [state, currentConvState, hello]);
 
   const changeState = () => {
     navigation.setOptions = ({route, navigation}: NavigationStackProp) => ({
@@ -43,7 +50,7 @@ export const CurrentState = (props: CurrentStateProps) => {
       },
     });
 
-    const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
+    const newState = state === 'OPEN' ? 'CLOSED' : 'OPEN';
     api
       .setStateConversation({
         conversationId: conversationId,
@@ -61,6 +68,7 @@ export const CurrentState = (props: CurrentStateProps) => {
       });
 
     setState(newState);
+    setCurrentConvState(newState);
   };
 
   const OpenStateButton = () => {
@@ -86,9 +94,7 @@ export const CurrentState = (props: CurrentStateProps) => {
     return (
       <View style={[styles.closedStateButton, style]}>
         {pressable ? (
-          <Pressable
-            onPress={changeConvState}
-            onPressIn={() => Vibration.vibrate}>
+          <Pressable onPress={changeState} onPressIn={() => Vibration.vibrate}>
             <Checkmark height={30} width={30} fill={colorSoftGreen} />
           </Pressable>
         ) : (
@@ -97,7 +103,6 @@ export const CurrentState = (props: CurrentStateProps) => {
       </View>
     );
   };
-
 
   return <>{state === 'OPEN' ? <OpenStateButton /> : <ClosedStateButton />}</>;
 };

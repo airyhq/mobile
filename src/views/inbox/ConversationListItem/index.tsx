@@ -40,11 +40,13 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
   const [currentConversationState, setCurrentConversationState] = useState(
     conversation.metadata.state || 'OPEN',
   );
+  const [hello, setHello] = useState('');
   const realm = RealmDB.getInstance();
   const swipeableRef = useRef<Swipeable | null>(null);
 
   useEffect(() => {
     console.log('listConv', currentConversationState);
+    setHello(currentConversationState);
   }, [currentConversationState]);
 
   const LeftSwipe = (dragX: Animated.AnimatedInterpolation) => {
@@ -60,9 +62,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
         <View
           style={[
             styles.toggleStateBox,
-            currentConversationState === 'OPEN'
-              ? styles.closed
-              : styles.open,
+            currentConversationState === 'OPEN' ? styles.closed : styles.open,
           ]}>
           <Animated.Text
             style={{
@@ -81,9 +81,6 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
 
   const changeState = () => {
     const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
-    setCurrentConversationState(newState);
-
-    //console.log('change state newState', currentConversationState);
 
     return api
       .setStateConversation({
@@ -98,13 +95,9 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
           if (changedConversation?.metadata?.state) {
             changedConversation.metadata.state = newState;
           }
-
-          //console.log('then')
-
-          //conversation.metadata.state = newState;
         });
 
-        //console.log('listConv newState', currentConversationState);
+        setCurrentConversationState(newState);
       });
   };
 
@@ -124,9 +117,11 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
       source: conversation.channel.source,
       sourceChannelId: conversation.channel.sourceChannelId,
       metadataName: conversation.channel.metadata.name,
-      changeState: changeState,
-      setCurrentConversationState: setCurrentConversationState
+      setState: setCurrentConversationState,
+      hello: hello,
     });
+
+    navigation.setOptions({setState: setCurrentConversationState});
   };
 
   const close = () => {
@@ -165,9 +160,9 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
               <CurrentState
                 conversationId={conversation.id}
                 pressable={false}
-                state={currentConversationState || 'OPEN'}
-                changeState={changeState}
-                setCurrentConversationState={setCurrentConversationState}
+                state={currentConversationState}
+                setState={setCurrentConversationState}
+                hello={hello}
               />
             </View>
             <View

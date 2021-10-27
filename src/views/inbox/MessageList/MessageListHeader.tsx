@@ -6,10 +6,14 @@ import {CurrentState} from '../../../components/CurrentState';
 import IconChannel from '../../../components/IconChannel';
 
 export const MessageListHeader = ({route, navigation}: NavigationStackProp) => {
-  const [state, setState] = useState<string>(route.params.state || 'OPEN');
+  const [convState, setConvState] = useState<string>(
+    route.params.state || 'OPEN',
+  );
 
-  const stateUpdate = (newState: string) => {
-    setState(newState);
+  const stateUpdate = () => {
+    const newState = route.params.state === 'OPEN' ? 'CLOSED' : 'OPEN';
+    setConvState(newState);
+    route.params.setState(newState);
   };
 
   return (
@@ -34,7 +38,7 @@ export const MessageListHeader = ({route, navigation}: NavigationStackProp) => {
       </View>
       <CurrentState
         conversationId={route.params.conversationId}
-        state={state}
+        state={convState}
         pressable={true}
         style={{position: 'absolute', right: 12, top: 3}}
         navigation={navigation}
