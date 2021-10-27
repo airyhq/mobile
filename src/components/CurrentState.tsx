@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   StyleSheet,
@@ -21,7 +21,8 @@ type CurrentStateProps = {
   conversationId: string;
   pressable: boolean;
   style?: StyleProp<ViewStyle>;
-  changeState: any;
+  changeState?: any;
+  setCurrentConversationState?: any;
   navigation?: NavigationStackProp<{conversationId: string}>;
   setState?: (newState: string) => void;
 };
@@ -67,7 +68,7 @@ export const CurrentState = (props: CurrentStateProps) => {
       <>
         {pressable ? (
           <Pressable
-            onPress={() => changeState}
+            onPress={changeState}
             onPressIn={() => Vibration.vibrate}
             style={[
               styles.openStateButton,
@@ -86,7 +87,7 @@ export const CurrentState = (props: CurrentStateProps) => {
       <View style={[styles.closedStateButton, style]}>
         {pressable ? (
           <Pressable
-            onPress={() => changeState}
+            onPress={changeConvState}
             onPressIn={() => Vibration.vibrate}>
             <Checkmark height={30} width={30} fill={colorSoftGreen} />
           </Pressable>
@@ -96,6 +97,7 @@ export const CurrentState = (props: CurrentStateProps) => {
       </View>
     );
   };
+
 
   return <>{state === 'OPEN' ? <OpenStateButton /> : <ClosedStateButton />}</>;
 };

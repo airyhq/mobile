@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import {
   View,
   StyleSheet,
@@ -43,6 +43,10 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
   const realm = RealmDB.getInstance();
   const swipeableRef = useRef<Swipeable | null>(null);
 
+  useEffect(() => {
+    console.log('listConv', currentConversationState);
+  }, [currentConversationState]);
+
   const LeftSwipe = (dragX: Animated.AnimatedInterpolation) => {
     const scale = dragX.interpolate({
       inputRange: [0, 100],
@@ -50,13 +54,13 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
       extrapolate: 'clamp',
     });
 
-    console.log('swipe', conversation.metadata.state);
+    //console.log('swipe', conversation.metadata.state);
     return (
       <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
         <View
           style={[
             styles.toggleStateBox,
-            conversation.metadata.state === 'OPEN'
+            currentConversationState === 'OPEN'
               ? styles.closed
               : styles.open,
           ]}>
@@ -66,7 +70,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
               color: colorLightGray,
               textAlign: 'center',
             }}>
-            {conversation.metadata.state === 'OPEN'
+            {currentConversationState === 'OPEN'
               ? 'SET TO CLOSED'
               : 'SET TO OPEN'}
           </Animated.Text>
@@ -77,18 +81,30 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
 
   const changeState = () => {
     const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
-    console.log('change state newState', newState);
-    api
+    setCurrentConversationState(newState);
+
+    //console.log('change state newState', currentConversationState);
+
+    return api
       .setStateConversation({
         conversationId: conversation.id,
         state: newState,
       })
       .then(() => {
         realm.write(() => {
-          conversation.metadata.state = newState;
+          const changedConversation: Conversation | undefined =
+            realm.objectForPrimaryKey('Conversation', conversation.id);
+
+          if (changedConversation?.metadata?.state) {
+            changedConversation.metadata.state = newState;
+          }
+
+          //console.log('then')
+
+          //conversation.metadata.state = newState;
         });
 
-        setCurrentConversationState(newState);
+        //console.log('listConv newState', currentConversationState);
       });
   };
 
@@ -104,11 +120,12 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
       conversationId: conversation.id,
       avatarUrl: conversation.metadata.contact.avatarUrl,
       displayName: conversation.metadata.contact.displayName,
-      state: conversation.metadata.state,
+      state: currentConversationState,
       source: conversation.channel.source,
       sourceChannelId: conversation.channel.sourceChannelId,
       metadataName: conversation.channel.metadata.name,
       changeState: changeState,
+      setCurrentConversationState: setCurrentConversationState
     });
   };
 
@@ -150,6 +167,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
                 pressable={false}
                 state={currentConversationState || 'OPEN'}
                 changeState={changeState}
+                setCurrentConversationState={setCurrentConversationState}
               />
             </View>
             <View
