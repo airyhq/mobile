@@ -61,6 +61,7 @@ export const FilterHeaderBar = () => {
     return () => {
       currentFilter.removeAllListeners();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterOpen]);
 
   const isFilterApplied = () => {
