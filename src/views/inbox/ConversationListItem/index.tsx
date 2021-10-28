@@ -78,9 +78,10 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
       })
       .then(() => {
         realm.write(() => {
-          const changedConversation: Conversation = realm
-            .objectForPrimaryKey('Conversation', conversation.id)
-            .toJSON();
+          const changedConversation: Conversation = realm.objectForPrimaryKey(
+            'Conversation',
+            conversation.id,
+          );
           changedConversation.metadata.state = newState;
         });
       });
