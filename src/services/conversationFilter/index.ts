@@ -4,8 +4,6 @@ export const displayNameFilterActive = (currentFilter: ConversationFilter) => {
   if (currentFilter !== undefined) {
     if (currentFilter.displayName !== '') {
       return true;
-    } else {
-      return false;
     }
   }
 };
@@ -14,8 +12,6 @@ export const readOnlyFilterActive = (currentFilter: ConversationFilter) => {
   if (currentFilter !== undefined) {
     if (currentFilter.readOnly !== null) {
       return true;
-    } else {
-      return false;
     }
   }
 };
@@ -24,8 +20,6 @@ export const unreadOnlyFilterActive = (currentFilter: ConversationFilter) => {
   if (currentFilter !== undefined) {
     if (currentFilter.unreadOnly !== null) {
       return true;
-    } else {
-      return false;
     }
   }
 };
@@ -34,8 +28,6 @@ export const isStateOpenFilterActive = (currentFilter: ConversationFilter) => {
   if (currentFilter !== undefined) {
     if (currentFilter.isStateOpen !== null) {
       return true;
-    } else {
-      return false;
     }
   }
 };
@@ -44,8 +36,6 @@ export const byChannelsFilterActive = (currentFilter: ConversationFilter) => {
   if (currentFilter !== undefined) {
     if (currentFilter.byChannels.length > 0) {
       return true;
-    } else {
-      return false;
     }
   }
 };
@@ -60,8 +50,6 @@ export const isFilterActive = (currentFilter: ConversationFilter) => {
       byChannelsFilterActive(currentFilter)
     ) {
       return true;
-    } else {
-      return false;
     }
   }
 };
@@ -82,12 +70,17 @@ export const onlyDisplayNameFilterActive = (
   }
 };
 
-export const resetConversationFilters = (currentFilter: ConversationFilter) => {
+export const resetConversationFilters = (
+  currentFilter: ConversationFilter,
+  realm: Realm,
+) => {
   if (currentFilter !== undefined) {
-    (currentFilter.displayName = ''),
-      (currentFilter.byChannels = []),
-      (currentFilter.readOnly = null),
-      (currentFilter.unreadOnly = null);
-    currentFilter.isStateOpen = null;
+    realm.write(() => {
+      (currentFilter.displayName = ''),
+        (currentFilter.byChannels = []),
+        (currentFilter.readOnly = null),
+        (currentFilter.unreadOnly = null);
+      currentFilter.isStateOpen = null;
+    });
   }
 };

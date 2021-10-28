@@ -53,12 +53,14 @@ export const FilterHeaderBar = () => {
   const resetButtonFadeAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    currentFilter.addListener(() => {
-      isFilterApplied();
-    });
-    return () => {
-      currentFilter.removeAllListeners();
-    };
+    if (currentFilter) {
+      currentFilter.addListener(() => {
+        isFilterApplied();
+      });
+      return () => {
+        currentFilter.removeAllListeners();
+      };
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterOpen]);
 
@@ -112,9 +114,7 @@ export const FilterHeaderBar = () => {
   };
 
   const resetFilters = () => {
-    realm.write(() => {
-      resetConversationFilters(currentFilter);
-    });
+    resetConversationFilters(currentFilter, realm);
     Vibration.vibrate();
   };
 
