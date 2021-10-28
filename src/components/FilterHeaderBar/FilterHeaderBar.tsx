@@ -22,12 +22,10 @@ import {ChannelComponent} from './ChannelCompontent';
 import {SearchBarComponent} from './SearchBarComponent';
 import {Channel, ConversationFilter} from '../../model';
 import {
-  byChannelsFilterActive,
   displayNameFilterActive,
   isFilterActive,
-  isStateOpenFilterActive,
-  readOnlyFilterActive,
-  unreadOnlyFilterActive,
+  onlyDisplayNameFilterActive,
+  resetConversationFilters,
 } from '../../services/conversationFilter';
 
 export const FilterHeaderBar = () => {
@@ -72,13 +70,7 @@ export const FilterHeaderBar = () => {
       fadeInAnimation(resetButtonFadeAnimation, 300);
       setAppliedFilters(true);
     }
-    if (
-      displayNameFilterActive(currentFilter) &&
-      !readOnlyFilterActive(currentFilter) &&
-      !unreadOnlyFilterActive(currentFilter) &&
-      !byChannelsFilterActive(currentFilter) &&
-      !isStateOpenFilterActive(currentFilter)
-    ) {
+    if (onlyDisplayNameFilterActive(currentFilter)) {
       setAppliedFilters(false);
     }
     if (displayNameFilterActive(currentFilter) && filterOpen) {
@@ -121,11 +113,7 @@ export const FilterHeaderBar = () => {
 
   const resetFilters = () => {
     realm.write(() => {
-      (currentFilter.displayName = ''),
-        (currentFilter.byChannels = []),
-        (currentFilter.readOnly = null),
-        (currentFilter.unreadOnly = null);
-      currentFilter.isStateOpen = null;
+      resetConversationFilters(currentFilter);
     });
     Vibration.vibrate();
   };

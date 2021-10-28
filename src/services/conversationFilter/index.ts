@@ -65,3 +65,29 @@ export const isFilterActive = (currentFilter: ConversationFilter) => {
     }
   }
 };
+
+export const onlyDisplayNameFilterActive = (
+  currentFilter: ConversationFilter,
+) => {
+  if (currentFilter !== undefined) {
+    if (
+      displayNameFilterActive(currentFilter) &&
+      !readOnlyFilterActive(currentFilter) &&
+      !unreadOnlyFilterActive(currentFilter) &&
+      !byChannelsFilterActive(currentFilter) &&
+      !isStateOpenFilterActive(currentFilter)
+    ) {
+      return true;
+    }
+  }
+};
+
+export const resetConversationFilters = (currentFilter: ConversationFilter) => {
+  if (currentFilter !== undefined) {
+    (currentFilter.displayName = ''),
+      (currentFilter.byChannels = []),
+      (currentFilter.readOnly = null),
+      (currentFilter.unreadOnly = null);
+    currentFilter.isStateOpen = null;
+  }
+};
