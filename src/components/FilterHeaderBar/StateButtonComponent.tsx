@@ -10,14 +10,12 @@ import {ConversationFilter} from '../../model';
 import {RealmDB} from '../../storage/realm';
 
 type StateButtonCompontentProps = {
-  filterReset: boolean;
+  currentFilter: ConversationFilter;
 };
 
 export const StateButtonComponent = (props: StateButtonCompontentProps) => {
-  const {filterReset} = props;
+  const {currentFilter} = props;
   const realm = RealmDB.getInstance();
-  const currentFilter =
-    realm.objects<ConversationFilter>('ConversationFilter')[0];
   const [stateActiveOpen, setStateActiveOpen] = useState<boolean>(
     currentFilter?.isStateOpen,
   );
@@ -40,16 +38,6 @@ export const StateButtonComponent = (props: StateButtonCompontentProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stateActiveOpen, setStateActiveOpen]);
-
-  useEffect(() => {
-    if (filterReset) {
-      setStateActiveOpen(null);
-      realm.write(() => {
-        currentFilter.isStateOpen = stateActiveOpen;
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterReset]);
 
   return (
     <View

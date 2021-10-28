@@ -11,19 +11,17 @@ import {ConversationFilter} from '../../model/ConversationFilter';
 import {RealmDB} from '../../storage/realm';
 
 type ReadUnreadComponentProps = {
-  filterReset: boolean;
+  currentFilter: ConversationFilter;
 };
 
 export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
-  const {filterReset} = props;
+  const {currentFilter} = props;
   const realm = RealmDB.getInstance();
-  const currentFilter =
-    realm.objects<ConversationFilter>('ConversationFilter')[0];
   const [stateActiveRead, setStateActiveRead] = useState<boolean>(
-    currentFilter?.readOnly || null,
+    currentFilter?.readOnly,
   );
   const [stateActiveUnRead, setStateActiveUnRead] = useState<boolean>(
-    currentFilter?.unreadOnly || null,
+    currentFilter?.unreadOnly,
   );
 
   useEffect(() => {
@@ -50,18 +48,6 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
     stateActiveUnRead,
     setStateActiveUnRead,
   ]);
-
-  useEffect(() => {
-    if (filterReset) {
-      setStateActiveRead(null);
-      setStateActiveUnRead(null);
-      realm.write(() => {
-        currentFilter.readOnly = stateActiveRead;
-        currentFilter.unreadOnly = stateActiveUnRead;
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterReset]);
 
   return (
     <View

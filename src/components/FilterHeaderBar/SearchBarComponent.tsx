@@ -11,17 +11,13 @@ import {RealmDB} from '../../storage/realm';
 import {ConversationFilter} from '../../model/ConversationFilter';
 
 type SearchBarComponentProps = {
-  filterReset: boolean;
+  currentFilter: ConversationFilter;
 };
 
 export const SearchBarComponent = (props: SearchBarComponentProps) => {
-  const {filterReset} = props;
+  const {currentFilter} = props;
   const realm = RealmDB.getInstance();
-  const currentFilter =
-    realm.objects<ConversationFilter>('ConversationFilter')[0];
-  const [searchInput, setSearchInput] = useState(
-    currentFilter?.displayName || '',
-  );
+  const [searchInput, setSearchInput] = useState(currentFilter?.displayName);
 
   useEffect(() => {
     if (currentFilter) {
@@ -41,16 +37,6 @@ export const SearchBarComponent = (props: SearchBarComponentProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchInput, setSearchInput]);
-
-  useEffect(() => {
-    if (filterReset) {
-      setSearchInput('');
-      realm.write(() => {
-        currentFilter.displayName = searchInput;
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterReset]);
 
   return (
     <View style={styles.searchBarContainer}>
