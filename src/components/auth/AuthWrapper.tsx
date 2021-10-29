@@ -71,9 +71,9 @@ export const AuthWrapper = ({children}) => {
         });
         setUser(nextUser);
         setIsAuthenticated(true);
-        // setTimeout(() => {
-        //   setLoading(false);
-        // }, 1000);        
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);        
       });
     },
     [user, logout],
@@ -109,9 +109,7 @@ export const AuthWrapper = ({children}) => {
       height: '100%',
       width: '100%'
     }}>
-      <LottieView source={require('../../assets/animations/loading.json')} autoPlay loop onAnimationFinish={() => {
-        setLoading(false);
-      }}/>
+      <LottieView source={require('../../assets/animations/loading.json')} autoPlay loop />
     </View>
   ) : (
     isAuthenticated ? (
