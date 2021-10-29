@@ -15,17 +15,19 @@ export const GenericTemplate = ({template}: GenericTemplateRendererProps) => {
     <Carousel>
       {template.elements.map((element, idx) => {
         return (
-          <View key={`template-${idx}`} style={styles.template}>
-            {element.image_url && (
-              <ImageWithFallback
-                imageStyle={styles.templateImage}
-                src={element.image_url}
-              />
-            )}
-            <View style={styles.innerTemplate}>
-              <Text style={styles.templateTitle}>{element.title}</Text>
-              <Text style={styles.templateSubtitle}>{element.subtitle}</Text>
-              <Buttons buttons={element.buttons} />
+          <View key={idx} style={{paddingRight: 5}}>
+            <View key={`template-${idx}`} style={styles.template}>
+              {element.image_url && (
+                <ImageWithFallback
+                  imageStyle={styles.templateImage}
+                  src={element.image_url}
+                />
+              )}
+              <View style={styles.innerTemplate}>
+                <Text style={styles.templateTitle}>{element.title}</Text>
+                <Text style={styles.templateSubtitle}>{element.subtitle}</Text>
+                <Buttons buttons={element.buttons} />
+              </View>
             </View>
           </View>
         );
