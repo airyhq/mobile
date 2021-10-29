@@ -42,7 +42,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
       ? setSelectedChannels(
           selectedChannels.filter(channel => channel.id !== item.id),
         )
-      : setSelectedChannels(selectedChannels => [...selectedChannels, item]);
+      : setSelectedChannels([...selectedChannels, item]);
 
     if (currentFilter) {
       realm.write(() => {

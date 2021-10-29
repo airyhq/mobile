@@ -80,7 +80,8 @@ export const FilterHeaderBar = () => {
       setAppliedFilters(true);
     }
     if (!isFilterActive(currentFilter)) {
-      fadeOutAnimation(resetButtonFadeAnimation, 300), setAppliedFilters(false);
+      fadeOutAnimation(resetButtonFadeAnimation, 300);
+      setAppliedFilters(false);
     }
   };
 

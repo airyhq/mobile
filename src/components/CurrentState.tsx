@@ -31,7 +31,7 @@ export const CurrentState = (props: CurrentStateProps) => {
   const realm = RealmDB.getInstance();
 
   const changeState = () => {
-    navigation.setOptions = ({route, navigation}: NavigationStackProp) => ({
+    navigation.setOptions = ({route}: NavigationStackProp) => ({
       headerTitle: () => {
         return (
           <SafeAreaView>

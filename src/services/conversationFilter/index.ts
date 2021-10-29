@@ -76,10 +76,10 @@ export const resetConversationFilters = (
 ) => {
   if (currentFilter !== undefined) {
     realm.write(() => {
-      (currentFilter.displayName = ''),
-        (currentFilter.byChannels = []),
-        (currentFilter.readOnly = null),
-        (currentFilter.unreadOnly = null);
+      currentFilter.displayName = '';
+      currentFilter.byChannels = [];
+      currentFilter.readOnly = null;
+      currentFilter.unreadOnly = null;
       currentFilter.isStateOpen = null;
     });
   }
