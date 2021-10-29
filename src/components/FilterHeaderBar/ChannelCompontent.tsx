@@ -46,7 +46,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
           ...prevSelectedChannels,
           item,
         ]);
-    
+
     if (currentFilter) {
       realm.write(() => {
         currentFilter.byChannels = selectedChannels;
