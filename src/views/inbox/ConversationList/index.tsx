@@ -68,8 +68,8 @@ export const ConversationList = (props: ConversationListProps) => {
           });
 
           if (conversations.length === 0) {
-            setConversations([...response.data]),
-              upsertConversations(response.data, realm);
+            setConversations([...response.data]);
+            upsertConversations(response.data, realm);
           } else {
             upsertConversations(response.data, realm);
           }

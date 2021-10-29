@@ -89,7 +89,8 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
             },
           ]}
           onPress={() => {
-            setStateActiveRead(null), setStateActiveUnRead(null);
+            setStateActiveRead(null);
+            setStateActiveUnRead(null);
           }}>
           <Text
             style={{
@@ -116,7 +117,8 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
             },
           ]}
           onPress={() => {
-            setStateActiveRead(false), setStateActiveUnRead(true);
+            setStateActiveRead(false);
+            setStateActiveUnRead(true);
           }}>
           <Text
             style={{
@@ -140,7 +142,8 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
             },
           ]}
           onPress={() => {
-            setStateActiveRead(true), setStateActiveUnRead(false);
+            setStateActiveRead(true);
+            setStateActiveUnRead(false);
           }}>
           <Text
             style={{
