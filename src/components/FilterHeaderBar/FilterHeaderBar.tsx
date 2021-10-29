@@ -21,11 +21,16 @@ import {StateButtonComponent} from './StateButtonComponent';
 import {ChannelComponent} from './ChannelCompontent';
 import {SearchBarComponent} from './SearchBarComponent';
 import {Channel, ConversationFilter} from '../../model';
+import {
+  displayNameFilterActive,
+  isFilterActive,
+  onlyDisplayNameFilterActive,
+  resetConversationFilters,
+} from '../../services/conversationFilter';
 
 export const FilterHeaderBar = () => {
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
   const [appliedFilters, setAppliedFilters] = useState<boolean>(false);
-  const [filterReset, setFilterReset] = useState<boolean>(false);
   const defaultHeaderHeight = 44;
   const defaultHeaderHeightExpanded = 290;
   const CHANNEL_COMPONENT_HEIGHT = 100;
@@ -44,43 +49,74 @@ export const FilterHeaderBar = () => {
       ? defaultHeaderHeightExpanded
       : defaultHeaderHeightExpanded - CHANNEL_COMPONENT_HEIGHT;
 
-  const fadeAnimation = useRef(new Animated.Value(0)).current;
+  const filterHeaderFadeAnimation = useRef(new Animated.Value(0)).current;
+  const resetButtonFadeAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    filterApplied();
+    if (currentFilter) {
+      currentFilter.addListener(() => {
+        isFilterApplied();
+      });
+      return () => {
+        currentFilter.removeAllListeners();
+      };
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFilter]);
+  }, [filterOpen]);
 
-  const filterApplied = () => {
-    if (currentFilter !== undefined) {
-      currentFilter?.displayName !== '' ||
-      currentFilter?.byChannels.length > 0 ||
-      currentFilter?.isStateOpen !== null ||
-      currentFilter?.readOnly !== null ||
-      currentFilter?.unreadOnly !== null
-        ? setAppliedFilters(true)
-        : setAppliedFilters(false);
+  const isFilterApplied = () => {
+    if (
+      isFilterActive(currentFilter) &&
+      !displayNameFilterActive(currentFilter)
+    ) {
+      fadeInAnimation(resetButtonFadeAnimation, 300);
+      setAppliedFilters(true);
+    }
+    if (onlyDisplayNameFilterActive(currentFilter)) {
+      setAppliedFilters(false);
+    }
+    if (displayNameFilterActive(currentFilter) && filterOpen) {
+      resetButtonFadeAnimation.setValue(1);
+      setAppliedFilters(true);
+    }
+    if (!isFilterActive(currentFilter)) {
+      fadeOutAnimation(resetButtonFadeAnimation, 300);
+      setAppliedFilters(false);
     }
   };
 
-  const fadeInAnimation = () => {
-    Animated.timing(fadeAnimation, {
+  const fadeInAnimation = (
+    item: Animated.Value | Animated.ValueXY,
+    duration?: number,
+  ) => {
+    Animated.timing(item, {
       toValue: 1,
-      duration: 600,
+      duration: duration || 600,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const fadeOutAnimation = (
+    item: Animated.Value | Animated.ValueXY,
+    duration?: number,
+  ) => {
+    Animated.timing(item, {
+      toValue: 0,
+      duration: duration || 600,
       useNativeDriver: true,
     }).start();
   };
 
   const toggleFiltering = () => {
     setFilterOpen(!filterOpen);
-    !filterOpen ? fadeInAnimation() : fadeAnimation.setValue(0);
-    !appliedFilters && setFilterReset(false);
+    !filterOpen
+      ? fadeInAnimation(filterHeaderFadeAnimation)
+      : filterHeaderFadeAnimation.setValue(0);
   };
 
   const resetFilters = () => {
-    setFilterReset(true);
+    resetConversationFilters(currentFilter, realm);
     Vibration.vibrate();
-    setAppliedFilters(false);
   };
 
   const CollapsedFilterView = () => {
@@ -104,7 +140,7 @@ export const FilterHeaderBar = () => {
             alignItems: 'center',
             flexDirection: 'row',
           }}>
-          <SearchBarComponent filterReset={filterReset} />
+          <SearchBarComponent currentFilter={currentFilter} />
           <View
             style={{
               flexDirection: 'row',
@@ -116,7 +152,7 @@ export const FilterHeaderBar = () => {
                 <FilterIcon width={32} height={32} fill={colorAiryBlue} />
               </TouchableOpacity>
               {appliedFilters && (
-                <View
+                <Animated.View
                   style={{
                     position: 'absolute',
                     right: 4,
@@ -140,7 +176,7 @@ export const FilterHeaderBar = () => {
       <Animated.View
         style={{
           height: expandedHeaderHeight,
-          opacity: fadeAnimation,
+          opacity: filterHeaderFadeAnimation,
           backgroundColor: 'white',
           width: windowWidth,
           justifyContent: 'flex-end',
@@ -155,18 +191,21 @@ export const FilterHeaderBar = () => {
               justifyContent: 'space-between',
             }}>
             <Text style={styles.headerTitleExpanded}>Filter</Text>
-            {appliedFilters && (
-              <TouchableOpacity onPress={resetFilters}>
-                <Text style={{marginRight: 8, color: colorAiryBlue}}>
-                  Reset
-                </Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity onPress={resetFilters}>
+              <Animated.Text
+                style={{
+                  marginRight: 8,
+                  color: colorAiryBlue,
+                  opacity: resetButtonFadeAnimation,
+                }}>
+                Reset
+              </Animated.Text>
+            </TouchableOpacity>
           </View>
-          <ReadUnreadComponent filterReset={filterReset} />
-          <StateButtonComponent filterReset={filterReset} />
+          <ReadUnreadComponent currentFilter={currentFilter} />
+          <StateButtonComponent currentFilter={currentFilter} />
           {connectedChannels.length > 0 && (
-            <ChannelComponent filterReset={filterReset} />
+            <ChannelComponent currentFilter={currentFilter} />
           )}
           <View
             style={{

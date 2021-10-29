@@ -19,17 +19,15 @@ import {RealmDB} from '../../storage/realm';
 import {ConversationFilter} from '../../model/ConversationFilter';
 
 type ChannelComponentProps = {
-  filterReset: boolean;
+  currentFilter: ConversationFilter;
 };
 
 export const ChannelComponent = (props: ChannelComponentProps) => {
-  const {filterReset} = props;
+  const {currentFilter} = props;
   const channelListRef = useRef<FlatList>(null);
   const CHANNEL_PADDING = 48;
   const windowWidth = Dimensions.get('window').width;
   const realm = RealmDB.getInstance();
-  const currentFilter =
-    realm.objects<ConversationFilter>('ConversationFilter')[0];
   const [selectedChannels, setSelectedChannels] = useState<Channel[]>(
     currentFilter?.byChannels || [],
   );
@@ -44,7 +42,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
       ? setSelectedChannels(
           selectedChannels.filter(channel => channel.id !== item.id),
         )
-      : setSelectedChannels(selectedChannels => [...selectedChannels, item]);
+      : setSelectedChannels([...selectedChannels, item]);
 
     if (currentFilter) {
       realm.write(() => {
@@ -71,16 +69,6 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedChannels, setSelectedChannels]);
-
-  useEffect(() => {
-    if (filterReset) {
-      setSelectedChannels([]);
-      realm.write(() => {
-        currentFilter.byChannels = selectedChannels;
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterReset]);
 
   const ChannelItem = ({item}) => {
     return (
