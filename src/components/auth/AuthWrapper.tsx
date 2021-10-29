@@ -7,6 +7,7 @@ import {UserInfo} from '../../model/userInfo';
 import {HttpClient} from '@airyhq/http-client';
 import {Login} from './Login';
 import CookieManager from '@react-native-cookies/cookies';
+import { View } from 'react-native';
 
 export let api = new HttpClient();
 
@@ -70,7 +71,9 @@ export const AuthWrapper = ({children}) => {
         });
         setUser(nextUser);
         setIsAuthenticated(true);
-        setLoading(false);
+        // setTimeout(() => {
+        //   setLoading(false);
+        // }, 1000);        
       });
     },
     [user, logout],
@@ -102,7 +105,14 @@ export const AuthWrapper = ({children}) => {
   }, [onUserChange]);
 
   return loading ? (
-    <LottieView source={require('../../assets/animations/loading.json')} autoPlay loop />              
+    <View style={{
+      height: '100%',
+      width: '100%'
+    }}>
+      <LottieView source={require('../../assets/animations/loading.json')} autoPlay loop onAnimationFinish={() => {
+        setLoading(false);
+      }}/>
+    </View>
   ) : (
     isAuthenticated ? (
       <AuthContext.Provider
