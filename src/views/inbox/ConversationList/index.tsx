@@ -211,6 +211,7 @@ export const ConversationList = (props: ConversationListProps) => {
           data={conversations}
           onEndReached={debouncedListPreviousConversations}
           renderItem={memoizedRenderItem}
+          onEndReachedThreshold={0.5}
         />
       ) : (
         <EmptyFilterResults />
