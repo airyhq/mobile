@@ -21,8 +21,6 @@ import {Channel} from '../../../model/Channel';
 import {Pagination} from '../../../model';
 import {api} from '../../../api';
 
-declare type PaginatedResponse<T> = typeof import('@airyhq/http-client');
-
 type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
 };
@@ -167,7 +165,9 @@ export const ConversationList = (props: ConversationListProps) => {
         filters: appliedFilters ? filterToLuceneSyntax(currentFilter) : null,
       })
       .then((response: any) => {
-        // upsertConversations(response.data, realm);
+        upsertConversations(response.data, realm);
+
+        setConversations([...conversations, ...response.data]);
 
         realm.write(() => {
           const pagination: Pagination | undefined =
@@ -211,6 +211,7 @@ export const ConversationList = (props: ConversationListProps) => {
           data={conversations}
           onEndReached={debouncedListPreviousConversations}
           renderItem={memoizedRenderItem}
+          onEndReachedThreshold={0.5}
         />
       ) : (
         <EmptyFilterResults />
