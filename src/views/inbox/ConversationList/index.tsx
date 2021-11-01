@@ -3,9 +3,9 @@ import {StyleSheet, Dimensions, SafeAreaView, FlatList} from 'react-native';
 import {debounce} from 'lodash-es';
 import {ConversationListItem} from '../ConversationListItem';
 import {NoConversations} from '../NoConversations';
-import {RealmDB} from '../../../storage/realm';
+import {RealmDB, upsertConversations} from '../../../storage/realm';
 import {getPagination} from '../../../services/Pagination';
-import {Conversation, upsertConversations} from '../../../model/Conversation';
+import {Conversation} from '../../../model/Conversation';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {
   ConversationFilter,

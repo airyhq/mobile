@@ -6,41 +6,27 @@ import {
   StyleProp,
   ViewStyle,
   Vibration,
-  SafeAreaView,
 } from 'react-native';
 import {colorSoftGreen, colorStateRed} from '../assets/colors';
 import {RealmDB} from '../storage/realm';
 import Checkmark from '../assets/images/icons/checkmark-circle.svg';
 import {Conversation} from '../model/Conversation';
 import {api} from '../api';
-import {NavigationStackProp} from 'react-navigation-stack';
-import {MessageListHeader} from '../views/inbox/MessageList/MessageListHeader';
 
 type CurrentStateProps = {
   state: string;
   conversationId: string;
   pressable: boolean;
   style?: StyleProp<ViewStyle>;
-  navigation?: NavigationStackProp<{conversationId: string}>;
   setState?: (newState: string) => void;
 };
 
 export const CurrentState = (props: CurrentStateProps) => {
-  const {state, conversationId, pressable, style, navigation, setState} = props;
+  const {state, conversationId, pressable, style, setState} = props;
   const currentConversationState = state || 'OPEN';
   const realm = RealmDB.getInstance();
 
   const changeState = () => {
-    navigation.setOptions = ({route}: NavigationStackProp) => ({
-      headerTitle: () => {
-        return (
-          <SafeAreaView>
-            <MessageListHeader route={route} navigation={navigation} />
-          </SafeAreaView>
-        );
-      },
-    });
-
     const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
     api
       .setStateConversation({
