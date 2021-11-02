@@ -59,6 +59,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
               transform: [{translateX: scale}],
               color: colorLightGray,
               textAlign: 'center',
+              fontFamily: 'Lato',
             }}>
             {currentConversationState === 'OPEN'
               ? 'SET TO CLOSED'
