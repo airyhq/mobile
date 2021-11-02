@@ -61,9 +61,12 @@ export const StateButtonComponent = (props: StateButtonCompontentProps) => {
           ]}
           onPress={() => setStateActiveOpen(null)}>
           <Text
-            style={{
-              color: stateActiveOpen === null ? 'white' : colorContrast,
-            }}>
+            style={[
+              styles.text,
+              {
+                color: stateActiveOpen === null ? 'white' : colorContrast,
+              },
+            ]}>
             All
           </Text>
         </TouchableOpacity>
@@ -83,7 +86,10 @@ export const StateButtonComponent = (props: StateButtonCompontentProps) => {
           ]}
           onPress={() => setStateActiveOpen(true)}>
           <Text
-            style={{color: stateActiveOpen === true ? 'white' : colorRedAlert}}>
+            style={[
+              styles.text,
+              {color: stateActiveOpen === true ? 'white' : colorRedAlert},
+            ]}>
             Open
           </Text>
         </TouchableOpacity>
@@ -103,9 +109,12 @@ export const StateButtonComponent = (props: StateButtonCompontentProps) => {
           ]}
           onPress={() => setStateActiveOpen(false)}>
           <Text
-            style={{
-              color: stateActiveOpen === false ? 'white' : colorSoftGreen,
-            }}>
+            style={[
+              styles.text,
+              {
+                color: stateActiveOpen === false ? 'white' : colorSoftGreen,
+              },
+            ]}>
             Done
           </Text>
         </TouchableOpacity>
@@ -124,5 +133,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 1,
     borderColor: colorAiryBlue,
+  },
+  text: {
+    fontFamily: 'Lato',
   },
 });

@@ -44,21 +44,23 @@ const styles = StyleSheet.create({
   },
   contactContent: {
     overflow: 'hidden',
-    maxWidth: '100%',
+    maxWidth: '90%',
     alignItems: 'flex-start',
+    marginTop: 10,
   },
   member: {
     alignItems: 'flex-end',
   },
   memberContent: {
     overflow: 'hidden',
-    maxWidth: '100%',
+    maxWidth: '90%',
     alignItems: 'flex-end',
     flexDirection: 'column',
+    marginTop: 10,
   },
   time: {
     fontFamily: 'Lato',
-    fontSize: 10,
+    fontSize: 12,
     color: colorTextGray,
     marginLeft: 5,
     marginRight: 5,

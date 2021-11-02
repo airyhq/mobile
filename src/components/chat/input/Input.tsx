@@ -156,8 +156,8 @@ const styles = StyleSheet.create({
   textInput: {
     fontFamily: 'Lato',
     alignSelf: 'flex-end',
-    borderRadius: 16,
-    paddingTop: 10,
+    fontSize: 16,
+    paddingTop: 8,
   },
   sendButton: {
     borderRadius: 50,

@@ -79,12 +79,15 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
             setStateActiveUnRead(null);
           }}>
           <Text
-            style={{
-              color:
-                (stateActiveRead || stateActiveUnRead) === null
-                  ? 'white'
-                  : colorContrast,
-            }}>
+            style={[
+              styles.text,
+              {
+                color:
+                  (stateActiveRead || stateActiveUnRead) === null
+                    ? 'white'
+                    : colorContrast,
+              },
+            ]}>
             All
           </Text>
         </TouchableOpacity>
@@ -107,9 +110,12 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
             setStateActiveUnRead(true);
           }}>
           <Text
-            style={{
-              color: stateActiveUnRead === true ? 'white' : colorRedAlert,
-            }}>
+            style={[
+              styles.text,
+              {
+                color: stateActiveUnRead === true ? 'white' : colorRedAlert,
+              },
+            ]}>
             Unread
           </Text>
         </TouchableOpacity>
@@ -132,9 +138,12 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
             setStateActiveUnRead(false);
           }}>
           <Text
-            style={{
-              color: stateActiveRead === true ? 'white' : colorSoftGreen,
-            }}>
+            style={[
+              styles.text,
+              {
+                color: stateActiveRead === true ? 'white' : colorSoftGreen,
+              },
+            ]}>
             Read
           </Text>
         </TouchableOpacity>
@@ -153,5 +162,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 1,
     borderColor: colorAiryBlue,
+  },
+  text: {
+    fontFamily: 'Lato',
   },
 });
