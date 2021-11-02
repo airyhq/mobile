@@ -19,6 +19,9 @@ import {debounce, sortBy} from 'lodash-es';
 import {ChatInput} from '../../../components/chat/input/ChatInput';
 import {useHeaderHeight} from '@react-navigation/stack';
 import {api} from '../../../api';
+import { loadMessagesForConversation } from '../../../api/conversation';
+import { isLastInGroup } from '../../../services/message';
+import { hasDateChanged } from '../../../services/dates';
 
 declare type PaginatedResponse<T> = typeof import('@airyhq/http-client');
 
@@ -28,7 +31,7 @@ interface RouteProps {
   params: {conversationId: string};
 }
 
-type MessageListProps = {
+type MessageListProps = {  
   route: RouteProps;
 };
 
@@ -36,14 +39,14 @@ const realm = RealmDB.getInstance();
 
 export const MessageList = (props: MessageListProps) => {
   const {route} = props;
-  const conversationId: string = route.params.conversationId;
+  
   const [messages, setMessages] = useState<Message[] | []>([]);
   const messageListRef = useRef<FlatList>(null);
   const headerHeight = useHeaderHeight();
   const behavior = Platform.OS === 'ios' ? 'padding' : 'height';
   const keyboardVerticalOffset = Platform.OS === 'ios' ? headerHeight : 0;
   const conversation: Conversation | undefined =
-    realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
+    realm.objectForPrimaryKey<Conversation>('Conversation', route.params.conversationId);
 
   const {
     metadata: {contact},
@@ -53,46 +56,9 @@ export const MessageList = (props: MessageListProps) => {
 
   useEffect(() => {
     const databaseMessages: (MessageData & Realm.Object) | undefined =
-      realm.objectForPrimaryKey<MessageData>('MessageData', conversationId);
-
-    const currentConversation: Conversation | undefined =
-      realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
-
-    const listMessages = () => {
-      api
-        .listMessages({conversationId, pageSize: 50})
-        .then((response: PaginatedResponse<Message>) => {
-          if (databaseMessages) {
-            realm.write(() => {
-              databaseMessages.messages = [
-                ...mergeMessages(databaseMessages.messages, [...response.data]),
-              ];
-            });
-          } else {
-            realm.write(() => {
-              realm.create('MessageData', {
-                id: conversationId,
-                messages: mergeMessages([], [...response.data]),
-              });
-            });
-          }
-
-          if (response.paginationData) {
-            realm.write(() => {
-              currentConversation.paginationData.loading =
-                response.paginationData?.loading ?? null;
-              currentConversation.paginationData.nextCursor =
-                response.paginationData?.nextCursor ?? null;
-              currentConversation.paginationData.previousCursor =
-                response.paginationData?.previousCursor ?? null;
-              currentConversation.paginationData.total =
-                response.paginationData?.total ?? null;
-            });
-          }
-        });
-    };
-
-    listMessages();
+      realm.objectForPrimaryKey<MessageData>('MessageData', route.params.conversationId);
+      
+    loadMessagesForConversation(route.params.conversationId);
 
     if (databaseMessages) {
       databaseMessages.addListener(() => {
@@ -105,7 +71,7 @@ export const MessageList = (props: MessageListProps) => {
         databaseMessages.removeAllListeners();
       }
     };
-  }, [conversationId]);
+  }, [route.params.conversationId]);  
 
   function mergeMessages(
     oldMessages: Message[],
@@ -124,17 +90,20 @@ export const MessageList = (props: MessageListProps) => {
     !!(paginationData && paginationData.nextCursor);
 
   const debouncedListPreviousMessages = debounce(() => {
-    if (hasPreviousMessages()) {
+    // if (hasPreviousMessages()) {
       listPreviousMessages();
-    }
-  }, 2000);
+    // }
+  }, 200);
 
   const listPreviousMessages = () => {
     const cursor = paginationData && paginationData.nextCursor;
 
+    console.log('CURSOR: ', cursor);
+    
+
     api
       .listMessages({
-        conversationId,
+        conversationId: route.params.conversationId,
         pageSize: 50,
         cursor: cursor,
       })
@@ -156,7 +125,7 @@ export const MessageList = (props: MessageListProps) => {
         } else {
           realm.write(() => {
             realm.create('MessageData', {
-              id: conversationId,
+              id: route.params.conversationId,
               messages: mergeMessages([], [...response.data]),
             });
           });
@@ -182,11 +151,11 @@ export const MessageList = (props: MessageListProps) => {
       return (
         <MessageComponent
           key={item.id}
-          message={item}
-          messages={messages}
+          message={item}          
           source={source}
-          contact={contact}
-          index={index}
+          contact={contact}          
+          isLastInGroup={isLastInGroup(messages[index - 1], messages[index])}
+          dateChanged={hasDateChanged(messages[index - 1], messages[index])}
         />
       );
     };
@@ -200,13 +169,17 @@ export const MessageList = (props: MessageListProps) => {
         behavior={behavior}
         keyboardVerticalOffset={keyboardVerticalOffset}>
         <View style={styles.container}>
-          <FlatList
-            style={styles.flatlist}
-            data={messages}
-            inverted={false}
+          <FlatList                                    
+            inverted
+            contentContainerStyle={{
+              flexGrow: 1, justifyContent: 'flex-end',
+            }}
             ref={messageListRef}
+            data={messages.reverse()}            
+            renderItem={memoizedRenderItem}            
             onEndReached={debouncedListPreviousMessages}
-            renderItem={memoizedRenderItem}
+            onEndReachedThreshold={0.5}
+            style={styles.flatlist}            
           />
           <View style={styles.chatInput}>
             <ChatInput conversationId={route.params.conversationId} />
@@ -220,11 +193,12 @@ export const MessageList = (props: MessageListProps) => {
 const styles = StyleSheet.create({
   container: {
     height: '100%',
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
+    alignContent: 'flex-start',
     backgroundColor: 'white',
   },
   flatlist: {
-    backgroundColor: 'white',
+    backgroundColor: 'white',    
   },
   chatInput: {
     alignSelf: 'flex-start',

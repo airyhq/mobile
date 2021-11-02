@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {formatTime, isSameDay} from '../../../services/dates';
+import {formatTime, hasDateChanged, isSameDay} from '../../../services/dates';
 import {formatDateOfMessage} from '../../../services/format/date';
 import {MessageInfoWrapper} from '../../../components/MessageInfoWrapper';
 import {SourceMessage} from '../../../render/SourceMessage';
@@ -8,41 +8,29 @@ import {colorBackgroundGray, colorTextGray} from '../../../assets/colors';
 import {Message, Contact} from '../../../model';
 
 type MessageProps = {
-  message: Message;
-  index: number;
-  messages: Message[];
+  message: Message;  
   source: string;
   contact: Contact;
-};
-
-const hasDateChanged = (prevMessage: Message, message: Message) => {
-  if (prevMessage == null) {
-    return true;
-  }
-  return !isSameDay(prevMessage.sentAt, message.sentAt);
+  isLastInGroup: boolean;
+  dateChanged: boolean;
 };
 
 export const MessageComponent = ({
-  message,
-  index,
-  messages,
+  message,  
   source,
   contact,
+  isLastInGroup,
+  dateChanged
 }: MessageProps) => {
-  const prevMessage = messages[index - 1];
-  const nextMessage = messages[index + 1];
+ 
 
-  const lastInGroup = prevMessage
-    ? message.fromContact !== prevMessage.fromContact
-    : true;
-
-  const sentAt: string | undefined = lastInGroup
+  const sentAt: string | undefined = isLastInGroup
     ? formatTime(message.sentAt)
     : null;
 
   return (
     <View key={message.id} style={styles.message}>
-      {hasDateChanged(nextMessage, message) && (
+      {dateChanged && (
         <View key={`date-${message.id}`} style={styles.dateHeader}>
           <Text>{formatDateOfMessage(message)}</Text>
         </View>
@@ -50,7 +38,7 @@ export const MessageComponent = ({
 
       <MessageInfoWrapper
         fromContact={message.fromContact}
-        lastInGroup={lastInGroup}
+        lastInGroup={isLastInGroup}
         contact={contact}
         sentAt={sentAt}
         isChatPlugin={false}>
