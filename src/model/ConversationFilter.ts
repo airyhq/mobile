@@ -23,6 +23,7 @@ export const filterToLuceneSyntax = (
   filter: ConversationFilter,
 ): string | null => {
   const filterQuery: Array<string> = [];
+
   if (filter?.unreadOnly) {
     filterQuery.push('unread_count:[1 TO *]');
   } else if (filter?.readOnly) {
@@ -32,6 +33,8 @@ export const filterToLuceneSyntax = (
     filterQuery.push('display_name:*' + filter.displayName + '*');
   }
   if (filter?.byChannels && filter.byChannels.length > 0) {
+    console.log('filter', filter);
+    console.log('filter.byChannels', filter.byChannels);
     filterQuery.push('channel_id:(' + filter.byChannels.join(' OR ') + ')');
   }
   if (filter?.isStateOpen === true) {

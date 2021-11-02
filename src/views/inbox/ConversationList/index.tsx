@@ -20,6 +20,7 @@ import {EmptyFilterResults} from '../../../components/EmptyFilterResults';
 import {Channel} from '../../../model/Channel';
 import {Pagination} from '../../../model';
 import {api} from '../../../api';
+import {AiryLoader} from '../../../componentsLib/loaders';
 
 type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
@@ -33,7 +34,12 @@ export const ConversationList = (props: ConversationListProps) => {
   const [conversations, setConversations] = useState([]);
   const [currentFilter, setCurrentFilter] = useState<ConversationFilter>();
   const [appliedFilters, setAppliedFilters] = useState<boolean>();
+  const [conversationsLoading, setConversationsLoading] = useState(true);
   let filteredChannelArray = [];
+
+  useEffect(() => {
+    console.log('conversations', conversations.length);
+  }, [conversations]);
 
   const filterApplied = () => {
     currentFilter?.displayName !== '' ||
@@ -63,6 +69,8 @@ export const ConversationList = (props: ConversationListProps) => {
           filters: appliedFilters ? filterToLuceneSyntax(currentFilter) : null,
         })
         .then((response: any) => {
+          setConversationsLoading(false);
+
           realm.write(() => {
             realm.create('Pagination', response.paginationData);
           });
@@ -204,7 +212,9 @@ export const ConversationList = (props: ConversationListProps) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {conversations && conversations.length === 0 && !appliedFilters ? (
+      {conversationsLoading ? (
+        <AiryLoader />
+      ) : conversations && conversations.length === 0 && !appliedFilters ? (
         <NoConversations conversations={conversations.length} />
       ) : conversations && conversations.length > 0 ? (
         <FlatList
@@ -212,6 +222,11 @@ export const ConversationList = (props: ConversationListProps) => {
           onEndReached={debouncedListPreviousConversations}
           renderItem={memoizedRenderItem}
           onEndReachedThreshold={0.5}
+          getItemLayout={(data, index) => ({
+            length: 100,
+            offset: 100 * index,
+            index,
+          })}
         />
       ) : (
         <EmptyFilterResults />

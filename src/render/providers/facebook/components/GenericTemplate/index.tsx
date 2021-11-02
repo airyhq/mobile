@@ -12,27 +12,53 @@ type GenericTemplateRendererProps = {
 
 export const GenericTemplate = ({template}: GenericTemplateRendererProps) => {
   return (
-    <Carousel>
-      {template.elements.map((element, idx) => {
-        return (
-          <View key={idx} style={{paddingRight: 5}}>
-            <View key={`template-${idx}`} style={styles.template}>
-              {element.image_url && (
-                <ImageWithFallback
-                  imageStyle={styles.templateImage}
-                  src={element.image_url}
-                />
-              )}
-              <View style={styles.innerTemplate}>
-                <Text style={styles.templateTitle}>{element.title}</Text>
-                <Text style={styles.templateSubtitle}>{element.subtitle}</Text>
-                <Buttons buttons={element.buttons} />
+    <>
+      {template.elements.length > 1 ? (
+        <Carousel>
+          {template.elements.map((element, idx) => {
+            return (
+              <View key={idx} style={{paddingRight: 5}}>
+                <View key={`template-${idx}`} style={styles.template}>
+                  {element.image_url && (
+                    <ImageWithFallback
+                      imageStyle={styles.templateImage}
+                      src={element.image_url}
+                    />
+                  )}
+                  <View style={styles.innerTemplate}>
+                    <Text style={styles.templateTitle}>{element.title}</Text>
+                    <Text style={styles.templateSubtitle}>
+                      {element.subtitle}
+                    </Text>
+                    <Buttons buttons={element.buttons} />
+                  </View>
+                </View>
               </View>
+            );
+          })}
+        </Carousel>
+      ) : (
+        <View style={{paddingRight: 5}}>
+          <View style={styles.template}>
+            {template.elements[0].image_url && (
+              <ImageWithFallback
+                imageStyle={styles.templateImage}
+                src={template.elements[0].image_url}
+              />
+            )}
+            <View style={styles.innerTemplate}>
+              <Text style={styles.templateTitle}>
+                {template.elements[0].title}
+              </Text>
+              <Text style={styles.templateSubtitle}>
+                {template.elements[0].subtitle}
+              </Text>
+              <Buttons buttons={template.elements[0].buttons} />
             </View>
           </View>
-        );
-      })}
-    </Carousel>
+        </View>
+      )}
+    </>
   );
 };
 
