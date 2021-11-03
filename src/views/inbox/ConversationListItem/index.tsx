@@ -27,7 +27,7 @@ import {
 import {NavigationStackProp} from 'react-navigation-stack';
 import {CurrentState} from '../../../components/CurrentState';
 import {api} from '../../../api';
-import {changeConversationState} from '../../../services/channel';
+import { changeConversationState } from '../../../api/Channel';
 
 type ConversationListItemProps = {
   conversation: Conversation;

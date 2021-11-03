@@ -3,7 +3,7 @@ import {View, StyleSheet, Pressable, StyleProp, ViewStyle} from 'react-native';
 import {colorSoftGreen, colorStateRed} from '../assets/colors';
 import {RealmDB} from '../storage/realm';
 import Checkmark from '../assets/images/icons/checkmark-circle.svg';
-import {changeConversationState} from '../services/channel';
+import {changeConversationState} from '../api/Channel';
 
 type CurrentStateProps = {
   state: string;

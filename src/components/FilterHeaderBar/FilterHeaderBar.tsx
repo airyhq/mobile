@@ -27,7 +27,7 @@ import {
   resetConversationFilters,
 } from '../../services/conversationFilter';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import {hapticFeedbackOptions} from '../../assets/hapticFeedback';
+import {hapticFeedbackOptions} from '../../services/HapticFeedback';
 
 export const FilterHeaderBar = () => {
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
