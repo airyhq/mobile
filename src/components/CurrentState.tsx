@@ -1,7 +1,6 @@
 import React from 'react';
 import {View, StyleSheet, Pressable, StyleProp, ViewStyle} from 'react-native';
 import {colorSoftGreen, colorStateRed} from '../assets/colors';
-import {RealmDB} from '../storage/realm';
 import Checkmark from '../assets/images/icons/checkmark-circle.svg';
 import {changeConversationState} from '../api/Channel';
 
@@ -16,7 +15,6 @@ type CurrentStateProps = {
 export const CurrentState = (props: CurrentStateProps) => {
   const {state, conversationId, pressable, style, setState} = props;
   const currentConversationState = state || 'OPEN';
-  const realm = RealmDB.getInstance();
 
   const OpenStateButton = () => {
     return (
@@ -27,7 +25,6 @@ export const CurrentState = (props: CurrentStateProps) => {
               changeConversationState(
                 currentConversationState,
                 conversationId,
-                realm,
                 setState,
               )
             }
@@ -52,7 +49,6 @@ export const CurrentState = (props: CurrentStateProps) => {
               changeConversationState(
                 currentConversationState,
                 conversationId,
-                realm,
                 setState,
               )
             }>

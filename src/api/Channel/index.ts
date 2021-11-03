@@ -10,7 +10,6 @@ const realm = RealmDB.getInstance();
 export const changeConversationState = (
   currentConversationState: string,
   conversationId: string,
-  realm: Realm,
   setState?: (newState: string) => void,
 ) => {
   const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';

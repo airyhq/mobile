@@ -14,7 +14,6 @@ import {formatTimeOfMessage} from '../../../services/format/date';
 import RightArrow from '../../../assets/images/icons/rightArrow.svg';
 import {Avatar} from '../../../components/Avatar';
 import {SourceMessagePreview} from '../../../render/SourceMessagePreview';
-import {RealmDB} from '../../../storage/realm';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {
   colorAiryBlue,
@@ -27,7 +26,7 @@ import {
 import {NavigationStackProp} from 'react-navigation-stack';
 import {CurrentState} from '../../../components/CurrentState';
 import {api} from '../../../api';
-import { changeConversationState } from '../../../api/Channel';
+import {changeConversationState} from '../../../api/Channel';
 
 type ConversationListItemProps = {
   conversation: Conversation;
@@ -39,7 +38,6 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
   const participant = conversation.metadata.contact;
   const unread = conversation.metadata.unreadCount > 0;
   const currentConversationState = conversation.metadata.state || 'OPEN';
-  const realm = RealmDB.getInstance();
   const swipeableRef = useRef<Swipeable | null>(null);
 
   const LeftSwipe = (dragX: Animated.AnimatedInterpolation) => {
@@ -97,7 +95,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
   };
 
   const handlePress = () => {
-    changeConversationState(currentConversationState, conversation.id, realm);
+    changeConversationState(currentConversationState, conversation.id);
     close();
   };
 
