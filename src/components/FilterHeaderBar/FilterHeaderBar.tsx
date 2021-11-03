@@ -6,7 +6,6 @@ import {
   View,
   StyleSheet,
   Animated,
-  Vibration,
 } from 'react-native';
 import {
   colorAiryBlue,
@@ -27,6 +26,8 @@ import {
   onlyDisplayNameFilterActive,
   resetConversationFilters,
 } from '../../services/conversationFilter';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import {hapticFeedbackOptions} from '../../assets/hapticFeedback';
 
 export const FilterHeaderBar = () => {
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
@@ -116,7 +117,7 @@ export const FilterHeaderBar = () => {
 
   const resetFilters = () => {
     resetConversationFilters(currentFilter, realm);
-    Vibration.vibrate();
+    ReactNativeHapticFeedback.trigger('impactHeavy', hapticFeedbackOptions);
   };
 
   const CollapsedFilterView = () => {
