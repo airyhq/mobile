@@ -17,7 +17,7 @@ export const GenericTemplate = ({template}: GenericTemplateRendererProps) => {
         <Carousel>
           {template.elements.map((element, idx) => {
             return (
-              <View key={idx} style={{paddingRight: 5}}>
+              <View key={idx} style={{paddingRight: 8}}>
                 <View key={`template-${idx}`} style={styles.template}>
                   {element.image_url && (
                     <ImageWithFallback

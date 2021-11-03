@@ -33,8 +33,6 @@ export const filterToLuceneSyntax = (
     filterQuery.push('display_name:*' + filter.displayName + '*');
   }
   if (filter?.byChannels && filter.byChannels.length > 0) {
-    console.log('filter', filter);
-    console.log('filter.byChannels', filter.byChannels);
     filterQuery.push('channel_id:(' + filter.byChannels.join(' OR ') + ')');
   }
   if (filter?.isStateOpen === true) {

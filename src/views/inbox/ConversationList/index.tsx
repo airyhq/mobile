@@ -1,26 +1,27 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, Dimensions, SafeAreaView, FlatList} from 'react-native';
+import {NavigationStackProp} from 'react-navigation-stack';
+import {Collection} from 'realm';
 import {debounce} from 'lodash-es';
 import {ConversationListItem} from '../ConversationListItem';
 import {NoConversations} from '../NoConversations';
-import {RealmDB, upsertConversations} from '../../../storage/realm';
+import {RealmDB} from '../../../storage/realm';
 import {getPagination} from '../../../services/Pagination';
-import {Conversation} from '../../../model/Conversation';
-import {NavigationStackProp} from 'react-navigation-stack';
+import {EmptyFilterResults} from '../../../components/EmptyFilterResults';
 import {
+  Channel,
+  Conversation,
   ConversationFilter,
-  filterToLuceneSyntax,
   getDisplayNameForRealmFilter,
   getStateForRealmFilter,
   isFilterReadOnly,
   isFilterUnreadOnly,
-} from '../../../model/ConversationFilter';
-import {Collection} from 'realm';
-import {EmptyFilterResults} from '../../../components/EmptyFilterResults';
-import {Channel} from '../../../model/Channel';
-import {Pagination} from '../../../model';
-import {api} from '../../../api';
+} from '../../../model';
 import {AiryLoader} from '../../../componentsLib/loaders';
+import {
+  listConversations,
+  getNextConversationList,
+} from '../../../api/Conversation';
 
 type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
@@ -34,12 +35,8 @@ export const ConversationList = (props: ConversationListProps) => {
   const [conversations, setConversations] = useState([]);
   const [currentFilter, setCurrentFilter] = useState<ConversationFilter>();
   const [appliedFilters, setAppliedFilters] = useState<boolean>();
-  const [conversationsLoading, setConversationsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   let filteredChannelArray = [];
-
-  useEffect(() => {
-    console.log('conversations', conversations.length);
-  }, [conversations]);
 
   const filterApplied = () => {
     currentFilter?.displayName !== '' ||
@@ -63,28 +60,13 @@ export const ConversationList = (props: ConversationListProps) => {
     filterListener.addListener(onFilterUpdated);
 
     setTimeout(() => {
-      api
-        .listConversations({
-          page_size: 50,
-          filters: appliedFilters ? filterToLuceneSyntax(currentFilter) : null,
-        })
-        .then((response: any) => {
-          setConversationsLoading(false);
-
-          realm.write(() => {
-            realm.create('Pagination', response.paginationData);
-          });
-
-          if (conversations.length === 0) {
-            setConversations([...response.data]);
-            upsertConversations(response.data, realm);
-          } else {
-            upsertConversations(response.data, realm);
-          }
-        })
-        .catch((error: Error) => {
-          console.error(error);
-        });
+      listConversations(
+        appliedFilters,
+        currentFilter,
+        setLoading,
+        conversations,
+        setConversations,
+      );
     }, 200);
 
     return () => {
@@ -164,35 +146,15 @@ export const ConversationList = (props: ConversationListProps) => {
     return newArray;
   };
 
-  const getNextConversationList = () => {
-    const cursor = paginationData?.nextCursor;
-    api
-      .listConversations({
-        cursor: cursor,
-        page_size: 50,
-        filters: appliedFilters ? filterToLuceneSyntax(currentFilter) : null,
-      })
-      .then((response: any) => {
-        upsertConversations(response.data, realm);
-
-        setConversations([...conversations, ...response.data]);
-
-        realm.write(() => {
-          const pagination: Pagination | undefined =
-            realm.objects<Pagination>('Pagination')[0];
-          pagination.previousCursor = response.paginationData.previousCursor;
-          pagination.nextCursor = response.paginationData.nextCursor;
-          pagination.total = response.paginationData.total;
-        });
-      })
-      .catch((error: Error) => {
-        console.error(error);
-      });
-  };
-
   const debouncedListPreviousConversations = debounce(() => {
-    if (paginationData && paginationData.nextCursor) {
-      getNextConversationList();
+    const nextCursor = paginationData && paginationData.nextCursor;
+    if (nextCursor) {
+      getNextConversationList(
+        nextCursor,
+        appliedFilters,
+        currentFilter,
+        setConversations,
+      );
     }
   }, 2000);
 
@@ -210,9 +172,15 @@ export const ConversationList = (props: ConversationListProps) => {
     return renderItem;
   }, [navigation]);
 
+  const getItemLayout = (data, index) => ({
+    length: 100,
+    offset: 100 * index,
+    index,
+  });
+
   return (
     <SafeAreaView style={styles.container}>
-      {conversationsLoading ? (
+      {loading ? (
         <AiryLoader />
       ) : conversations && conversations.length === 0 && !appliedFilters ? (
         <NoConversations conversations={conversations.length} />
@@ -222,11 +190,7 @@ export const ConversationList = (props: ConversationListProps) => {
           onEndReached={debouncedListPreviousConversations}
           renderItem={memoizedRenderItem}
           onEndReachedThreshold={0.5}
-          getItemLayout={(data, index) => ({
-            length: 100,
-            offset: 100 * index,
-            index,
-          })}
+          getItemLayout={getItemLayout}
         />
       ) : (
         <EmptyFilterResults />
