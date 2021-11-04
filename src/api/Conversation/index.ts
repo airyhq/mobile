@@ -12,7 +12,7 @@ const realm = RealmDB.getInstance();
 export const listConversations = (
   appliedFilters: boolean,
   currentFilter: ConversationFilter,
-  setLoading: (loading: boolean) => void,
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   conversations: Conversation[],
   setConversations: React.Dispatch<React.SetStateAction<Conversation[]>>,
 ) => {
