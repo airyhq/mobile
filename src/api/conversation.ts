@@ -1,7 +1,7 @@
 import {RealmDB} from '../storage/realm';
 import {api} from '../api';
 import {Conversation, Message, MessageData} from '../Model';
-import { mergeMessages } from '../services/message';
+import {mergeMessages} from '../services/message';
 
 declare type PaginatedResponse<T> = typeof import('@airyhq/http-client');
 
@@ -29,8 +29,11 @@ export const sendMessage = (conversationId: string, message: any) => {
     });
 };
 
-export const loadMessagesForConversation = (conversationId: string, cursor?: string, onResponse?: () => void) => {
-    
+export const loadMessagesForConversation = (
+  conversationId: string,
+  cursor?: string,
+  onResponse?: () => void,
+) => {
   const realm = RealmDB.getInstance();
 
   const currentConversationData: (MessageData & Realm.Object) | undefined =
@@ -40,12 +43,18 @@ export const loadMessagesForConversation = (conversationId: string, cursor?: str
     realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
 
   api
-    .listMessages({conversationId, pageSize: 50, ...(cursor && {cursor: cursor})})    
+    .listMessages({
+      conversationId,
+      pageSize: 50,
+      ...(cursor && {cursor: cursor}),
+    })
     .then((response: PaginatedResponse<Message>) => {
       if (currentConversationData) {
         realm.write(() => {
           currentConversationData.messages = [
-            ...mergeMessages(currentConversationData.messages, [...response.data]),
+            ...mergeMessages(currentConversationData.messages, [
+              ...response.data,
+            ]),
           ];
         });
       } else {
@@ -69,6 +78,8 @@ export const loadMessagesForConversation = (conversationId: string, cursor?: str
             response.paginationData?.total ?? null;
         });
       }
-      if (onResponse) onResponse();
+      if (onResponse) {
+        onResponse();
+      }
     });
 };

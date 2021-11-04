@@ -1,4 +1,4 @@
-import { Message } from "../../model";
+import {Message} from '../../model';
 
 export function isToday(date: Date) {
   return (

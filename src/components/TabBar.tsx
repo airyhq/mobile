@@ -81,7 +81,7 @@ export const TabBar = () => {
       />
       <Stack.Screen
         name="MessageList"
-        component={MessageList}        
+        component={MessageList}
         options={({route, navigation}: NavigationStackProp) => ({
           headerTitleAlign: 'left',
           headerBackTitleVisible: false,

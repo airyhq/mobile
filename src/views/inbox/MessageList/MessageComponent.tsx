@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {formatTime, hasDateChanged, isSameDay} from '../../../services/dates';
+import {formatTime} from '../../../services/dates';
 import {formatDateOfMessage} from '../../../services/format/date';
 import {MessageInfoWrapper} from '../../../components/MessageInfoWrapper';
 import {SourceMessage} from '../../../render/SourceMessage';
@@ -8,7 +8,7 @@ import {colorBackgroundGray, colorTextGray} from '../../../assets/colors';
 import {Message, Contact} from '../../../model';
 
 type MessageProps = {
-  message: Message;  
+  message: Message;
   source: string;
   contact: Contact;
   isLastInGroup: boolean;
@@ -16,14 +16,12 @@ type MessageProps = {
 };
 
 export const MessageComponent = ({
-  message,  
+  message,
   source,
   contact,
   isLastInGroup,
-  dateChanged
+  dateChanged,
 }: MessageProps) => {
- 
-
   const sentAt: string | undefined = isLastInGroup
     ? formatTime(message.sentAt)
     : null;

@@ -14,6 +14,9 @@ export function mergeMessages(
   return sortBy(oldMessages, message => message.sentAt);
 }
 
-export const isLastInGroup = (prevMessage: Message, currentMessage: Message) => {
+export const isLastInGroup = (
+  prevMessage: Message,
+  currentMessage: Message,
+) => {
   return currentMessage.fromContact !== prevMessage?.fromContact;
-}  
+};

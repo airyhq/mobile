@@ -6,23 +6,18 @@ import {
   View,
   KeyboardAvoidingView,
   Platform,
-  Text,
   NativeSyntheticEvent,
-  NativeScrollEvent
+  NativeScrollEvent,
 } from 'react-native';
 import {RealmDB} from '../../../storage/realm';
-import {
-  Message,
-  MessageData,
-  Conversation,
-} from '../../../model';
+import {Message, MessageData, Conversation} from '../../../model';
 import {MessageComponent} from './MessageComponent';
-import {debounce, sortBy, throttle} from 'lodash-es';
+import {throttle} from 'lodash-es';
 import {ChatInput} from '../../../components/chat/input/ChatInput';
 import {useHeaderHeight} from '@react-navigation/stack';
-import { loadMessagesForConversation } from '../../../api/conversation';
-import { isLastInGroup } from '../../../services/message';
-import { hasDateChanged } from '../../../services/dates';
+import {loadMessagesForConversation} from '../../../api/conversation';
+import {isLastInGroup} from '../../../services/message';
+import {hasDateChanged} from '../../../services/dates';
 
 interface RouteProps {
   key: string;
@@ -30,7 +25,7 @@ interface RouteProps {
   params: {conversationId: string};
 }
 
-type MessageListProps = {  
+type MessageListProps = {
   route: RouteProps;
 };
 
@@ -38,14 +33,17 @@ const realm = RealmDB.getInstance();
 
 export const MessageList = (props: MessageListProps) => {
   const {route} = props;
-  
+
   const [messages, setMessages] = useState<Message[] | []>([]);
   const messageListRef = useRef<FlatList>(null);
   const headerHeight = useHeaderHeight();
   const behavior = Platform.OS === 'ios' ? 'padding' : 'height';
   const keyboardVerticalOffset = Platform.OS === 'ios' ? headerHeight : 0;
   const conversation: Conversation | undefined =
-    realm.objectForPrimaryKey<Conversation>('Conversation', route.params.conversationId);
+    realm.objectForPrimaryKey<Conversation>(
+      'Conversation',
+      route.params.conversationId,
+    );
 
   const {
     metadata: {contact},
@@ -55,11 +53,14 @@ export const MessageList = (props: MessageListProps) => {
 
   useEffect(() => {
     const databaseMessages: (MessageData & Realm.Object) | undefined =
-      realm.objectForPrimaryKey<MessageData>('MessageData', route.params.conversationId);
-          
+      realm.objectForPrimaryKey<MessageData>(
+        'MessageData',
+        route.params.conversationId,
+      );
+
     if (databaseMessages.messages.length === 0) {
       loadMessagesForConversation(route.params.conversationId);
-    }            
+    }
 
     if (databaseMessages) {
       databaseMessages.addListener(() => {
@@ -72,20 +73,33 @@ export const MessageList = (props: MessageListProps) => {
         databaseMessages.removeAllListeners();
       }
     };
-  }, [route.params.conversationId]);  
+  }, [route.params.conversationId]);
 
   const hasPreviousMessages = () =>
     !!(paginationData && paginationData.nextCursor);
 
-  const debouncedListPreviousMessages = throttle(() => { 
-    loadMessagesForConversation(route.params.conversationId, messages[messages.length - 1].id);    
-  }, 3000, {leading: false, trailing: true});
+  const debouncedListPreviousMessages = throttle(
+    () => {
+      loadMessagesForConversation(
+        route.params.conversationId,
+        messages[messages.length - 1].id,
+      );
+    },
+    3000,
+    {leading: false, trailing: true},
+  );
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (hasPreviousMessages() && (event.nativeEvent.contentSize.height - event.nativeEvent.layoutMeasurement.height) * 0.5 < event.nativeEvent.contentOffset.y) {      
-      debouncedListPreviousMessages();         
-    }        
-  }
+    if (
+      hasPreviousMessages() &&
+      (event.nativeEvent.contentSize.height -
+        event.nativeEvent.layoutMeasurement.height) *
+        0.5 <
+        event.nativeEvent.contentOffset.y
+    ) {
+      debouncedListPreviousMessages();
+    }
+  };
 
   const memoizedRenderItem = React.useMemo(() => {
     const renderItem = ({item, index}) => {
@@ -94,9 +108,9 @@ export const MessageList = (props: MessageListProps) => {
       return (
         <MessageComponent
           key={item.id}
-          message={item}          
+          message={item}
           source={source}
-          contact={contact}          
+          contact={contact}
           isLastInGroup={isLastInGroup(prevMessage, currentMessage)}
           dateChanged={hasDateChanged(prevMessage, currentMessage)}
         />
@@ -112,17 +126,18 @@ export const MessageList = (props: MessageListProps) => {
         behavior={behavior}
         keyboardVerticalOffset={keyboardVerticalOffset}>
         <View style={styles.container}>
-          <FlatList                                    
+          <FlatList
             inverted
-            decelerationRate={0.1}                  
+            decelerationRate={0.1}
             contentContainerStyle={{
-              flexGrow: 1, justifyContent: 'flex-end',
-            }}          
-            style={styles.flatlist}              
+              flexGrow: 1,
+              justifyContent: 'flex-end',
+            }}
+            style={styles.flatlist}
             ref={messageListRef}
-            data={messages.reverse()}            
-            renderItem={memoizedRenderItem}                        
-            onScroll={onScroll}                                     
+            data={messages.reverse()}
+            renderItem={memoizedRenderItem}
+            onScroll={onScroll}
           />
           <View style={styles.chatInput}>
             <ChatInput conversationId={route.params.conversationId} />
@@ -141,13 +156,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   flatlist: {
-    backgroundColor: 'white',    
+    backgroundColor: 'white',
   },
   loader: {
     marginTop: 16,
     marginBottom: 16,
     color: 'gray',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   chatInput: {
     alignSelf: 'flex-start',
