@@ -13,7 +13,6 @@ export const sendMessage = (conversationId: string, message: any) => {
       message,
     })
     .then((response: Message) => {
-      const realm = RealmDB.getInstance();
       realm.write(() => {
         realm.create('Message', {
           id: response.id,
