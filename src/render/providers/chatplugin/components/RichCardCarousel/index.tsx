@@ -26,7 +26,7 @@ export const RichCardCarousel = (props: RichCardCarouselRenderProps) => {
     <Carousel>
       {cardContents.map((card: Card, idx: number) => {
         return (
-          <View key={idx} style={{paddingRight: 5}}>
+          <View key={idx} style={{paddingRight: 8}}>
             <RichCard
               title={card.title}
               description={card.description}

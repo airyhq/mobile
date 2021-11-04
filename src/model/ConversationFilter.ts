@@ -23,6 +23,7 @@ export const filterToLuceneSyntax = (
   filter: ConversationFilter,
 ): string | null => {
   const filterQuery: Array<string> = [];
+
   if (filter?.unreadOnly) {
     filterQuery.push('unread_count:[1 TO *]');
   } else if (filter?.readOnly) {

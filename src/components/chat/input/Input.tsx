@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Animated, TextInput, TouchableOpacity} from 'react-native';
 import {View, StyleSheet} from 'react-native';
-import {sendMessage} from '../../../api/conversation';
+import {sendMessage} from '../../../api/Message';
 import {
   colorAiryBlue,
   colorBackgroundGray,
