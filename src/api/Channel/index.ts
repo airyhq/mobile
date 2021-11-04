@@ -1,36 +1,8 @@
 import {api} from '../../api';
 import {Channel} from '../../model/Channel';
 import {RealmDB} from '../../storage/realm';
-import {Conversation} from '../../model/Conversation';
-import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import {hapticFeedbackOptions} from '../../services/HapticFeedback';
 
 const realm = RealmDB.getInstance();
-
-export const changeConversationState = (
-  currentConversationState: string,
-  conversationId: string,
-  setState?: (newState: string) => void,
-) => {
-  const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
-  api
-    .setStateConversation({
-      conversationId: conversationId,
-      state: newState,
-    })
-    .then(() => {
-      realm.write(() => {
-        const changedConversation: Conversation | undefined =
-          realm.objectForPrimaryKey('Conversation', conversationId);
-
-        if (changedConversation?.metadata?.state) {
-          changedConversation.metadata.state = newState;
-        }
-      });
-    });
-  setState && setState(newState);
-  ReactNativeHapticFeedback.trigger('impactHeavy', hapticFeedbackOptions);
-};
 
 export const listChannels = () => {
   api
