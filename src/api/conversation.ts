@@ -29,11 +29,8 @@ export const sendMessage = (conversationId: string, message: any) => {
     });
 };
 
-export const loadMessagesForConversation = (conversationId: string) => {
-
-
-  console.log('LOAD MESSAGES');
-  
+export const loadMessagesForConversation = (conversationId: string, cursor?: string, onResponse?: () => void) => {
+    
   const realm = RealmDB.getInstance();
 
   const currentConversationData: (MessageData & Realm.Object) | undefined =
@@ -43,7 +40,7 @@ export const loadMessagesForConversation = (conversationId: string) => {
     realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
 
   api
-    .listMessages({conversationId, pageSize: 50})
+    .listMessages({conversationId, pageSize: 50, ...(cursor && {cursor: cursor})})    
     .then((response: PaginatedResponse<Message>) => {
       if (currentConversationData) {
         realm.write(() => {
@@ -72,5 +69,6 @@ export const loadMessagesForConversation = (conversationId: string) => {
             response.paginationData?.total ?? null;
         });
       }
+      if (onResponse) onResponse();
     });
 };

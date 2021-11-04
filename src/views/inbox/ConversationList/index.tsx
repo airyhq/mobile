@@ -59,7 +59,7 @@ export const ConversationList = (props: ConversationListProps) => {
     setTimeout(() => {
       api
         .listConversations({
-          page_size: 50,
+          page_size: 100,
           filters: appliedFilters ? filterToLuceneSyntax(currentFilter) : null,
         })
         .then((response: any) => {
@@ -161,7 +161,7 @@ export const ConversationList = (props: ConversationListProps) => {
     api
       .listConversations({
         cursor: cursor,
-        page_size: 50,
+        page_size: 100,
         filters: appliedFilters ? filterToLuceneSyntax(currentFilter) : null,
       })
       .then((response: any) => {
