@@ -30,7 +30,9 @@ export const MessageComponent = ({
     <View key={message.id} style={styles.message}>
       {dateChanged && (
         <View key={`date-${message.id}`} style={styles.dateHeader}>
-          <Text>{formatDateOfMessage(message)}</Text>
+          <Text style={styles.dateHeaderText}>
+            {formatDateOfMessage(message)}
+          </Text>
         </View>
       )}
 
@@ -57,14 +59,17 @@ const styles = StyleSheet.create({
   },
   dateHeader: {
     marginTop: 8,
-    marginBottom: 8,
     paddingTop: 4,
     paddingBottom: 4,
-    paddingLeft: 4,
-    paddingRight: 4,
+    paddingLeft: 6,
+    paddingRight: 6,
     borderRadius: 4,
     backgroundColor: colorBackgroundGray,
     color: colorTextGray,
     alignSelf: 'center',
+  },
+  dateHeaderText: {
+    fontFamily: 'Lato',
+    fontSize: 16,
   },
 });

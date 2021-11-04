@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 4,
     padding: 3,
+    fontFamily: 'Lato',
   },
   searchBarFocused: {
     flexDirection: 'row',

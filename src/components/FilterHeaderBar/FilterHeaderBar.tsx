@@ -6,7 +6,6 @@ import {
   View,
   StyleSheet,
   Animated,
-  Vibration,
 } from 'react-native';
 import {
   colorAiryBlue,
@@ -18,7 +17,7 @@ import ChevronUpIcon from '../../assets/images/icons/chevronUp.svg';
 import {RealmDB} from '../../storage/realm';
 import {ReadUnreadComponent} from './ReadUnreadComponent';
 import {StateButtonComponent} from './StateButtonComponent';
-import {ChannelComponent} from './ChannelCompontent';
+import {ChannelComponent} from './ChannelComponent';
 import {SearchBarComponent} from './SearchBarComponent';
 import {Channel, ConversationFilter} from '../../model';
 import {
@@ -27,6 +26,8 @@ import {
   onlyDisplayNameFilterActive,
   resetConversationFilters,
 } from '../../services/conversationFilter';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import {hapticFeedbackOptions} from '../../services/HapticFeedback';
 
 export const FilterHeaderBar = () => {
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
@@ -116,7 +117,7 @@ export const FilterHeaderBar = () => {
 
   const resetFilters = () => {
     resetConversationFilters(currentFilter, realm);
-    Vibration.vibrate();
+    ReactNativeHapticFeedback.trigger('impactHeavy', hapticFeedbackOptions);
   };
 
   const CollapsedFilterView = () => {
@@ -191,7 +192,7 @@ export const FilterHeaderBar = () => {
               justifyContent: 'space-between',
             }}>
             <Text style={styles.headerTitleExpanded}>Filter</Text>
-            <TouchableOpacity onPress={resetFilters}>
+            <TouchableOpacity onPress={resetFilters} disabled={!appliedFilters}>
               <Animated.Text
                 style={{
                   marginRight: 8,

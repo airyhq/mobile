@@ -2,8 +2,12 @@ import {RealmDB} from '../storage/realm';
 import {api} from '../api';
 import {Conversation, Message, MessageData} from '../Model';
 import {mergeMessages} from '../services/message';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import {hapticFeedbackOptions} from '../services/HapticFeedback';
 
 declare type PaginatedResponse<T> = typeof import('@airyhq/http-client');
+
+const realm = RealmDB.getInstance();
 
 export const sendMessage = (conversationId: string, message: any) => {
   api
@@ -12,7 +16,6 @@ export const sendMessage = (conversationId: string, message: any) => {
       message,
     })
     .then((response: Message) => {
-      const realm = RealmDB.getInstance();
       realm.write(() => {
         realm.create('Message', {
           id: response.id,
@@ -34,8 +37,6 @@ export const loadMessagesForConversation = (
   cursor?: string,
   onResponse?: () => void,
 ) => {
-  const realm = RealmDB.getInstance();
-
   const currentConversationData: (MessageData & Realm.Object) | undefined =
     realm.objectForPrimaryKey<MessageData>('MessageData', conversationId);
 
@@ -82,4 +83,29 @@ export const loadMessagesForConversation = (
         onResponse();
       }
     });
+};
+
+export const changeConversationState = (
+  currentConversationState: string,
+  conversationId: string,
+  setState?: (newState: string) => void,
+) => {
+  const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
+  api
+    .setStateConversation({
+      conversationId: conversationId,
+      state: newState,
+    })
+    .then(() => {
+      realm.write(() => {
+        const changedConversation: Conversation | undefined =
+          realm.objectForPrimaryKey('Conversation', conversationId);
+
+        if (changedConversation?.metadata?.state) {
+          changedConversation.metadata.state = newState;
+        }
+      });
+    });
+  setState && setState(newState);
+  ReactNativeHapticFeedback.trigger('impactHeavy', hapticFeedbackOptions);
 };

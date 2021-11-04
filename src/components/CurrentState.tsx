@@ -1,17 +1,8 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  StyleProp,
-  ViewStyle,
-  Vibration,
-} from 'react-native';
+import {View, StyleSheet, Pressable, StyleProp, ViewStyle} from 'react-native';
 import {colorSoftGreen, colorStateRed} from '../assets/colors';
-import {RealmDB} from '../storage/realm';
 import Checkmark from '../assets/images/icons/checkmark-circle.svg';
-import {Conversation} from '../model/Conversation';
-import {api} from '../api';
+import {changeConversationState} from '../api/conversation';
 
 type CurrentStateProps = {
   state: string;
@@ -24,36 +15,19 @@ type CurrentStateProps = {
 export const CurrentState = (props: CurrentStateProps) => {
   const {state, conversationId, pressable, style, setState} = props;
   const currentConversationState = state || 'OPEN';
-  const realm = RealmDB.getInstance();
-
-  const changeState = () => {
-    const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
-    api
-      .setStateConversation({
-        conversationId: conversationId,
-        state: newState,
-      })
-      .then(() => {
-        realm.write(() => {
-          const changedConversation: Conversation | undefined =
-            realm.objectForPrimaryKey('Conversation', conversationId);
-
-          if (changedConversation?.metadata?.state) {
-            changedConversation.metadata.state = newState;
-          }
-        });
-      });
-
-    setState(newState);
-  };
 
   const OpenStateButton = () => {
     return (
       <>
         {pressable ? (
           <Pressable
-            onPress={changeState}
-            onPressIn={() => Vibration.vibrate}
+            onPress={() =>
+              changeConversationState(
+                currentConversationState,
+                conversationId,
+                setState,
+              )
+            }
             style={[
               styles.openStateButton,
               {position: 'absolute', right: 7, top: 8, height: 24, width: 24},
@@ -70,7 +44,14 @@ export const CurrentState = (props: CurrentStateProps) => {
     return (
       <View style={[styles.closedStateButton, style]}>
         {pressable ? (
-          <Pressable onPress={changeState} onPressIn={() => Vibration.vibrate}>
+          <Pressable
+            onPress={() =>
+              changeConversationState(
+                currentConversationState,
+                conversationId,
+                setState,
+              )
+            }>
             <Checkmark height={30} width={30} fill={colorSoftGreen} />
           </Pressable>
         ) : (
