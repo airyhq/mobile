@@ -6,17 +6,18 @@ import {
   View,
   KeyboardAvoidingView,
   Platform,
-  Text
+  Text,
+  NativeSyntheticEvent,
+  NativeScrollEvent
 } from 'react-native';
 import {RealmDB} from '../../../storage/realm';
 import {
-  parseToRealmMessage,
   Message,
   MessageData,
   Conversation,
 } from '../../../model';
 import {MessageComponent} from './MessageComponent';
-import {debounce, sortBy} from 'lodash-es';
+import {debounce, sortBy, throttle} from 'lodash-es';
 import {ChatInput} from '../../../components/chat/input/ChatInput';
 import {useHeaderHeight} from '@react-navigation/stack';
 import { loadMessagesForConversation } from '../../../api/conversation';
@@ -39,7 +40,6 @@ export const MessageList = (props: MessageListProps) => {
   const {route} = props;
   
   const [messages, setMessages] = useState<Message[] | []>([]);
-  const [loading, setLoading] = useState<boolean>(false);
   const messageListRef = useRef<FlatList>(null);
   const headerHeight = useHeaderHeight();
   const behavior = Platform.OS === 'ios' ? 'padding' : 'height';
@@ -58,7 +58,6 @@ export const MessageList = (props: MessageListProps) => {
       realm.objectForPrimaryKey<MessageData>('MessageData', route.params.conversationId);
           
     if (databaseMessages.messages.length === 0) {
-      console.log('Loading messages from server');      
       loadMessagesForConversation(route.params.conversationId);
     }            
 
@@ -78,16 +77,15 @@ export const MessageList = (props: MessageListProps) => {
   const hasPreviousMessages = () =>
     !!(paginationData && paginationData.nextCursor);
 
-  const debouncedListPreviousMessages = () => {
-    if (hasPreviousMessages()) {     
-      setLoading(true);
-      console.log('loading previous messages');  
-      console.log(paginationData.nextCursor);  
-      loadMessagesForConversation(route.params.conversationId, messages[messages.length - 1].id, () => {
-        setLoading(false);      
-      });
-    }
-  };
+  const debouncedListPreviousMessages = throttle(() => { 
+    loadMessagesForConversation(route.params.conversationId, messages[messages.length - 1].id);    
+  }, 3000, {leading: false, trailing: true});
+
+  const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (hasPreviousMessages() && (event.nativeEvent.contentSize.height - event.nativeEvent.layoutMeasurement.height) * 0.5 < event.nativeEvent.contentOffset.y) {      
+      debouncedListPreviousMessages();         
+    }        
+  }
 
   const memoizedRenderItem = React.useMemo(() => {
     const renderItem = ({item, index}) => {
@@ -124,12 +122,7 @@ export const MessageList = (props: MessageListProps) => {
             ref={messageListRef}
             data={messages.reverse()}            
             renderItem={memoizedRenderItem}                        
-            onScroll={(event) => {              
-              if (!loading && (event.nativeEvent.contentSize.height - event.nativeEvent.layoutMeasurement.height) * 0.5 < event.nativeEvent.contentOffset.y) {
-                console.log('load from scroll');                
-                debouncedListPreviousMessages();
-              }
-            }}                                     
+            onScroll={onScroll}                                     
           />
           <View style={styles.chatInput}>
             <ChatInput conversationId={route.params.conversationId} />
