@@ -2,7 +2,7 @@ import React from 'react';
 import {View, StyleSheet, Pressable, StyleProp, ViewStyle} from 'react-native';
 import {colorSoftGreen, colorStateRed} from '../assets/colors';
 import Checkmark from '../assets/images/icons/checkmark-circle.svg';
-import {changeConversationState} from '../api/conversation';
+import {changeConversationState} from '../api/Conversation';
 
 type CurrentStateProps = {
   state: string;
