@@ -1,11 +1,12 @@
+import React from 'react';
 import {
   filterToLuceneSyntax,
   Conversation,
   ConversationFilter,
   Pagination,
-} from '../../model';
-import {RealmDB, upsertConversations} from '../../storage/realm';
-import {api} from '../../api';
+} from '../model';
+import {RealmDB, upsertConversations} from '../storage/realm';
+import {api} from '../api';
 
 const realm = RealmDB.getInstance();
 
