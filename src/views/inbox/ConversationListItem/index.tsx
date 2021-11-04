@@ -14,7 +14,6 @@ import {formatTimeOfMessage} from '../../../services/format/date';
 import RightArrow from '../../../assets/images/icons/rightArrow.svg';
 import {Avatar} from '../../../components/Avatar';
 import {SourceMessagePreview} from '../../../render/SourceMessagePreview';
-import {RealmDB} from '../../../storage/realm';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {
   colorAiryBlue,
@@ -27,6 +26,7 @@ import {
 import {NavigationStackProp} from 'react-navigation-stack';
 import {CurrentState} from '../../../components/CurrentState';
 import {api} from '../../../api';
+import {changeConversationState} from '../../../api/conversation';
 
 type ConversationListItemProps = {
   conversation: Conversation;
@@ -38,7 +38,6 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
   const participant = conversation.metadata.contact;
   const unread = conversation.metadata.unreadCount > 0;
   const currentConversationState = conversation.metadata.state || 'OPEN';
-  const realm = RealmDB.getInstance();
   const swipeableRef = useRef<Swipeable | null>(null);
 
   const LeftSwipe = (dragX: Animated.AnimatedInterpolation) => {
@@ -70,24 +69,6 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
     );
   };
 
-  const changeState = () => {
-    const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
-    api
-      .setStateConversation({
-        conversationId: conversation.id,
-        state: newState,
-      })
-      .then(() => {
-        realm.write(() => {
-          const changedConversation: Conversation = realm.objectForPrimaryKey(
-            'Conversation',
-            conversation.id,
-          );
-          changedConversation.metadata.state = newState;
-        });
-      });
-  };
-
   const markAsRead = () => {
     if (unread) {
       api.readConversations(conversation.id);
@@ -114,7 +95,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
   };
 
   const handlePress = () => {
-    changeState();
+    changeConversationState(currentConversationState, conversation.id);
     close();
   };
 
