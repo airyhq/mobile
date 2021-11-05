@@ -15,7 +15,7 @@ import {MessageComponent} from './MessageComponent';
 import {throttle} from 'lodash-es';
 import {ChatInput} from '../../../components/chat/input/ChatInput';
 import {useHeaderHeight} from '@react-navigation/stack';
-import {loadMessagesForConversation} from '../../../api/conversation';
+import {loadMessagesForConversation} from '../../../api/Message';
 import {isLastInGroup} from '../../../services/message';
 import {hasDateChanged} from '../../../services/dates';
 
