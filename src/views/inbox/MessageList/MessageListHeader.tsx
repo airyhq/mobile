@@ -19,7 +19,7 @@ export const MessageListHeader = ({route, navigation}: NavigationStackProp) => {
         small={true}
         style={{
           height: 32,
-          width: 32          
+          width: 32,
         }}
       />
       <View style={styles.titleIconChannelContainer}>
@@ -64,5 +64,5 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: 'Lato',
     fontSize: 18,
-  }
+  },
 });

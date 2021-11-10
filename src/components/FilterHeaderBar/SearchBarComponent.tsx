@@ -17,9 +17,8 @@ type SearchBarComponentProps = {
 const SearchBarComponent = (props: SearchBarComponentProps) => {
   const {currentFilter} = props;
 
-
   console.log('currentFilter', currentFilter);
-  
+
   const realm = RealmDB.getInstance();
   const [searchInput, setSearchInput] = useState(
     currentFilter?.displayName || '',
@@ -46,7 +45,7 @@ const SearchBarComponent = (props: SearchBarComponentProps) => {
 
   return (
     <View style={styles.searchBarContainer}>
-      <SearchIcon height={18} width={18} fill={colorDarkElementsGray} />      
+      <SearchIcon height={18} width={18} fill={colorDarkElementsGray} />
       <TextInput
         placeholderTextColor={colorTextGray}
         placeholder="Search Conversation..."

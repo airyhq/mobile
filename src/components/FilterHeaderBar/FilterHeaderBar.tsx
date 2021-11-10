@@ -8,11 +8,7 @@ import {
   Animated,
   Platform,
 } from 'react-native';
-import {
-  colorAiryBlue,
-  colorLightGray,
-  colorRedAlert,
-} from '../../assets/colors';
+import {colorAiryBlue, colorLightGray} from '../../assets/colors';
 import FilterIcon from '../../assets/images/icons/filterIcon.svg';
 import ChevronUpIcon from '../../assets/images/icons/chevronUp.svg';
 import {RealmDB} from '../../storage/realm';
@@ -40,8 +36,7 @@ const windowWidth = Dimensions.get('window').width;
 export const FilterHeaderBar = () => {
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
   const [appliedFilters, setAppliedFilters] = useState<boolean>(false);
-  
-  
+
   const realm = RealmDB.getInstance();
   const currentFilter =
     realm.objects<ConversationFilter>('ConversationFilter')[0];
@@ -125,8 +120,8 @@ export const FilterHeaderBar = () => {
     ReactNativeHapticFeedback.trigger('impactHeavy', hapticFeedbackOptions);
   };
 
-  return filterOpen ? 
-    <ExpandedFilterView 
+  return filterOpen ? (
+    <ExpandedFilterView
       currentFilter={currentFilter}
       appliedFilters={appliedFilters}
       toggleFiltering={toggleFiltering}
@@ -135,12 +130,14 @@ export const FilterHeaderBar = () => {
       resetButtonFadeAnimation={resetButtonFadeAnimation}
       expandedHeaderHeight={expandedHeaderHeight}
       filterHeaderFadeAnimation={filterHeaderFadeAnimation}
-    /> : 
+    />
+  ) : (
     <CollapsedFilterView
-    currentFilter={currentFilter}
-    appliedFilters={appliedFilters}
-    toggleFiltering={toggleFiltering}
-    />;
+      currentFilter={currentFilter}
+      appliedFilters={appliedFilters}
+      toggleFiltering={toggleFiltering}
+    />
+  );
 };
 
 type CollapsedFilterViewProps = {
@@ -150,7 +147,6 @@ type CollapsedFilterViewProps = {
 };
 
 const CollapsedFilterView = (props: CollapsedFilterViewProps) => {
-
   const {currentFilter, toggleFiltering, appliedFilters} = props;
 
   return (
@@ -182,7 +178,13 @@ const CollapsedFilterView = (props: CollapsedFilterViewProps) => {
           }}>
           <View>
             <TouchableOpacity onPress={toggleFiltering}>
-              <FilterIcon style={{}} width={32} height={32} fill={colorAiryBlue} color={colorAiryBlue}/>
+              <FilterIcon
+                style={{}}
+                width={32}
+                height={32}
+                fill={colorAiryBlue}
+                color={colorAiryBlue}
+              />
             </TouchableOpacity>
             {appliedFilters && (
               <Animated.View
@@ -216,8 +218,16 @@ type ExpandedFilterViewProps = {
 };
 
 const ExpandedFilterView = (props: ExpandedFilterViewProps) => {
-
-  const {currentFilter, connectedChannels, toggleFiltering, resetFilters, appliedFilters, expandedHeaderHeight, resetButtonFadeAnimation, filterHeaderFadeAnimation} = props;
+  const {
+    currentFilter,
+    connectedChannels,
+    toggleFiltering,
+    resetFilters,
+    appliedFilters,
+    expandedHeaderHeight,
+    resetButtonFadeAnimation,
+    filterHeaderFadeAnimation,
+  } = props;
 
   return (
     <Animated.View
@@ -270,7 +280,12 @@ const ExpandedFilterView = (props: ExpandedFilterViewProps) => {
               right: windowWidth / 2 - 40,
               padding: 0,
             }}>
-            <ChevronUpIcon height={48} width={48} fill={colorAiryBlue} color={colorAiryBlue} />
+            <ChevronUpIcon
+              height={48}
+              width={48}
+              fill={colorAiryBlue}
+              color={colorAiryBlue}
+            />
           </TouchableOpacity>
         </View>
       </View>

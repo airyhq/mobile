@@ -1,5 +1,12 @@
 import React from 'react';
-import {View, StyleSheet, Pressable, StyleProp, ViewStyle, Platform} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  StyleProp,
+  ViewStyle,
+  Platform,
+} from 'react-native';
 import {colorSoftGreen, colorStateRed} from '../assets/colors';
 import Checkmark from '../assets/images/icons/checkmark-circle.svg';
 import {changeConversationState} from '../api/Conversation';
@@ -40,9 +47,13 @@ export const CurrentState = (props: CurrentStateProps) => {
     );
   };
 
-  const ClosedStateButton = () => {    
+  const ClosedStateButton = () => {
     return (
-      <View style={[pressable ? styles.closedStateButtonPress : styles.closedStateButton, style]}>
+      <View
+        style={[
+          pressable ? styles.closedStateButtonPress : styles.closedStateButton,
+          style,
+        ]}>
         {pressable ? (
           <Pressable
             onPress={() =>
@@ -86,7 +97,7 @@ const styles = StyleSheet.create({
     height: 20,
     width: 20,
     borderRadius: 50,
-    marginRight: Platform.OS === 'ios' ? 10 : 20,    
+    marginRight: Platform.OS === 'ios' ? 10 : 20,
   },
   closedStateButtonPress: {
     height: 20,
@@ -94,6 +105,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginRight: Platform.OS === 'ios' ? 8 : 34,
     paddingTop: Platform.OS === 'ios' ? 2 : 0,
-    marginTop: Platform.OS === 'ios' ? 0 : -12,    
+    marginTop: Platform.OS === 'ios' ? 0 : -12,
   },
 });
