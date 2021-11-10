@@ -121,10 +121,7 @@ export const MessageList = (props: MessageListProps) => {
   }, [contact, messages, source]);
 
   return (
-    <SafeAreaView style={{backgroundColor: 'white'}}>
-      <KeyboardAvoidingView
-        behavior={behavior}
-        keyboardVerticalOffset={keyboardVerticalOffset}>
+    <SafeAreaView style={{backgroundColor: 'white'}}>      
         <View style={styles.container}>
           <FlatList
             inverted
@@ -139,11 +136,15 @@ export const MessageList = (props: MessageListProps) => {
             renderItem={memoizedRenderItem}
             onScroll={onScroll}
           />
+          <KeyboardAvoidingView
+            behavior={behavior}
+              keyboardVerticalOffset={keyboardVerticalOffset}>
           <View style={styles.chatInput}>
             <ChatInput conversationId={route.params.conversationId} />
           </View>
+          </KeyboardAvoidingView>
         </View>
-      </KeyboardAvoidingView>
+      
     </SafeAreaView>
   );
 };
