@@ -17,8 +17,6 @@ type SearchBarComponentProps = {
 const SearchBarComponent = (props: SearchBarComponentProps) => {
   const {currentFilter} = props;
 
-  console.log('currentFilter', currentFilter);
-
   const realm = RealmDB.getInstance();
   const [searchInput, setSearchInput] = useState(
     currentFilter?.displayName || '',

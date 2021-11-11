@@ -103,8 +103,8 @@ const styles = StyleSheet.create({
     height: 20,
     width: 20,
     borderRadius: 50,
-    marginRight: Platform.OS === 'ios' ? 8 : 34,
-    paddingTop: Platform.OS === 'ios' ? 2 : 0,
-    marginTop: Platform.OS === 'ios' ? 0 : -12,
+    marginRight: Platform.OS === 'ios' ? 24 : 34,
+    paddingTop: 0,
+    marginTop: -12,
   },
 });

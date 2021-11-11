@@ -73,6 +73,7 @@ export const AuthWrapper = ({children}) => {
           });
           setUser(nextUser);
           setIsAuthenticated(true);
+          setLoading(false);
         })
         .catch(error => error);
     },
@@ -86,11 +87,9 @@ export const AuthWrapper = ({children}) => {
         const host = userChanged.host;
         const token = userChanged.token;
         if (host && token) {
-          refreshUser(host, token);
+          refreshUser(host, token);          
         }
-      } else {
-        setLoading(false);
-      }
+      } 
     },
     [refreshUser],
   );
