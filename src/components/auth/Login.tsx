@@ -62,6 +62,7 @@ export const Login = () => {
   let [domain, setDomain] = useState('');
   let [domainInput, setDomainInput] = useState('');
   let [showLogoutView, setShowLogoutView] = useState(false);
+  let [showWebView, setShowWebView] = useState(true);
   let [loginErr, setLoginErr] = useState<string>('');
   let [webviewUrl, setWebviewUrl] = useState('');
   const isLogoutSuccessUrl = url => url.indexOf(`${domain}/ui`) !== -1;
@@ -103,6 +104,7 @@ export const Login = () => {
   };
 
   const getAndStoreUser = async token => {
+    setShowWebView(false);
     const host = getHost(domain);
     const realm = RealmDB.getInstance();
     realm.write(() => {
@@ -148,7 +150,7 @@ export const Login = () => {
         scalesPageToFit
         userAgent="Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko" //needs to be removed
         originWhitelist={['https://*', 'http://*']}
-        style={styles.webview}
+        style={[styles.webview, !showWebView && {opacity: 0}]}
       />
       <TouchableOpacity onPress={closeWebview} style={styles.closeButton}>
         <Text style={styles.closeButtonText}>Close</Text>

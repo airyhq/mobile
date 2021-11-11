@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
+import LottieView from 'lottie-react-native';
 import {RealmDB} from '../../storage/realm';
 
 import {Results} from 'realm';
@@ -6,6 +7,7 @@ import {UserInfo} from '../../model/userInfo';
 import {HttpClient} from '@airyhq/http-client';
 import {Login} from './Login';
 import CookieManager from '@react-native-cookies/cookies';
+import {View} from 'react-native';
 
 export let api = new HttpClient();
 
@@ -26,6 +28,7 @@ export const AuthContext = React.createContext<AuthContext>({
 export const AuthWrapper = ({children}) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<UserInfo>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const logout = useCallback(() => {
     setIsAuthenticated(false);
@@ -70,6 +73,7 @@ export const AuthWrapper = ({children}) => {
           });
           setUser(nextUser);
           setIsAuthenticated(true);
+          setLoading(false);
         })
         .catch(error => error);
     },
@@ -99,7 +103,19 @@ export const AuthWrapper = ({children}) => {
     onUserChange(users);
   }, [onUserChange]);
 
-  return isAuthenticated ? (
+  return loading ? (
+    <View
+      style={{
+        height: '100%',
+        width: '100%',
+      }}>
+      <LottieView
+        source={require('../../assets/animations/loading.json')}
+        autoPlay
+        loop
+      />
+    </View>
+  ) : isAuthenticated ? (
     <AuthContext.Provider
       value={{
         isAuthenticated,
