@@ -14,8 +14,11 @@ type SearchBarComponentProps = {
   currentFilter: ConversationFilter;
 };
 
-export const SearchBarComponent = (props: SearchBarComponentProps) => {
+const SearchBarComponent = (props: SearchBarComponentProps) => {
   const {currentFilter} = props;
+
+  console.log('currentFilter', currentFilter);
+
   const realm = RealmDB.getInstance();
   const [searchInput, setSearchInput] = useState(
     currentFilter?.displayName || '',
@@ -60,6 +63,8 @@ export const SearchBarComponent = (props: SearchBarComponentProps) => {
   );
 };
 
+export const SearchBar = React.memo(SearchBarComponent);
+
 const styles = StyleSheet.create({
   searchBarContainer: {
     flexDirection: 'row',
@@ -76,6 +81,7 @@ const styles = StyleSheet.create({
     paddingLeft: 4,
     padding: 3,
     fontFamily: 'Lato',
+    fontSize: 16,
   },
   searchBarFocused: {
     flexDirection: 'row',

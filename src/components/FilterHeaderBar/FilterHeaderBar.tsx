@@ -6,19 +6,16 @@ import {
   View,
   StyleSheet,
   Animated,
+  Platform,
 } from 'react-native';
-import {
-  colorAiryBlue,
-  colorLightGray,
-  colorRedAlert,
-} from '../../assets/colors';
+import {colorAiryBlue, colorLightGray} from '../../assets/colors';
 import FilterIcon from '../../assets/images/icons/filterIcon.svg';
 import ChevronUpIcon from '../../assets/images/icons/chevronUp.svg';
 import {RealmDB} from '../../storage/realm';
 import {ReadUnreadComponent} from './ReadUnreadComponent';
 import {StateButtonComponent} from './StateButtonComponent';
 import {ChannelComponent} from './ChannelComponent';
-import {SearchBarComponent} from './SearchBarComponent';
+import {SearchBar} from './SearchBarComponent';
 import {Channel, ConversationFilter} from '../../model';
 import {
   displayNameFilterActive,
@@ -29,14 +26,17 @@ import {
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import {hapticFeedbackOptions} from '../../services/HapticFeedback';
 
+const defaultHeaderHeight = Platform.OS === 'ios' ? 44 : 62;
+const defaultHeaderHeightExpanded = 290;
+const CHANNEL_COMPONENT_HEIGHT = 100;
+const PADDING_COLLAPSEDFILTER = 32;
+
+const windowWidth = Dimensions.get('window').width;
+
 export const FilterHeaderBar = () => {
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
   const [appliedFilters, setAppliedFilters] = useState<boolean>(false);
-  const defaultHeaderHeight = 44;
-  const defaultHeaderHeightExpanded = 290;
-  const CHANNEL_COMPONENT_HEIGHT = 100;
-  const PADDING_COLLAPSEDFILTER = 32;
-  const windowWidth = Dimensions.get('window').width;
+
   const realm = RealmDB.getInstance();
   const currentFilter =
     realm.objects<ConversationFilter>('ConversationFilter')[0];
@@ -120,119 +120,177 @@ export const FilterHeaderBar = () => {
     ReactNativeHapticFeedback.trigger('impactHeavy', hapticFeedbackOptions);
   };
 
-  const CollapsedFilterView = () => {
-    return (
-      <Animated.View
+  return filterOpen ? (
+    <ExpandedFilterView
+      currentFilter={currentFilter}
+      appliedFilters={appliedFilters}
+      toggleFiltering={toggleFiltering}
+      connectedChannels={connectedChannels}
+      resetFilters={resetFilters}
+      resetButtonFadeAnimation={resetButtonFadeAnimation}
+      expandedHeaderHeight={expandedHeaderHeight}
+      filterHeaderFadeAnimation={filterHeaderFadeAnimation}
+    />
+  ) : (
+    <CollapsedFilterView
+      currentFilter={currentFilter}
+      appliedFilters={appliedFilters}
+      toggleFiltering={toggleFiltering}
+    />
+  );
+};
+
+type CollapsedFilterViewProps = {
+  currentFilter: ConversationFilter;
+  appliedFilters: boolean;
+  toggleFiltering: () => void;
+};
+
+const CollapsedFilterView = (props: CollapsedFilterViewProps) => {
+  const {currentFilter, toggleFiltering, appliedFilters} = props;
+
+  return (
+    <Animated.View
+      style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: windowWidth,
+        height: defaultHeaderHeight,
+        backgroundColor: 'white',
+        borderBottomWidth: 0.5,
+        borderBottomColor: colorLightGray,
+      }}>
+      <View
         style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
+          width: windowWidth - PADDING_COLLAPSEDFILTER,
+          paddingLeft: 8,
+          paddingRight: 8,
           alignItems: 'center',
-          width: windowWidth,
-          height: defaultHeaderHeight,
-          backgroundColor: 'white',
-          borderBottomWidth: 0.5,
-          borderBottomColor: colorLightGray,
+          flexDirection: 'row',
         }}>
+        <SearchBar currentFilter={currentFilter} />
         <View
           style={{
-            width: windowWidth - PADDING_COLLAPSEDFILTER,
-            paddingLeft: 8,
-            paddingRight: 8,
+            flexDirection: 'row',
             alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <View>
+            <TouchableOpacity onPress={toggleFiltering}>
+              <FilterIcon
+                style={{}}
+                width={32}
+                height={32}
+                fill={colorAiryBlue}
+                color={colorAiryBlue}
+              />
+            </TouchableOpacity>
+            {appliedFilters && (
+              <Animated.View
+                style={{
+                  position: 'absolute',
+                  right: 4,
+                  top: 2,
+                  height: 8,
+                  width: 8,
+                  backgroundColor: 'red',
+                  borderRadius: 50,
+                }}
+              />
+            )}
+          </View>
+        </View>
+      </View>
+    </Animated.View>
+  );
+};
+
+type ExpandedFilterViewProps = {
+  currentFilter: ConversationFilter;
+  appliedFilters: boolean;
+  connectedChannels: Realm.Results<Channel & Realm.Object>;
+  toggleFiltering: () => void;
+  resetFilters: () => void;
+  resetButtonFadeAnimation: Animated.Value;
+  expandedHeaderHeight: number;
+  filterHeaderFadeAnimation: Animated.Value;
+};
+
+const ExpandedFilterView = (props: ExpandedFilterViewProps) => {
+  const {
+    currentFilter,
+    connectedChannels,
+    toggleFiltering,
+    resetFilters,
+    appliedFilters,
+    expandedHeaderHeight,
+    resetButtonFadeAnimation,
+    filterHeaderFadeAnimation,
+  } = props;
+
+  return (
+    <Animated.View
+      style={{
+        height: expandedHeaderHeight,
+        opacity: filterHeaderFadeAnimation,
+        backgroundColor: 'white',
+        width: windowWidth,
+        justifyContent: 'flex-end',
+        borderBottomColor: colorLightGray,
+        borderBottomWidth: 0.5,
+      }}>
+      <View style={{marginLeft: 12, marginRight: 12}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <Text style={styles.headerTitleExpanded}>Filter</Text>
+          <TouchableOpacity onPress={resetFilters} disabled={!appliedFilters}>
+            <Animated.Text
+              style={{
+                marginRight: 8,
+                color: colorAiryBlue,
+                opacity: resetButtonFadeAnimation,
+              }}>
+              Reset
+            </Animated.Text>
+          </TouchableOpacity>
+        </View>
+        <ReadUnreadComponent currentFilter={currentFilter} />
+        <StateButtonComponent currentFilter={currentFilter} />
+        {connectedChannels.length > 0 && (
+          <ChannelComponent currentFilter={currentFilter} />
+        )}
+        <View
+          style={{
+            marginBottom: 16,
+            marginTop: 8,
+            justifyContent: 'flex-end',
+            alignItems: 'flex-end',
             flexDirection: 'row',
           }}>
-          <SearchBarComponent currentFilter={currentFilter} />
-          <View
+          <TouchableOpacity
+            onPress={toggleFiltering}
             style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
+              position: 'absolute',
+              bottom: -23,
+              right: windowWidth / 2 - 40,
+              padding: 0,
             }}>
-            <View>
-              <TouchableOpacity onPress={toggleFiltering}>
-                <FilterIcon width={32} height={32} fill={colorAiryBlue} />
-              </TouchableOpacity>
-              {appliedFilters && (
-                <Animated.View
-                  style={{
-                    position: 'absolute',
-                    right: 4,
-                    top: 2,
-                    height: 8,
-                    width: 8,
-                    backgroundColor: 'red',
-                    borderRadius: 50,
-                  }}
-                />
-              )}
-            </View>
-          </View>
+            <ChevronUpIcon
+              height={48}
+              width={48}
+              fill={colorAiryBlue}
+              color={colorAiryBlue}
+            />
+          </TouchableOpacity>
         </View>
-      </Animated.View>
-    );
-  };
-
-  const ExpandedFilterView = () => {
-    return (
-      <Animated.View
-        style={{
-          height: expandedHeaderHeight,
-          opacity: filterHeaderFadeAnimation,
-          backgroundColor: 'white',
-          width: windowWidth,
-          justifyContent: 'flex-end',
-          borderBottomColor: colorLightGray,
-          borderBottomWidth: 0.5,
-        }}>
-        <View style={{marginLeft: 12, marginRight: 12}}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <Text style={styles.headerTitleExpanded}>Filter</Text>
-            <TouchableOpacity onPress={resetFilters} disabled={!appliedFilters}>
-              <Animated.Text
-                style={{
-                  marginRight: 8,
-                  color: colorAiryBlue,
-                  opacity: resetButtonFadeAnimation,
-                }}>
-                Reset
-              </Animated.Text>
-            </TouchableOpacity>
-          </View>
-          <ReadUnreadComponent currentFilter={currentFilter} />
-          <StateButtonComponent currentFilter={currentFilter} />
-          {connectedChannels.length > 0 && (
-            <ChannelComponent currentFilter={currentFilter} />
-          )}
-          <View
-            style={{
-              marginBottom: 16,
-              marginTop: 8,
-              justifyContent: 'flex-end',
-              alignItems: 'flex-end',
-              flexDirection: 'row',
-            }}>
-            <TouchableOpacity
-              onPress={toggleFiltering}
-              style={{
-                position: 'absolute',
-                bottom: -23,
-                right: windowWidth / 2 - 40,
-                padding: 0,
-              }}>
-              <ChevronUpIcon height={48} width={48} fill={colorRedAlert} />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Animated.View>
-    );
-  };
-
-  return filterOpen ? <ExpandedFilterView /> : <CollapsedFilterView />;
+      </View>
+    </Animated.View>
+  );
 };
 
 const styles = StyleSheet.create({

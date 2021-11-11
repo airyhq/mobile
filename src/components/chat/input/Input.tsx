@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Animated, TextInput, TouchableOpacity} from 'react-native';
+import {Animated, Platform, TextInput, TouchableOpacity} from 'react-native';
 import {View, StyleSheet} from 'react-native';
 import {sendMessage} from '../../../api/Message';
 import {
@@ -157,7 +157,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato',
     alignSelf: 'flex-end',
     fontSize: 16,
-    paddingTop: 8,
+    paddingTop: Platform.OS === 'ios' ? 8 : 0,
+    paddingBottom: 0,
   },
   sendButton: {
     borderRadius: 50,
