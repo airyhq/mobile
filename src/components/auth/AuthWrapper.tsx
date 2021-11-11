@@ -58,23 +58,23 @@ export const AuthWrapper = ({children}) => {
         logout();
       });
 
-      api.getConfig().then(({userProfile}) => {
-        const nextUser = {
-          token,
-          host,
-          name: userProfile.name,
-          avatarUrl: userProfile.avatarUrl,
-        };
-        const realm = RealmDB.getInstance();
-        realm.write(() => {
-          realm.create('UserInfo', nextUser, 'modified');
-        });
-        setUser(nextUser);
-        setIsAuthenticated(true);
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);        
-      });
+      api
+        .getConfig()
+        .then(({userProfile}) => {
+          const nextUser = {
+            token,
+            host,
+            name: userProfile.name,
+            avatarUrl: userProfile.avatarUrl,
+          };
+          const realm = RealmDB.getInstance();
+          realm.write(() => {
+            realm.create('UserInfo', nextUser, 'modified');
+          });
+          setUser(nextUser);
+          setIsAuthenticated(true);
+        })
+        .catch(error => error);
     },
     [user, logout],
   );

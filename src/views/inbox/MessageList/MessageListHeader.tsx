@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Dimensions, View, Text, StyleSheet} from 'react-native';
+import {Dimensions, View, Text, StyleSheet, Platform} from 'react-native';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {Avatar} from '../../../components/Avatar';
 import {CurrentState} from '../../../components/CurrentState';
@@ -36,7 +36,6 @@ export const MessageListHeader = ({route, navigation}: NavigationStackProp) => {
         conversationId={route.params.conversationId}
         state={state}
         pressable={true}
-        style={{position: 'absolute', right: 12, top: 3}}
         navigation={navigation}
         setState={stateUpdate}
       />
@@ -56,7 +55,7 @@ const styles = StyleSheet.create({
     width: WINDOW_WIDTH - BACKBUTTON_WIDTH,
     height: HEADER_HEIGHT,
     backgroundColor: 'white',
-    marginLeft: -40,
+    marginLeft: Platform.OS === 'ios' ? -40 : -20,
   },
   titleIconChannelContainer: {
     flex: 1,

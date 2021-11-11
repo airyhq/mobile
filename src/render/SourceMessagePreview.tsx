@@ -40,7 +40,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
         );
         const replaced = enCodedText.split('+').join(' ');
         const text = decodeURIComponent(replaced);
-        return text;
+        return <Text>{text}</Text>;
       } else if (lastMessageContent.text.includes('&Body=' && '&To=whatsapp')) {
         const startText = lastMessageContent.text.search('&Body=');
         const endText = lastMessageContent.text.search('&To=whatsapp');
@@ -51,7 +51,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
         );
         const replaced = enCodedText.split('+').join(' ');
         const text = decodeURIComponent(replaced);
-        return text;
+        return <Text>{text}</Text>;
       }
     }
 

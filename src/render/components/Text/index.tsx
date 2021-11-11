@@ -42,11 +42,13 @@ const styles = StyleSheet.create({
   },
   contactContent: {
     fontFamily: 'Lato',
+    fontSize: 16,
     backgroundColor: colorBackgroundBlue,
     color: colorTextContrast,
   },
   memberContent: {
     fontFamily: 'Lato',
+    fontSize: 16,
     backgroundColor: colorAiryBlue,
     color: 'white',
   },

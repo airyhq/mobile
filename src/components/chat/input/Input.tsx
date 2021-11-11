@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Animated, TextInput, TouchableOpacity} from 'react-native';
+import {Animated, Platform, TextInput, TouchableOpacity} from 'react-native';
 import {View, StyleSheet} from 'react-native';
-import {sendMessage} from '../../../api/conversation';
+import {sendMessage} from '../../../api/Message';
 import {
   colorAiryBlue,
   colorBackgroundGray,
@@ -156,8 +156,9 @@ const styles = StyleSheet.create({
   textInput: {
     fontFamily: 'Lato',
     alignSelf: 'flex-end',
-    borderRadius: 16,
-    paddingTop: 10,
+    fontSize: 16,
+    paddingTop: Platform.OS === 'ios' ? 8 : 0,
+    paddingBottom: 0,
   },
   sendButton: {
     borderRadius: 50,

@@ -36,7 +36,11 @@ export const TabBar = () => {
 
   const SettingsScreen = () => {
     return (
-      <SettingsStack.Navigator screenOptions={{headerShown: true}}>
+      <SettingsStack.Navigator
+        screenOptions={{
+          headerShown: true,
+          headerTitleStyle: {fontFamily: 'Lato', fontSize: 20},
+        }}>
         <SettingsStack.Screen name="Settings" component={SettingsView} />
       </SettingsStack.Navigator>
     );

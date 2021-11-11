@@ -17,7 +17,7 @@
 		193ACA3E645DB9652C8A390B /* libPods-mobile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 245474D9001301B4F5A4B85A /* libPods-mobile.a */; };
 		3BFA0D419F244625ABA76449 /* Lato-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C12C2CFCF8F544179B3EAAC9 /* Lato-Thin.ttf */; };
 		597AEC841E304864973FF860 /* Lato-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 16CEB9E6E231410A88303C26 /* Lato-ThinItalic.ttf */; };
-		5B903A0F272ADD5600A300BE /* test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B903A0E272ADD5600A300BE /* test.swift */; };
+		5BC818E427341E70007F7396 /* empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC818E327341E70007F7396 /* empty.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		888C72F52A4F447E94145E4A /* Lato-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9C9F13C9BF3D4856BF8D9A40 /* Lato-BlackItalic.ttf */; };
 		8B33CB3BE44540E294EAF482 /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 542D442BEC2B470EB2ED7F41 /* Lato-Italic.ttf */; };
@@ -57,9 +57,9 @@
 		2CD30A8D0C2640DF9E96C712 /* Lato-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-BoldItalic.ttf"; path = "../src/assets/fonts/Lato-BoldItalic.ttf"; sourceTree = "<group>"; };
 		45CC453761CE4725881EC140 /* Lato-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Regular.ttf"; path = "../src/assets/fonts/Lato-Regular.ttf"; sourceTree = "<group>"; };
 		542D442BEC2B470EB2ED7F41 /* Lato-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Italic.ttf"; path = "../src/assets/fonts/Lato-Italic.ttf"; sourceTree = "<group>"; };
-		5835058CA4C64B50ABCA9EB0 /* Pods-mobile-mobileTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobile-mobileTests.release.xcconfig"; path = "Target Support Files/Pods-mobile-mobileTests/Pods-mobile-mobileTests.release.xcconfig"; sourceTree = "<group>"; };
-		5B903A0D272ADD5600A300BE /* mobile-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "mobile-Bridging-Header.h"; sourceTree = "<group>"; };
-		5B903A0E272ADD5600A300BE /* test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = test.swift; sourceTree = "<group>"; };
+		5BC818E227341E70007F7396 /* mobile-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "mobile-Bridging-Header.h"; sourceTree = "<group>"; };
+		5BC818E327341E70007F7396 /* empty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = empty.swift; sourceTree = "<group>"; };
+		79072B74AEF36080E16AB4E0 /* Pods-mobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobile.release.xcconfig"; path = "Target Support Files/Pods-mobile/Pods-mobile.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = mobile/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8DA913A0429C49EABE1AE283 /* Lato-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Bold.ttf"; path = "../src/assets/fonts/Lato-Bold.ttf"; sourceTree = "<group>"; };
 		94A60E1811CE8D1BA041DE57 /* Pods-mobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobile.release.xcconfig"; path = "Target Support Files/Pods-mobile/Pods-mobile.release.xcconfig"; sourceTree = "<group>"; };
@@ -134,8 +134,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
-				5B903A0E272ADD5600A300BE /* test.swift */,
-				5B903A0D272ADD5600A300BE /* mobile-Bridging-Header.h */,
+				5BC818E327341E70007F7396 /* empty.swift */,
+				5BC818E227341E70007F7396 /* mobile-Bridging-Header.h */,
 			);
 			name = mobile;
 			sourceTree = "<group>";
@@ -253,7 +253,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1250;
+						LastSwiftMigration = 1300;
 					};
 				};
 			};
@@ -470,6 +470,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				5B903A0F272ADD5600A300BE /* test.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				5BC818E427341E70007F7396 /* empty.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

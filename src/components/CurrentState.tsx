@@ -5,71 +5,38 @@ import {
   Pressable,
   StyleProp,
   ViewStyle,
-  Vibration,
-  SafeAreaView,
+  Platform,
 } from 'react-native';
 import {colorSoftGreen, colorStateRed} from '../assets/colors';
-import {RealmDB} from '../storage/realm';
 import Checkmark from '../assets/images/icons/checkmark-circle.svg';
-import {Conversation} from '../model/Conversation';
-import {api} from '../api';
-import {NavigationStackProp} from 'react-navigation-stack';
-import {MessageListHeader} from '../views/inbox/MessageList/MessageListHeader';
+import {changeConversationState} from '../api/Conversation';
 
 type CurrentStateProps = {
   state: string;
   conversationId: string;
   pressable: boolean;
   style?: StyleProp<ViewStyle>;
-  navigation?: NavigationStackProp<{conversationId: string}>;
   setState?: (newState: string) => void;
 };
 
 export const CurrentState = (props: CurrentStateProps) => {
-  const {state, conversationId, pressable, style, navigation, setState} = props;
+  const {state, conversationId, pressable, style, setState} = props;
   const currentConversationState = state || 'OPEN';
-  const realm = RealmDB.getInstance();
-
-  const changeState = () => {
-    navigation.setOptions = ({route, navigation}: NavigationStackProp) => ({
-      headerTitle: () => {
-        return (
-          <SafeAreaView>
-            <MessageListHeader route={route} navigation={navigation} />
-          </SafeAreaView>
-        );
-      },
-    });
-
-    const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
-    api
-      .setStateConversation({
-        conversationId: conversationId,
-        state: newState,
-      })
-      .then(() => {
-        realm.write(() => {
-          const changedConversation: Conversation | undefined =
-            realm.objectForPrimaryKey('Conversation', conversationId);
-
-          if (changedConversation?.metadata?.state) {
-            changedConversation.metadata.state = newState;
-          }
-        });
-      });
-
-    setState(newState);
-  };
 
   const OpenStateButton = () => {
     return (
       <>
         {pressable ? (
           <Pressable
-            onPress={changeState}
-            onPressIn={() => Vibration.vibrate}
+            onPress={() =>
+              changeConversationState(
+                currentConversationState,
+                conversationId,
+                setState,
+              )
+            }
             style={[
-              styles.openStateButton,
+              styles.openStateButtonPress,
               {position: 'absolute', right: 7, top: 8, height: 24, width: 24},
             ]}
           />
@@ -82,9 +49,20 @@ export const CurrentState = (props: CurrentStateProps) => {
 
   const ClosedStateButton = () => {
     return (
-      <View style={[styles.closedStateButton, style]}>
+      <View
+        style={[
+          pressable ? styles.closedStateButtonPress : styles.closedStateButton,
+          style,
+        ]}>
         {pressable ? (
-          <Pressable onPress={changeState} onPressIn={() => Vibration.vibrate}>
+          <Pressable
+            onPress={() =>
+              changeConversationState(
+                currentConversationState,
+                conversationId,
+                setState,
+              )
+            }>
             <Checkmark height={30} width={30} fill={colorSoftGreen} />
           </Pressable>
         ) : (
@@ -112,5 +90,21 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginRight: 8,
     paddingTop: 2,
+  },
+  openStateButtonPress: {
+    borderWidth: 1,
+    borderColor: colorStateRed,
+    height: 20,
+    width: 20,
+    borderRadius: 50,
+    marginRight: Platform.OS === 'ios' ? 10 : 20,
+  },
+  closedStateButtonPress: {
+    height: 20,
+    width: 20,
+    borderRadius: 50,
+    marginRight: Platform.OS === 'ios' ? 8 : 34,
+    paddingTop: Platform.OS === 'ios' ? 2 : 0,
+    marginTop: Platform.OS === 'ios' ? 0 : -12,
   },
 });

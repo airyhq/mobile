@@ -1,6 +1,6 @@
-import {api} from '../../api';
-import {Channel} from '../../model/Channel';
-import {RealmDB} from '../../storage/realm';
+import {api} from '../api';
+import {Channel} from '../model/Channel';
+import {RealmDB} from '../storage/realm';
 
 const realm = RealmDB.getInstance();
 

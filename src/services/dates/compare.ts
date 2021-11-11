@@ -1,3 +1,5 @@
+import {Message} from '../../model';
+
 export function isToday(date: Date) {
   return (
     new Date().setHours(0, 0, 0, 0) === new Date(date).setHours(0, 0, 0, 0)
@@ -19,3 +21,10 @@ export function isSameDay(firstDate: Date, secondDate: Date) {
     new Date(secondDate).setHours(0, 0, 0, 0)
   );
 }
+
+export const hasDateChanged = (prevMessage: Message, message: Message) => {
+  if (prevMessage == null) {
+    return true;
+  }
+  return !isSameDay(prevMessage.sentAt, message.sentAt);
+};

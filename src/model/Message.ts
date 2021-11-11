@@ -37,7 +37,7 @@ export type MessageData = {
 export const ContentMessageSchema = {
   name: 'ContentMessage',
   properties: {
-    type: 'string',
+    type: 'string?',
     text: 'string?',
     richCard: 'RichCard?',
     richCardCarousel: 'RichCardCarousel?',

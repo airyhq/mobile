@@ -1,7 +1,12 @@
 import Realm from 'realm';
 import {UserInfoSchema} from '../model/userInfo';
-import {ConversationSchema} from '../model/Conversation';
-import {ConversationFilterSchema} from '../model/ConversationFilter';
+import {
+  ConversationSchema,
+  parseToRealmConversation,
+  Conversation,
+  Channel,
+  ConversationFilterSchema,
+} from '../model';
 import {
   ChannelMetadataSchema,
   ChannelSchema,
@@ -104,3 +109,44 @@ export class RealmDB {
     return RealmDB.instance;
   }
 }
+
+export const upsertConversations = (
+  conversations: Conversation[],
+  realm: Realm,
+) => {
+  conversations.forEach(conversation => {
+    const storedConversation: Conversation | undefined =
+      realm.objectForPrimaryKey('Conversation', conversation.id);
+
+    if (storedConversation) {
+      realm.write(() => {
+        storedConversation.lastMessage = conversation.lastMessage;
+        storedConversation.metadata = conversation.metadata;
+      });
+    } else {
+      realm.write(() => {
+        const newConversation: Conversation =
+          parseToRealmConversation(conversation);
+        const channel: Channel =
+          RealmDB.getInstance().objectForPrimaryKey<Channel>(
+            'Channel',
+            conversation.channel.id,
+          );
+        const newConversationState = newConversation.metadata.state || 'OPEN';
+
+        realm.create('Conversation', {
+          ...newConversation,
+          channel: channel || newConversation.channel,
+          metadata: {
+            ...newConversation.metadata,
+            state: newConversationState,
+          },
+        });
+        realm.create('MessageData', {
+          id: conversation.id,
+          messages: [],
+        });
+      });
+    }
+  });
+};

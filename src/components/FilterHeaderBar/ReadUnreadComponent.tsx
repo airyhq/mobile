@@ -11,19 +11,17 @@ import {ConversationFilter} from '../../model/ConversationFilter';
 import {RealmDB} from '../../storage/realm';
 
 type ReadUnreadComponentProps = {
-  filterReset: boolean;
+  currentFilter: ConversationFilter;
 };
 
 export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
-  const {filterReset} = props;
+  const {currentFilter} = props;
   const realm = RealmDB.getInstance();
-  const currentFilter =
-    realm.objects<ConversationFilter>('ConversationFilter')[0];
   const [stateActiveRead, setStateActiveRead] = useState<boolean>(
-    currentFilter?.readOnly || null,
+    currentFilter?.readOnly,
   );
   const [stateActiveUnRead, setStateActiveUnRead] = useState<boolean>(
-    currentFilter?.unreadOnly || null,
+    currentFilter?.unreadOnly,
   );
 
   useEffect(() => {
@@ -51,18 +49,6 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
     setStateActiveUnRead,
   ]);
 
-  useEffect(() => {
-    if (filterReset) {
-      setStateActiveRead(null);
-      setStateActiveUnRead(null);
-      realm.write(() => {
-        currentFilter.readOnly = stateActiveRead;
-        currentFilter.unreadOnly = stateActiveUnRead;
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterReset]);
-
   return (
     <View
       style={{
@@ -89,15 +75,19 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
             },
           ]}
           onPress={() => {
-            setStateActiveRead(null), setStateActiveUnRead(null);
+            setStateActiveRead(null);
+            setStateActiveUnRead(null);
           }}>
           <Text
-            style={{
-              color:
-                (stateActiveRead || stateActiveUnRead) === null
-                  ? 'white'
-                  : colorContrast,
-            }}>
+            style={[
+              styles.text,
+              {
+                color:
+                  (stateActiveRead || stateActiveUnRead) === null
+                    ? 'white'
+                    : colorContrast,
+              },
+            ]}>
             All
           </Text>
         </TouchableOpacity>
@@ -116,12 +106,16 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
             },
           ]}
           onPress={() => {
-            setStateActiveRead(false), setStateActiveUnRead(true);
+            setStateActiveRead(false);
+            setStateActiveUnRead(true);
           }}>
           <Text
-            style={{
-              color: stateActiveUnRead === true ? 'white' : colorRedAlert,
-            }}>
+            style={[
+              styles.text,
+              {
+                color: stateActiveUnRead === true ? 'white' : colorRedAlert,
+              },
+            ]}>
             Unread
           </Text>
         </TouchableOpacity>
@@ -140,12 +134,16 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
             },
           ]}
           onPress={() => {
-            setStateActiveRead(true), setStateActiveUnRead(false);
+            setStateActiveRead(true);
+            setStateActiveUnRead(false);
           }}>
           <Text
-            style={{
-              color: stateActiveRead === true ? 'white' : colorSoftGreen,
-            }}>
+            style={[
+              styles.text,
+              {
+                color: stateActiveRead === true ? 'white' : colorSoftGreen,
+              },
+            ]}>
             Read
           </Text>
         </TouchableOpacity>
@@ -164,5 +162,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 1,
     borderColor: colorAiryBlue,
+  },
+  text: {
+    fontFamily: 'Lato',
   },
 });
