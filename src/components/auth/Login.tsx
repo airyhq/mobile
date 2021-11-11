@@ -104,7 +104,7 @@ export const Login = () => {
   };
 
   const getAndStoreUser = async token => {
-    setShowWebView(false);    
+    setShowWebView(false);
     const host = getHost(domain);
     const realm = RealmDB.getInstance();
     realm.write(() => {
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     height: 150,
   },
   webview: {
-    flex: 1,    
+    flex: 1,
   },
   closeButton: {
     backgroundColor: colorBackgroundBlue,

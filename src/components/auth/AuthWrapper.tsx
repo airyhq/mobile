@@ -7,7 +7,7 @@ import {UserInfo} from '../../model/userInfo';
 import {HttpClient} from '@airyhq/http-client';
 import {Login} from './Login';
 import CookieManager from '@react-native-cookies/cookies';
-import { View } from 'react-native';
+import {View} from 'react-native';
 
 export let api = new HttpClient();
 
@@ -87,9 +87,9 @@ export const AuthWrapper = ({children}) => {
         const host = userChanged.host;
         const token = userChanged.token;
         if (host && token) {
-          refreshUser(host, token);          
+          refreshUser(host, token);
         }
-      } 
+      }
     },
     [refreshUser],
   );
@@ -104,24 +104,27 @@ export const AuthWrapper = ({children}) => {
   }, [onUserChange]);
 
   return loading ? (
-    <View style={{
-      height: '100%',
-      width: '100%'
-    }}>
-      <LottieView source={require('../../assets/animations/loading.json')} autoPlay loop />
+    <View
+      style={{
+        height: '100%',
+        width: '100%',
+      }}>
+      <LottieView
+        source={require('../../assets/animations/loading.json')}
+        autoPlay
+        loop
+      />
     </View>
+  ) : isAuthenticated ? (
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        user,
+        logout,
+      }}>
+      {children}
+    </AuthContext.Provider>
   ) : (
-    isAuthenticated ? (
-      <AuthContext.Provider
-        value={{
-          isAuthenticated,
-          user,
-          logout,
-        }}>
-        {children}
-      </AuthContext.Provider>
-    ) : (
-      <Login />
-    )
-  )
+    <Login />
+  );
 };
