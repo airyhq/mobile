@@ -92,7 +92,7 @@ export const AuthWrapper = ({children}) => {
       } else {
         setLoading(false);
       }
-    }, 
+    },
     [refreshUser],
   );
 
