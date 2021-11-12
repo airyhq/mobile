@@ -89,8 +89,10 @@ export const AuthWrapper = ({children}) => {
         if (host && token) {
           refreshUser(host, token);
         }
+      } else {
+        setLoading(false);
       }
-    },
+    }, 
     [refreshUser],
   );
 
