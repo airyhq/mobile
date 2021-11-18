@@ -39,6 +39,10 @@ export const StateButtonComponent = (props: StateButtonCompontentProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stateActiveOpen, setStateActiveOpen]);
 
+  useEffect(() => {
+    setStateActiveOpen(currentFilter.isStateOpen);
+  }, [currentFilter]);
+
   return (
     <View
       style={{

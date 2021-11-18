@@ -54,14 +54,14 @@ export const FilterHeaderBar = () => {
   const resetButtonFadeAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (currentFilter) {
+    currentFilter &&
       currentFilter.addListener(() => {
         isFilterApplied();
       });
-      return () => {
-        currentFilter.removeAllListeners();
-      };
-    }
+    return () => {
+      currentFilter.removeAllListeners();
+    };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterOpen]);
 

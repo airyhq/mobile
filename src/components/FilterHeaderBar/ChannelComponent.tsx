@@ -73,6 +73,10 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedChannels, setSelectedChannels]);
 
+  useEffect(() => {
+    setSelectedChannels(currentFilter.byChannels);
+  }, [currentFilter]);
+
   const ChannelItem = ({item}) => {
     return (
       <View style={styles.channelItemContainer}>

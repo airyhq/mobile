@@ -49,6 +49,11 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
     setStateActiveUnRead,
   ]);
 
+  useEffect(() => {
+    setStateActiveRead(currentFilter.readOnly);
+    setStateActiveUnRead(currentFilter.unreadOnly);
+  }, [currentFilter]);
+
   return (
     <View
       style={{
