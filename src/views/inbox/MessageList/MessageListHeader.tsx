@@ -36,7 +36,6 @@ export const MessageListHeader = ({route, navigation}: NavigationStackProp) => {
         conversationId={route.params.conversationId}
         state={state}
         pressable={true}
-        navigation={navigation}
         setState={stateUpdate}
       />
     </View>
