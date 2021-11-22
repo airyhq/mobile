@@ -27,6 +27,8 @@ import {NavigationStackProp} from 'react-navigation-stack';
 import {CurrentState} from '../../../components/CurrentState';
 import {api} from '../../../api';
 import {changeConversationState} from '../../../api/Conversation';
+import {hapticFeedbackOptions} from '../../../services/HapticFeedback';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 type ConversationListItemProps = {
   conversation: Conversation;
@@ -95,6 +97,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
   };
 
   const handlePress = () => {
+    ReactNativeHapticFeedback.trigger('impactHeavy', hapticFeedbackOptions);
     changeConversationState(currentConversationState, conversation.id);
     close();
   };

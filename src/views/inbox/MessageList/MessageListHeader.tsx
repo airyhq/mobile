@@ -5,7 +5,7 @@ import {Avatar} from '../../../components/Avatar';
 import {CurrentState} from '../../../components/CurrentState';
 import IconChannel from '../../../components/IconChannel';
 
-export const MessageListHeader = ({route, navigation}: NavigationStackProp) => {
+export const MessageListHeader = ({route}: NavigationStackProp) => {
   const [state, setState] = useState<string>(route.params.state || 'OPEN');
 
   const stateUpdate = (newState: string) => {
@@ -36,7 +36,6 @@ export const MessageListHeader = ({route, navigation}: NavigationStackProp) => {
         conversationId={route.params.conversationId}
         state={state}
         pressable={true}
-        navigation={navigation}
         setState={stateUpdate}
       />
     </View>

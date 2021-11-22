@@ -10,6 +10,8 @@ import {
 import {colorSoftGreen, colorStateRed} from '../assets/colors';
 import Checkmark from '../assets/images/icons/checkmark-circle.svg';
 import {changeConversationState} from '../api/Conversation';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import {hapticFeedbackOptions} from '../services/HapticFeedback';
 
 type CurrentStateProps = {
   state: string;
@@ -28,16 +30,21 @@ export const CurrentState = (props: CurrentStateProps) => {
       <>
         {pressable ? (
           <Pressable
-            onPress={() =>
+            hitSlop={{top: 10, right: 48, bottom: 10}}
+            onPress={() => {
+              ReactNativeHapticFeedback.trigger(
+                'impactHeavy',
+                hapticFeedbackOptions,
+              );
               changeConversationState(
                 currentConversationState,
                 conversationId,
                 setState,
-              )
-            }
+              );
+            }}
             style={[
               styles.openStateButtonPress,
-              {position: 'absolute', right: 7, top: 8, height: 24, width: 24},
+              {position: 'absolute', right: 7, top: 9, height: 24, width: 24},
             ]}
           />
         ) : (
@@ -56,13 +63,18 @@ export const CurrentState = (props: CurrentStateProps) => {
         ]}>
         {pressable ? (
           <Pressable
-            onPress={() =>
+            hitSlop={{top: 10, right: 48, bottom: 10}}
+            onPress={() => {
+              ReactNativeHapticFeedback.trigger(
+                'impactHeavy',
+                hapticFeedbackOptions,
+              );
               changeConversationState(
                 currentConversationState,
                 conversationId,
                 setState,
-              )
-            }>
+              );
+            }}>
             <Checkmark height={30} width={30} fill={colorSoftGreen} />
           </Pressable>
         ) : (

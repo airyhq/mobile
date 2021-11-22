@@ -7,8 +7,6 @@ import {
 } from '../model';
 import {RealmDB, upsertConversations} from '../storage/realm';
 import {api} from '../api';
-import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import {hapticFeedbackOptions} from '../services/HapticFeedback';
 
 const realm = RealmDB.getInstance();
 
@@ -98,5 +96,4 @@ export const changeConversationState = (
       });
     });
   setState && setState(newState);
-  ReactNativeHapticFeedback.trigger('impactHeavy', hapticFeedbackOptions);
 };
