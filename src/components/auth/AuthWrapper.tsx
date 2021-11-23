@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import LottieView from 'lottie-react-native';
 import {RealmDB} from '../../storage/realm';
 
-import {Results} from 'realm';
+import {Results, UpdateMode} from 'realm';
 import {UserInfo} from '../../model/userInfo';
 import {HttpClient} from '@airyhq/http-client';
 import {Login} from './Login';
@@ -69,7 +69,7 @@ export const AuthWrapper = ({children}) => {
           };
           const realm = RealmDB.getInstance();
           realm.write(() => {
-            realm.create('UserInfo', nextUser, 'modified');
+            realm.create('UserInfo', nextUser, UpdateMode.Modified);
           });
           setUser(nextUser);
           setIsAuthenticated(true);

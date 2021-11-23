@@ -21,6 +21,7 @@ import {
   WebViewNavigation,
 } from 'react-native-webview/lib/WebViewTypes';
 import {RealmDB} from '../../storage/realm';
+import {UpdateMode} from 'realm';
 
 const getAuthUrl = domain => `${getHost(domain)}/oauth2/authorization/auth0`;
 const getHost = domain => `https://${domain}`;
@@ -114,7 +115,7 @@ export const Login = () => {
           token: token,
           host: host,
         },
-        'modified',
+        UpdateMode.Modified,
       );
     });
   };
