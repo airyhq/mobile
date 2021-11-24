@@ -82,11 +82,17 @@ export const ConversationList = (props: ConversationListProps) => {
 
     if (currentFilter) {
       databaseConversations = databaseConversations.filtered(
-        'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1 && $2 CONTAINS[c] channel.id',
+        'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1',
         getDisplayNameForRealmFilter(currentFilter),
         getStateForRealmFilter(currentFilter),
-        filteredChannels(),
       );
+
+      if (currentFilter.byChannels.length > 0) {
+        databaseConversations = databaseConversations.filtered(
+          '$0 CONTAINS[c] channel.id',
+          filteredChannels(),
+        );
+      }
 
       if (isFilterReadOnly(currentFilter)) {
         databaseConversations = databaseConversations.filtered(
