@@ -1,6 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, Text, Dimensions} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Dimensions,
+  ActivityIndicator,
+  Pressable,
+} from 'react-native';
 import Video from 'react-native-video';
+import {colorAiryBlue} from '../../../assets/colors';
 
 type VideoRenderProps = {
   videoUrl: string;
@@ -18,6 +26,8 @@ export const VideoComponent = ({videoUrl}: VideoRenderProps) => {
   const [isVideoFailed, setVideoFailed] = useState(
     failedUrls.includes(videoUrl),
   );
+  const [loading, setLoading] = useState<boolean>(true);
+  const [fullscreen, setFullscreen] = useState<boolean>(false);
 
   useEffect(() => {
     setVideoFailed(failedUrls.includes(videoUrl));
@@ -28,22 +38,47 @@ export const VideoComponent = ({videoUrl}: VideoRenderProps) => {
     setVideoFailed(true);
   };
 
+  const handleOnLoadEnd = () => {
+    setLoading(false);
+  };
+
+  const handleOnPress = () => {
+    setFullscreen(true);
+  };
+
   return (
-    <View style={styles.wrapper}>
-      <View style={styles.item}>
-        {isVideoFailed ? (
-          <Text>Loading of video failed</Text>
-        ) : (
-          <Video
-            source={{uri: videoUrl}}
-            onError={loadingFailed}
-            style={styles.video}
-            resizeMode={'contain'}
-            controls
+    <>
+      <Pressable onPress={handleOnPress} style={styles.wrapper}>
+        <View style={styles.item}>
+          {isVideoFailed ? (
+            <Text>Loading of video failed</Text>
+          ) : (
+            <Video
+              source={{uri: videoUrl}}
+              onError={loadingFailed}
+              onLoad={handleOnLoadEnd}
+              style={styles.video}
+              resizeMode={'cover'}
+              controls
+              playWhenInactive={false}
+            />
+          )}
+        </View>
+      </Pressable>
+      <>
+        {loading && (
+          <ActivityIndicator
+            style={{
+              position: 'absolute',
+              top: 35,
+              left: 70,
+              right: 70,
+              height: 50,
+            }}
           />
         )}
-      </View>
-    </View>
+      </>
+    </>
   );
 };
 
@@ -52,9 +87,16 @@ const styles = StyleSheet.create({
     display: 'flex',
     flex: 1,
     marginTop: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 2,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 1,
   },
   item: {
-    display: 'flex',
+    flex: 1,
     alignSelf: 'flex-end',
     width: '100%',
   },
@@ -87,5 +129,6 @@ const styles = StyleSheet.create({
   video: {
     width: Dimensions.get('window').width / 2,
     height: 100,
+    borderRadius: 12,
   },
 });

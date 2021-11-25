@@ -6,11 +6,13 @@ import SettingsIcon from '../assets/images/icons/settings_icon.svg';
 import {createStackNavigator} from '@react-navigation/stack';
 import {MessageList} from '../views/inbox/MessageList';
 import {colorAiryBlue, colorTextGray} from '../assets/colors';
-import {SafeAreaView} from 'react-native';
+import {SafeAreaView, View} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {FilterHeaderBar} from './FilterHeaderBar/FilterHeaderBar';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {MessageListHeader} from '../views/inbox/MessageList/MessageListHeader';
+import {FileContent} from '../views/inbox/MessageList/FileContent';
+import DownloadIcon from '../assets/images/icons/download.svg';
 
 export const TabBar = () => {
   const Tab = createBottomTabNavigator();
@@ -94,6 +96,24 @@ export const TabBar = () => {
               <SafeAreaView>
                 <MessageListHeader route={route} navigation={navigation} />
               </SafeAreaView>
+            );
+          },
+        })}
+      />
+      <Stack.Screen
+        name="FileContent"
+        component={FileContent}
+        options={({route}: NavigationStackProp) => ({
+          headerTitle: route.params.fileName,
+          headerBackTitle: '',
+          headerRight: () => {
+            return (
+              <DownloadIcon
+                height={32}
+                width={32}
+                fill={colorAiryBlue}
+                style={{marginRight: 8}}
+              />
             );
           },
         })}
