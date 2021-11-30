@@ -4,7 +4,7 @@ export interface Attachment {
   url?: string | null;
 }
 export interface SimpleAttachment {
-  type: 'image' | 'video' | 'audio' | 'file' | 'fallback';
+  type: 'image' | 'video' | 'audio' | 'file' | 'fallback' | 'story_mention';
   title?: string;
   url?: string;
   payload?: {title?: string; url?: string} | null;

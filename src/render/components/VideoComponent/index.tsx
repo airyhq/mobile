@@ -4,6 +4,7 @@ import Video from 'react-native-video';
 
 type VideoRenderProps = {
   videoUrl: string;
+  size?: string;
 };
 
 /**
@@ -14,7 +15,7 @@ type VideoRenderProps = {
  */
 const failedUrls = [];
 
-export const VideoComponent = ({videoUrl}: VideoRenderProps) => {
+export const VideoComponent = ({videoUrl, size}: VideoRenderProps) => {
   const [isVideoFailed, setVideoFailed] = useState(
     failedUrls.includes(videoUrl),
   );
@@ -37,7 +38,11 @@ export const VideoComponent = ({videoUrl}: VideoRenderProps) => {
           <Video
             source={{uri: videoUrl}}
             onError={loadingFailed}
-            style={styles.video}
+            style={[
+              size === 'instagramStory'
+                ? styles.instagramStorySizeVideo
+                : styles.defaultSizeVideo,
+            ]}
             resizeMode={'contain'}
             controls
           />
@@ -49,14 +54,13 @@ export const VideoComponent = ({videoUrl}: VideoRenderProps) => {
 
 const styles = StyleSheet.create({
   wrapper: {
-    display: 'flex',
     flex: 1,
     marginTop: 5,
+    borderRadius: 22,
   },
   item: {
-    display: 'flex',
-    alignSelf: 'flex-end',
     width: '100%',
+    alignSelf: 'flex-end',
   },
   itemMember: {
     marginTop: 5,
@@ -71,21 +75,26 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   container: {
-    display: 'flex',
     flexDirection: 'row',
   },
   itemUser: {
+    position: 'relative',
     alignSelf: 'flex-start',
     textAlign: 'left',
-    position: 'relative',
   },
   itemUserVideo: {
     marginTop: 5,
     borderRadius: 8,
     overflow: 'hidden',
   },
-  video: {
+  defaultSizeVideo: {
     width: Dimensions.get('window').width / 2,
     height: 100,
+    borderRadius: 8,
+  },
+  instagramStorySizeVideo: {
+    height: Dimensions.get('window').width / (16 / 9),
+    width: Dimensions.get('window').width / (16 / 9) / (16 / 9),
+    borderRadius: 22,
   },
 });

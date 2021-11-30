@@ -105,6 +105,10 @@ export const parseToRealmMessage = (
   const attachmentMessage =
     messageContent?.attachment || messageContent?.attachments;
 
+  if (messageContent?.attachments) {
+    console.log('attachmentMessage', attachmentMessage);
+  }
+
   //chatplugin templates
   if (source === Source.chatplugin) {
     //richCard
@@ -190,7 +194,7 @@ export const parseToRealmMessage = (
   }
 
   //facebook templates
-  if (source === Source.facebook) {
+  if (source === Source.facebook || source === Source.instagram) {
     if (
       messageContent?.attachment?.type === 'template' ||
       messageContent?.attachments?.[0].type === 'template'
@@ -236,8 +240,8 @@ export const parseToRealmMessage = (
 
       //media template
       if (
-        messageContent?.attachment.payload?.template_type === 'media' ||
-        messageContent?.attachments?.[0].payload?.template_type === 'media'
+        messageContent?.attachment?.payload?.template_type === 'media' ||
+        messageContent?.attachments?.[0]?.payload?.template_type === 'media'
       ) {
         return {
           id: unformattedMessage.id,
@@ -255,6 +259,8 @@ export const parseToRealmMessage = (
 
     //attachment / attachments
     if (attachmentMessage) {
+      console.log('attachmentMessage', attachmentMessage);
+
       if (messageContent?.attachment) {
         return {
           id: unformattedMessage.id,

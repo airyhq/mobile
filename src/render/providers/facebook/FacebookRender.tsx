@@ -16,6 +16,7 @@ import {VideoComponent} from '../../components/VideoComponent';
 import {ImageComponent} from '../../components/ImageComponent';
 import {QuickReplies} from './components/QuickReplies';
 import {FallbackAttachment} from './components/FallbackAttachment';
+import {StoryMention} from './components/InstagramStoryMention';
 
 export const FacebookRender = (props: RenderPropsUnion) => {
   const message = props.message;
@@ -69,6 +70,16 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
 
     case 'mediaTemplate':
       return <MediaTemplate template={content} />;
+
+    //Instagram-specific
+    case 'story_mention':
+      return (
+        <StoryMention
+          url={content.url}
+          sentAt={content.sentAt}
+          fromContact={props.message.fromContact || false}
+        />
+      );
 
     default:
       return null;
@@ -147,6 +158,10 @@ const parseAttachment = (
 function facebookInbound(message): ContentUnion {
   const messageJson = message.content?.message ?? message.content;
 
+  if (messageJson.attachments) {
+    console.log('messageJson', messageJson.attachments);
+  }
+
   if (messageJson?.type === 'button') {
     return parseAttachment(messageJson.buttonAttachment);
   }
@@ -203,6 +218,22 @@ function facebookInbound(message): ContentUnion {
       images: messageJson.attachments.map(image => {
         return parseAttachment(image);
       }),
+    };
+  }
+
+  //Instagram-specific
+  if (
+    (messageJson &&
+      messageJson?.attachments &&
+      messageJson?.attachments?.[0]?.type === 'story_mention') ||
+    messageJson?.attachment?.type === 'story_mention'
+  ) {
+    return {
+      type: 'story_mention',
+      url:
+        messageJson?.attachments?.[0]?.payload?.url ??
+        messageJson?.attachment?.payload?.url,
+      sentAt: message.sentAt,
     };
   }
 
@@ -300,6 +331,22 @@ function facebookOutbound(message): ContentUnion {
     return parseAttachment(
       messageJson.attachment || messageJson.attachments[0],
     );
+  }
+
+  //Instagram-specific
+  if (
+    (messageJson &&
+      messageJson?.attachments &&
+      messageJson?.attachments?.[0]?.type === 'story_mention') ||
+    messageJson?.attachment?.type === 'story_mention'
+  ) {
+    return {
+      type: 'story_mention',
+      url:
+        messageJson.attachment?.payload.url ??
+        messageJson.attachments?.[0].payload.url,
+      sentAt: message.sentAt,
+    };
   }
 
   if (messageJson.text) {
