@@ -48,6 +48,7 @@ export const ContentMessageSchema = {
     buttonAttachment: 'ButtonAttachment?',
     quickRepliesChatPlugin: 'QuickRepliesChatPlugin?',
     quickRepliesFacebook: 'QuickRepliesFacebook?',
+    storyReplies: 'InstagramStoryReplies?',
   },
 };
 
@@ -90,6 +91,9 @@ export const MessageMetadataSchema = {
   },
 };
 
+// {"content": {"message": {"mid": "aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDAwMDYyMDM3MjEwOjM0MDI4MjM2Njg0MTcxMDMwMDk0OTEyODEyODQ4NjQ1NTI2Mjk3NDozMDE3NzY3MzM3Nzg4NzY0ODk1MzE3NTk0MDIyMzk5MTgwOAZDZD",
+// "reply_to": [Object], "text": "👏"}, "recipient": {"id": "17841400062037210"}, "sender": {"id": "6276053242466598"}, "timestamp": 1635934951843}, "deliveryState": "delivered", "fromContact": true, "id": "04afcba7-79d0-52ec-952d-a4777816a5f7", "metadata": {}, "sentAt": 2021-11-03T10:22:31.843Z, "source": "instagram"}
+
 export const parseToRealmMessage = (
   unformattedMessage: any,
   source: string,
@@ -97,17 +101,16 @@ export const parseToRealmMessage = (
   let messageContent =
     unformattedMessage.content?.Body ??
     unformattedMessage.content?.text ??
-    unformattedMessage.content?.message?.text ??
+    (unformattedMessage.content?.message?.text &&
+    !unformattedMessage.content?.message?.reply_to
+      ? unformattedMessage.content?.message?.text
+      : unformattedMessage.content?.message) ??
     unformattedMessage.content?.postback?.title ??
     unformattedMessage.content?.message ??
     unformattedMessage.content;
 
   const attachmentMessage =
     messageContent?.attachment || messageContent?.attachments;
-
-  if (messageContent?.attachments) {
-    console.log('attachmentMessage', attachmentMessage);
-  }
 
   //chatplugin templates
   if (source === Source.chatplugin) {
@@ -195,6 +198,24 @@ export const parseToRealmMessage = (
 
   //facebook templates
   if (source === Source.facebook || source === Source.instagram) {
+    //instagram story replies
+    if (messageContent?.reply_to) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'storyReplies',
+          storyReplies: {
+            url: messageContent.reply_to.story.url,
+            text: messageContent.text,
+          },
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
     if (
       messageContent?.attachment?.type === 'template' ||
       messageContent?.attachments?.[0].type === 'template'
@@ -259,8 +280,6 @@ export const parseToRealmMessage = (
 
     //attachment / attachments
     if (attachmentMessage) {
-      console.log('attachmentMessage', attachmentMessage);
-
       if (messageContent?.attachment) {
         return {
           id: unformattedMessage.id,

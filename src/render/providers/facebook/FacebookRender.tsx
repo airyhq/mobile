@@ -17,6 +17,7 @@ import {ImageComponent} from '../../components/ImageComponent';
 import {QuickReplies} from './components/QuickReplies';
 import {FallbackAttachment} from './components/FallbackAttachment';
 import {StoryMention} from './components/InstagramStoryMention';
+import {StoryReplies} from './components/InstagramStoryReplies';
 
 export const FacebookRender = (props: RenderPropsUnion) => {
   const message = props.message;
@@ -76,6 +77,16 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
       return (
         <StoryMention
           url={content.url}
+          sentAt={content.sentAt}
+          fromContact={props.message.fromContact || false}
+        />
+      );
+
+    case 'story_replies':
+      return (
+        <StoryReplies
+          url={content.url}
+          text={content.text}
           sentAt={content.sentAt}
           fromContact={props.message.fromContact || false}
         />
@@ -158,10 +169,6 @@ const parseAttachment = (
 function facebookInbound(message): ContentUnion {
   const messageJson = message.content?.message ?? message.content;
 
-  if (messageJson.attachments) {
-    console.log('messageJson', messageJson.attachments);
-  }
-
   if (messageJson?.type === 'button') {
     return parseAttachment(messageJson.buttonAttachment);
   }
@@ -233,6 +240,15 @@ function facebookInbound(message): ContentUnion {
       url:
         messageJson?.attachments?.[0]?.payload?.url ??
         messageJson?.attachment?.payload?.url,
+      sentAt: message.sentAt,
+    };
+  }
+
+  if (messageJson.storyReplies) {
+    return {
+      type: 'story_replies',
+      text: messageJson.storyReplies.text,
+      url: messageJson.storyReplies.url,
       sentAt: message.sentAt,
     };
   }
@@ -345,6 +361,15 @@ function facebookOutbound(message): ContentUnion {
       url:
         messageJson.attachment?.payload.url ??
         messageJson.attachments?.[0].payload.url,
+      sentAt: message.sentAt,
+    };
+  }
+
+  if (messageJson.reply_to) {
+    return {
+      type: 'story_replies',
+      text: messageJson.text,
+      url: messageJson.reply_to?.story?.url,
       sentAt: message.sentAt,
     };
   }

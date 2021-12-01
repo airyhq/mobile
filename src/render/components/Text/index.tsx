@@ -32,6 +32,7 @@ export const TextComponent = ({text, fromContact}: TextRenderProps) => {
 const styles = StyleSheet.create({
   bubble: {
     borderRadius: 20,
+    alignSelf: 'flex-start',
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: 8,
@@ -45,12 +46,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: colorBackgroundBlue,
     color: colorTextContrast,
+    alignItems: 'baseline',
   },
   memberContent: {
     fontFamily: 'Lato',
     fontSize: 16,
     backgroundColor: colorAiryBlue,
     color: 'white',
+    alignItems: 'baseline',
   },
   messageLink: {
     fontWeight: 'normal',

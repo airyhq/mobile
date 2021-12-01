@@ -7,7 +7,7 @@ import {
   colorTextContrast,
   colorAiryBlue,
 } from '../../../../../assets/colors';
-import {VideoComponent} from '../../../../components/VideoComponent';
+import {InstagramStoryPreview} from '../InstagramStoryPreview';
 
 type StoryMentionProps = {
   url: string;
@@ -44,9 +44,7 @@ export const StoryMention = ({url, sentAt, fromContact}: StoryMentionProps) => {
       </View>
 
       {timeElapsedInHours(sentAt) <= 24 && (
-        <View style={styles.videoContainer}>
-          <VideoComponent videoUrl={url} size="instagramStory" />
-        </View>
+        <InstagramStoryPreview storyUrl="https://lookaside.fbsbx.com/ig_messaging_cdn/?asset_id=17889599717523682&signature=Abzuqy-J3VkNy1g04OwS6iMp8TeXW1qIdHysWv46jy_urtl04SmOy5o9yrAXKBz1jZj0sJvr0TFABM6rKhKQOX1s2q-E4T2c3wt0XSBT5FAkQmaZbSxM3_BrFJ7soKczljTxOI_K42ZVydd8ER1ThCHAdqZUXSTBgViievX_gjpUCKwG2A" />
       )}
     </>
   );
@@ -81,10 +79,5 @@ const styles = StyleSheet.create({
   linkMemberContent: {
     color: 'white',
     fontStyle: 'italic',
-  },
-  videoContainer: {
-    marginTop: 5,
-    marginBottom: 0,
-    borderRadius: 22,
   },
 });

@@ -1,8 +1,10 @@
 import React from 'react';
-import styles from './index.module.scss';
-import {ReactComponent as PlayCircleIcon} from 'assets/images/icons/play-circle.svg';
-import Linkify from 'linkify-react';
-import {timeElapsedInHours} from 'dates';
+import {StyleSheet, View, Text, Linking} from 'react-native';
+import PlayCircleIcon from '../../../../../assets/images/icons/play-circle.svg';
+import {timeElapsedInHours} from '../../../../../services/dates';
+import {TextComponent} from '../../../../components/Text';
+import {InstagramStoryPreview} from '../InstagramStoryPreview';
+import {colorTextContrast, colorTextGray} from '../../../../../assets/colors';
 
 type InstagramRepliesProps = {
   url: string;
@@ -18,37 +20,53 @@ export const StoryReplies = ({
   fromContact,
 }: InstagramRepliesProps) => {
   return (
-    <div className={styles.container}>
-      <div className={styles.storyReply}>
-        <span className={styles.storyResponse}>In response to a&nbsp;</span>
-        {timeElapsedInHours(sentAt) <= 24 ? (
-          <div className={styles.storyLink}>
-            <a
-              className={styles.activeStory}
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer">
-              <PlayCircleIcon className={styles.icon} />
-              story
-            </a>
-          </div>
-        ) : (
-          <span className={styles.expiredStory}> story (expired)</span>
-        )}
-      </div>
-      <Linkify
-        tagName="div"
-        className={`${
-          fromContact ? styles.contactContent : styles.memberContent
-        }`}
-        options={{
-          defaultProtocol: 'https',
-          className: `${styles.messageLink} ${
-            fromContact ? styles.contactContent : styles.memberContent
-          }`,
-        }}>
-        {text}
-      </Linkify>
-    </div>
+    <>
+      <Text style={styles.storyResponse}>In response to a&nbsp;</Text>
+      {timeElapsedInHours(sentAt) <= 24 ? (
+        <View style={styles.storyLink}>
+          <PlayCircleIcon style={styles.icon} />
+          <Text style={styles.activeStory} onPress={() => Linking.openURL(url)}>
+            story
+          </Text>
+        </View>
+      ) : (
+        <Text style={styles.expiredStory}> story (expired)</Text>
+      )}
+
+      {timeElapsedInHours(sentAt) <= 24 && (
+        <InstagramStoryPreview storyUrl={url} />
+      )}
+
+      <TextComponent fromContact={fromContact} text={text} />
+    </>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 10,
+  },
+  expiredStory: {
+    fontFamily: 'Lato',
+    fontSize: 14,
+    color: colorTextGray,
+  },
+  storyResponse: {
+    color: colorTextGray,
+  },
+  storyLink: {
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  icon: {
+    marginRight: 2,
+    marginLeft: 2,
+  },
+  activeStory: {
+    fontFamily: 'Lato',
+    fontSize: 14,
+    fontWeight: 'bold',
+    textDecorationStyle: 'solid',
+    color: colorTextContrast,
+  },
+});
