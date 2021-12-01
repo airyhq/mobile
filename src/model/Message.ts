@@ -91,6 +91,13 @@ export const MessageMetadataSchema = {
   },
 };
 
+const isTextMessageOrStoryReplies = (unformattedMessage: any) => {
+  return unformattedMessage.content?.message?.text &&
+    !unformattedMessage.content?.message?.reply_to
+    ? unformattedMessage.content?.message?.text
+    : unformattedMessage.content?.message;
+};
+
 export const parseToRealmMessage = (
   unformattedMessage: any,
   source: string,
@@ -98,10 +105,7 @@ export const parseToRealmMessage = (
   let messageContent =
     unformattedMessage.content?.Body ??
     unformattedMessage.content?.text ??
-    (unformattedMessage.content?.message?.text &&
-    !unformattedMessage.content?.message?.reply_to
-      ? unformattedMessage.content?.message?.text
-      : unformattedMessage.content?.message) ??
+    isTextMessageOrStoryReplies(unformattedMessage) ??
     unformattedMessage.content?.postback?.title ??
     unformattedMessage.content?.message ??
     unformattedMessage.content;
@@ -215,7 +219,7 @@ export const parseToRealmMessage = (
 
     //instagram deleted messages
     if (messageContent?.is_deleted) {
-      console.log('returned', {
+      return {
         id: unformattedMessage.id,
         content: {
           type: 'isDeleted',
@@ -224,11 +228,16 @@ export const parseToRealmMessage = (
         fromContact: unformattedMessage.fromContact,
         sentAt: unformattedMessage.sentAt,
         metadata: unformattedMessage.metadata,
-      });
+      };
+    }
+
+    //instagram unsupported
+    if (messageContent?.is_unsupported) {
       return {
         id: unformattedMessage.id,
         content: {
-          type: 'isDeleted',
+          type: 'text',
+          text: 'Unsupported message type',
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,

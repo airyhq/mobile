@@ -183,7 +183,7 @@ const parseAttachment = (
 
   return {
     type: 'text',
-    text: 'Unknown message type',
+    text: 'Unsupported message type',
   };
 };
 
@@ -367,15 +367,6 @@ function facebookOutbound(message): ContentUnion {
     };
   }
 
-  if (
-    messageJson.attachment ||
-    (messageJson.attachments && messageJson?.attachments.length > 0)
-  ) {
-    return parseAttachment(
-      messageJson.attachment || messageJson.attachments[0],
-    );
-  }
-
   //Instagram-specific
   if (
     (messageJson &&
@@ -386,25 +377,34 @@ function facebookOutbound(message): ContentUnion {
     return {
       type: 'story_mention',
       url:
-        messageJson.attachment?.payload.url ??
-        messageJson.attachments?.[0].payload.url,
+        messageJson?.attachments?.[0]?.payload?.url ??
+        messageJson?.attachment?.payload?.url,
       sentAt: message.sentAt,
     };
   }
 
-  if (messageJson.reply_to) {
+  if (messageJson.storyReplies) {
     return {
       type: 'story_replies',
-      text: messageJson.text,
-      url: messageJson.reply_to?.story?.url,
+      text: messageJson.storyReplies.text,
+      url: messageJson.storyReplies.url,
       sentAt: message.sentAt,
     };
   }
 
-  if (messageJson.isDeleted) {
+  if (messageJson.type === 'isDeleted') {
     return {
       type: 'deletedMessage',
     };
+  }
+
+  if (
+    messageJson.attachment ||
+    (messageJson.attachments && messageJson?.attachments.length > 0)
+  ) {
+    return parseAttachment(
+      messageJson.attachment || messageJson.attachments[0],
+    );
   }
 
   if (messageJson.text) {
@@ -416,6 +416,6 @@ function facebookOutbound(message): ContentUnion {
 
   return {
     type: 'text',
-    text: 'Unknown message type',
+    text: 'Unsupported message type',
   };
 }

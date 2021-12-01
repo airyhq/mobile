@@ -161,6 +161,6 @@ function googleOutbound(message: any): ContentUnion {
 
   return {
     type: 'text',
-    text: 'Unknown message type',
+    text: 'Unsupported message type',
   };
 }

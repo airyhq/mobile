@@ -25,9 +25,10 @@ export const StoryMention = ({url, sentAt, fromContact}: StoryMentionProps) => {
             <View style={styles.activeStory}>
               <Text
                 style={[
+                  styles.text,
                   fromContact
-                    ? styles.linkContactContent
-                    : styles.linkMemberContent,
+                    ? styles.contactContentText
+                    : styles.memberContentText,
                 ]}
                 onPress={() => Linking.openURL(url)}>
                 mentioned in an active Instagram story{' '}
@@ -36,7 +37,13 @@ export const StoryMention = ({url, sentAt, fromContact}: StoryMentionProps) => {
             </View>
           </>
         ) : (
-          <Text style={styles.expiredStory}>
+          <Text
+            style={[
+              styles.text,
+              fromContact
+                ? styles.contactContentText
+                : styles.memberContentText,
+            ]}>
             {' '}
             mentioned in an expired Instagram story
           </Text>
@@ -54,30 +61,31 @@ const styles = StyleSheet.create({
   activeStory: {
     alignItems: 'center',
   },
-  expiredStory: {
+  text: {
     fontStyle: 'italic',
+    fontFamily: 'Lato',
+    fontSize: 16,
   },
   contactContent: {
     maxWidth: 500,
     padding: 10,
     marginTop: 5,
     backgroundColor: colorBackgroundBlue,
-    color: colorTextContrast,
-    fontFamily: 'Lato',
-    fontSize: 16,
+    borderRadius: 20,
   },
-  linkContactContent: {
+  contactContentText: {
     color: colorTextContrast,
-    fontStyle: 'italic',
   },
   memberContent: {
+    maxWidth: 500,
+    padding: 10,
+    marginTop: 5,
     backgroundColor: colorAiryBlue,
     color: 'white',
-    fontFamily: 'Lato',
     fontSize: 16,
+    borderRadius: 20,
   },
-  linkMemberContent: {
+  memberContentText: {
     color: 'white',
-    fontStyle: 'italic',
   },
 });

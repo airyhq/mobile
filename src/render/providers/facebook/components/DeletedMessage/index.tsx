@@ -17,7 +17,13 @@ export const DeletedMessage = ({fromContact}: DeletedMessageProps) => {
         styles.bubble,
         fromContact ? styles.contactContent : styles.memberContent,
       ]}>
-      <Text style={styles.deletedMessageText}>Message deleted</Text>
+      <Text
+        style={[
+          styles.text,
+          fromContact ? styles.contactContentText : styles.memberContentText,
+        ]}>
+        Message deleted
+      </Text>
     </View>
   );
 };
@@ -35,20 +41,22 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   contactContent: {
-    fontFamily: 'Lato',
-    fontSize: 16,
     backgroundColor: colorBackgroundBlue,
-    color: colorTextContrast,
     alignItems: 'baseline',
   },
   memberContent: {
-    fontFamily: 'Lato',
-    fontSize: 16,
     backgroundColor: colorAiryBlue,
-    color: 'white',
     alignItems: 'baseline',
   },
-  deletedMessageText: {
+  text: {
     fontStyle: 'italic',
+    fontFamily: 'Lato',
+    fontSize: 16,
+  },
+  contactContentText: {
+    color: colorTextContrast,
+  },
+  memberContentText: {
+    color: 'white',
   },
 });
