@@ -245,4 +245,5 @@ export type AttachmentUnion =
   | GenericTemplate
   | MediaTemplate
   | StoryMentionContent
-  | Fallback;
+  | Fallback
+  | ShareContent;

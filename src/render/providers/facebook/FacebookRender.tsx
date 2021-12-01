@@ -18,6 +18,8 @@ import {QuickReplies} from './components/QuickReplies';
 import {FallbackAttachment} from './components/FallbackAttachment';
 import {StoryMention} from './components/InstagramStoryMention';
 import {StoryReplies} from './components/InstagramStoryReplies';
+import {DeletedMessage} from './components/DeletedMessage';
+import {Share} from './components/InstagramShare';
 
 export const FacebookRender = (props: RenderPropsUnion) => {
   const message = props.message;
@@ -91,6 +93,18 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
           fromContact={props.message.fromContact || false}
         />
       );
+    case 'share':
+      return (
+        <Share
+          url={content.url}
+          fromContact={props.message.fromContact || false}
+        />
+      );
+
+    case 'deletedMessage':
+      return (
+        <DeletedMessage fromContact={props.message.fromContact || false} />
+      );
 
     default:
       return null;
@@ -157,6 +171,13 @@ const parseAttachment = (
       url: attachment.payload.elements[0].url ?? null,
       attachment_id: attachment.payload.elements[0].attachment_id ?? null,
       buttons: attachment.payload.elements[0].buttons,
+    };
+  }
+
+  if (attachment.type === 'share') {
+    return {
+      type: 'share',
+      url: attachment.payload.url,
     };
   }
 
@@ -250,6 +271,12 @@ function facebookInbound(message): ContentUnion {
       text: messageJson.storyReplies.text,
       url: messageJson.storyReplies.url,
       sentAt: message.sentAt,
+    };
+  }
+
+  if (messageJson.type === 'isDeleted') {
+    return {
+      type: 'deletedMessage',
     };
   }
 
@@ -371,6 +398,12 @@ function facebookOutbound(message): ContentUnion {
       text: messageJson.text,
       url: messageJson.reply_to?.story?.url,
       sentAt: message.sentAt,
+    };
+  }
+
+  if (messageJson.isDeleted) {
+    return {
+      type: 'deletedMessage',
     };
   }
 

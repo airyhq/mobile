@@ -91,9 +91,6 @@ export const MessageMetadataSchema = {
   },
 };
 
-// {"content": {"message": {"mid": "aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDAwMDYyMDM3MjEwOjM0MDI4MjM2Njg0MTcxMDMwMDk0OTEyODEyODQ4NjQ1NTI2Mjk3NDozMDE3NzY3MzM3Nzg4NzY0ODk1MzE3NTk0MDIyMzk5MTgwOAZDZD",
-// "reply_to": [Object], "text": "👏"}, "recipient": {"id": "17841400062037210"}, "sender": {"id": "6276053242466598"}, "timestamp": 1635934951843}, "deliveryState": "delivered", "fromContact": true, "id": "04afcba7-79d0-52ec-952d-a4777816a5f7", "metadata": {}, "sentAt": 2021-11-03T10:22:31.843Z, "source": "instagram"}
-
 export const parseToRealmMessage = (
   unformattedMessage: any,
   source: string,
@@ -208,6 +205,30 @@ export const parseToRealmMessage = (
             url: messageContent.reply_to.story.url,
             text: messageContent.text,
           },
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //instagram deleted messages
+    if (messageContent?.is_deleted) {
+      console.log('returned', {
+        id: unformattedMessage.id,
+        content: {
+          type: 'isDeleted',
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      });
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'isDeleted',
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
