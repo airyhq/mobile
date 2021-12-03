@@ -93,7 +93,8 @@ export const MessageMetadataSchema = {
 
 const isTextMessageOrStoryReplies = (unformattedMessage: any) => {
   return unformattedMessage.content?.message?.text &&
-    !unformattedMessage.content?.message?.reply_to
+    (!unformattedMessage.content?.message?.reply_to ||
+      !unformattedMessage.content?.reply_to)
     ? unformattedMessage.content?.message?.text
     : unformattedMessage.content?.message;
 };

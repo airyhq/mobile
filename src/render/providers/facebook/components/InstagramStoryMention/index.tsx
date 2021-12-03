@@ -51,7 +51,7 @@ export const StoryMention = ({url, sentAt, fromContact}: StoryMentionProps) => {
       </View>
 
       {timeElapsedInHours(sentAt) <= 24 && (
-        <InstagramStoryPreview storyUrl="https://lookaside.fbsbx.com/ig_messaging_cdn/?asset_id=17889599717523682&signature=Abzuqy-J3VkNy1g04OwS6iMp8TeXW1qIdHysWv46jy_urtl04SmOy5o9yrAXKBz1jZj0sJvr0TFABM6rKhKQOX1s2q-E4T2c3wt0XSBT5FAkQmaZbSxM3_BrFJ7soKczljTxOI_K42ZVydd8ER1ThCHAdqZUXSTBgViievX_gjpUCKwG2A" />
+        <InstagramStoryPreview storyUrl={url} fromContact={fromContact} />
       )}
     </>
   );

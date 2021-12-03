@@ -1,19 +1,30 @@
-import React from 'react';
-import {StyleSheet, Text, View, Linking, TouchableOpacity} from 'react-native';
-import RightArrowIcon from '../../../../../assets/images/icons/rightArrow.svg';
+import React, {useState, useEffect} from 'react';
+import {StyleSheet, Text, View, Image} from 'react-native';
 import {
   colorBackgroundBlue,
   colorTextContrast,
   colorAiryBlue,
 } from '../../../../../assets/colors';
-import {ImageWithFallback} from '../../../../components/ImageWithFallback';
 
 interface InstagramShareProps {
   url: string;
   fromContact?: boolean;
 }
 
+const failedUrls = [];
+
 export const Share = ({url, fromContact}: InstagramShareProps) => {
+  const [imageFailed, setImageFailed] = useState(failedUrls.includes(url));
+
+  useEffect(() => {
+    setImageFailed(failedUrls.includes(url));
+  }, [url]);
+
+  const loadingFailed = () => {
+    failedUrls.push(url);
+    setImageFailed(true);
+  };
+
   return (
     <>
       <View
@@ -22,16 +33,21 @@ export const Share = ({url, fromContact}: InstagramShareProps) => {
           fromContact ? styles.contactContent : styles.memberContent,
         ]}>
         <View style={styles.container}>
-          <Text style={styles.shareText} onPress={() => Linking.openURL(url)}>
-            Shared Post
-          </Text>
-          <RightArrowIcon fill={colorTextContrast} style={styles.icon} />
+          <Text style={styles.shareText}>Shared Post</Text>
         </View>
       </View>
 
-      <TouchableOpacity onPress={() => Linking.openURL(url)}>
-        <ImageWithFallback src={url} imageStyle={styles.sharedPost} />
-      </TouchableOpacity>
+      {imageFailed ? (
+        <Text style={styles.previewUnavaiblable}>Post unavaiblable</Text>
+      ) : (
+        <Image
+          style={styles.sharedPost}
+          source={{
+            uri: url,
+          }}
+          onError={() => loadingFailed()}
+        />
+      )}
     </>
   );
 };
@@ -81,5 +97,8 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     width: 150,
     height: 150,
+  },
+  previewUnavaiblable: {
+    fontStyle: 'italic',
   },
 });
