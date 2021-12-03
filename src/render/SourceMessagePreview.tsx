@@ -182,9 +182,10 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
 
       if (attachmentType === 'image') {
         return (
-          <View style={styles.richCard}>
+          <View style={styles.icon}>
             <AttachmentImage
               style={{height: '24px', width: '24px', margin: '0px'}}
+              fill="#737373"
             />
           </View>
         );
@@ -192,9 +193,10 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
 
       if (attachmentType === 'video') {
         return (
-          <View style={styles.richCard}>
+          <View style={styles.icon}>
             <AttachmentVideo
               style={{height: '24px', width: '24px', margin: '0px'}}
+              fill="#737373"
             />
           </View>
         );
@@ -202,9 +204,10 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
 
       if (attachmentType === 'audio') {
         return (
-          <View style={styles.richCard}>
+          <View style={styles.icon}>
             <AttachmentAudio
               style={{height: '24px', width: '24px', margin: '0px'}}
+              fill="#737373"
             />
           </View>
         );
@@ -212,9 +215,10 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
 
       if (attachmentType === 'file') {
         return (
-          <View style={styles.richCard}>
+          <View style={styles.icon}>
             <AttachmentFile
               style={{height: '24px', width: '24px', margin: '0px'}}
+              fill="#737373"
             />
           </View>
         );
@@ -229,8 +233,11 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       twilioWhatsAppInboundImage
     ) {
       return (
-        <View style={styles.richCard}>
-          <AttachmentImage style={{height: '24px', width: '24px'}} />
+        <View style={styles.icon}>
+          <AttachmentImage
+            style={{height: '18px', width: '18px'}}
+            fill="#737373"
+          />
         </View>
       );
     }
@@ -242,9 +249,10 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       twilioWhatsAppInboundVideo
     ) {
       return (
-        <View style={styles.richCard}>
+        <View style={styles.icon}>
           <AttachmentVideo
             style={{height: '24px', width: '24px', margin: '0px'}}
+            fill="#737373"
           />
         </View>
       );
@@ -257,9 +265,10 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       twilioWhatsAppInboundAudio
     ) {
       return (
-        <View style={styles.richCard}>
+        <View style={styles.icon}>
           <AttachmentAudio
             style={{height: '24px', width: '24px', margin: '0px'}}
+            fill="#737373"
           />
         </View>
       );
@@ -272,9 +281,10 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       twilioWhatsAppInboundFile
     ) {
       return (
-        <View style={styles.richCard}>
+        <View style={styles.icon}>
           <AttachmentFile
             style={{height: '24px', width: '24px', margin: '0px'}}
+            fill="#737373"
           />
         </View>
       );
@@ -301,15 +311,18 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
 
     if (lastMessageContent?.image) {
       return (
-        <View style={styles.richCard}>
-          <RichCardIcon width={24} height={24} fill="#737373" />
+        <View style={styles.icon}>
+          <AttachmentImage
+            style={{height: '18px', width: '18px'}}
+            fill="#737373"
+          />
         </View>
       );
     }
 
     if (lastMessageContent?.richCard) {
       return (
-        <View style={styles.richCard}>
+        <View style={styles.icon}>
           <RichCardIcon width={24} height={24} fill="#737373" />
         </View>
       );
@@ -328,7 +341,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
 };
 
 const styles = StyleSheet.create({
-  richCard: {
+  icon: {
     margin: 0,
     justifyContent: 'center',
     width: '100%',
