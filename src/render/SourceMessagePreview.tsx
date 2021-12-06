@@ -49,10 +49,33 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
 
   const lastMessageIsText = (conversation: Conversation) => {
     const lastMessageContent = conversation.lastMessage.content;
+
+    //google
     const googleLiveAgentRequest =
       lastMessageContent?.userStatus?.requestedLiveAgent;
     const googleSurveyResponse = lastMessageContent?.surveyResponse;
 
+    if (googleLiveAgentRequest) {
+      return (
+        <>
+          <Text>
+            <Emoji symbol={'👋'} /> Live Agent request
+          </Text>
+        </>
+      );
+    }
+
+    if (googleSurveyResponse) {
+      return (
+        <>
+          <Text>
+            <Emoji symbol={'📝'} /> Survey response
+          </Text>
+        </>
+      );
+    }
+
+    //instagram
     const instagramStoryMention =
       lastMessageContent?.attachments?.[0]?.type === 'story_mention';
     const instagramStoryReplies = lastMessageContent?.storyReplies;
@@ -89,26 +112,6 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       return (
         <>
           <Text>shared post</Text>
-        </>
-      );
-    }
-
-    if (googleLiveAgentRequest) {
-      return (
-        <>
-          <Text>
-            <Emoji symbol={'👋'} /> Live Agent request
-          </Text>
-        </>
-      );
-    }
-
-    if (googleSurveyResponse) {
-      return (
-        <>
-          <Text>
-            <Emoji symbol={'📝'} /> Survey response
-          </Text>
         </>
       );
     }

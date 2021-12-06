@@ -54,7 +54,6 @@ export const Share = ({url, fromContact}: InstagramShareProps) => {
 
 const styles = StyleSheet.create({
   bubble: {
-    borderRadius: 20,
     alignSelf: 'flex-start',
     alignItems: 'center',
     justifyContent: 'center',
@@ -63,20 +62,21 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     paddingLeft: 10,
     marginTop: 5,
+    borderRadius: 20,
   },
   contactContent: {
-    fontFamily: 'Lato',
-    fontSize: 16,
+    alignItems: 'baseline',
     backgroundColor: colorBackgroundBlue,
     color: colorTextContrast,
-    alignItems: 'baseline',
+    fontFamily: 'Lato',
+    fontSize: 16,
   },
   memberContent: {
+    alignItems: 'baseline',
     fontFamily: 'Lato',
     fontSize: 16,
     backgroundColor: colorAiryBlue,
     color: 'white',
-    alignItems: 'baseline',
   },
   container: {
     flexDirection: 'row',
@@ -85,7 +85,6 @@ const styles = StyleSheet.create({
   shareText: {
     color: colorTextContrast,
     fontStyle: 'italic',
-    textDecorationLine: 'underline',
   },
   icon: {
     marginLeft: 4,
@@ -97,6 +96,7 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     width: 150,
     height: 150,
+    marginTop: 5,
   },
   previewUnavaiblable: {
     fontStyle: 'italic',
