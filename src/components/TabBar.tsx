@@ -13,6 +13,8 @@ import {NavigationStackProp} from 'react-navigation-stack';
 import {MessageListHeader} from '../views/inbox/MessageList/MessageListHeader';
 import {FileContent} from '../views/inbox/MessageList/FileContent';
 import DownloadIcon from '../assets/images/icons/download.svg';
+import {FullScreenImage} from './FileComponents/FullScreenImage';
+import {DownloadFileHeader} from './FileComponents/DownloadFileHeader';
 
 export const TabBar = () => {
   const Tab = createBottomTabNavigator();
@@ -107,14 +109,18 @@ export const TabBar = () => {
           headerTitle: route.params.fileName,
           headerBackTitle: '',
           headerRight: () => {
-            return (
-              <DownloadIcon
-                height={32}
-                width={32}
-                fill={colorAiryBlue}
-                style={{marginRight: 8}}
-              />
-            );
+            return <DownloadFileHeader />;
+          },
+        })}
+      />
+      <Stack.Screen
+        name="FullScreenImage"
+        component={FullScreenImage}
+        options={({route}: NavigationStackProp) => ({
+          headerTitle: '',
+          headerBackTitle: '',
+          headerRight: () => {
+            return <DownloadFileHeader />;
           },
         })}
       />

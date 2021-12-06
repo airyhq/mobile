@@ -190,6 +190,8 @@ const parseAttachment = (
 function facebookInbound(message): ContentUnion {
   const messageJson = message.content?.message ?? message.content;
 
+  // console.log('+++++++++++++', messageJson.type);
+
   if (messageJson?.type === 'button') {
     return parseAttachment(messageJson.buttonAttachment);
   }
@@ -304,6 +306,8 @@ function facebookInbound(message): ContentUnion {
 
 function facebookOutbound(message): ContentUnion {
   const messageJson = message.content?.message ?? message.content;
+
+  console.log('===================', messageJson.attachment);
 
   if (messageJson?.type === 'button') {
     return parseAttachment(messageJson.buttonAttachment);

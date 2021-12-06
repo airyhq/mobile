@@ -1,6 +1,7 @@
 import React from 'react';
 import {decodeURIComponentMessage} from '../../../services/types/decodeURIComponentMessage';
 import {getAttachmentType} from '../../../services/types/mediaAttachments';
+import {AudioComponent} from '../../components/AudioComponent';
 import {FileComponent} from '../../components/FileComponent';
 import {ImageComponent} from '../../components/ImageComponent';
 import {TextComponent} from '../../components/Text';
@@ -31,6 +32,9 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
 
     case 'video':
       return <VideoComponent videoUrl={content.videoUrl} />;
+
+    case 'audio':
+      return <AudioComponent audioUrl={content.audioUrl} />;
 
     case 'file':
       return (
@@ -107,6 +111,8 @@ const inboundContent = (message): ContentUnion => {
       contentEnd,
     );
 
+    console.log('AUDIO AUDIO');
+
     return {
       type: 'audio',
       audioUrl: audioUrl,
@@ -161,17 +167,17 @@ const inboundContent = (message): ContentUnion => {
     messageContent.includes('Latitude') &&
     messageContent.includes('Longitude')
   ) {
-    const latitudeStartIndex = messageContent.search('Latitude=');
+    const latitudeStartIndex = messageContent.includes('Latitude=');
     const latitudeStartLength = 'Latitude='.length;
-    const latitudeEndIndex = messageContent.search('&Longitude=');
+    const latitudeEndIndex = messageContent.includes('&Longitude=');
     const latitude = messageContent.substring(
       latitudeStartIndex + latitudeStartLength,
       latitudeEndIndex,
     );
 
-    const longitudeStartIndex = messageContent.search('&Longitude=');
+    const longitudeStartIndex = messageContent.includes('&Longitude=');
     const longitudeStartLength = '&Longitude='.length;
-    const longitudeEndIndex = messageContent.search('&SmsMessageSid=');
+    const longitudeEndIndex = messageContent.includes('&SmsMessageSid=');
     const longitude = messageContent.substring(
       longitudeStartIndex + longitudeStartLength,
       longitudeEndIndex,

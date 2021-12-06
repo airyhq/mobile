@@ -27,7 +27,6 @@ export const VideoComponent = ({videoUrl}: VideoRenderProps) => {
     failedUrls.includes(videoUrl),
   );
   const [loading, setLoading] = useState<boolean>(true);
-  const [fullscreen, setFullscreen] = useState<boolean>(false);
 
   useEffect(() => {
     setVideoFailed(failedUrls.includes(videoUrl));
@@ -41,14 +40,9 @@ export const VideoComponent = ({videoUrl}: VideoRenderProps) => {
   const handleOnLoadEnd = () => {
     setLoading(false);
   };
-
-  const handleOnPress = () => {
-    setFullscreen(true);
-  };
-
   return (
     <>
-      <Pressable onPress={handleOnPress} style={styles.wrapper}>
+      <View style={styles.wrapper}>
         <View style={styles.item}>
           {isVideoFailed ? (
             <Text>Loading of video failed</Text>
@@ -59,12 +53,12 @@ export const VideoComponent = ({videoUrl}: VideoRenderProps) => {
               onLoad={handleOnLoadEnd}
               style={styles.video}
               resizeMode={'cover'}
+              paused={true}
               controls
-              playWhenInactive={false}
             />
           )}
         </View>
-      </Pressable>
+      </View>
       <>
         {loading && (
           <ActivityIndicator
@@ -85,6 +79,7 @@ export const VideoComponent = ({videoUrl}: VideoRenderProps) => {
 const styles = StyleSheet.create({
   wrapper: {
     display: 'flex',
+    width: '80%',
     flex: 1,
     marginTop: 5,
     shadowColor: '#000',

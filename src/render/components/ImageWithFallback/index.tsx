@@ -7,7 +7,7 @@ type ImageRenderProps = {
   src: string;
   alt?: string;
   imageStyle?: StyleProp<ImageStyle>;
-  setLoading: (loading: boolean) => void;
+  setLoading?: (loading: boolean) => void;
 };
 
 const failedUrls = [];
@@ -28,6 +28,10 @@ export const ImageWithFallback = ({
     setImageFailed(true);
   };
 
+  const handleOnLoad = () => {
+    setLoading && setLoading(false);
+  };
+
   return (
     <>
       {imageFailed ? (
@@ -42,7 +46,7 @@ export const ImageWithFallback = ({
         </>
       ) : (
         <Image
-          onLoad={() => setLoading(false)}
+          onLoad={handleOnLoad}
           style={imageStyle}
           source={{
             uri: src,

@@ -8,11 +8,13 @@ import {
 } from 'react-native';
 import {ImageWithFallback} from '../ImageWithFallback';
 import {ImageContent} from '../../providers/facebook/facebookModel';
+import {useNavigation} from '@react-navigation/core';
 
 type ImageRenderProps = {
   imageUrl?: string;
   images?: ImageContent[];
   altText?: string;
+  imageName?: string;
 };
 
 export const ImageComponent = ({
@@ -21,10 +23,12 @@ export const ImageComponent = ({
   images,
 }: ImageRenderProps) => {
   const [loading, setLoading] = useState<boolean>(true);
-  const handleOnPress = () => {};
+  const navigation = useNavigation();
 
-  const handleLoadEnd = () => {
-    setLoading(false);
+  const handleOnPress = () => {
+    navigation.navigate('FullScreenImage', {
+      imageUrl: imageUrl,
+    });
   };
 
   const handleSetLoading = (loading: boolean) => {
@@ -42,7 +46,6 @@ export const ImageComponent = ({
                   src={image.imageUrl}
                   key={image.imageUrl}
                   setLoading={handleSetLoading}
-                  alt={image.altText ?? 'image in a conversation in Airy Inbox'}
                   imageStyle={{
                     ...styles.messageListItemImageBlock,
                     ...styles.image,

@@ -5,11 +5,12 @@ import RichCardIcon from '../assets/images/icons/richCardIcon.svg';
 import AttachmentTemplate from '../assets/images/icons/attachmentTemplate.svg';
 import AttachmentImage from '../assets/images/icons/attachmentImage.svg';
 import AttachmentVideo from '../assets/images/icons/attachmentVideo.svg';
-import AttachmentAudio from '../assets/images/icons/file-audio.svg';
-import AttachmentFile from '../assets/images/icons/file-download.svg';
-import {decodeURIComponentMessage} from '../services/message';
+import PreviewImage from '../assets/images/icons/previewImage.svg';
+import AttachmentAudio from '../assets/images/icons/attachmentAudio.svg';
+import AttachmentFile from '../assets/images/icons/attachmentFile.svg';
 import {getAttachmentType} from '../services/attachments';
 import {Emoji} from '../componentsLib/general/Emoji';
+import {decodeURIComponentMessage} from '../services/types/decodeURIComponentMessage';
 import {colorTextGray} from '../assets/colors';
 
 interface SourceMessagePreviewProps {
@@ -47,118 +48,6 @@ const isImageFromGoogleSource = (messageText?: string) => {
 
 export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
   const {conversation} = props;
-
-  const lastMessageIsText = (conversation: Conversation) => {
-    const lastMessageContent = conversation.lastMessage.content;
-
-    //google
-    const googleLiveAgentRequest =
-      lastMessageContent?.userStatus?.requestedLiveAgent;
-    const googleSurveyResponse = lastMessageContent?.surveyResponse;
-
-    if (googleLiveAgentRequest) {
-      return (
-        <>
-          <Text>
-            <Emoji symbol={'👋'} /> Live Agent request
-          </Text>
-        </>
-      );
-    }
-
-    if (googleSurveyResponse) {
-      return (
-        <>
-          <Text>
-            <Emoji symbol={'📝'} /> Survey response
-          </Text>
-        </>
-      );
-    }
-
-    //instagram
-    const instagramStoryMention =
-      lastMessageContent?.attachments?.[0]?.type === 'story_mention';
-    const instagramStoryReplies = lastMessageContent?.storyReplies;
-    const instagramDeletedMessage = lastMessageContent?.isDeleted;
-    const instagramShare =
-      lastMessageContent?.attachment?.share ||
-      lastMessageContent?.attachments?.[0]?.share;
-
-    if (instagramStoryMention) {
-      return (
-        <>
-          <Text>story mention</Text>
-        </>
-      );
-    }
-
-    if (instagramStoryReplies) {
-      return (
-        <>
-          <Text>story reply</Text>
-        </>
-      );
-    }
-
-    if (instagramDeletedMessage) {
-      return (
-        <>
-          <Text>deleted message</Text>
-        </>
-      );
-    }
-
-    if (instagramShare) {
-      return (
-        <>
-          <Text>shared post</Text>
-        </>
-      );
-    }
-
-    if (typeof lastMessageContent === 'string') {
-      let text;
-
-      if (lastMessageContent.includes('&Body=' && '&FromCountry=')) {
-        const contentStart = '&Body=';
-        const contentEnd = '&FromCountry=';
-        text = decodeURIComponentMessage(
-          lastMessageContent,
-          contentStart,
-          contentEnd,
-        );
-      } else if (lastMessageContent.includes('&Body=' && '&To=whatsapp')) {
-        const contentStart = '&Body=';
-        const contentEnd = '&To=whatsapp';
-        text = decodeURIComponentMessage(
-          lastMessageContent,
-          contentStart,
-          contentEnd,
-        );
-      }
-
-      return <Text numberOfLines={1}>{text}</Text>;
-    }
-
-    if (
-      (lastMessageContent.text ||
-        lastMessageContent.message?.text ||
-        (lastMessageContent?.Body &&
-          typeof lastMessageContent?.Body === 'string')) &&
-      !isImageFromGoogleSource(lastMessageContent.message?.text)
-    ) {
-      return <FormattedMessage message={conversation.lastMessage} />;
-    }
-
-    if (lastMessageContent.suggestionResponse) {
-      return (
-        <Text numberOfLines={1}>
-          {conversation.lastMessage.content.suggestionResponse.text}
-        </Text>
-      );
-    }
-  };
 
   const lastMessageIsIcon = (conversation: Conversation) => {
     const lastMessageContent = conversation.lastMessage.content;
@@ -339,6 +228,119 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
         <AttachmentTemplate width={18} height={18} fill={colorTextGray} />
       </View>
     );
+  };
+
+  const lastMessageIsText = (conversation: Conversation) => {
+    const lastMessageContent = conversation.lastMessage.content;
+
+    //google
+    const googleLiveAgentRequest =
+      lastMessageContent?.userStatus?.requestedLiveAgent;
+    const googleSurveyResponse = lastMessageContent?.surveyResponse;
+
+    if (googleLiveAgentRequest) {
+      return (
+        <>
+          <Text>
+            <Emoji symbol={'👋'} /> Live Agent request
+          </Text>
+        </>
+      );
+    }
+
+    if (googleSurveyResponse) {
+      return (
+        <>
+          <Text>
+            <Emoji symbol={'📝'} /> Survey response
+          </Text>
+        </>
+      );
+    }
+
+    //instagram
+    const instagramStoryMention =
+      lastMessageContent?.attachments?.[0]?.type === 'story_mention';
+    const instagramStoryReplies = lastMessageContent?.storyReplies;
+    const instagramDeletedMessage = lastMessageContent?.isDeleted;
+    const instagramShare =
+      lastMessageContent?.attachment?.share ||
+      lastMessageContent?.attachments?.[0]?.share;
+
+    if (instagramStoryMention) {
+      return (
+        <>
+          <Text>story mention</Text>
+        </>
+      );
+    }
+
+    if (instagramStoryReplies) {
+      return (
+        <>
+          <Text>story reply</Text>
+        </>
+      );
+    }
+
+    if (instagramDeletedMessage) {
+      return (
+        <>
+          <Text>deleted message</Text>
+        </>
+      );
+    }
+
+    if (instagramShare) {
+      return (
+        <>
+          <Text>shared post</Text>
+        </>
+      );
+    }
+
+    //Twilio
+    if (typeof lastMessageContent === 'string') {
+      let text;
+
+      if (lastMessageContent.includes('&Body=' && '&FromCountry=')) {
+        const contentStart = '&Body=';
+        const contentEnd = '&FromCountry=';
+        text = decodeURIComponentMessage(
+          lastMessageContent,
+          contentStart,
+          contentEnd,
+        );
+      } else if (lastMessageContent.includes('&Body=' && '&To=whatsapp')) {
+        const contentStart = '&Body=';
+        const contentEnd = '&To=whatsapp';
+        text = decodeURIComponentMessage(
+          lastMessageContent,
+          contentStart,
+          contentEnd,
+        );
+      }
+
+      return <Text numberOfLines={1}>{text}</Text>;
+    }
+
+    if (
+      (lastMessageContent.text ||
+        lastMessageContent.message?.text ||
+        (lastMessageContent?.Body &&
+          typeof lastMessageContent?.Body === 'string')) &&
+      !isImageFromGoogleSource(lastMessageContent.message?.text)
+    ) {
+      return <FormattedMessage message={conversation.lastMessage} />;
+    }
+
+    if (lastMessageContent.suggestionResponse) {
+      return (
+        <Text numberOfLines={1}>
+          {conversation.lastMessage.content.suggestionResponse.text}
+        </Text>
+      );
+    }
   };
 
   return (

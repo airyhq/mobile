@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import FileDownloadIcon from '../../../assets/images/icons/fileDownload.svg';
-import {colorBackgroundBlue, colorLightGray} from '../../../assets/colors';
+import {colorAiryBlue, colorBackgroundBlue, colorLightGray} from '../../../assets/colors';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
 
@@ -11,11 +11,7 @@ type FileRenderProps = {
   fileName?: string;
 };
 
-export const FileComponent = ({
-  fileUrl,
-  fileType,
-  fileName,
-}: FileRenderProps) => {
+export const FileComponent = ({fileUrl, fileName}: FileRenderProps) => {
   const navigation = useNavigation();
 
   const maxFileNameLength = 30;
@@ -24,12 +20,11 @@ export const FileComponent = ({
 
   const handleOnPress = () => {
     navigation.navigate('FileContent', {fileName: fileName, fileUrl: fileUrl});
-    console.log('12');
   };
 
   return (
     <TouchableOpacity style={styles.container} onPress={handleOnPress}>
-      <FileDownloadIcon height={24} width={24} fill="red" />
+      <FileDownloadIcon height={24} width={24} color={colorAiryBlue} />
       <Text style={styles.text}>{fileName}</Text>
     </TouchableOpacity>
   );
@@ -39,6 +34,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     padding: 10,
+    minWidth: '60%',
     marginTop: 5,
     backgroundColor: colorBackgroundBlue,
     borderColor: colorLightGray,
