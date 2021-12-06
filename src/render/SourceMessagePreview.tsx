@@ -22,7 +22,7 @@ interface FormattedMessageProps {
 const FormattedMessage = ({message}: FormattedMessageProps) => {
   if (message?.content) {
     return (
-      <Text>
+      <Text numberOfLines={1}>
         {message.content.message?.text ||
           message.content.text ||
           message?.content?.Body}
@@ -137,7 +137,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
         );
       }
 
-      return <Text>{text}</Text>;
+      return <Text numberOfLines={1}>{text}</Text>;
     }
 
     if (
@@ -152,7 +152,9 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
 
     if (lastMessageContent.suggestionResponse) {
       return (
-        <Text>{conversation.lastMessage.content.suggestionResponse.text}</Text>
+        <Text numberOfLines={1}>
+          {conversation.lastMessage.content.suggestionResponse.text}
+        </Text>
       );
     }
   };
