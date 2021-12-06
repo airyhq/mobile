@@ -1,37 +1,26 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   View,
   Dimensions,
   Linking,
   TouchableOpacity,
+  Image,
+  Text,
 } from 'react-native';
 import Video from 'react-native-video';
-import {ImageWithFallback} from '../../../../components/ImageWithFallback';
 
 type InstagramStoryPreviewProps = {
   storyUrl: string;
   fromContact: boolean;
 };
 
-const failedUrls = [];
-
 export const InstagramStoryPreview = ({
   storyUrl,
   fromContact,
 }: InstagramStoryPreviewProps) => {
-  const [isVideoFailed, setVideoFailed] = useState(
-    failedUrls.includes(storyUrl),
-  );
-
-  useEffect(() => {
-    setVideoFailed(failedUrls.includes(storyUrl));
-  }, [storyUrl]);
-
-  const loadingFailed = () => {
-    failedUrls.push(storyUrl);
-    setVideoFailed(true);
-  };
+  const [isVideoFailed, setVideoFailed] = useState(false);
+  const [postUnavailable, setPostUnavailable] = useState(false);
 
   return (
     <View
@@ -39,18 +28,27 @@ export const InstagramStoryPreview = ({
         styles.wrapper,
         fromContact ? styles.contactContent : styles.memberContent,
       ]}>
-      {isVideoFailed ? (
+      {postUnavailable && !isVideoFailed && (
+        <Text style={styles.previewUnavaiblable}>Story unavaiblable</Text>
+      )}
+
+      {isVideoFailed && !postUnavailable && (
         <TouchableOpacity onPress={() => Linking.openURL(storyUrl)}>
-          <ImageWithFallback
-            src={storyUrl}
-            imageStyle={styles.instagramStoryPreviewSize}
+          <Image
+            style={styles.instagramStoryPreviewSize}
+            source={{
+              uri: storyUrl,
+            }}
+            onError={() => setPostUnavailable(true)}
           />
         </TouchableOpacity>
-      ) : (
+      )}
+
+      {!isVideoFailed && !postUnavailable && (
         <TouchableOpacity onPress={() => Linking.openURL(storyUrl)}>
           <Video
             source={{uri: storyUrl}}
-            onError={loadingFailed}
+            onError={() => setVideoFailed(true)}
             style={styles.instagramStoryPreviewSize}
             resizeMode={'contain'}
             controls
@@ -64,6 +62,7 @@ export const InstagramStoryPreview = ({
 const styles = StyleSheet.create({
   wrapper: {
     marginTop: 5,
+    height: 'auto',
   },
   contactContent: {
     alignSelf: 'flex-start',
@@ -78,5 +77,8 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').width / (16 / 9),
     width: Dimensions.get('window').width / (16 / 9) / (16 / 9),
     borderRadius: 22,
+  },
+  previewUnavaiblable: {
+    fontStyle: 'italic',
   },
 });
