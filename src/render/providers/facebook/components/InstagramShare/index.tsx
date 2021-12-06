@@ -1,9 +1,12 @@
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, View, Image} from 'react-native';
+import React from 'react';
+import {StyleSheet, Text, View, TouchableOpacity, Linking} from 'react-native';
+import {InstagramMediaPreview} from '../InstagramMediaPreview';
+import LinkIcon from '../../../../../assets/images/icons/external-link.svg';
 import {
   colorBackgroundBlue,
-  colorTextContrast,
   colorAiryBlue,
+  colorTextGray,
+  colorTextContrast,
 } from '../../../../../assets/colors';
 
 interface InstagramShareProps {
@@ -11,20 +14,7 @@ interface InstagramShareProps {
   fromContact?: boolean;
 }
 
-const failedUrls = [];
-
 export const Share = ({url, fromContact}: InstagramShareProps) => {
-  const [imageFailed, setImageFailed] = useState(failedUrls.includes(url));
-
-  useEffect(() => {
-    setImageFailed(failedUrls.includes(url));
-  }, [url]);
-
-  const loadingFailed = () => {
-    failedUrls.push(url);
-    setImageFailed(true);
-  };
-
   return (
     <>
       <View
@@ -32,22 +22,15 @@ export const Share = ({url, fromContact}: InstagramShareProps) => {
           styles.bubble,
           fromContact ? styles.contactContent : styles.memberContent,
         ]}>
-        <View style={styles.container}>
-          <Text style={styles.shareText}>Shared Post</Text>
-        </View>
+        <TouchableOpacity
+          style={styles.container}
+          onPress={() => Linking.openURL(url)}>
+          <Text style={styles.shareText}>Shared Post </Text>
+          <LinkIcon fill={fromContact ? colorTextContrast : 'white'} />
+        </TouchableOpacity>
       </View>
 
-      {imageFailed ? (
-        <Text style={styles.previewUnavaiblable}>Post unavaiblable</Text>
-      ) : (
-        <Image
-          style={styles.sharedPost}
-          source={{
-            uri: url,
-          }}
-          onError={() => loadingFailed()}
-        />
-      )}
+      <InstagramMediaPreview mediaUrl={url} fromContact={fromContact} />
     </>
   );
 };
@@ -97,6 +80,20 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     marginTop: 5,
+  },
+  fallbackPost: {
+    borderWidth: 1,
+    borderColor: colorTextGray,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 2,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1,
+    backgroundColor: 'white',
   },
   previewUnavaiblable: {
     fontStyle: 'italic',

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View, Text, Linking} from 'react-native';
 import LinkIcon from '../../../../../assets/images/icons/external-link.svg';
 import {timeElapsedInHours} from '../../../../../services/dates';
@@ -7,7 +7,7 @@ import {
   colorTextContrast,
   colorAiryBlue,
 } from '../../../../../assets/colors';
-import {InstagramStoryPreview} from '../InstagramStoryPreview';
+import {InstagramMediaPreview} from '../InstagramMediaPreview';
 
 type StoryMentionProps = {
   url: string;
@@ -16,6 +16,10 @@ type StoryMentionProps = {
 };
 
 export const StoryMention = ({url, sentAt, fromContact}: StoryMentionProps) => {
+  const [storyUnavailable, setStoryUnavailable] = useState(false);
+
+  const updateStoryUnavailableText = () => setStoryUnavailable(true);
+
   return (
     <>
       <View
@@ -31,7 +35,9 @@ export const StoryMention = ({url, sentAt, fromContact}: StoryMentionProps) => {
                     : styles.memberContentText,
                 ]}
                 onPress={() => Linking.openURL(url)}>
-                mentioned in an active Instagram story{' '}
+                {!storyUnavailable
+                  ? 'mentioned in an active Instagram story'
+                  : 'mentioned in an Instagram story'}{' '}
                 <LinkIcon fill={fromContact ? colorTextContrast : 'white'} />
               </Text>
             </View>
@@ -51,7 +57,12 @@ export const StoryMention = ({url, sentAt, fromContact}: StoryMentionProps) => {
       </View>
 
       {timeElapsedInHours(sentAt) <= 24 && (
-        <InstagramStoryPreview storyUrl={url} fromContact={fromContact} />
+        <InstagramMediaPreview
+          mediaUrl={url}
+          fromContact={fromContact}
+          updateStoryUnavailableText={updateStoryUnavailableText}
+          isInstagramStory
+        />
       )}
     </>
   );

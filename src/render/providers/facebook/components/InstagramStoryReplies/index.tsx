@@ -3,7 +3,7 @@ import {StyleSheet, View, Text, Linking} from 'react-native';
 import PlayCircleIcon from '../../../../../assets/images/icons/play-circle.svg';
 import {timeElapsedInHours} from '../../../../../services/dates';
 import {TextComponent} from '../../../../components/Text';
-import {InstagramStoryPreview} from '../InstagramStoryPreview';
+import {InstagramMediaPreview} from '../InstagramMediaPreview';
 import {colorTextContrast, colorTextGray} from '../../../../../assets/colors';
 
 type InstagramRepliesProps = {
@@ -34,7 +34,11 @@ export const StoryReplies = ({
       )}
 
       {timeElapsedInHours(sentAt) <= 24 && (
-        <InstagramStoryPreview storyUrl={url} />
+        <InstagramMediaPreview
+          mediaUrl={url}
+          fromContact={fromContact}
+          isInstagramStory
+        />
       )}
 
       <TextComponent fromContact={fromContact} text={text} />

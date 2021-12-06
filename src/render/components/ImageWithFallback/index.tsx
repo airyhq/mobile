@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {Image, StyleProp, ImageStyle} from 'react-native';
+import {Image, StyleProp, ImageStyle, Text} from 'react-native';
 import {SvgUri} from 'react-native-svg';
+import {colorTextGray} from '../../../assets/colors';
 
 type ImageRenderProps = {
   src: string;
@@ -25,11 +26,15 @@ export const ImageWithFallback = ({src, imageStyle}: ImageRenderProps) => {
   return (
     <>
       {imageFailed ? (
-        <SvgUri
-          width="70"
-          height="70"
-          uri="https://s3.amazonaws.com/assets.airy.co/fallbackMediaImage.svg"
-        />
+        <>
+          <SvgUri
+            width="70"
+            height="70"
+            uri="https://s3.amazonaws.com/assets.airy.co/fallbackMediaImage.svg"
+            fill={colorTextGray}
+          />
+          <Text> media unavailable</Text>
+        </>
       ) : (
         <Image
           style={imageStyle}

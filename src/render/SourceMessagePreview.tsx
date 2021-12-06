@@ -335,7 +335,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
 
     return (
       <View>
-        <AttachmentTemplate width={18} height={18} />
+        <AttachmentTemplate width={18} height={18} fill="#737373" />
       </View>
     );
   };
