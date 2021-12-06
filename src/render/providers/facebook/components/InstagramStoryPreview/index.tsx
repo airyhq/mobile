@@ -28,7 +28,7 @@ export const InstagramStoryPreview = ({
         styles.wrapper,
         fromContact ? styles.contactContent : styles.memberContent,
       ]}>
-      {postUnavailable && !isVideoFailed && (
+      {postUnavailable && isVideoFailed && (
         <Text style={styles.previewUnavaiblable}>Story unavaiblable</Text>
       )}
 
