@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
+import {Text} from 'react-native';
 
 export type Props = {
   label?: string;
@@ -8,11 +8,11 @@ export type Props = {
 };
 
 export const Emoji = ({label, symbol, className}: Props) => (
-  <View
+  <Text
     style={className}
     accessibilityRole="image"
     aria-label={label ? label : ''}
     aria-hidden={label ? 'false' : 'true'}>
     {symbol}
-  </View>
+  </Text>
 );
