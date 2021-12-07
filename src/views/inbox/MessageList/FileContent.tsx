@@ -1,9 +1,10 @@
+import {RouteProp} from '@react-navigation/native';
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import Pdf from 'react-native-pdf';
 
 type FileContentProps = {
-  route: any;
+  route: RouteProp<{params: {fileUrl: string}}, 'params'>;
 };
 
 export const FileContent = (props: FileContentProps) => {
