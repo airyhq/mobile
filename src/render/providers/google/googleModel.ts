@@ -11,7 +11,7 @@ export interface Content {
     | 'richCard'
     | 'richCardCarousel'
     | 'requestedLiveAgent'
-    | 'surveyResponse'
+    | 'surveyResponse';
 }
 
 export interface RequestedLiveAgent extends Content {
@@ -87,7 +87,6 @@ interface SuggestedActions {
   };
 }
 
-
 export interface SurveyResponse extends Content {
   type: 'surveyResponse';
   rating: string;
@@ -131,4 +130,4 @@ export type ContentUnion =
   | RichCard
   | RichCardCarousel
   | RequestedLiveAgent
-  | SurveyResponse
+  | SurveyResponse;

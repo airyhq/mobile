@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Image} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {ImageWithFallback} from '../../render/components/ImageWithFallback';
 
 type FullScreenImageProps = {
@@ -14,15 +14,15 @@ export const FullScreenImage = (props: FullScreenImageProps) => {
     <ImageWithFallback
       src={route.params.imageUrl}
       key={imageUrl}
-      imageStyle={{flex: 1, resizeMode: 'contain', backgroundColor: 'white'}}
-      //   setLoading={handleSetLoading}
+      imageStyle={styles.image}
     />
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  image: {
     flex: 1,
-    backgroundColor: 'pink',
+    resizeMode: 'contain',
+    backgroundColor: 'white',
   },
 });

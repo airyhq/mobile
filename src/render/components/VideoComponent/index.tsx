@@ -5,10 +5,8 @@ import {
   Text,
   Dimensions,
   ActivityIndicator,
-  Pressable,
 } from 'react-native';
 import Video from 'react-native-video';
-import {colorAiryBlue} from '../../../assets/colors';
 
 type VideoRenderProps = {
   videoUrl: string;

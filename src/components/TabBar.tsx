@@ -6,15 +6,13 @@ import SettingsIcon from '../assets/images/icons/settings_icon.svg';
 import {createStackNavigator} from '@react-navigation/stack';
 import {MessageList} from '../views/inbox/MessageList';
 import {colorAiryBlue, colorTextGray} from '../assets/colors';
-import {SafeAreaView, View} from 'react-native';
+import {SafeAreaView} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {FilterHeaderBar} from './FilterHeaderBar/FilterHeaderBar';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {MessageListHeader} from '../views/inbox/MessageList/MessageListHeader';
 import {FileContent} from '../views/inbox/MessageList/FileContent';
-import DownloadIcon from '../assets/images/icons/download.svg';
 import {FullScreenImage} from './FileComponents/FullScreenImage';
-import {DownloadFileHeader} from './FileComponents/DownloadFileHeader';
 
 export const TabBar = () => {
   const Tab = createBottomTabNavigator();
@@ -108,21 +106,15 @@ export const TabBar = () => {
         options={({route}: NavigationStackProp) => ({
           headerTitle: route.params.fileName,
           headerBackTitle: '',
-          headerRight: () => {
-            return <DownloadFileHeader />;
-          },
         })}
       />
       <Stack.Screen
         name="FullScreenImage"
         component={FullScreenImage}
-        options={({route}: NavigationStackProp) => ({
+        options={{
           headerTitle: '',
           headerBackTitle: '',
-          headerRight: () => {
-            return <DownloadFileHeader />;
-          },
-        })}
+        }}
       />
     </Stack.Navigator>
   );

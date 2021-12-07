@@ -1,7 +1,11 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
 import FileDownloadIcon from '../../../assets/images/icons/fileDownload.svg';
-import {colorAiryBlue, colorBackgroundBlue, colorLightGray} from '../../../assets/colors';
+import {
+  colorAiryBlue,
+  colorBackgroundBlue,
+  colorLightGray,
+} from '../../../assets/colors';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useNavigation} from '@react-navigation/native';
 
@@ -15,8 +19,9 @@ export const FileComponent = ({fileUrl, fileName}: FileRenderProps) => {
   const navigation = useNavigation();
 
   const maxFileNameLength = 30;
-  if (fileName.length >= maxFileNameLength)
+  if (fileName.length >= maxFileNameLength) {
     fileName = fileName.slice(-maxFileNameLength);
+  }
 
   const handleOnPress = () => {
     navigation.navigate('FileContent', {fileName: fileName, fileUrl: fileUrl});

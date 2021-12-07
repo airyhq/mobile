@@ -78,7 +78,9 @@ export const getAttachmentType = (fileName: string, source: string) => {
   const fileNameArr = fileName.split('.');
   const fileNameExtension = fileNameArr[fileNameArr.length - 1].toLowerCase();
 
-  if (source === 'twilio.whatsapp') source = 'twilioWhatsapp';
+  if (source === 'twilio.whatsapp') {
+    source = 'twilioWhatsapp';
+  }
 
   const imageFiles = attachmentsExtensions[source + 'ImageExtensions'];
   const videoFiles = attachmentsExtensions[source + 'VideoExtensions'];

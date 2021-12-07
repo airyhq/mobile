@@ -45,10 +45,12 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
 
 const inboundContent = (message): ContentUnion => {
   const messageContent = message.content.text;
+  let contentStart: string;
+  let contentEnd: string;
 
   if (messageContent.includes('MediaContentType0=image')) {
-    const contentStart = 'MediaUrl0=';
-    const contentEnd = '&ApiVersion=';
+    contentStart = 'MediaUrl0=';
+    contentEnd = '&ApiVersion=';
     const imageUrl = decodeURIComponentMessage(
       messageContent,
       contentStart,
@@ -57,8 +59,8 @@ const inboundContent = (message): ContentUnion => {
     let textCaption;
 
     if (messageContent.includes('&Body=' && '&To=whatsapp')) {
-      const contentStart = '&Body=';
-      const contentEnd = '&To=whatsapp';
+      contentStart = '&Body=';
+      contentEnd = '&To=whatsapp';
       textCaption = decodeURIComponentMessage(
         messageContent,
         contentStart,
@@ -75,18 +77,18 @@ const inboundContent = (message): ContentUnion => {
 
   //video (with optional text caption)
   if (messageContent.includes('MediaContentType0=video')) {
-    const contentStart = 'MediaUrl0=';
-    const contentEnd = '&ApiVersion=';
+    contentStart = 'MediaUrl0=';
+    contentEnd = '&ApiVersion=';
     const videoUrl = decodeURIComponentMessage(
       messageContent,
       contentStart,
       contentEnd,
     );
-    let textCaption;
+    let textCaption: string;
 
     if (messageContent.includes('&Body=' && '&To=whatsapp')) {
-      const contentStart = '&Body=';
-      const contentEnd = '&To=whatsapp';
+      contentStart = '&Body=';
+      contentEnd = '&To=whatsapp';
       textCaption = decodeURIComponentMessage(
         messageContent,
         contentStart,
@@ -103,15 +105,13 @@ const inboundContent = (message): ContentUnion => {
 
   //audio
   if (messageContent.includes('MediaContentType0=audio')) {
-    const contentStart = 'MediaUrl0=';
-    const contentEnd = '&ApiVersion=';
+    contentStart = 'MediaUrl0=';
+    contentEnd = '&ApiVersion=';
     const audioUrl = decodeURIComponentMessage(
       messageContent,
       contentStart,
       contentEnd,
     );
-
-    console.log('AUDIO AUDIO');
 
     return {
       type: 'audio',
@@ -126,8 +126,8 @@ const inboundContent = (message): ContentUnion => {
   ) {
     let fileName = '';
 
-    const contentStart = 'MediaUrl0=';
-    const contentEnd = '&ApiVersion=';
+    contentStart = 'MediaUrl0=';
+    contentEnd = '&ApiVersion=';
     const fileUrl = decodeURIComponentMessage(
       messageContent,
       contentStart,
@@ -135,8 +135,8 @@ const inboundContent = (message): ContentUnion => {
     );
 
     if (messageContent.includes('&Body=' && '&To=whatsapp')) {
-      const contentStart = '&Body=';
-      const contentEnd = '&To=whatsapp';
+      contentStart = '&Body=';
+      contentEnd = '&To=whatsapp';
       fileName = decodeURIComponentMessage(
         messageContent,
         contentStart,
@@ -198,19 +198,19 @@ const inboundContent = (message): ContentUnion => {
     messageContent.includes('&Body=' && '&FromCountry=') ||
     messageContent.includes('&Body=' && '&To=whatsapp')
   ) {
-    let text;
+    let text: string;
 
     if (messageContent.includes('&Body=' && '&FromCountry=')) {
-      const contentStart = '&Body=';
-      const contentEnd = '&FromCountry=';
+      contentStart = '&Body=';
+      contentEnd = '&FromCountry=';
       text = decodeURIComponentMessage(
         messageContent,
         contentStart,
         contentEnd,
       );
     } else if (messageContent.includes('&Body=' && '&To=whatsapp')) {
-      const contentStart = '&Body=';
-      const contentEnd = '&To=whatsapp';
+      contentStart = '&Body=';
+      contentEnd = '&To=whatsapp';
       text = decodeURIComponentMessage(
         messageContent,
         contentStart,
@@ -218,7 +218,9 @@ const inboundContent = (message): ContentUnion => {
       );
     }
 
-    if (!text || text === '') text = 'Unsupported message type';
+    if (!text || text === '') {
+      text = 'Unsupported message type';
+    }
 
     return {
       type: 'text',

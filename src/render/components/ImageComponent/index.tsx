@@ -31,8 +31,8 @@ export const ImageComponent = ({
     });
   };
 
-  const handleSetLoading = (loading: boolean) => {
-    setLoading(loading);
+  const handleSetLoading = (isLoading: boolean) => {
+    setLoading(isLoading);
   };
 
   return (
