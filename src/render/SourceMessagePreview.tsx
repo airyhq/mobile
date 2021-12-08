@@ -10,6 +10,7 @@ import AttachmentFile from '../assets/images/icons/file-download.svg';
 import {decodeURIComponentMessage} from '../services/message';
 import {getAttachmentType} from '../services/attachments';
 import {Emoji} from '../componentsLib/general/Emoji';
+import {colorTextGray} from '../assets/colors';
 
 interface SourceMessagePreviewProps {
   conversation: Conversation;
@@ -190,7 +191,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
           <View style={styles.icon}>
             <AttachmentImage
               style={{height: '24px', width: '24px', margin: '0px'}}
-              fill="#737373"
+              fill={colorTextGray}
             />
           </View>
         );
@@ -201,7 +202,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
           <View style={styles.icon}>
             <AttachmentVideo
               style={{height: '24px', width: '24px', margin: '0px'}}
-              fill="#737373"
+              fill={colorTextGray}
             />
           </View>
         );
@@ -212,7 +213,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
           <View style={styles.icon}>
             <AttachmentAudio
               style={{height: '24px', width: '24px', margin: '0px'}}
-              fill="#737373"
+              fill={colorTextGray}
             />
           </View>
         );
@@ -223,7 +224,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
           <View style={styles.icon}>
             <AttachmentFile
               style={{height: '24px', width: '24px', margin: '0px'}}
-              fill="#737373"
+              fill={colorTextGray}
             />
           </View>
         );
@@ -241,7 +242,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
         <View style={styles.icon}>
           <AttachmentImage
             style={{height: '18px', width: '18px'}}
-            fill="#737373"
+            fill={colorTextGray}
           />
         </View>
       );
@@ -257,7 +258,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
         <View style={styles.icon}>
           <AttachmentVideo
             style={{height: '24px', width: '24px', margin: '0px'}}
-            fill="#737373"
+            fill={colorTextGray}
           />
         </View>
       );
@@ -273,7 +274,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
         <View style={styles.icon}>
           <AttachmentAudio
             style={{height: '24px', width: '24px', margin: '0px'}}
-            fill="#737373"
+            fill={colorTextGray}
           />
         </View>
       );
@@ -289,7 +290,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
         <View style={styles.icon}>
           <AttachmentFile
             style={{height: '24px', width: '24px', margin: '0px'}}
-            fill="#737373"
+            fill={colorTextGray}
           />
         </View>
       );
@@ -319,7 +320,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
         <View style={styles.icon}>
           <AttachmentImage
             style={{height: '18px', width: '18px'}}
-            fill="#737373"
+            fill={colorTextGray}
           />
         </View>
       );
@@ -328,14 +329,14 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     if (lastMessageContent?.richCard) {
       return (
         <View style={styles.icon}>
-          <RichCardIcon width={24} height={24} fill="#737373" />
+          <RichCardIcon width={24} height={24} fill={colorTextGray} />
         </View>
       );
     }
 
     return (
       <View>
-        <AttachmentTemplate width={18} height={18} fill="#737373" />
+        <AttachmentTemplate width={18} height={18} fill={colorTextGray} />
       </View>
     );
   };
