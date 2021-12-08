@@ -48,6 +48,7 @@ import {
   MediaAttachmentPayloadSchema,
   MediaTemplateSchema,
   DefaultActionSchema,
+  InstagramStoryRepliesSchema,
 } from '../model';
 
 export class RealmDB {
@@ -92,6 +93,7 @@ export class RealmDB {
           MediaAttachmentSchema,
           MediaAttachmentPayloadSchema,
           MediaTemplateSchema,
+          InstagramStoryRepliesSchema,
           ChannelMetadataSchema,
           MessageSchema,
           MessageDataSchema,

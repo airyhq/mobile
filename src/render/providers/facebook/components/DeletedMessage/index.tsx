@@ -1,30 +1,29 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import Hyperlink from 'react-native-hyperlink';
 import {
   colorBackgroundBlue,
   colorTextContrast,
   colorAiryBlue,
-} from '../../../assets/colors';
+} from '../../../../../assets/colors';
 
-type TextRenderProps = {
-  text: string;
+interface DeletedMessageProps {
   fromContact?: boolean;
-};
+}
 
-export const TextComponent = ({text, fromContact}: TextRenderProps) => {
+export const DeletedMessage = ({fromContact}: DeletedMessageProps) => {
   return (
     <View
       style={[
         styles.bubble,
         fromContact ? styles.contactContent : styles.memberContent,
       ]}>
-      <Hyperlink linkDefault={true} linkStyle={styles.messageLink}>
-        <Text
-          style={fromContact ? styles.contactContent : styles.memberContent}>
-          {text}
-        </Text>
-      </Hyperlink>
+      <Text
+        style={[
+          styles.text,
+          fromContact ? styles.contactContentText : styles.memberContentText,
+        ]}>
+        Message deleted
+      </Text>
     </View>
   );
 };
@@ -32,6 +31,7 @@ export const TextComponent = ({text, fromContact}: TextRenderProps) => {
 const styles = StyleSheet.create({
   bubble: {
     borderRadius: 20,
+    alignSelf: 'flex-start',
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: 8,
@@ -41,20 +41,22 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   contactContent: {
-    fontFamily: 'Lato',
-    fontSize: 16,
     backgroundColor: colorBackgroundBlue,
-    color: colorTextContrast,
-    alignSelf: 'flex-start',
+    alignItems: 'baseline',
   },
   memberContent: {
+    backgroundColor: colorAiryBlue,
+    alignItems: 'baseline',
+  },
+  text: {
+    fontStyle: 'italic',
     fontFamily: 'Lato',
     fontSize: 16,
-    backgroundColor: colorAiryBlue,
-    color: 'white',
-    alignSelf: 'flex-end',
   },
-  messageLink: {
-    fontWeight: 'normal',
+  contactContentText: {
+    color: colorTextContrast,
+  },
+  memberContentText: {
+    color: 'white',
   },
 });

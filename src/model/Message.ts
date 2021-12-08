@@ -48,6 +48,7 @@ export const ContentMessageSchema = {
     buttonAttachment: 'ButtonAttachment?',
     quickRepliesChatPlugin: 'QuickRepliesChatPlugin?',
     quickRepliesFacebook: 'QuickRepliesFacebook?',
+    storyReplies: 'InstagramStoryReplies?',
   },
 };
 
@@ -90,6 +91,14 @@ export const MessageMetadataSchema = {
   },
 };
 
+const isTextMessageOrStoryReplies = (unformattedMessage: any) => {
+  return unformattedMessage.content?.message?.text &&
+    (!unformattedMessage.content?.message?.reply_to ||
+      !unformattedMessage.content?.reply_to)
+    ? unformattedMessage.content?.message?.text
+    : unformattedMessage.content?.message;
+};
+
 export const parseToRealmMessage = (
   unformattedMessage: any,
   source: string,
@@ -97,7 +106,7 @@ export const parseToRealmMessage = (
   let messageContent =
     unformattedMessage.content?.Body ??
     unformattedMessage.content?.text ??
-    unformattedMessage.content?.message?.text ??
+    isTextMessageOrStoryReplies(unformattedMessage) ??
     unformattedMessage.content?.postback?.title ??
     unformattedMessage.content?.message ??
     unformattedMessage.content;
@@ -190,7 +199,54 @@ export const parseToRealmMessage = (
   }
 
   //facebook templates
-  if (source === Source.facebook) {
+  if (source === Source.facebook || source === Source.instagram) {
+    //instagram story replies
+    if (messageContent?.reply_to) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'storyReplies',
+          storyReplies: {
+            url: messageContent.reply_to.story.url,
+            text: messageContent.text,
+          },
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //instagram deleted messages
+    if (messageContent?.is_deleted) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'isDeleted',
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //instagram unsupported
+    if (messageContent?.is_unsupported) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'text',
+          text: 'Unsupported message type',
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
     if (
       messageContent?.attachment?.type === 'template' ||
       messageContent?.attachments?.[0].type === 'template'
@@ -236,8 +292,8 @@ export const parseToRealmMessage = (
 
       //media template
       if (
-        messageContent?.attachment.payload?.template_type === 'media' ||
-        messageContent?.attachments?.[0].payload?.template_type === 'media'
+        messageContent?.attachment?.payload?.template_type === 'media' ||
+        messageContent?.attachments?.[0]?.payload?.template_type === 'media'
       ) {
         return {
           id: unformattedMessage.id,

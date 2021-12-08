@@ -16,6 +16,10 @@ import {VideoComponent} from '../../components/VideoComponent';
 import {ImageComponent} from '../../components/ImageComponent';
 import {QuickReplies} from './components/QuickReplies';
 import {FallbackAttachment} from './components/FallbackAttachment';
+import {StoryMention} from './components/InstagramStoryMention';
+import {StoryReplies} from './components/InstagramStoryReplies';
+import {DeletedMessage} from './components/DeletedMessage';
+import {Share} from './components/InstagramShare';
 
 export const FacebookRender = (props: RenderPropsUnion) => {
   const message = props.message;
@@ -69,6 +73,38 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
 
     case 'mediaTemplate':
       return <MediaTemplate template={content} />;
+
+    //Instagram-specific
+    case 'story_mention':
+      return (
+        <StoryMention
+          url={content.url}
+          sentAt={content.sentAt}
+          fromContact={props.message.fromContact || false}
+        />
+      );
+
+    case 'story_replies':
+      return (
+        <StoryReplies
+          url={content.url}
+          text={content.text}
+          sentAt={content.sentAt}
+          fromContact={props.message.fromContact || false}
+        />
+      );
+    case 'share':
+      return (
+        <Share
+          url={content.url}
+          fromContact={props.message.fromContact || false}
+        />
+      );
+
+    case 'deletedMessage':
+      return (
+        <DeletedMessage fromContact={props.message.fromContact || false} />
+      );
 
     default:
       return null;
@@ -138,9 +174,16 @@ const parseAttachment = (
     };
   }
 
+  if (attachment.type === 'share') {
+    return {
+      type: 'share',
+      url: attachment.payload.url,
+    };
+  }
+
   return {
     type: 'text',
-    text: 'Unknown message type',
+    text: 'Unsupported message type',
   };
 };
 
@@ -203,6 +246,37 @@ function facebookInbound(message): ContentUnion {
       images: messageJson.attachments.map(image => {
         return parseAttachment(image);
       }),
+    };
+  }
+
+  //Instagram-specific
+  if (
+    (messageJson &&
+      messageJson?.attachments &&
+      messageJson?.attachments?.[0]?.type === 'story_mention') ||
+    messageJson?.attachment?.type === 'story_mention'
+  ) {
+    return {
+      type: 'story_mention',
+      url:
+        messageJson?.attachments?.[0]?.payload?.url ??
+        messageJson?.attachment?.payload?.url,
+      sentAt: message.sentAt,
+    };
+  }
+
+  if (messageJson.storyReplies) {
+    return {
+      type: 'story_replies',
+      text: messageJson.storyReplies.text,
+      url: messageJson.storyReplies.url,
+      sentAt: message.sentAt,
+    };
+  }
+
+  if (messageJson.type === 'isDeleted') {
+    return {
+      type: 'deletedMessage',
     };
   }
 
@@ -293,6 +367,37 @@ function facebookOutbound(message): ContentUnion {
     };
   }
 
+  //Instagram-specific
+  if (
+    (messageJson &&
+      messageJson?.attachments &&
+      messageJson?.attachments?.[0]?.type === 'story_mention') ||
+    messageJson?.attachment?.type === 'story_mention'
+  ) {
+    return {
+      type: 'story_mention',
+      url:
+        messageJson?.attachments?.[0]?.payload?.url ??
+        messageJson?.attachment?.payload?.url,
+      sentAt: message.sentAt,
+    };
+  }
+
+  if (messageJson.storyReplies) {
+    return {
+      type: 'story_replies',
+      text: messageJson.storyReplies.text,
+      url: messageJson.storyReplies.url,
+      sentAt: message.sentAt,
+    };
+  }
+
+  if (messageJson.type === 'isDeleted') {
+    return {
+      type: 'deletedMessage',
+    };
+  }
+
   if (
     messageJson.attachment ||
     (messageJson.attachments && messageJson?.attachments.length > 0)
@@ -311,6 +416,6 @@ function facebookOutbound(message): ContentUnion {
 
   return {
     type: 'text',
-    text: 'Unknown message type',
+    text: 'Unsupported message type',
   };
 }
