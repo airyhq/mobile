@@ -29,10 +29,8 @@ type SuggestionsRendererProps = {
     fileUrl: string;
     altText: string;
   };
-  suggestions: any;
+  suggestions: SuggestionsUnion[];
 };
-
-//SuggestionsUnion[];
 
 export const Suggestions = ({
   text,
@@ -41,7 +39,7 @@ export const Suggestions = ({
   suggestions,
   fromContact,
 }: SuggestionsRendererProps) => {
-  console.log('suggestions compo', suggestions?.[0]?.action);
+  console.log('suggestions', suggestions);
 
   return (
     <View style={styles.suggestionsWrapper}>
@@ -133,27 +131,23 @@ export const Suggestions = ({
             );
           }
         })}
-        {suggestions &&
-          suggestions?.[0] &&
-          ('action' in suggestions[0] !== null ||
-            'reply' in suggestions[0] !== null ||
-            'authenticationRequest' in suggestions?.[0] !== null ||
-            'liveAgentRequest' in suggestions?.[0] !== null) && (
-            <Pressable
-              style={({pressed}) => [
-                pressed
-                  ? styles.pressedHoverTextContainer
-                  : styles.hoverTextContainer,
-              ]}>
-              {() => (
-                <Text style={styles.hoverText}>
-                  {' '}
-                  action cannot be triggered
-                </Text>
-              )}
-            </Pressable>
-          )}
       </View>
+
+      {suggestions &&
+        suggestions?.[0] &&
+        'action' in suggestions?.[0] &&
+        suggestions?.[0].action === null && (
+          <Pressable
+            style={({pressed}) => [
+              pressed
+                ? styles.pressedHoverTextContainer
+                : styles.hoverTextContainer,
+            ]}>
+            {() => (
+              <Text style={styles.hoverText}> action cannot be triggered</Text>
+            )}
+          </Pressable>
+        )}
     </View>
   );
 };
@@ -162,17 +156,27 @@ const styles = StyleSheet.create({
   suggestionsWrapper: {
     width: 'auto',
     marginTop: 5,
+    overflow: 'scroll',
   },
   suggestionsContainer: {
     position: 'relative',
+    width: '100%',
+    height: 'auto',
     marginTop: 5,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
   },
   touchableHighlightSuggestion: {
     width: 'auto',
-    justifyContent: 'flex-start',
+    maxWidth: '90%',
+    justifyContent: 'center',
     alignItems: 'center',
+    alignSelf: 'center',
     marginTop: 5,
     marginBottom: 5,
+    marginLeft: 5,
+    marginRight: 5,
     borderRadius: 16,
     borderWidth: 1,
     paddingTop: 4,
@@ -193,8 +197,7 @@ const styles = StyleSheet.create({
     color: colorTextContrast,
     alignItems: 'center',
     justifyContent: 'center',
-    flexWrap: 'wrap',
-    maxWidth: '90%',
+    width: 'auto',
   },
   actionIcon: {
     width: 20,

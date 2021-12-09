@@ -193,9 +193,7 @@ function googleOutbound(message: any): ContentUnion {
   }
 
   if (messageJson.suggestions.length > 0) {
-    console.log('OUTBOUND messageJson', messageJson);
-
-    console.log('messageJson?.suggestions', messageJson?.suggestions);
+    console.log('messageJson.suggestions', messageJson.suggestions);
 
     if (messageJson.suggestions.length > maxNumberOfSuggestions) {
       messageJson.suggestions = messageJson.suggestions.slice(
