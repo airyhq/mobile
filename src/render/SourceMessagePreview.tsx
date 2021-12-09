@@ -113,7 +113,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       return (
         <View style={styles.icon}>
           <AttachmentFile height={24} width={24} color={colorTextGray} />
-          <Text style={[styles.text, {marginLeft: 4, color: colorTextGray}]}>
+          <Text style={[styles.text, {marginLeft: 2, color: colorTextGray}]}>
             File
           </Text>
         </View>
