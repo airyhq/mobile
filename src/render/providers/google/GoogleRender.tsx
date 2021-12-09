@@ -3,6 +3,7 @@ import {RenderPropsUnion} from '../../props';
 import {ContentUnion} from './googleModel';
 import {TextComponent} from '../../components/Text';
 import {ImageComponent} from '../../components/ImageComponent';
+import {Suggestions} from './components/Suggestions';
 import {RichCard} from './components/RichCard';
 import {RichCardCarousel} from './components/RichCardCarousel';
 import {SurveyResponse} from './components/SurveyResponse';
@@ -31,6 +32,16 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
           altText="sent via Google Business Messages"
         />
       );
+    case 'suggestions':
+      return (
+        <Suggestions
+          fromContact={props.message.fromContact || false}
+          text={content.text}
+          image={content.image}
+          fallback={content.fallback}
+          suggestions={content.suggestions}
+        />
+      );
     case 'richCard':
       return (
         <RichCard
@@ -56,8 +67,11 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
 
 function googleInbound(message: any): ContentUnion {
   const messageJson = message.content.message ?? message.content;
+  const maxNumberOfSuggestions = 13;
 
-  if (messageJson.image) {
+  //console.log('INBOUND messageJson', messageJson);
+
+  if (messageJson.image !== null) {
     return {
       type: 'image',
       imageUrl: messageJson.image.contentInfo.fileUrl,
@@ -79,6 +93,42 @@ function googleInbound(message: any): ContentUnion {
       media: cardContent.media,
       suggestions: cardContent.suggestions,
     };
+  }
+
+  if (messageJson.suggestions.length > 0) {
+    if (messageJson.suggestions.length > maxNumberOfSuggestions) {
+      messageJson.suggestions = messageJson.suggestions.slice(
+        0,
+        maxNumberOfSuggestions,
+      );
+    }
+
+    if (messageJson.text) {
+      return {
+        type: 'suggestions',
+        text: messageJson.text,
+        suggestions: messageJson.suggestions,
+      };
+    }
+
+    if (messageJson.image) {
+      return {
+        type: 'suggestions',
+        image: {
+          fileUrl: messageJson.image.contentInfo.fileUrl,
+          altText: messageJson.image.contentInfo.altText,
+        },
+        suggestions: messageJson.suggestions,
+      };
+    }
+
+    if (messageJson.fallback) {
+      return {
+        type: 'suggestions',
+        fallback: messageJson.fallback,
+        suggestions: messageJson.suggestions,
+      };
+    }
   }
 
   if (messageJson.richCardCarousel?.carouselCard) {
@@ -116,6 +166,7 @@ function googleInbound(message: any): ContentUnion {
 
 function googleOutbound(message: any): ContentUnion {
   const messageJson = message.content.message ?? message.content;
+  const maxNumberOfSuggestions = 13;
 
   if (messageJson.richCard?.standaloneCard) {
     const {
@@ -141,6 +192,46 @@ function googleOutbound(message: any): ContentUnion {
     };
   }
 
+  if (messageJson.suggestions.length > 0) {
+    console.log('OUTBOUND messageJson', messageJson);
+
+    console.log('messageJson?.suggestions', messageJson?.suggestions);
+
+    if (messageJson.suggestions.length > maxNumberOfSuggestions) {
+      messageJson.suggestions = messageJson.suggestions.slice(
+        0,
+        maxNumberOfSuggestions,
+      );
+    }
+
+    if (messageJson.text) {
+      return {
+        type: 'suggestions',
+        text: messageJson.text,
+        suggestions: messageJson.suggestions,
+      };
+    }
+
+    if (messageJson.image) {
+      return {
+        type: 'suggestions',
+        image: {
+          fileUrl: messageJson.image.contentInfo.fileUrl,
+          altText: messageJson.image.contentInfo.altText,
+        },
+        suggestions: messageJson.suggestions,
+      };
+    }
+
+    if (messageJson.fallback) {
+      return {
+        type: 'suggestions',
+        fallback: messageJson.fallback,
+        suggestions: messageJson.suggestions,
+      };
+    }
+  }
+
   if (messageJson.image && messageJson.image?.contentInfo?.fileUrl) {
     return {
       type: 'image',
@@ -149,14 +240,14 @@ function googleOutbound(message: any): ContentUnion {
     };
   }
 
-  if (messageJson.text) {
+  if (messageJson.text !== null) {
     return {
       type: 'text',
       text: messageJson.text,
     };
   }
 
-  if (messageJson.fallback) {
+  if (messageJson.fallback !== null) {
     return {
       type: 'text',
       text: messageJson.fallback,

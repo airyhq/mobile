@@ -39,6 +39,9 @@ export const ContentMessageSchema = {
   properties: {
     type: 'string?',
     text: 'string?',
+    fallback: 'string?',
+    image: 'GoogleImage?',
+    suggestions: 'GoogleSuggestionsTypes[]',
     richCard: 'RichCard?',
     richCardCarousel: 'RichCardCarousel?',
     attachment: 'Attachment?',
@@ -99,12 +102,20 @@ const isTextMessageOrStoryReplies = (unformattedMessage: any) => {
     : unformattedMessage.content?.message;
 };
 
+const isTextOrGoogleSuggestions = (unformattedMessage: any) => {
+  return unformattedMessage.content?.suggestions
+    ? unformattedMessage?.content
+    : unformattedMessage?.text;
+};
+
 export const parseToRealmMessage = (
   unformattedMessage: any,
   source: string,
 ): Message => {
+  //put together isTextMessage
   let messageContent =
     unformattedMessage.content?.Body ??
+    isTextOrGoogleSuggestions(unformattedMessage) ??
     unformattedMessage.content?.text ??
     isTextMessageOrStoryReplies(unformattedMessage) ??
     unformattedMessage.content?.postback?.title ??
@@ -413,7 +424,7 @@ export const parseToRealmMessage = (
     }
   }
 
-  //Google templates
+  //Google
   if (source === Source.google) {
     //richCard
     if (messageContent.richCard && !messageContent.richCard?.carouselCard) {
@@ -452,6 +463,130 @@ export const parseToRealmMessage = (
         content: {
           type: 'image',
           image: messageContent,
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //suggestions
+    if (messageContent?.suggestions) {
+      console.log('messageContent', messageContent);
+      console.log('messageContent.suggestions', messageContent.suggestions);
+      console.log(
+        'suggestions isArray',
+        Array.isArray(messageContent.suggestions),
+      );
+
+      if (messageContent.suggestions?.[0]?.reply) {
+        console.log('reply', messageContent.suggestions?.[0]);
+        console.log(
+          'reply isArray',
+          Array.isArray(messageContent.suggestions?.[0]?.reply),
+        );
+      }
+
+      const fakesuggestions = [
+        {
+          reply: {
+            text: 'Hello',
+            postbackData: 'hello-formal',
+          },
+        },
+        {
+          reply: {
+            text: 'HEY',
+            postbackData: 'hello-informal',
+          },
+        },
+        {
+          reply: {
+            text: 'YES',
+            postbackData: 'answer-yes',
+          },
+        },
+        {
+          reply: {
+            text: 'NO',
+            postbackData: 'answer-no',
+          },
+        },
+        {
+          reply: {
+            text: 'MAYBE',
+            postbackData: 'answer-maybe',
+          },
+        },
+        {
+          reply: {
+            text: 'Audrey',
+            postbackData: 'name-audrey',
+          },
+        },
+        {
+          reply: {
+            text: 'Alice',
+            postbackData: 'name-alice',
+          },
+        },
+        {
+          reply: {
+            text: 'Berlin',
+            postbackData: 'name-city',
+          },
+        },
+        {
+          reply: {
+            text: 'NY',
+            postbackData: 'name-city',
+          },
+        },
+        {
+          reply: {
+            text: 'India',
+            postbackData: 'name-country',
+          },
+        },
+        {
+          reply: {
+            text: 'France',
+            postbackData: 'name-country',
+          },
+        },
+        {
+          reply: {
+            text: 'Pakistan',
+            postbackData: 'name-country',
+          },
+        },
+      ];
+
+      if (messageContent?.image) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'suggestions',
+            text: messageContent?.text,
+            fallback: messageContent?.fallback,
+            image: messageContent?.image,
+            suggestions: fakesuggestions,
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'suggestions',
+          text: messageContent?.text,
+          fallback: messageContent?.fallback,
+          suggestions: fakesuggestions,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,

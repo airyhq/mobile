@@ -1,13 +1,6 @@
 import Realm from 'realm';
 import {UserInfoSchema} from '../model/userInfo';
 import {
-  ConversationSchema,
-  parseToRealmConversation,
-  Conversation,
-  Channel,
-  ConversationFilterSchema,
-} from '../model';
-import {
   ChannelMetadataSchema,
   ChannelSchema,
   ContactSchema,
@@ -49,6 +42,22 @@ import {
   MediaTemplateSchema,
   DefaultActionSchema,
   InstagramStoryRepliesSchema,
+  ConversationSchema,
+  parseToRealmConversation,
+  Conversation,
+  Channel,
+  ConversationFilterSchema,
+  GoogleSuggestionsSchema,
+  GoogleSuggestionsTypesSchema,
+  GoogleImageSchema,
+  ImageInfoSchema,
+  SuggestedRepliesSchema,
+  SuggestedActionSchema,
+  OpenUrlActionSchema,
+  SuggestedDialActionSchema,
+  AuthenticationRequestSchema,
+  OAuthSchema,
+  LiveAgentRequestSchema,
 } from '../model';
 
 export class RealmDB {
@@ -94,6 +103,17 @@ export class RealmDB {
           MediaAttachmentPayloadSchema,
           MediaTemplateSchema,
           InstagramStoryRepliesSchema,
+          GoogleSuggestionsSchema,
+          GoogleSuggestionsTypesSchema,
+          GoogleImageSchema,
+          ImageInfoSchema,
+          SuggestedRepliesSchema,
+          SuggestedActionSchema,
+          OpenUrlActionSchema,
+          SuggestedDialActionSchema,
+          AuthenticationRequestSchema,
+          OAuthSchema,
+          LiveAgentRequestSchema,
           ChannelMetadataSchema,
           MessageSchema,
           MessageDataSchema,
