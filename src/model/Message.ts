@@ -114,11 +114,9 @@ export const parseToRealmMessage = (
   unformattedMessage: any,
   source: string,
 ): Message => {
-  //put together isTextMessage
   let messageContent =
     unformattedMessage.content?.Body ??
     isTextOrGoogleSuggestions(unformattedMessage) ??
-    unformattedMessage.content?.text ??
     isTextMessageOrStoryReplies(unformattedMessage) ??
     unformattedMessage.content?.postback?.title ??
     unformattedMessage.content?.message ??
@@ -428,11 +426,6 @@ export const parseToRealmMessage = (
 
   //Google
   if (source === Source.google) {
-    messageContent = {
-      text: 'Hello, here is some **bold text**, *italicized text*, and a [link](https://www.google.com).',
-      containsRichText: 'true',
-    };
-
     //richCard
     if (messageContent.richCard && !messageContent.richCard?.carouselCard) {
       return {
