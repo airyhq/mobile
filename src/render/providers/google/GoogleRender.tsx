@@ -7,6 +7,8 @@ import {Suggestions} from './components/Suggestions';
 import {RichCard} from './components/RichCard';
 import {RichCardCarousel} from './components/RichCardCarousel';
 import {SurveyResponse} from './components/SurveyResponse';
+import {RequestedLiveAgent} from './components/RequestedLiveAgent';
+import {RichText} from './components/RichText';
 
 export const GoogleRender = (props: RenderPropsUnion) => {
   const message = props.message;
@@ -25,6 +27,21 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
           text={content.text}
         />
       );
+
+    case 'richText':
+      return (
+        <RichText
+          fromContact={props.message.fromContact || false}
+          text={content.text}
+        />
+      );
+
+    case 'requestedLiveAgent':
+      return <RequestedLiveAgent />;
+
+    case 'surveyResponse':
+      return <SurveyResponse rating={content.rating} />;
+
     case 'image':
       return (
         <ImageComponent
@@ -69,7 +86,12 @@ function googleInbound(message: any): ContentUnion {
   const messageJson = message.content.message ?? message.content;
   const maxNumberOfSuggestions = 13;
 
-  //console.log('INBOUND messageJson', messageJson);
+  if (messageJson?.richText) {
+    return {
+      type: 'richText',
+      text: messageJson.richText,
+    };
+  }
 
   if (messageJson.image !== null) {
     return {
@@ -151,6 +173,19 @@ function googleInbound(message: any): ContentUnion {
     };
   }
 
+  if (messageJson?.type === 'requestedLiveAgent') {
+    return {
+      type: 'requestedLiveAgent',
+    };
+  }
+
+  if (messageJson?.surveyResponse) {
+    return {
+      type: 'surveyResponse',
+      rating: messageJson?.surveyResponse,
+    };
+  }
+
   if (messageJson.text) {
     return {
       type: 'text',
@@ -167,6 +202,13 @@ function googleInbound(message: any): ContentUnion {
 function googleOutbound(message: any): ContentUnion {
   const messageJson = message.content.message ?? message.content;
   const maxNumberOfSuggestions = 13;
+
+  if (messageJson?.richText) {
+    return {
+      type: 'richText',
+      text: messageJson.richText,
+    };
+  }
 
   if (messageJson.richCard?.standaloneCard) {
     const {
@@ -249,6 +291,19 @@ function googleOutbound(message: any): ContentUnion {
     return {
       type: 'text',
       text: messageJson.fallback,
+    };
+  }
+
+  if (messageJson?.type === 'requestedLiveAgent') {
+    return {
+      type: 'requestedLiveAgent',
+    };
+  }
+
+  if (messageJson?.surveyResponse) {
+    return {
+      type: 'surveyResponse',
+      rating: messageJson?.surveyResponse,
     };
   }
 

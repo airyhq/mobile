@@ -171,8 +171,9 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
 
     //google
     const googleLiveAgentRequest =
-      lastMessageContent?.userStatus?.requestedLiveAgent;
+      lastMessageContent?.type === 'requestedLiveAgent';
     const googleSurveyResponse = lastMessageContent?.surveyResponse;
+    const googleRichText = lastMessageContent?.richText;
 
     if (googleLiveAgentRequest) {
       return (
@@ -194,9 +195,15 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       );
     }
 
-    //Instagram
+    if (googleRichText) {
+      return (
+        <>
+          <Text>Rich text</Text>
+        </>
+      );
+    }
 
-    //story mention
+    //instagram
     const instagramStoryMention =
       lastMessageContent?.attachments?.[0]?.type === 'story_mention';
     const instagramStoryReplies = lastMessageContent?.storyReplies;

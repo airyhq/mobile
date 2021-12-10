@@ -6,15 +6,13 @@ import {
   colorTemplateGray,
 } from '../../../../../assets/colors';
 
-export const SurveyResponse = ({rating}) => (
+export const RequestedLiveAgent = () => (
   <View style={styles.surveyContainer}>
     <Text>
-      <Emoji symbol={'📝'} />
+      <Emoji symbol={'👋'} />
     </Text>
     <Text style={styles.text}>
-      This user{' '}
-      {rating === 'NO' ? 'negatively' : rating === 'YES' ? 'positively' : ''}{' '}
-      rated the experience with the response &#39;{rating}&#39;.
+      This user has requested to speak to a human agent.
     </Text>
   </View>
 );

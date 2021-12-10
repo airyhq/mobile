@@ -52,6 +52,8 @@ export const ContentMessageSchema = {
     quickRepliesChatPlugin: 'QuickRepliesChatPlugin?',
     quickRepliesFacebook: 'QuickRepliesFacebook?',
     storyReplies: 'InstagramStoryReplies?',
+    surveyResponse: 'string?',
+    richText: 'string?',
   },
 };
 
@@ -426,6 +428,11 @@ export const parseToRealmMessage = (
 
   //Google
   if (source === Source.google) {
+    messageContent = {
+      text: 'Hello, here is some **bold text**, *italicized text*, and a [link](https://www.google.com).',
+      containsRichText: 'true',
+    };
+
     //richCard
     if (messageContent.richCard && !messageContent.richCard?.carouselCard) {
       return {
@@ -518,6 +525,89 @@ export const parseToRealmMessage = (
         sentAt: unformattedMessage.sentAt,
         metadata: unformattedMessage.metadata,
       };
+    }
+
+    //requestedLiveAgent
+    if (messageContent?.userStatus?.requestedLiveAgent) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'requestedLiveAgent',
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //surveyResponse
+    if (messageContent?.surveyResponse) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'surveyResponse',
+          surveyResponse:
+            messageContent?.surveyResponse?.questionResponsePostbackData ??
+            messageContent?.surveyResponse?.questionResponseText,
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //richText
+    if (messageContent?.containsRichText) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'richText',
+          richText: messageContent?.text,
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //auth response
+    if (messageContent?.authenticationResponse) {
+      if (
+        messageContent?.authenticationResponse?.code &&
+        !messageContent?.authenticationResponse?.errorDetails
+      ) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'text',
+            text: 'Authentication was successful',
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+
+      if (
+        messageContent?.authenticationResponse?.errorDetails &&
+        !messageContent?.authenticationResponse?.code
+      ) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'text',
+            text: 'Authentication failed',
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
     }
   }
 
