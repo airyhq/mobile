@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, View, StyleSheet} from 'react-native';
 import {Conversation, Message} from '../model';
-import AttachmentRichCard from '../assets/images/icons/attachmentRichCard.svg';
+import AttachmentRichCardCarousel from '../assets/images/icons/attachmentRichCardCarousel.svg';
 import AttachmentTemplate from '../assets/images/icons/attachmentTemplate.svg';
 import AttachmentImage from '../assets/images/icons/attachmentImage.svg';
 import AttachmentVideo from '../assets/images/icons/attachmentVideo.svg';
@@ -138,10 +138,18 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     }
 
     //RichCard
-    if (lastMessageContent?.richCard) {
+    if (
+      lastMessageContent?.richCard ||
+      lastMessageContent?.richCardCarousel ||
+      lastMessageContent.genericTemplate
+    ) {
       return (
         <View style={styles.icon}>
-          <AttachmentRichCard width={24} height={24} color={colorTextGray} />
+          <AttachmentRichCardCarousel
+            width={24}
+            height={24}
+            color={colorTextGray}
+          />
           <Text style={[styles.text, {marginLeft: 4, color: colorTextGray}]}>
             RichCard
           </Text>
@@ -268,6 +276,8 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
 
     //deletedMessages
     if (instagramDeletedMessage) {
+      console.log('djsaijdasoidjsaoidjasidjas');
+
       return (
         <>
           <Text style={styles.text} numberOfLines={1}>
