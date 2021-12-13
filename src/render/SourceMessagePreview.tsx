@@ -172,14 +172,39 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     //google
     const googleLiveAgentRequest =
       lastMessageContent?.type === 'requestedLiveAgent';
+    const googleAuthResponseSuccess =
+      lastMessageContent?.type === 'authResponseSuccess';
+    const googleAuthResponseFailed =
+      lastMessageContent?.type === 'authResponseFailure';
     const googleSurveyResponse = lastMessageContent?.surveyResponse;
     const googleRichText = lastMessageContent?.richText;
+    const googleSuggestion = lastMessageContent?.suggestions?.length > 0;
 
     if (googleLiveAgentRequest) {
       return (
         <>
           <Text style={styles.text} numberOfLines={1}>
             <Emoji symbol={'👋'} /> Live Agent request
+          </Text>
+        </>
+      );
+    }
+
+    if (googleAuthResponseSuccess) {
+      return (
+        <>
+          <Text>
+            <Emoji symbol={'✅'} /> Auth successful
+          </Text>
+        </>
+      );
+    }
+
+    if (googleAuthResponseFailed) {
+      return (
+        <>
+          <Text>
+            <Emoji symbol={'❌'} /> Auth failed
           </Text>
         </>
       );
@@ -199,6 +224,14 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       return (
         <>
           <Text>Rich text</Text>
+        </>
+      );
+    }
+
+    if (googleSuggestion) {
+      return (
+        <>
+          <Text>Suggestion</Text>
         </>
       );
     }

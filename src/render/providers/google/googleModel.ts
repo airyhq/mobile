@@ -12,12 +12,18 @@ export interface Content {
     | 'richCardCarousel'
     | 'requestedLiveAgent'
     | 'surveyResponse'
-    | 'richText';
+    | 'richText'
+    | 'authResponse';
 }
 
 export interface RichText extends Content {
   type: 'richText';
   text: 'string';
+}
+
+export interface AuthResponse extends Content {
+  type: 'authResponse';
+  status: string;
 }
 
 export interface RequestedLiveAgent extends Content {
@@ -142,4 +148,5 @@ export type ContentUnion =
   | RichCardCarousel
   | RequestedLiveAgent
   | SurveyResponse
-  | RichText;
+  | RichText
+  | AuthResponse;

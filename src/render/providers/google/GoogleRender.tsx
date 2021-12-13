@@ -3,12 +3,26 @@ import {RenderPropsUnion} from '../../props';
 import {ContentUnion} from './googleModel';
 import {TextComponent} from '../../components/Text';
 import {ImageComponent} from '../../components/ImageComponent';
+<<<<<<< HEAD
 import {Suggestions} from './components/Suggestions';
 import {RichCard} from './components/RichCard';
 import {RichCardCarousel} from './components/RichCardCarousel';
 import {SurveyResponse} from './components/SurveyResponse';
 import {RequestedLiveAgent} from './components/RequestedLiveAgent';
 import {RichText} from './components/RichText';
+=======
+import {
+  Suggestions,
+  RichCard,
+  RichCardCarousel,
+  RequestedLiveAgent,
+  SurveyResponse,
+  RichText,
+  AuthResponse,
+} from './components';
+
+const maxNumberOfGoogleSuggestions = 13;
+>>>>>>> cb69324 (ui fixes)
 
 export const GoogleRender = (props: RenderPropsUnion) => {
   const message = props.message;
@@ -41,6 +55,9 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
 
     case 'surveyResponse':
       return <SurveyResponse rating={content.rating} />;
+
+    case 'authResponse':
+      return <AuthResponse status={content.status} />;
 
     case 'image':
       return (
@@ -84,20 +101,11 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
 
 function googleInbound(message: any): ContentUnion {
   const messageJson = message.content.message ?? message.content;
-  const maxNumberOfSuggestions = 13;
 
   if (messageJson?.richText) {
     return {
       type: 'richText',
       text: messageJson.richText,
-    };
-  }
-
-  if (messageJson.image !== null) {
-    return {
-      type: 'image',
-      imageUrl: messageJson.image.contentInfo.fileUrl,
-      altText: messageJson.image.contentInfo.altText,
     };
   }
 
@@ -118,10 +126,10 @@ function googleInbound(message: any): ContentUnion {
   }
 
   if (messageJson.suggestions.length > 0) {
-    if (messageJson.suggestions.length > maxNumberOfSuggestions) {
+    if (messageJson.suggestions.length > maxNumberOfGoogleSuggestions) {
       messageJson.suggestions = messageJson.suggestions.slice(
         0,
-        maxNumberOfSuggestions,
+        maxNumberOfGoogleSuggestions,
       );
     }
 
@@ -151,6 +159,14 @@ function googleInbound(message: any): ContentUnion {
         suggestions: messageJson.suggestions,
       };
     }
+  }
+
+  if (messageJson.image !== null) {
+    return {
+      type: 'image',
+      imageUrl: messageJson.image.contentInfo.fileUrl,
+      altText: messageJson.image.contentInfo.altText,
+    };
   }
 
   if (messageJson.richCardCarousel?.carouselCard) {
@@ -186,6 +202,20 @@ function googleInbound(message: any): ContentUnion {
     };
   }
 
+  if (messageJson?.type === 'authResponseFailure') {
+    return {
+      type: 'authResponse',
+      status: 'failed',
+    };
+  }
+
+  if (messageJson?.type === 'authResponseSuccess') {
+    return {
+      type: 'authResponse',
+      status: 'successful',
+    };
+  }
+
   if (messageJson.text) {
     return {
       type: 'text',
@@ -201,7 +231,6 @@ function googleInbound(message: any): ContentUnion {
 
 function googleOutbound(message: any): ContentUnion {
   const messageJson = message.content.message ?? message.content;
-  const maxNumberOfSuggestions = 13;
 
   if (messageJson?.richText) {
     return {
@@ -235,12 +264,10 @@ function googleOutbound(message: any): ContentUnion {
   }
 
   if (messageJson.suggestions.length > 0) {
-    console.log('messageJson.suggestions', messageJson.suggestions);
-
-    if (messageJson.suggestions.length > maxNumberOfSuggestions) {
+    if (messageJson.suggestions.length > maxNumberOfGoogleSuggestions) {
       messageJson.suggestions = messageJson.suggestions.slice(
         0,
-        maxNumberOfSuggestions,
+        maxNumberOfGoogleSuggestions,
       );
     }
 
@@ -304,6 +331,20 @@ function googleOutbound(message: any): ContentUnion {
     return {
       type: 'surveyResponse',
       rating: messageJson?.surveyResponse,
+    };
+  }
+
+  if (messageJson?.type === 'authResponseFailure') {
+    return {
+      type: 'authResponse',
+      status: 'failed',
+    };
+  }
+
+  if (messageJson?.type === 'authResponseSuccess') {
+    return {
+      type: 'authResponse',
+      status: 'successful',
     };
   }
 

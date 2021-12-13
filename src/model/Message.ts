@@ -117,6 +117,7 @@ export const parseToRealmMessage = (
   let messageContent =
     unformattedMessage.content?.Body ??
     isTextOrGoogleSuggestions(unformattedMessage) ??
+    unformattedMessage.content?.text ??
     isTextMessageOrStoryReplies(unformattedMessage) ??
     unformattedMessage.content?.postback?.title ??
     unformattedMessage.content?.message ??
@@ -457,12 +458,16 @@ export const parseToRealmMessage = (
     }
 
     //image attachment
-    if (messageContent.image && messageContent.image?.contentInfo?.fileUrl) {
+    if (
+      messageContent.image &&
+      messageContent.image?.contentInfo?.fileUrl &&
+      !messageContent.suggestions
+    ) {
       return {
         id: unformattedMessage.id,
         content: {
           type: 'image',
-          image: messageContent,
+          image: messageContent.image,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
@@ -568,6 +573,7 @@ export const parseToRealmMessage = (
 
     //auth response
     if (messageContent?.authenticationResponse) {
+      //success
       if (
         messageContent?.authenticationResponse?.code &&
         !messageContent?.authenticationResponse?.errorDetails
@@ -575,8 +581,7 @@ export const parseToRealmMessage = (
         return {
           id: unformattedMessage.id,
           content: {
-            type: 'text',
-            text: 'Authentication was successful',
+            type: 'authResponseSuccess',
           },
           deliveryState: unformattedMessage.deliveryState,
           fromContact: unformattedMessage.fromContact,
@@ -585,15 +590,12 @@ export const parseToRealmMessage = (
         };
       }
 
-      if (
-        messageContent?.authenticationResponse?.errorDetails &&
-        !messageContent?.authenticationResponse?.code
-      ) {
+      //failure
+      if (messageContent?.authenticationResponse?.errorDetails) {
         return {
           id: unformattedMessage.id,
           content: {
-            type: 'text',
-            text: 'Authentication failed',
+            type: 'authResponseFailure',
           },
           deliveryState: unformattedMessage.deliveryState,
           fromContact: unformattedMessage.fromContact,

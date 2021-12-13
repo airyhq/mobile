@@ -6,16 +6,20 @@ import {
   colorTemplateGray,
 } from '../../../../../assets/colors';
 
-export const RequestedLiveAgent = () => (
-  <View style={styles.container}>
-    <Text>
-      <Emoji symbol={'👋'} />
-    </Text>
-    <Text style={styles.text}>
-      This user has requested to speak to a human agent.
-    </Text>
-  </View>
-);
+export const AuthResponse = ({status}) => {
+  const emojiStatus = status === 'successful' ? '✅' : '❌';
+
+  return (
+    <View style={styles.container}>
+      <Text>
+        <Emoji symbol={emojiStatus} />
+      </Text>
+      <Text style={styles.text}>
+        Authentication {status === 'successful' ? 'was' : ''} {status}
+      </Text>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

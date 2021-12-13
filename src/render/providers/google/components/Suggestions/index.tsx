@@ -18,7 +18,6 @@ import {
   colorDarkElementsGray,
   colorTemplateHightlight,
   colorTextContrast,
-  colorLightGray,
 } from '../../../../../assets/colors';
 
 type SuggestionsRendererProps = {
@@ -39,10 +38,12 @@ export const Suggestions = ({
   suggestions,
   fromContact,
 }: SuggestionsRendererProps) => {
-  console.log('suggestions', suggestions);
-
   return (
-    <View style={styles.suggestionsWrapper}>
+    <View
+      style={[
+        styles.suggestionsWrapper,
+        fromContact ? styles.contactContent : styles.memberContent,
+      ]}>
       {image && (
         <ImageComponent imageUrl={image.fileUrl} altText={image.altText} />
       )}
@@ -51,7 +52,11 @@ export const Suggestions = ({
         <TextComponent text={text ?? fallback} fromContact={fromContact} />
       )}
 
-      <View style={styles.suggestionsContainer}>
+      <View
+        style={[
+          styles.suggestionsContainer,
+          fromContact ? styles.contactContent : styles.memberContent,
+        ]}>
         {(suggestions as SuggestionsUnion[]).map(elem => {
           if ('reply' in elem && elem?.reply !== null) {
             return (
@@ -125,7 +130,7 @@ export const Suggestions = ({
                 key={Math.floor(Math.random() * 50)}
                 style={styles.touchableHighlightSuggestion}>
                 <Text key={Math.floor(Math.random() * 50)} style={styles.title}>
-                  Message a live agent on Google&apos;s Business Messages
+                  Message a live agent on GBM
                 </Text>
               </TouchableHighlight>
             );
@@ -140,11 +145,14 @@ export const Suggestions = ({
           <Pressable
             style={({pressed}) => [
               pressed
-                ? styles.pressedHoverTextContainer
-                : styles.hoverTextContainer,
+                ? styles.actionWarningPressed
+                : styles.actionWarningDefault,
             ]}>
             {() => (
-              <Text style={styles.hoverText}> action cannot be triggered</Text>
+              <Text style={styles.actionWarningText}>
+                {' '}
+                action cannot be triggered
+              </Text>
             )}
           </Pressable>
         )}
@@ -155,24 +163,30 @@ export const Suggestions = ({
 const styles = StyleSheet.create({
   suggestionsWrapper: {
     width: 'auto',
+    height: 'auto',
     marginTop: 5,
-    overflow: 'scroll',
   },
   suggestionsContainer: {
     position: 'relative',
-    width: '100%',
+    width: 'auto',
     height: 'auto',
     marginTop: 5,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
+    overflow: 'visible',
+  },
+  memberContent: {
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+  },
+  contactContent: {
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
   },
   touchableHighlightSuggestion: {
     width: 'auto',
-    maxWidth: '90%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
+    height: 'auto',
+    maxWidth: '100%',
     marginTop: 5,
     marginBottom: 5,
     marginLeft: 5,
@@ -217,21 +231,16 @@ const styles = StyleSheet.create({
     marginLeft: 0,
     padding: 0,
   },
-  hoverTextContainer: {
-    width: '100%',
-    height: '100%',
+  actionWarningDefault: {
     position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    borderRadius: 6,
-    paddingRight: 2,
-    backgroundColor: colorLightGray,
+    height: '100%',
+    width: '100%',
     opacity: 0,
   },
-  pressedHoverTextContainer: {
+  actionWarningPressed: {
     opacity: 1,
   },
-  hoverText: {
+  actionWarningText: {
     fontFamily: 'Lato',
     fontSize: 14,
     color: colorTextContrast,
