@@ -5,21 +5,6 @@ export const GoogleSuggestionsSchema = {
   },
 };
 
-export const GoogleImageSchema = {
-  name: 'GoogleImage',
-  properties: {
-    contentInfo: 'ImageInfo',
-  },
-};
-
-export const ImageInfoSchema = {
-  name: 'ImageInfo',
-  properties: {
-    fileUrl: 'string',
-    altText: 'string',
-  },
-};
-
 export const GoogleSuggestionsTypesSchema = {
   name: 'GoogleSuggestionsTypes',
   properties: {
