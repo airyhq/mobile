@@ -5,6 +5,7 @@ import {TextComponent} from '../../components/Text';
 import {ImageComponent} from '../../components/ImageComponent';
 import {RichCard} from './components/RichCard';
 import {RichCardCarousel} from './components/RichCardCarousel';
+import {SurveyResponse} from './components/SurveyResponse';
 
 export const GoogleRender = (props: RenderPropsUnion) => {
   const message = props.message;
@@ -47,6 +48,9 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
           cardContents={content.cardContents}
         />
       );
+
+    case 'surveyResponse':
+      return <SurveyResponse rating={content.rating} />;
   }
 }
 

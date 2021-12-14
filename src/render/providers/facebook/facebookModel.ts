@@ -132,7 +132,6 @@ export interface TextContent extends Content {
 export interface ImageContent extends Content {
   type: 'image';
   imageUrl: string;
-  altText?: string;
 }
 
 export interface AudioContent extends Content {
@@ -195,6 +194,7 @@ export interface Fallback extends Content {
   url: string;
 }
 
+//Instagram-specific
 export interface StoryMentionContent extends Content {
   type: 'story_mention';
   url: string;
@@ -244,6 +244,6 @@ export type AttachmentUnion =
   | ButtonTemplate
   | GenericTemplate
   | MediaTemplate
-  | StoryMentionContent
   | Fallback
+  | StoryMentionContent
   | ShareContent;

@@ -10,7 +10,8 @@ export interface Content {
     | 'suggestions'
     | 'richCard'
     | 'richCardCarousel'
-    | 'requestedLiveAgent';
+    | 'requestedLiveAgent'
+    | 'surveyResponse';
 }
 
 export interface RequestedLiveAgent extends Content {
@@ -86,6 +87,11 @@ interface SuggestedActions {
   };
 }
 
+export interface SurveyResponse extends Content {
+  type: 'surveyResponse';
+  rating: string;
+}
+
 interface AuthenticationRequestSuggestion {
   authenticationRequest: {
     oauth: {
@@ -123,4 +129,5 @@ export type ContentUnion =
   | Suggestions
   | RichCard
   | RichCardCarousel
-  | RequestedLiveAgent;
+  | RequestedLiveAgent
+  | SurveyResponse;
