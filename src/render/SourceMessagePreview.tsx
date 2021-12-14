@@ -288,6 +288,16 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       );
     }
 
+    //Facebook Postback
+    if (lastMessageContent?.postback) {
+      return (
+        <Text style={styles.text} numberOfLines={1}>
+          {lastMessageContent?.postback?.title ??
+            lastMessageContent?.postback?.payload}
+        </Text>
+      );
+    }
+
     //Twilio
 
     //Text SMS

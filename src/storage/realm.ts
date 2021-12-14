@@ -58,6 +58,7 @@ import {
   AuthenticationRequestSchema,
   OAuthSchema,
   LiveAgentRequestSchema,
+  FacebookPostbackSchema,
 } from '../model';
 
 export class RealmDB {
@@ -103,6 +104,7 @@ export class RealmDB {
           MediaAttachmentPayloadSchema,
           MediaTemplateSchema,
           InstagramStoryRepliesSchema,
+<<<<<<< HEAD
           GoogleSuggestionsSchema,
           GoogleSuggestionsTypesSchema,
           GoogleImageSchema,
@@ -114,6 +116,9 @@ export class RealmDB {
           AuthenticationRequestSchema,
           OAuthSchema,
           LiveAgentRequestSchema,
+=======
+          FacebookPostbackSchema,
+>>>>>>> 35048c2 (fb messages fix)
           ChannelMetadataSchema,
           MessageSchema,
           MessageDataSchema,

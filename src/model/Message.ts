@@ -54,6 +54,7 @@ export const ContentMessageSchema = {
     storyReplies: 'InstagramStoryReplies?',
     surveyResponse: 'string?',
     richText: 'string?',
+    postback: 'FacebookPostback?',
   },
 };
 
@@ -210,7 +211,7 @@ export const parseToRealmMessage = (
     }
   }
 
-  //facebook templates
+  //facebook
   if (source === Source.facebook || source === Source.instagram) {
     //instagram story replies
     if (messageContent?.reply_to) {
@@ -259,6 +260,7 @@ export const parseToRealmMessage = (
       };
     }
 
+    //fb templates
     if (
       messageContent?.attachment?.type === 'template' ||
       messageContent?.attachments?.[0].type === 'template'
@@ -319,6 +321,20 @@ export const parseToRealmMessage = (
           metadata: unformattedMessage.metadata,
         };
       }
+    }
+
+    //postback
+    if (messageContent?.postback) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          postback: messageContent?.postback,
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
     }
 
     //attachment / attachments
