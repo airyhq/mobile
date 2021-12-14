@@ -236,8 +236,6 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
 
     //deletedMessages
     if (instagramDeletedMessage) {
-      console.log('djsaijdasoidjsaoidjasidjas');
-
       return (
         <>
           <Text style={styles.text} numberOfLines={1}>

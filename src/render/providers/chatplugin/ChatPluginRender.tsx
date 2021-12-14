@@ -7,6 +7,11 @@ import {
 } from './chatPluginModel';
 import {TextComponent} from '../../components/Text';
 import {RichCard, RichCardCarousel, QuickReplies} from './components';
+import {ImageComponent} from '../../components/ImageComponent';
+import {VideoComponent} from '../../components/VideoComponent';
+import {AudioComponent} from '../../components/AudioComponent';
+import {FileComponent} from '../../components/FileComponent';
+import {RichText} from './components/RichText';
 
 export const ChatPluginRender = (props: RenderPropsUnion) => {
   return render(mapContent(props.message), props);
@@ -53,11 +58,26 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
           quickReplies={content.quickReplies}
         />
       );
+    case 'image':
+      return <ImageComponent imageUrl={content.imageUrl} />;
+
+    case 'video':
+      return <VideoComponent videoUrl={content.videoUrl} />;
+
+    case 'audio':
+      return <AudioComponent audioUrl={content.audioUrl} />;
+
+    case 'file':
+      return <FileComponent fileUrl={content.fileUrl} />;
   }
 }
 
 function mapContent(message: any): ContentUnion {
-  const messageContent = message.content.message ?? message.content ?? message;
+  const messageContent = message.content?.message ?? message.content ?? message;
+
+  if (messageContent.attachment) {
+    return parseAttachment(messageContent.attachment);
+  }
 
   if (messageContent.quickRepliesChatPlugin) {
     if (messageContent.quickRepliesChatPlugin.length > 13) {
@@ -131,6 +151,20 @@ const parseAttachment = (attachment: SimpleAttachment): AttachmentUnion => {
     return {
       type: 'video',
       videoUrl: attachment.payload.url,
+    };
+  }
+
+  if (attachment?.type === 'audio') {
+    return {
+      type: 'audio',
+      audioUrl: attachment.payload.url,
+    };
+  }
+
+  if (attachment?.type === 'file') {
+    return {
+      type: 'file',
+      fileUrl: attachment.payload.url,
     };
   }
 

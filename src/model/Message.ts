@@ -196,6 +196,75 @@ export const parseToRealmMessage = (
         metadata: unformattedMessage.metadata,
       };
     }
+
+    if (attachmentMessage?.type === 'image') {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          attachment: {
+            type: 'image',
+            payload: {
+              url: unformattedMessage.content.attachment.payload.url,
+            },
+          },
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+    if (attachmentMessage?.type === 'video') {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          attachment: {
+            type: 'video',
+            payload: {
+              url: unformattedMessage.content.attachment.payload.url,
+            },
+          },
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+    if (attachmentMessage?.type === 'audio') {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          attachment: {
+            type: 'audio',
+            payload: {
+              url: unformattedMessage.content.attachment.payload.url,
+            },
+          },
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+    if (attachmentMessage?.type === 'file') {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          attachment: {
+            type: 'file',
+            payload: {
+              url: unformattedMessage.content.attachment.payload.url,
+            },
+          },
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
   }
 
   //facebook templates
