@@ -11,7 +11,6 @@ import {ImageComponent} from '../../components/ImageComponent';
 import {VideoComponent} from '../../components/VideoComponent';
 import {AudioComponent} from '../../components/AudioComponent';
 import {FileComponent} from '../../components/FileComponent';
-import {RichText} from './components/RichText';
 
 export const ChatPluginRender = (props: RenderPropsUnion) => {
   return render(mapContent(props.message), props);
