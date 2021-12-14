@@ -16,6 +16,10 @@ target 'mobile' do
     inherit! :complete
     # Pods for testing
   end
+  
+  target 'OneSignalNotificationServiceExtension' do
+    pod 'OneSignalXCFramework', '>= 3.0', '< 4.0'
+  end
 
   # Enables Flipper.
   #
