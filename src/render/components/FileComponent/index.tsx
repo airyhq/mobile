@@ -17,20 +17,28 @@ type FileRenderProps = {
 
 export const FileComponent = ({fileUrl, fileName}: FileRenderProps) => {
   const navigation = useNavigation();
+  let fallbackFileName: string = '';
 
   const maxFileNameLength = 30;
-  if (fileName.length >= maxFileNameLength) {
+  if (fileName?.length >= maxFileNameLength) {
     fileName = fileName.slice(-maxFileNameLength);
   }
 
+  if (fileName == undefined) {
+    fallbackFileName = 'File';
+  }
+
   const handleOnPress = () => {
-    navigation.navigate('FileContent', {fileName: fileName, fileUrl: fileUrl});
+    navigation.navigate('FileContent', {
+      fileName: fileName || fallbackFileName,
+      fileUrl: fileUrl,
+    });
   };
 
   return (
     <TouchableOpacity style={styles.container} onPress={handleOnPress}>
       <FileDownloadIcon height={24} width={24} color={colorAiryBlue} />
-      <Text style={styles.text}>{fileName}</Text>
+      <Text style={styles.text}>{fileName || fallbackFileName}</Text>
     </TouchableOpacity>
   );
 };
@@ -39,7 +47,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     padding: 10,
-    minWidth: '60%',
+    minWidth: 150,
     marginTop: 5,
     backgroundColor: colorBackgroundBlue,
     borderColor: colorLightGray,
