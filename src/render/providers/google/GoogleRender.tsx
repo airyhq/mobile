@@ -3,14 +3,6 @@ import {RenderPropsUnion} from '../../props';
 import {ContentUnion} from './googleModel';
 import {TextComponent} from '../../components/Text';
 import {ImageComponent} from '../../components/ImageComponent';
-<<<<<<< HEAD
-import {Suggestions} from './components/Suggestions';
-import {RichCard} from './components/RichCard';
-import {RichCardCarousel} from './components/RichCardCarousel';
-import {SurveyResponse} from './components/SurveyResponse';
-import {RequestedLiveAgent} from './components/RequestedLiveAgent';
-import {RichText} from './components/RichText';
-=======
 import {
   Suggestions,
   RichCard,
@@ -22,7 +14,6 @@ import {
 } from './components';
 
 const maxNumberOfGoogleSuggestions = 13;
->>>>>>> cb69324 (ui fixes)
 
 export const GoogleRender = (props: RenderPropsUnion) => {
   const message = props.message;
