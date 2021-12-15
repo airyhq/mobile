@@ -1,6 +1,6 @@
 import {RealmDB} from '../storage/realm';
 import {api} from '../api';
-import {Conversation, Message, MessageData} from '../Model';
+import {Conversation, Message} from '../Model';
 import {mergeMessages} from '../services/message';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import {hapticFeedbackOptions} from '../services/HapticFeedback';
@@ -37,8 +37,8 @@ export const loadMessagesForConversation = (
   cursor?: string,
   onResponse?: () => void,
 ) => {
-  const currentConversationData: (MessageData & Realm.Object) | undefined =
-    realm.objectForPrimaryKey<MessageData>('MessageData', conversationId);
+  const currentConversationData: (Conversation & Realm.Object) | undefined =
+    realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
 
   const currentConversation: Conversation | undefined =
     realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
@@ -60,8 +60,7 @@ export const loadMessagesForConversation = (
         });
       } else {
         realm.write(() => {
-          realm.create('MessageData', {
-            id: conversationId,
+          realm.create('Conversation', {
             messages: mergeMessages([], [...response.data]),
           });
         });

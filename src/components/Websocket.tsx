@@ -4,7 +4,6 @@ import {
   Conversation,
   parseToRealmConversation,
   Message,
-  MessageData,
   parseToRealmMessage,
 } from '../model';
 import {RealmDB} from '../storage/realm';
@@ -24,8 +23,6 @@ const addMessage = (conversationId: string, message: Message) => {
   realm.write(() => {
     const currentConversation: Conversation | undefined =
       realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
-    const currentMessageData: MessageData =
-      realm.objectForPrimaryKey<MessageData>('MessageData', conversationId);
 
     if (currentConversation) {
       currentConversation.lastMessage = parseToRealmMessage(
@@ -33,9 +30,9 @@ const addMessage = (conversationId: string, message: Message) => {
         currentConversation.channel.source,
       );
 
-      if (currentMessageData && currentMessageData.messages) {
-        currentMessageData.messages = mergeMessages(
-          currentMessageData.messages,
+      if (currentConversation && currentConversation.messages) {
+        currentConversation.messages = mergeMessages(
+          currentConversation.messages,
           [message],
         );
       }
@@ -53,7 +50,6 @@ const getInfoNewConversation = (conversationId: string, retries: number) => {
     .then((response: Conversation) => {
       realm.write(() => {
         realm.create('Conversation', parseToRealmConversation(response));
-        realm.create('MessageData', {id: conversationId, messages: []});
       });
     })
     .catch(() => {

@@ -24,6 +24,7 @@ export const ConversationSchema = {
     createdAt: 'date?',
     lastMessage: 'Message',
     paginationData: 'Pagination',
+    messages: {type: 'list', objectType: 'Message'},
   },
 };
 
@@ -34,6 +35,7 @@ export interface Conversation {
   createdAt: Date;
   lastMessage: Message;
   paginationData: Pagination;
+  messages: Message[];
 }
 
 export const FilteredConversationSchema = {

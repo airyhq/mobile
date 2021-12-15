@@ -29,11 +29,6 @@ export interface Message {
   source?: string;
 }
 
-export type MessageData = {
-  id: string;
-  messages: Message[];
-};
-
 export const ContentMessageSchema = {
   name: 'ContentMessage',
   properties: {
@@ -66,15 +61,6 @@ export const MessageSchema = {
     fromContact: 'bool',
     sentAt: 'date',
     metadata: 'MessageMetadata?',
-  },
-};
-
-export const MessageDataSchema = {
-  name: 'MessageData',
-  primaryKey: 'id',
-  properties: {
-    id: 'string',
-    messages: {type: 'list', objectType: 'Message'},
   },
 };
 

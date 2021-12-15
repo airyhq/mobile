@@ -13,7 +13,6 @@ import {
   PaginationSchema,
   SuggestedReplySchema,
   SuggestionsSchema,
-  MessageDataSchema,
   ContentMessageSchema,
   RichCardSchema,
   ButtonAttachmentSchema,
@@ -116,7 +115,6 @@ export class RealmDB {
           LiveAgentRequestSchema,
           ChannelMetadataSchema,
           MessageSchema,
-          MessageDataSchema,
           MetadataSchema,
           MessageTypeSchema,
           MetadataEventSchema,
@@ -163,10 +161,6 @@ export const upsertConversations = (
             ...newConversation.metadata,
             state: newConversationState,
           },
-        });
-        realm.create('MessageData', {
-          id: conversation.id,
-          messages: [],
         });
       });
     }
