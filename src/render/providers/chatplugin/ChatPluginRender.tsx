@@ -6,7 +6,7 @@ import {
   AttachmentUnion,
 } from './chatPluginModel';
 import {TextComponent} from '../../components/Text';
-import {RichCard, RichCardCarousel, QuickReplies} from './components';
+import {RichCard, RichCardCarousel, QuickReplies, RichText} from './components';
 import {ImageComponent} from '../../components/ImageComponent';
 import {VideoComponent} from '../../components/VideoComponent';
 import {AudioComponent} from '../../components/AudioComponent';
@@ -40,6 +40,14 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
           suggestions={content.suggestions}
         />
       );
+    case 'richText':
+      return (
+        <RichText
+          text={content.text}
+          fallback={content.fallback}
+          fromContact={props.message.fromContact || false}
+        />
+      );
     case 'richCardCarousel':
       return (
         <RichCardCarousel
@@ -57,6 +65,9 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
           quickReplies={content.quickReplies}
         />
       );
+
+    case 'suggestionResponse':
+      return <TextComponent {...propsToUse} text={content.text} />;
     case 'image':
       return <ImageComponent imageUrl={content.imageUrl} />;
 
@@ -98,6 +109,22 @@ function mapContent(message: any): ContentUnion {
       type: 'quickReplies',
       text: messageContent.text,
       quickReplies: messageContent.quickRepliesChatPlugin,
+    };
+  }
+
+  if (messageContent?.suggestionResponse) {
+    return {
+      type: 'suggestionResponse',
+      text: messageContent.suggestionResponse.text,
+      postbackData: messageContent.suggestionResponse.postbackData,
+    };
+  }
+
+  if (messageContent?.richText) {
+    return {
+      type: 'richText',
+      fallback: messageContent.richText?.fallback,
+      text: messageContent.richText?.text,
     };
   }
 

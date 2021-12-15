@@ -42,6 +42,7 @@ export const ContentMessageSchema = {
     fallback: 'string?',
     image: 'GoogleImage?',
     suggestions: 'GoogleSuggestionsTypes[]',
+    richText: 'RichText?',
     richCard: 'RichCard?',
     richCardCarousel: 'RichCardCarousel?',
     attachment: 'Attachment?',
@@ -53,8 +54,8 @@ export const ContentMessageSchema = {
     quickRepliesFacebook: 'QuickRepliesFacebook?',
     storyReplies: 'InstagramStoryReplies?',
     surveyResponse: 'string?',
-    richText: 'string?',
     postback: 'FacebookPostback?',
+    suggestionResponse: 'SuggestionResponse?',
   },
 };
 
@@ -151,6 +152,42 @@ export const parseToRealmMessage = (
         content: {
           type: 'RichCardCarousel',
           richCardCarousel: {...messageContent.richCard},
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //RichText
+    if (unformattedMessage.content?.containsRichText) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'richText',
+          richText: {
+            fallback: unformattedMessage.content?.fallback,
+            text: unformattedMessage.content?.text,
+          },
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    if (unformattedMessage.content?.suggestionResponse) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'suggestionResponse',
+          postbackData: {
+            text: unformattedMessage.content?.suggestionResponse?.text,
+            postbackData:
+              unformattedMessage.content?.suggestionResponse?.postbackData,
+          },
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
