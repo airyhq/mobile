@@ -157,10 +157,19 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       );
     }
 
+    if (lastMessageContent.richText) {
+      return (
+        <Text style={styles.text} numberOfLines={1}>
+          {lastMessageContent?.richText?.text}
+        </Text>
+      );
+    }
+
     //Text
     if (
       (lastMessageContent.text || lastMessageContent.message?.text) &&
-      !isImageFromGoogleSource(lastMessageContent.message?.text)
+      !isImageFromGoogleSource(lastMessageContent.message?.text) &&
+      !lastMessageContent.richText
     ) {
       return (
         <Text style={styles.text} numberOfLines={1}>

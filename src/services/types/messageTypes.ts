@@ -7,7 +7,6 @@ export const isTextMessage = (content: Content) => {
     !message.containsRichText &&
     !message.suggestions &&
     !message.quick_replies &&
-    !message.containsRichText &&
     !message.attachments &&
     !message.attachment
   ) {

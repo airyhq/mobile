@@ -39,6 +39,7 @@ export const ContentMessageSchema = {
   properties: {
     type: 'string?',
     text: 'string?',
+    richText: 'RichText?',
     richCard: 'RichCard?',
     richCardCarousel: 'RichCardCarousel?',
     attachment: 'Attachment?',
@@ -49,6 +50,7 @@ export const ContentMessageSchema = {
     quickRepliesChatPlugin: 'QuickRepliesChatPlugin?',
     quickRepliesFacebook: 'QuickRepliesFacebook?',
     storyReplies: 'InstagramStoryReplies?',
+    suggestionResponse: 'SuggestionResponse?',
   },
 };
 
@@ -138,6 +140,42 @@ export const parseToRealmMessage = (
         content: {
           type: 'RichCardCarousel',
           richCardCarousel: {...messageContent.richCard},
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //RichText
+    if (unformattedMessage.content?.containsRichText) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'richText',
+          richText: {
+            fallback: unformattedMessage.content?.fallback,
+            text: unformattedMessage.content?.text,
+          },
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    if (unformattedMessage.content?.suggestionResponse) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'suggestionResponse',
+          postbackData: {
+            text: unformattedMessage.content?.suggestionResponse?.text,
+            postbackData:
+              unformattedMessage.content?.suggestionResponse?.postbackData,
+          },
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,

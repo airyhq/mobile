@@ -44,7 +44,8 @@ export interface AudioContent extends Content {
 
 export interface RichTextContent extends Content {
   type: 'richText';
-  text: 'string';
+  text?: string;
+  fallback?: string;
 }
 
 export enum MediaHeight {
@@ -130,6 +131,7 @@ export type ContentUnion =
   | VideoContent
   | FileContent
   | AudioContent
+  | RichTextContent
   | RichTextContent
   | RichCardContent
   | RichCardCarouselContent

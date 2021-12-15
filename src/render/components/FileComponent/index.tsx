@@ -24,7 +24,7 @@ export const FileComponent = ({fileUrl, fileName}: FileRenderProps) => {
     fileName = fileName.slice(-maxFileNameLength);
   }
 
-  if (fileName == undefined) {
+  if (fileName === undefined) {
     fallbackFileName = 'File';
   }
 

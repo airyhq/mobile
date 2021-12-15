@@ -27,6 +27,7 @@ import {
   ButtonSchema,
   StandaloneCardSchema,
   CardContentSchema,
+  RichTextSchema,
   RichCardMediaSchema,
   RichCardMediaContentInfoSchema,
   RichCardSuggestionsSchema,
@@ -50,6 +51,7 @@ import {
   DefaultActionSchema,
   InstagramStoryRepliesSchema,
 } from '../model';
+import {SuggestionResponseSchema} from '../model/templates/SuggestionResponse';
 
 export class RealmDB {
   private static instance: Realm;
@@ -70,6 +72,7 @@ export class RealmDB {
           RichCardSchema,
           StandaloneCardSchema,
           CardContentSchema,
+          RichTextSchema,
           RichCardMediaSchema,
           RichCardMediaContentInfoSchema,
           RichCardSuggestionsSchema,
@@ -103,6 +106,7 @@ export class RealmDB {
           MessageMetadataSchema,
           SuggestedReplySchema,
           SuggestionsSchema,
+          SuggestionResponseSchema,
           PaginationSchema,
           UserInfoSchema,
         ],
