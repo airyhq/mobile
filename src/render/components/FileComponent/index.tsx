@@ -37,6 +37,7 @@ export const FileComponent = ({fileUrl, fileName}: FileRenderProps) => {
 
 const styles = StyleSheet.create({
   container: {
+    alignItems: 'center',
     padding: 10,
     minWidth: '60%',
     marginTop: 5,
@@ -45,7 +46,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 12,
     flexDirection: 'row',
-    alignSelf: 'flex-end',
     shadowColor: '#000',
     shadowOffset: {
       width: 1,
