@@ -39,6 +39,9 @@ export const ContentMessageSchema = {
   properties: {
     type: 'string?',
     text: 'string?',
+    fallback: 'string?',
+    image: 'GoogleImage?',
+    suggestions: 'GoogleSuggestionsTypes[]',
     richCard: 'RichCard?',
     richCardCarousel: 'RichCardCarousel?',
     attachment: 'Attachment?',
@@ -49,6 +52,8 @@ export const ContentMessageSchema = {
     quickRepliesChatPlugin: 'QuickRepliesChatPlugin?',
     quickRepliesFacebook: 'QuickRepliesFacebook?',
     storyReplies: 'InstagramStoryReplies?',
+    surveyResponse: 'string?',
+    richText: 'string?',
   },
 };
 
@@ -99,12 +104,19 @@ const isTextMessageOrStoryReplies = (unformattedMessage: any) => {
     : unformattedMessage.content?.message;
 };
 
+const isTextOrGoogleSuggestions = (unformattedMessage: any) => {
+  return unformattedMessage.content?.suggestions
+    ? unformattedMessage?.content
+    : unformattedMessage?.text;
+};
+
 export const parseToRealmMessage = (
   unformattedMessage: any,
   source: string,
 ): Message => {
   let messageContent =
     unformattedMessage.content?.Body ??
+    isTextOrGoogleSuggestions(unformattedMessage) ??
     unformattedMessage.content?.text ??
     isTextMessageOrStoryReplies(unformattedMessage) ??
     unformattedMessage.content?.postback?.title ??
@@ -413,7 +425,7 @@ export const parseToRealmMessage = (
     }
   }
 
-  //Google templates
+  //Google
   if (source === Source.google) {
     //richCard
     if (messageContent.richCard && !messageContent.richCard?.carouselCard) {
@@ -446,18 +458,151 @@ export const parseToRealmMessage = (
     }
 
     //image attachment
-    if (messageContent.image && messageContent.image?.contentInfo?.fileUrl) {
+    if (
+      messageContent.image &&
+      messageContent.image?.contentInfo?.fileUrl &&
+      !messageContent.suggestions
+    ) {
       return {
         id: unformattedMessage.id,
         content: {
           type: 'image',
-          image: messageContent,
+          image: messageContent.image,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
         sentAt: unformattedMessage.sentAt,
         metadata: unformattedMessage.metadata,
       };
+    }
+
+    //suggestionResponse
+    if (messageContent.suggestionResponse) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'text',
+          text: messageContent.suggestionResponse.text,
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //suggestions
+    if (messageContent?.suggestions) {
+      if (messageContent?.image) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'suggestions',
+            text: messageContent?.text,
+            fallback: messageContent?.fallback,
+            image: messageContent?.image,
+            suggestions: messageContent?.suggestions,
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'suggestions',
+          text: messageContent?.text,
+          fallback: messageContent?.fallback,
+          suggestions: messageContent?.suggestions,
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //requestedLiveAgent
+    if (messageContent?.userStatus?.requestedLiveAgent) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'requestedLiveAgent',
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //surveyResponse
+    if (messageContent?.surveyResponse) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'surveyResponse',
+          surveyResponse:
+            messageContent?.surveyResponse?.questionResponsePostbackData ??
+            messageContent?.surveyResponse?.questionResponseText,
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //richText
+    if (messageContent?.containsRichText) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'richText',
+          richText: messageContent?.text,
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    //auth response
+    if (messageContent?.authenticationResponse) {
+      //success
+      if (
+        messageContent?.authenticationResponse?.code &&
+        !messageContent?.authenticationResponse?.errorDetails
+      ) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'authResponseSuccess',
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
+
+      //failure
+      if (messageContent?.authenticationResponse?.errorDetails) {
+        return {
+          id: unformattedMessage.id,
+          content: {
+            type: 'authResponseFailure',
+          },
+          deliveryState: unformattedMessage.deliveryState,
+          fromContact: unformattedMessage.fromContact,
+          sentAt: unformattedMessage.sentAt,
+          metadata: unformattedMessage.metadata,
+        };
+      }
     }
   }
 

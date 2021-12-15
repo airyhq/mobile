@@ -3,8 +3,17 @@ import {RenderPropsUnion} from '../../props';
 import {ContentUnion} from './googleModel';
 import {TextComponent} from '../../components/Text';
 import {ImageComponent} from '../../components/ImageComponent';
-import {RichCard} from './components/RichCard';
-import {RichCardCarousel} from './components/RichCardCarousel';
+import {
+  Suggestions,
+  RichCard,
+  RichCardCarousel,
+  RequestedLiveAgent,
+  SurveyResponse,
+  RichText,
+  AuthResponse,
+} from './components';
+
+const maxNumberOfGoogleSuggestions = 13;
 
 export const GoogleRender = (props: RenderPropsUnion) => {
   const message = props.message;
@@ -23,11 +32,39 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
           text={content.text}
         />
       );
+
+    case 'richText':
+      return (
+        <RichText
+          fromContact={props.message.fromContact || false}
+          text={content.text}
+        />
+      );
+
+    case 'requestedLiveAgent':
+      return <RequestedLiveAgent />;
+
+    case 'surveyResponse':
+      return <SurveyResponse rating={content.rating} />;
+
+    case 'authResponse':
+      return <AuthResponse status={content.status} />;
+
     case 'image':
       return (
         <ImageComponent
           imageUrl={content.imageUrl}
           altText="sent via Google Business Messages"
+        />
+      );
+    case 'suggestions':
+      return (
+        <Suggestions
+          fromContact={props.message.fromContact || false}
+          text={content.text}
+          image={content.image}
+          fallback={content.fallback}
+          suggestions={content.suggestions}
         />
       );
     case 'richCard':
@@ -39,7 +76,6 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
           suggestions={content.suggestions}
         />
       );
-
     case 'richCardCarousel':
       return (
         <RichCardCarousel
@@ -47,20 +83,24 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
           cardContents={content.cardContents}
         />
       );
+
+    case 'surveyResponse':
+      return <SurveyResponse rating={content.rating} />;
   }
 }
 
 function googleInbound(message: any): ContentUnion {
   const messageJson = message.content.message ?? message.content;
 
-  if (messageJson.image) {
+  //RichText
+  if (messageJson?.richText) {
     return {
-      type: 'image',
-      imageUrl: messageJson.image.contentInfo.fileUrl,
-      altText: messageJson.image.contentInfo.altText,
+      type: 'richText',
+      text: messageJson.richText,
     };
   }
 
+  //RichCard
   if (messageJson.richCard?.standaloneCard) {
     const {
       richCard: {
@@ -77,6 +117,7 @@ function googleInbound(message: any): ContentUnion {
     };
   }
 
+  //RichCardCarousel
   if (messageJson.richCardCarousel?.carouselCard) {
     return {
       type: 'richCardCarousel',
@@ -85,6 +126,53 @@ function googleInbound(message: any): ContentUnion {
     };
   }
 
+  //Suggestions
+  if (messageJson.suggestions.length > 0) {
+    if (messageJson.suggestions.length > maxNumberOfGoogleSuggestions) {
+      messageJson.suggestions = messageJson.suggestions.slice(
+        0,
+        maxNumberOfGoogleSuggestions,
+      );
+    }
+
+    if (messageJson.text) {
+      return {
+        type: 'suggestions',
+        text: messageJson.text,
+        suggestions: messageJson.suggestions,
+      };
+    }
+
+    if (messageJson.image) {
+      return {
+        type: 'suggestions',
+        image: {
+          fileUrl: messageJson?.image?.contentInfo?.fileUrl,
+          altText: messageJson?.image?.contentInfo?.altText,
+        },
+        suggestions: messageJson.suggestions,
+      };
+    }
+
+    if (messageJson.fallback) {
+      return {
+        type: 'suggestions',
+        fallback: messageJson.fallback,
+        suggestions: messageJson.suggestions,
+      };
+    }
+  }
+
+  //Image
+  if (messageJson.image !== null) {
+    return {
+      type: 'image',
+      imageUrl: messageJson.image.contentInfo.fileUrl,
+      altText: messageJson.image.contentInfo.altText,
+    };
+  }
+
+  //Image (sent by users to the agent as text message)
   if (
     messageJson.text &&
     messageJson.text.includes('https://storage.googleapis.com') &&
@@ -97,6 +185,38 @@ function googleInbound(message: any): ContentUnion {
     };
   }
 
+  //Live Agent request
+  if (messageJson?.type === 'requestedLiveAgent') {
+    return {
+      type: 'requestedLiveAgent',
+    };
+  }
+
+  //Survey Response
+  if (messageJson?.surveyResponse) {
+    return {
+      type: 'surveyResponse',
+      rating: messageJson?.surveyResponse,
+    };
+  }
+
+  //Auth Response failed
+  if (messageJson?.type === 'authResponseFailure') {
+    return {
+      type: 'authResponse',
+      status: 'failed',
+    };
+  }
+
+  //Auth Response successful
+  if (messageJson?.type === 'authResponseSuccess') {
+    return {
+      type: 'authResponse',
+      status: 'successful',
+    };
+  }
+
+  //Text
   if (messageJson.text) {
     return {
       type: 'text',
@@ -104,6 +224,7 @@ function googleInbound(message: any): ContentUnion {
     };
   }
 
+  //Unsupported
   return {
     type: 'text',
     text: 'Unkown message type',
@@ -113,6 +234,15 @@ function googleInbound(message: any): ContentUnion {
 function googleOutbound(message: any): ContentUnion {
   const messageJson = message.content.message ?? message.content;
 
+  //RichText
+  if (messageJson?.richText) {
+    return {
+      type: 'richText',
+      text: messageJson.richText,
+    };
+  }
+
+  //RichCard
   if (messageJson.richCard?.standaloneCard) {
     const {
       richCard: {
@@ -129,6 +259,7 @@ function googleOutbound(message: any): ContentUnion {
     };
   }
 
+  //RichCardCarousel
   if (messageJson.richCardCarousel?.carouselCard) {
     return {
       type: 'richCardCarousel',
@@ -137,28 +268,100 @@ function googleOutbound(message: any): ContentUnion {
     };
   }
 
+  //Suggestions
+  if (messageJson.suggestions.length > 0) {
+    if (messageJson.suggestions.length > maxNumberOfGoogleSuggestions) {
+      messageJson.suggestions = messageJson.suggestions.slice(
+        0,
+        maxNumberOfGoogleSuggestions,
+      );
+    }
+
+    if (messageJson.text) {
+      return {
+        type: 'suggestions',
+        text: messageJson.text,
+        suggestions: messageJson.suggestions,
+      };
+    }
+
+    if (messageJson.image) {
+      return {
+        type: 'suggestions',
+        image: {
+          fileUrl: messageJson.image.contentInfo.fileUrl,
+          altText: messageJson.image.contentInfo.altText,
+        },
+        suggestions: messageJson.suggestions,
+      };
+    }
+
+    if (messageJson.fallback) {
+      return {
+        type: 'suggestions',
+        fallback: messageJson.fallback,
+        suggestions: messageJson.suggestions,
+      };
+    }
+  }
+
+  //Image
   if (messageJson.image && messageJson.image?.contentInfo?.fileUrl) {
     return {
       type: 'image',
       imageUrl: messageJson.image.contentInfo.fileUrl,
-      altText: messageJson.image.contentInfo.altText,
+      altText: messageJson?.image?.contentInfo?.altText,
     };
   }
 
-  if (messageJson.text) {
+  //Requested Live Agent
+  if (messageJson?.type === 'requestedLiveAgent') {
+    return {
+      type: 'requestedLiveAgent',
+    };
+  }
+
+  //Survey Response
+  if (messageJson?.surveyResponse) {
+    return {
+      type: 'surveyResponse',
+      rating: messageJson?.surveyResponse,
+    };
+  }
+
+  //Auth response failure
+  if (messageJson?.type === 'authResponseFailure') {
+    return {
+      type: 'authResponse',
+      status: 'failed',
+    };
+  }
+
+  //Auth response successful
+  if (messageJson?.type === 'authResponseSuccess') {
+    return {
+      type: 'authResponse',
+      status: 'successful',
+    };
+  }
+
+  //Text
+  if (messageJson.text !== null) {
     return {
       type: 'text',
       text: messageJson.text,
     };
   }
 
-  if (messageJson.fallback) {
+  //Fallback
+  if (messageJson.fallback !== null) {
     return {
       type: 'text',
       text: messageJson.fallback,
     };
   }
 
+  //Unsupported
   return {
     type: 'text',
     text: 'Unsupported message type',

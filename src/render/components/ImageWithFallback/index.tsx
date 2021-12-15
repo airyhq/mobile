@@ -7,11 +7,16 @@ type ImageRenderProps = {
   src: string;
   alt?: string;
   imageStyle?: StyleProp<ImageStyle>;
+  setLoading?: (loading: boolean) => void;
 };
 
 const failedUrls = [];
 
-export const ImageWithFallback = ({src, imageStyle}: ImageRenderProps) => {
+export const ImageWithFallback = ({
+  src,
+  setLoading,
+  imageStyle,
+}: ImageRenderProps) => {
   const [imageFailed, setImageFailed] = useState(failedUrls.includes(src));
 
   useEffect(() => {
@@ -21,6 +26,10 @@ export const ImageWithFallback = ({src, imageStyle}: ImageRenderProps) => {
   const loadingFailed = () => {
     failedUrls.push(src);
     setImageFailed(true);
+  };
+
+  const handleOnLoad = () => {
+    setLoading && setLoading(false);
   };
 
   return (
@@ -37,6 +46,7 @@ export const ImageWithFallback = ({src, imageStyle}: ImageRenderProps) => {
         </>
       ) : (
         <Image
+          onLoad={handleOnLoad}
           style={imageStyle}
           source={{
             uri: src,

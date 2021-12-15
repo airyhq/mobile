@@ -1,9 +1,9 @@
 import React from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
-import {colorTextGray} from '../../../assets/colors';
-import ImageIcon from '../../../assets/images/icons/attachmentImage.svg';
-import AttachmentIcon from '../../../assets/images/icons/image.svg';
-import FileIcon from '../../../assets/images/icons/attachmentFile.svg';
+import {colorAiryBlue, colorTextGray} from '../../../assets/colors';
+import AttachmentImageIcon from '../../../assets/images/icons/attachmentImage.svg';
+import AttachmentTemplateIcon from '../../../assets/images/icons/attachmentTemplate.svg';
+import AttachmentFileIcon from '../../../assets/images/icons/attachmentFile.svg';
 import ArrowIcon from '../../../assets/images/icons/arrowCircleRight.svg';
 import {
   ATTACHMENT_BAR_ITEM_HEIGHT,
@@ -32,28 +32,30 @@ export const AttachmentPicker = (props: AttachmentBarProps) => {
       <>
         {attachmentTypes.includes(SupportedType.photo) && (
           <TouchableOpacity style={styles.icons}>
-            <ImageIcon
+            <AttachmentImageIcon
               height={ATTACHMENT_BAR_ITEM_HEIGHT}
               width={ATTACHMENT_BAR_ITEM_WIDTH}
-              fill={colorTextGray}
+              color={colorAiryBlue}
             />
           </TouchableOpacity>
         )}
         {attachmentTypes.includes(SupportedType.template) && (
           <TouchableOpacity style={styles.icons}>
-            <AttachmentIcon
-              height={ATTACHMENT_BAR_ITEM_HEIGHT}
-              width={ATTACHMENT_BAR_ITEM_WIDTH}
-              fill={colorTextGray}
-            />
+            <View style={{padding: 2}}>
+              <AttachmentTemplateIcon
+                height={ATTACHMENT_BAR_ITEM_HEIGHT - 4}
+                width={ATTACHMENT_BAR_ITEM_WIDTH - 4}
+                color={colorAiryBlue}
+              />
+            </View>
           </TouchableOpacity>
         )}
         {attachmentTypes.includes(SupportedType.file) && (
           <TouchableOpacity style={styles.icons}>
-            <FileIcon
+            <AttachmentFileIcon
               height={ATTACHMENT_BAR_ITEM_HEIGHT}
               width={ATTACHMENT_BAR_ITEM_WIDTH}
-              fill={colorTextGray}
+              color={colorAiryBlue}
             />
           </TouchableOpacity>
         )}

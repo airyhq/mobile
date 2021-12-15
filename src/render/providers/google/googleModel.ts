@@ -10,11 +10,29 @@ export interface Content {
     | 'suggestions'
     | 'richCard'
     | 'richCardCarousel'
-    | 'requestedLiveAgent';
+    | 'requestedLiveAgent'
+    | 'surveyResponse'
+    | 'richText'
+    | 'authResponse';
+}
+
+export interface RichText extends Content {
+  type: 'richText';
+  text: 'string';
+}
+
+export interface AuthResponse extends Content {
+  type: 'authResponse';
+  status: string;
 }
 
 export interface RequestedLiveAgent extends Content {
   type: 'requestedLiveAgent';
+}
+
+export interface SurveyResponse extends Content {
+  type: 'surveyResponse';
+  rating: string;
 }
 
 export interface Text extends Content {
@@ -86,6 +104,11 @@ interface SuggestedActions {
   };
 }
 
+export interface SurveyResponse extends Content {
+  type: 'surveyResponse';
+  rating: string;
+}
+
 interface AuthenticationRequestSuggestion {
   authenticationRequest: {
     oauth: {
@@ -123,4 +146,7 @@ export type ContentUnion =
   | Suggestions
   | RichCard
   | RichCardCarousel
-  | RequestedLiveAgent;
+  | RequestedLiveAgent
+  | SurveyResponse
+  | RichText
+  | AuthResponse;
