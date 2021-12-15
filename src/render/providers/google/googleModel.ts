@@ -11,11 +11,28 @@ export interface Content {
     | 'richCard'
     | 'richCardCarousel'
     | 'requestedLiveAgent'
-    | 'surveyResponse';
+    | 'surveyResponse'
+    | 'richText'
+    | 'authResponse';
+}
+
+export interface RichText extends Content {
+  type: 'richText';
+  text: 'string';
+}
+
+export interface AuthResponse extends Content {
+  type: 'authResponse';
+  status: string;
 }
 
 export interface RequestedLiveAgent extends Content {
   type: 'requestedLiveAgent';
+}
+
+export interface SurveyResponse extends Content {
+  type: 'surveyResponse';
+  rating: string;
 }
 
 export interface Text extends Content {
@@ -130,4 +147,6 @@ export type ContentUnion =
   | RichCard
   | RichCardCarousel
   | RequestedLiveAgent
-  | SurveyResponse;
+  | SurveyResponse
+  | RichText
+  | AuthResponse;

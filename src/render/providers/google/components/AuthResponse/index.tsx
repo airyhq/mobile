@@ -6,21 +6,23 @@ import {
   colorTemplateGray,
 } from '../../../../../assets/colors';
 
-export const SurveyResponse = ({rating}) => (
-  <View style={styles.surveyContainer}>
-    <Text>
-      <Emoji symbol={'📝'} />
-    </Text>
-    <Text style={styles.text}>
-      This user{' '}
-      {rating === 'NO' ? 'negatively' : rating === 'YES' ? 'positively' : ''}{' '}
-      rated the experience with the response &#39;{rating}&#39;.
-    </Text>
-  </View>
-);
+export const AuthResponse = ({status}) => {
+  const emojiStatus = status === 'successful' ? '✅' : '❌';
+
+  return (
+    <View style={styles.container}>
+      <Text>
+        <Emoji symbol={emojiStatus} />
+      </Text>
+      <Text style={styles.text}>
+        Authentication {status === 'successful' ? 'was' : ''} {status}
+      </Text>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
-  surveyContainer: {
+  container: {
     padding: 10,
     marginTop: 5,
     flexDirection: 'row',

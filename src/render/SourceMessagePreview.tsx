@@ -171,14 +171,40 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
 
     //google
     const googleLiveAgentRequest =
-      lastMessageContent?.userStatus?.requestedLiveAgent;
+      lastMessageContent?.type === 'requestedLiveAgent';
+    const googleAuthResponseSuccess =
+      lastMessageContent?.type === 'authResponseSuccess';
+    const googleAuthResponseFailed =
+      lastMessageContent?.type === 'authResponseFailure';
     const googleSurveyResponse = lastMessageContent?.surveyResponse;
+    const googleRichText = lastMessageContent?.richText;
+    const googleSuggestion = lastMessageContent?.suggestions?.length > 0;
 
     if (googleLiveAgentRequest) {
       return (
         <>
           <Text style={styles.text} numberOfLines={1}>
             <Emoji symbol={'👋'} /> Live Agent request
+          </Text>
+        </>
+      );
+    }
+
+    if (googleAuthResponseSuccess) {
+      return (
+        <>
+          <Text>
+            <Emoji symbol={'✅'} /> Auth successful
+          </Text>
+        </>
+      );
+    }
+
+    if (googleAuthResponseFailed) {
+      return (
+        <>
+          <Text>
+            <Emoji symbol={'❌'} /> Auth failed
           </Text>
         </>
       );
@@ -194,9 +220,23 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       );
     }
 
-    //Instagram
+    if (googleRichText) {
+      return (
+        <>
+          <Text>Rich text</Text>
+        </>
+      );
+    }
 
-    //story mention
+    if (googleSuggestion) {
+      return (
+        <>
+          <Text>Suggestion</Text>
+        </>
+      );
+    }
+
+    //instagram
     const instagramStoryMention =
       lastMessageContent?.attachments?.[0]?.type === 'story_mention';
     const instagramStoryReplies = lastMessageContent?.storyReplies;
