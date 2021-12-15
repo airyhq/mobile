@@ -40,8 +40,7 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
 
 const styles = StyleSheet.create({
   contact: {
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
   },
   contactContent: {
     overflow: 'hidden',
@@ -51,12 +50,12 @@ const styles = StyleSheet.create({
   },
   member: {
     alignItems: 'flex-end',
-    justifyContent: 'flex-end',
   },
   memberContent: {
     overflow: 'hidden',
     maxWidth: '90%',
     alignItems: 'flex-end',
+    flexDirection: 'column',
     marginTop: 10,
   },
   time: {
