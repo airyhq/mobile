@@ -59,9 +59,7 @@ export const FilterHeaderBar = () => {
         isFilterApplied();
       });
     return () => {
-      if (currentFilter?.removeAllListeners) {
-        currentFilter.removeAllListeners();
-      }
+      currentFilter && currentFilter.removeAllListeners();
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

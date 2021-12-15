@@ -11,6 +11,8 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {FilterHeaderBar} from './FilterHeaderBar/FilterHeaderBar';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {MessageListHeader} from '../views/inbox/MessageList/MessageListHeader';
+import {FileContent} from '../views/inbox/MessageList/FileContent';
+import {FullScreenImage} from './FileComponents/FullScreenImage';
 
 export const TabBar = () => {
   const Tab = createBottomTabNavigator();
@@ -97,6 +99,22 @@ export const TabBar = () => {
             );
           },
         })}
+      />
+      <Stack.Screen
+        name="FileContent"
+        component={FileContent}
+        options={({route}: NavigationStackProp) => ({
+          headerTitle: route.params.fileName,
+          headerBackTitle: '',
+        })}
+      />
+      <Stack.Screen
+        name="FullScreenImage"
+        component={FullScreenImage}
+        options={{
+          headerTitle: '',
+          headerBackTitle: '',
+        }}
       />
     </Stack.Navigator>
   );

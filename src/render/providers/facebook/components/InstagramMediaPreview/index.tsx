@@ -82,6 +82,7 @@ export const InstagramMediaPreview = ({
             isInstagramStory ? styles.story : styles.post,
           ]}
           resizeMode={'contain'}
+          paused={true}
           onLoad={handleOnLoadEnd}
           controls
         />
