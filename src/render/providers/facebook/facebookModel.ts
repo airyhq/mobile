@@ -142,6 +142,7 @@ export interface AudioContent extends Content {
 export interface FileContent extends Content {
   type: 'file';
   fileUrl: string;
+  fileName?: string;
 }
 
 export interface ImagesContent extends Content {

@@ -14,12 +14,16 @@ import {
 } from './facebookModel';
 import {VideoComponent} from '../../components/VideoComponent';
 import {ImageComponent} from '../../components/ImageComponent';
-import {QuickReplies} from './components/QuickReplies';
-import {FallbackAttachment} from './components/FallbackAttachment';
-import {StoryMention} from './components/InstagramStoryMention';
-import {StoryReplies} from './components/InstagramStoryReplies';
-import {DeletedMessage} from './components/DeletedMessage';
-import {Share} from './components/InstagramShare';
+import {AudioComponent} from '../../components/AudioComponent';
+import {FileComponent} from '../../components/FileComponent';
+import {
+  QuickReplies,
+  FallbackAttachment,
+  StoryMention,
+  StoryReplies,
+  DeletedMessage,
+  Share,
+} from './components';
 
 export const FacebookRender = (props: RenderPropsUnion) => {
   const message = props.message;
@@ -38,6 +42,15 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
           text={content.text}
         />
       );
+
+    case 'postback':
+      return (
+        <TextComponent
+          fromContact={props.message.fromContact || false}
+          text={content.title ?? content.payload}
+        />
+      );
+
     case 'image':
       return <ImageComponent imageUrl={content.imageUrl} />;
 
@@ -46,6 +59,14 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
 
     case 'video':
       return <VideoComponent videoUrl={content.videoUrl} />;
+
+    case 'audio':
+      return <AudioComponent audioUrl={content.audioUrl} />;
+
+    case 'file':
+      return (
+        <FileComponent fileUrl={content.fileUrl} fileName={content.fileName} />
+      );
 
     case 'fallback':
       return (
@@ -122,6 +143,20 @@ const parseAttachment = (
     return {
       type: 'image',
       imageUrl: attachment.payload.url,
+    };
+  }
+
+  if (attachment.type === 'audio') {
+    return {
+      type: 'audio',
+      audioUrl: attachment.payload.url,
+    };
+  }
+
+  if (attachment.type === 'file') {
+    return {
+      type: 'file',
+      fileUrl: attachment.payload.url,
     };
   }
 
@@ -233,6 +268,14 @@ function facebookInbound(message): ContentUnion {
     return {
       text: messageJson.text ?? null,
       ...parseAttachment(messageJson.attachment || messageJson.attachments[0]),
+    };
+  }
+
+  if (messageJson.postback) {
+    return {
+      type: 'postback',
+      title: messageJson.postback.title,
+      payload: messageJson.postback.payload,
     };
   }
 
@@ -364,6 +407,16 @@ function facebookOutbound(message): ContentUnion {
       images: messageJson.attachments.map(image => {
         return parseAttachment(image);
       }),
+    };
+  }
+
+  //Postback
+  if (messageJson.postback) {
+    return {
+      type: 'postback',
+      title:
+        messageJson.postback.title == false ? null : messageJson.postback.title,
+      payload: messageJson.postback.payload,
     };
   }
 

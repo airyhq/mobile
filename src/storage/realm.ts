@@ -58,6 +58,7 @@ import {
   AuthenticationRequestSchema,
   OAuthSchema,
   LiveAgentRequestSchema,
+  FacebookPostbackSchema,
 } from '../model';
 
 export class RealmDB {
@@ -114,6 +115,7 @@ export class RealmDB {
           AuthenticationRequestSchema,
           OAuthSchema,
           LiveAgentRequestSchema,
+          FacebookPostbackSchema,
           ChannelMetadataSchema,
           MessageSchema,
           MessageDataSchema,
