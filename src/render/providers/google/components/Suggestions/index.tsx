@@ -11,6 +11,7 @@ import {
 import {SuggestionsUnion} from '../../googleModel';
 import {TextComponent} from '../../../../components/Text';
 import {ImageComponent} from '../../../../components/ImageComponent';
+import {Tooltip} from '../../../../../componentsLib/general';
 
 import LinkIcon from '../../../../../assets/images/icons/link.svg';
 import PhoneIcon from '../../../../../assets/images/icons/phone.svg';
@@ -149,10 +150,7 @@ export const Suggestions = ({
                 : styles.actionWarningDefault,
             ]}>
             {() => (
-              <Text style={styles.actionWarningText}>
-                {' '}
-                action cannot be triggered
-              </Text>
+              <Tooltip text='action cannot be triggered' />
             )}
           </Pressable>
         )}
