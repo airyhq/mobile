@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
-  TouchableHighlight,
+  TouchableOpacity,
   Pressable,
   View,
   Text,
@@ -39,6 +39,8 @@ export const Suggestions = ({
   suggestions,
   fromContact,
 }: SuggestionsRendererProps) => {
+  const [tooltip, setTooltip] = useState(false);
+
   return (
     <View
       style={[
@@ -61,20 +63,21 @@ export const Suggestions = ({
         {(suggestions as SuggestionsUnion[]).map(elem => {
           if ('reply' in elem && elem?.reply !== null) {
             return (
-              <TouchableHighlight
+              <TouchableOpacity
                 key={elem.reply.text}
-                style={styles.touchableHighlightSuggestion}>
+                style={styles.touchableHighlightSuggestion}
+                onPressIn={() => setTooltip(true)} onPressOut={() => setTooltip(false)}>
                 <Text key={elem.reply.text} style={styles.title}>
                   {elem.reply.text}
                 </Text>
-              </TouchableHighlight>
+              </TouchableOpacity>
             );
           }
 
           if ('action' in elem && elem?.action !== null) {
             return (
               <>
-                <TouchableHighlight
+                <TouchableOpacity
                   key={elem.action.text}
                   style={styles.touchableHighlightSuggestion}>
                   <View style={styles.actionContainer}>
@@ -103,7 +106,7 @@ export const Suggestions = ({
                       {elem.action.text}
                     </Text>
                   </View>
-                </TouchableHighlight>
+                </TouchableOpacity>
               </>
             );
           }
@@ -113,50 +116,59 @@ export const Suggestions = ({
             elem?.authenticationRequest !== null
           ) {
             return (
-              <TouchableHighlight
+              <TouchableOpacity
                 key={elem.authenticationRequest.oauth.clientId}
-                style={styles.touchableHighlightSuggestion}>
+                style={styles.touchableHighlightSuggestion}
+                onPress={() => setTooltip(true)}
+                onPressOut={() => setTooltip(false)}>
                 <Text
                   key={elem.authenticationRequest.oauth.clientId}
                   style={styles.title}>
                   Authenticate with Google
                 </Text>
-              </TouchableHighlight>
+              </TouchableOpacity>
             );
           }
 
           if ('liveAgentRequest' in elem && elem?.liveAgentRequest !== null) {
             return (
-              <TouchableHighlight
+              <TouchableOpacity
                 key={Math.floor(Math.random() * 50)}
-                style={styles.touchableHighlightSuggestion}>
+                style={styles.touchableHighlightSuggestion}
+                onPress={() => setTooltip(true)}
+                onPressOut={() => setTooltip(false)}>
                 <Text key={Math.floor(Math.random() * 50)} style={styles.title}>
                   Message a live agent on GBM
                 </Text>
-              </TouchableHighlight>
+              </TouchableOpacity>
             );
           }
         })}
       </View>
 
-      {suggestions &&
-        suggestions?.[0] &&
-        'action' in suggestions?.[0] &&
-        suggestions?.[0].action === null && (
-          <Pressable
-            style={({pressed}) => [
-              pressed
-                ? styles.actionWarningPressed
-                : styles.actionWarningDefault,
-            ]}>
-            {() => (
-              <Tooltip text='action cannot be triggered' />
-            )}
-          </Pressable>
-        )}
+      {tooltip && (
+        <View style={styles.tooltipContainer}>
+          <Tooltip text="this action can only be triggered on GBM" externalLinkUrl={'https://google.fr'}/>
+        </View>
+      )}
     </View>
   );
 };
+
+{
+  /* <Pressable
+style={({pressed}) => [
+  pressed
+    ? styles.actionWarningPressed
+    : styles.actionWarningDefault,
+]}>
+{() => (
+  <View style={{position: 'absolute'}}>
+  
+  </View>
+)}
+</Pressable> */
+}
 
 const styles = StyleSheet.create({
   suggestionsWrapper: {
@@ -229,20 +241,8 @@ const styles = StyleSheet.create({
     marginLeft: 0,
     padding: 0,
   },
-  actionWarningDefault: {
-    position: 'absolute',
-    height: '100%',
-    width: '100%',
-    opacity: 0,
-  },
-  actionWarningPressed: {
-    opacity: 1,
-  },
-  actionWarningText: {
-    fontFamily: 'Lato',
-    fontSize: 14,
-    color: colorTextContrast,
-    fontStyle: 'italic',
-    textAlign: 'center',
+  tooltipContainer: {
+    bottom: 50,
+    position: 'absolute'
   },
 });

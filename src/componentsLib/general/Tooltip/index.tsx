@@ -2,50 +2,86 @@ import React from 'react';
 import {StyleSheet, View, Text, Linking, Dimensions} from 'react-native';
 import {colorTextContrast} from '../../../assets/colors';
 
+type TooltipProps = {
+  text: string;
+  textColor?: string;
+  backgroundColorContainer?: string;
+  externalLinkUrl?: string;
+};
+
 export const Tooltip = ({
   text,
   textColor,
-  icon,
-  containerBackgroundColor,
-  link,
-}: any) => {
+  backgroundColorContainer,
+  externalLinkUrl,
+}: TooltipProps) => {
   return (
     <View
       style={[
         styles.container,
-        {backgroundColor: containerBackgroundColor ?? 'white'},
+        {backgroundColor: backgroundColorContainer ?? colorTextContrast},
       ]}>
-      <Text style={{color: textColor ?? colorTextContrast}}>{text}</Text>
-      <View style={styles.arrow} />
+      {externalLinkUrl ? (
+        <Text
+          style={[styles.text, styles.link, {color: textColor ?? 'white'}]}
+          onPress={() => Linking.openURL(externalLinkUrl)}>
+          {text}
+        </Text>
+      ) : (
+        <Text style={[styles.text, {color: textColor ?? 'white'}]}>{text}</Text>
+      )}
+      <View
+        style={[
+          styles.arrow,
+          {borderTopColor: backgroundColorContainer ?? colorTextContrast},
+        ]}
+      />
     </View>
   );
 };
 
-//width: calculate with Dimensions 
-//height: calculate with Dimensions 
-//make arrow 
-//svg: you can pass the name of the svg and then the component imports and displays it 
-
-//    width: Dimensions.get('window').width / 4,
-//height: Dimensions.get('window').height / 12,
-
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
+    height: 'auto',
+    width: 'auto',
+    maxWidth: 400,
+    maxHeight: 200,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 6,
     shadowColor: '#000',
     shadowOffset: {
       width: 1,
       height: 1,
     },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.5,
     shadowRadius: 1,
   },
+  text: {
+    textAlign: 'center',
+    fontFamily: 'Lato',
+  },
+  link: {
+    textDecorationLine: 'underline',
+  },
   arrow: {
-    top: 0,
-    left: '50%',
-    marginLeft: '-5px',
-    borderWidth: 1,
-    borderBottomColor: 'red',
-    borderBottomWidth: 2,
-  }
+    position: 'absolute',
+    bottom: -10,
+    marginLeft: -5,
+    borderTopWidth: 10,
+    borderRightWidth: 10,
+    borderBottomWidth: 0,
+    borderLeftWidth: 10,
+    borderRightColor: 'transparent',
+    borderBottomColor: 'transparent',
+    borderLeftColor: 'transparent',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 1,
+      height: 1,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 1,
+  },
 });
