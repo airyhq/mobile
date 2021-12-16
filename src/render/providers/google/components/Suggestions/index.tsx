@@ -1,12 +1,5 @@
 import React, {useState} from 'react';
-import {
-  StyleSheet,
-  TouchableOpacity,
-  Pressable,
-  View,
-  Text,
-  Linking,
-} from 'react-native';
+import {StyleSheet, TouchableOpacity, View, Text, Linking} from 'react-native';
 
 import {SuggestionsUnion} from '../../googleModel';
 import {TextComponent} from '../../../../components/Text';
@@ -65,8 +58,9 @@ export const Suggestions = ({
             return (
               <TouchableOpacity
                 key={elem.reply.text}
-                style={styles.touchableHighlightSuggestion}
-                onPressIn={() => setTooltip(true)} onPressOut={() => setTooltip(false)}>
+                style={styles.touchableSuggestion}
+                onPressIn={() => setTooltip(true)}
+                onPressOut={() => setTooltip(false)}>
                 <Text key={elem.reply.text} style={styles.title}>
                   {elem.reply.text}
                 </Text>
@@ -79,7 +73,7 @@ export const Suggestions = ({
               <>
                 <TouchableOpacity
                   key={elem.action.text}
-                  style={styles.touchableHighlightSuggestion}>
+                  style={styles.touchableSuggestion}>
                   <View style={styles.actionContainer}>
                     {elem.action.openUrlAction ? (
                       <LinkIcon
@@ -118,7 +112,7 @@ export const Suggestions = ({
             return (
               <TouchableOpacity
                 key={elem.authenticationRequest.oauth.clientId}
-                style={styles.touchableHighlightSuggestion}
+                style={styles.touchableSuggestion}
                 onPress={() => setTooltip(true)}
                 onPressOut={() => setTooltip(false)}>
                 <Text
@@ -134,7 +128,7 @@ export const Suggestions = ({
             return (
               <TouchableOpacity
                 key={Math.floor(Math.random() * 50)}
-                style={styles.touchableHighlightSuggestion}
+                style={styles.touchableSuggestion}
                 onPress={() => setTooltip(true)}
                 onPressOut={() => setTooltip(false)}>
                 <Text key={Math.floor(Math.random() * 50)} style={styles.title}>
@@ -148,27 +142,12 @@ export const Suggestions = ({
 
       {tooltip && (
         <View style={styles.tooltipContainer}>
-          <Tooltip text="this action can only be triggered on GBM" externalLinkUrl={'https://google.fr'}/>
+          <Tooltip text="this action can only be triggered on GBM" />
         </View>
       )}
     </View>
   );
 };
-
-{
-  /* <Pressable
-style={({pressed}) => [
-  pressed
-    ? styles.actionWarningPressed
-    : styles.actionWarningDefault,
-]}>
-{() => (
-  <View style={{position: 'absolute'}}>
-  
-  </View>
-)}
-</Pressable> */
-}
 
 const styles = StyleSheet.create({
   suggestionsWrapper: {
@@ -193,7 +172,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
   },
-  touchableHighlightSuggestion: {
+  touchableSuggestion: {
     width: 'auto',
     height: 'auto',
     maxWidth: '100%',
@@ -243,6 +222,6 @@ const styles = StyleSheet.create({
   },
   tooltipContainer: {
     bottom: 50,
-    position: 'absolute'
+    position: 'absolute',
   },
 });

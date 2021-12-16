@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, Text, Linking, Dimensions} from 'react-native';
+import {StyleSheet, View, Text, Linking} from 'react-native';
 import {colorTextContrast} from '../../../assets/colors';
 
 type TooltipProps = {
