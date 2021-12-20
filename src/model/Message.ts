@@ -51,6 +51,7 @@ export const ContentMessageSchema = {
     quickRepliesFacebook: 'QuickRepliesFacebook?',
     storyReplies: 'InstagramStoryReplies?',
     suggestionResponse: 'SuggestionResponse?',
+    images: 'ImagesChatplugin[]',
   },
 };
 
@@ -245,6 +246,19 @@ export const parseToRealmMessage = (
               url: unformattedMessage.content.attachment.payload.url,
             },
           },
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    if (messageContent?.images?.length > 0) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          images: unformattedMessage.content.images,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,

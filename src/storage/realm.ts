@@ -50,6 +50,7 @@ import {
   MediaTemplateSchema,
   DefaultActionSchema,
   InstagramStoryRepliesSchema,
+  ImagesChatpluginSchema,
 } from '../model';
 import {SuggestionResponseSchema} from '../model/templates/SuggestionResponse';
 
@@ -109,6 +110,7 @@ export class RealmDB {
           SuggestionResponseSchema,
           PaginationSchema,
           UserInfoSchema,
+          ImagesChatpluginSchema,
         ],
       });
     }

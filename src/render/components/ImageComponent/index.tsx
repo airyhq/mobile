@@ -25,9 +25,9 @@ export const ImageComponent = ({
   const [loading, setLoading] = useState<boolean>(true);
   const navigation = useNavigation();
 
-  const handleOnPress = () => {
+  const handleOnPress = (url?: string) => {
     navigation.navigate('FullScreenImage', {
-      imageUrl: imageUrl,
+      imageUrl: imageUrl || url,
     });
   };
 
@@ -37,32 +37,37 @@ export const ImageComponent = ({
 
   return (
     <>
-      <Pressable onPress={handleOnPress} style={styles.wrapper}>
-        {images ? (
-          <View style={styles.imagesContainer}>
-            {images.map(image => {
-              return (
+      {images ? (
+        <View style={styles.imagesContainer}>
+          {images.map((image, index) => {
+            return (
+              <Pressable
+                onPress={() => handleOnPress(image.imageUrl)}
+                style={styles.wrapper}>
                 <ImageWithFallback
                   src={image.imageUrl}
-                  key={image.imageUrl}
+                  key={index + image.imageUrl}
                   setLoading={handleSetLoading}
                   imageStyle={{
                     ...styles.messageListItemImageBlock,
                     ...styles.image,
                   }}
                 />
-              );
-            })}
-          </View>
-        ) : (
+              </Pressable>
+            );
+          })}
+        </View>
+      ) : (
+        <Pressable onPress={() => handleOnPress()} style={styles.wrapper}>
           <ImageWithFallback
             imageStyle={styles.messageListItemImageBlock}
             setLoading={handleSetLoading}
+            key={imageUrl}
             src={imageUrl}
             alt={altText ?? 'image in a conversation in Airy Inbox'}
           />
-        )}
-      </Pressable>
+        </Pressable>
+      )}
       <>
         {loading && (
           <ActivityIndicator

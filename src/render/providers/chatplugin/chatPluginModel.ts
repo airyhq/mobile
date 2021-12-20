@@ -2,6 +2,7 @@ export interface Content {
   type:
     | 'text'
     | 'image'
+    | 'images'
     | 'video'
     | 'audio'
     | 'file'
@@ -22,6 +23,11 @@ export interface ImageContent extends Content {
   type: 'image';
   text?: string;
   imageUrl: string;
+}
+
+export interface ImagesContent extends Content {
+  type: 'images';
+  images: ImageContent[];
 }
 
 export interface VideoContent extends Content {
@@ -118,7 +124,7 @@ export interface QuickRepliesContent extends Content {
 }
 
 export interface SimpleAttachment {
-  type: 'image' | 'video' | 'audio' | 'file' | 'fallback';
+  type: 'image' | 'images' | 'video' | 'audio' | 'file' | 'fallback';
   payload: {
     title?: string;
     url?: string;
@@ -128,6 +134,7 @@ export interface SimpleAttachment {
 export type ContentUnion =
   | TextContent
   | ImageContent
+  | ImagesContent
   | VideoContent
   | FileContent
   | AudioContent
@@ -141,6 +148,7 @@ export type ContentUnion =
 export type AttachmentUnion =
   | TextContent
   | ImageContent
+  | ImagesContent
   | VideoContent
   | FileContent
   | AudioContent;

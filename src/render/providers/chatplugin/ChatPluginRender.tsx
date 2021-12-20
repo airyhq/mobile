@@ -68,8 +68,12 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
 
     case 'suggestionResponse':
       return <TextComponent {...propsToUse} text={content.text} />;
+
     case 'image':
       return <ImageComponent imageUrl={content.imageUrl} />;
+
+    case 'images':
+      return <ImageComponent images={content.images} />;
 
     case 'video':
       return <VideoComponent videoUrl={content.videoUrl} />;
@@ -149,6 +153,13 @@ function mapContent(message: any): ContentUnion {
       type: 'richCardCarousel',
       cardWidth: messageContent.richCardCarousel.carouselCard.cardWidth,
       cardContents: messageContent.richCardCarousel.carouselCard.cardContents,
+    };
+  }
+
+  if (messageContent.images) {
+    return {
+      type: 'images',
+      images: messageContent.images,
     };
   }
 

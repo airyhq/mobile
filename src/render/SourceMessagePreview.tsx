@@ -53,6 +53,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     //Image
     if (
       lastMessageContent?.image ||
+      lastMessageContent?.images?.length > 1 ||
       lastMessageContent.message?.attachments?.[0].type === 'image' ||
       lastMessageContent.attachments?.[0]?.type === 'image' ||
       lastMessageContent?.attachment?.type === 'image' ||
