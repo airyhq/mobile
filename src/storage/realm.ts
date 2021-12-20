@@ -60,6 +60,7 @@ import {
   OAuthSchema,
   LiveAgentRequestSchema,
   FacebookPostbackSchema,
+  ImagesChatpluginSchema,
 } from '../model';
 import {SuggestionResponseSchema} from '../model/templates/SuggestionResponse';
 
@@ -131,6 +132,7 @@ export class RealmDB {
           SuggestionResponseSchema,
           PaginationSchema,
           UserInfoSchema,
+          ImagesChatpluginSchema,
         ],
       });
     }
