@@ -415,7 +415,9 @@ function facebookOutbound(message): ContentUnion {
     return {
       type: 'postback',
       title:
-        messageJson.postback.title == false ? null : messageJson.postback.title,
+        messageJson.postback.title === false
+          ? null
+          : messageJson.postback.title,
       payload: messageJson.postback.payload,
     };
   }

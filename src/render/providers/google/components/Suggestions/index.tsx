@@ -148,7 +148,6 @@ export const Suggestions = ({
           <Tooltip
             text="this action can only be triggered on GBM"
             arrowPosition={TooltipArrowPosition.bottom}
-            externalLinkUrl="https://google.fr"
           />
         </View>
       )}
