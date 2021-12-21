@@ -2,11 +2,19 @@ import React from 'react';
 import {StyleSheet, View, Text, Linking} from 'react-native';
 import {colorTextContrast} from '../../../assets/colors';
 
+export enum TooltipArrowPosition {
+  top = 'top',
+  right = 'right',
+  bottom = 'bottom',
+  left = 'left',
+}
+
 type TooltipProps = {
   text: string;
   textColor?: string;
   backgroundColorContainer?: string;
   externalLinkUrl?: string;
+  arrowPosition?: TooltipArrowPosition;
 };
 
 export const Tooltip = ({
@@ -14,13 +22,29 @@ export const Tooltip = ({
   textColor,
   backgroundColorContainer,
   externalLinkUrl,
+  arrowPosition,
 }: TooltipProps) => {
+  const tooltipBackgroundColor = backgroundColorContainer ?? colorTextContrast;
+  const arrowBorderStyle = (position: TooltipArrowPosition) => {
+    if (position === 'top') {
+      return {borderBottomColor: tooltipBackgroundColor};
+    }
+
+    if (position === 'right') {
+      return {borderLeftColor: tooltipBackgroundColor};
+    }
+
+    if (position === 'bottom') {
+      return {borderTopColor: tooltipBackgroundColor};
+    }
+
+    if (position === 'left') {
+      return {borderRightColor: tooltipBackgroundColor};
+    }
+  };
+
   return (
-    <View
-      style={[
-        styles.container,
-        {backgroundColor: backgroundColorContainer ?? colorTextContrast},
-      ]}>
+    <View style={[styles.container, {backgroundColor: tooltipBackgroundColor}]}>
       {externalLinkUrl ? (
         <Text
           style={[styles.text, styles.link, {color: textColor ?? 'white'}]}
@@ -33,7 +57,8 @@ export const Tooltip = ({
       <View
         style={[
           styles.arrow,
-          {borderTopColor: backgroundColorContainer ?? colorTextContrast},
+          arrowPosition ? styles[arrowPosition] : styles.bottom,
+          arrowBorderStyle(arrowPosition),
         ]}
       />
     </View>
@@ -50,7 +75,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 6,
-    shadowColor: '#000',
+    shadowColor: colorTextContrast,
     shadowOffset: {
       width: 1,
       height: 1,
@@ -67,21 +92,46 @@ const styles = StyleSheet.create({
   },
   arrow: {
     position: 'absolute',
-    bottom: -10,
+    borderRightColor: 'transparent',
+    borderBottomColor: 'transparent',
+    borderLeftColor: 'transparent',
+  },
+  top: {
+    top: -10,
+    borderTopWidth: 0,
+    borderRightWidth: 10,
+    borderBottomWidth: 10,
+    borderLeftWidth: 10,
+    borderTopColor: 'transparent',
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+  },
+  right: {
+    right: -10,
+    borderTopWidth: 10,
+    borderRightWidth: 0,
+    borderBottomWidth: 10,
+    borderLeftWidth: 10,
+    borderTopColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: 'transparent',
+  },
+  bottom: {
     marginLeft: -5,
+    bottom: -10,
     borderTopWidth: 10,
     borderRightWidth: 10,
     borderBottomWidth: 0,
     borderLeftWidth: 10,
-    borderRightColor: 'transparent',
+  },
+  left: {
+    left: -10,
+    borderTopWidth: 10,
+    borderRightWidth: 10,
+    borderBottomWidth: 10,
+    borderLeftWidth: 0,
+    borderTopColor: 'transparent',
     borderBottomColor: 'transparent',
     borderLeftColor: 'transparent',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 1,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1,
   },
 });

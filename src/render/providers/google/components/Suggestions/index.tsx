@@ -4,7 +4,10 @@ import {StyleSheet, TouchableOpacity, View, Text, Linking} from 'react-native';
 import {SuggestionsUnion} from '../../googleModel';
 import {TextComponent} from '../../../../components/Text';
 import {ImageComponent} from '../../../../components/ImageComponent';
-import {Tooltip} from '../../../../../componentsLib/general';
+import {
+  Tooltip,
+  TooltipArrowPosition,
+} from '../../../../../componentsLib/general';
 
 import LinkIcon from '../../../../../assets/images/icons/link.svg';
 import PhoneIcon from '../../../../../assets/images/icons/phone.svg';
@@ -142,7 +145,11 @@ export const Suggestions = ({
 
       {tooltip && (
         <View style={styles.tooltipContainer}>
-          <Tooltip text="this action can only be triggered on GBM" />
+          <Tooltip
+            text="this action can only be triggered on GBM"
+            arrowPosition={TooltipArrowPosition.bottom}
+            externalLinkUrl="https://google.fr"
+          />
         </View>
       )}
     </View>
@@ -222,6 +229,7 @@ const styles = StyleSheet.create({
   },
   tooltipContainer: {
     bottom: 50,
+    right: 20,
     position: 'absolute',
   },
 });
