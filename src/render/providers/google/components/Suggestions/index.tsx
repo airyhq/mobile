@@ -1,5 +1,12 @@
-import React, {useState} from 'react';
-import {StyleSheet, TouchableOpacity, View, Text, Linking} from 'react-native';
+import React, {useRef} from 'react';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Text,
+  Linking,
+  Animated,
+} from 'react-native';
 
 import {SuggestionsUnion} from '../../googleModel';
 import {TextComponent} from '../../../../components/Text';
@@ -35,7 +42,23 @@ export const Suggestions = ({
   suggestions,
   fromContact,
 }: SuggestionsRendererProps) => {
-  const [tooltip, setTooltip] = useState(false);
+  const fadeAnimTooltip = useRef(new Animated.Value(0)).current;
+
+  const fadeOut = () => {
+    Animated.timing(fadeAnimTooltip, {
+      toValue: 0,
+      duration: 1500,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const fadeIn = () => {
+    Animated.timing(fadeAnimTooltip, {
+      toValue: 1,
+      duration: 0,
+      useNativeDriver: false,
+    }).start();
+  };
 
   return (
     <View
@@ -62,8 +85,8 @@ export const Suggestions = ({
               <TouchableOpacity
                 key={elem.reply.text}
                 style={styles.touchableSuggestion}
-                onPressIn={() => setTooltip(true)}
-                onPressOut={() => setTooltip(false)}>
+                onPressIn={fadeIn}
+                onPressOut={fadeOut}>
                 <Text key={elem.reply.text} style={styles.title}>
                   {elem.reply.text}
                 </Text>
@@ -116,8 +139,8 @@ export const Suggestions = ({
               <TouchableOpacity
                 key={elem.authenticationRequest.oauth.clientId}
                 style={styles.touchableSuggestion}
-                onPress={() => setTooltip(true)}
-                onPressOut={() => setTooltip(false)}>
+                onPressIn={fadeIn}
+                onPressOut={fadeOut}>
                 <Text
                   key={elem.authenticationRequest.oauth.clientId}
                   style={styles.title}>
@@ -132,8 +155,8 @@ export const Suggestions = ({
               <TouchableOpacity
                 key={Math.floor(Math.random() * 50)}
                 style={styles.touchableSuggestion}
-                onPress={() => setTooltip(true)}
-                onPressOut={() => setTooltip(false)}>
+                onPressIn={fadeIn}
+                onPressOut={fadeOut}>
                 <Text key={Math.floor(Math.random() * 50)} style={styles.title}>
                   Message a live agent on GBM
                 </Text>
@@ -143,14 +166,13 @@ export const Suggestions = ({
         })}
       </View>
 
-      {tooltip && (
-        <View style={styles.tooltipContainer}>
-          <Tooltip
-            text="this action can only be triggered on GBM"
-            arrowPosition={TooltipArrowPosition.bottom}
-          />
-        </View>
-      )}
+      <Animated.View
+        style={[styles.tooltipContainer, {opacity: fadeAnimTooltip}]}>
+        <Tooltip
+          text="this action can only be triggered on GBM"
+          arrowPosition={TooltipArrowPosition.bottom}
+        />
+      </Animated.View>
     </View>
   );
 };
@@ -228,7 +250,7 @@ const styles = StyleSheet.create({
   },
   tooltipContainer: {
     bottom: 50,
-    right: 20,
+    right: 0,
     position: 'absolute',
   },
 });
