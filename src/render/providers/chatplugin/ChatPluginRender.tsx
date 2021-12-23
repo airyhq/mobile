@@ -6,7 +6,11 @@ import {
   AttachmentUnion,
 } from './chatPluginModel';
 import {TextComponent} from '../../components/Text';
-import {RichCard, RichCardCarousel, QuickReplies} from './components';
+import {RichCard, RichCardCarousel, QuickReplies, RichText} from './components';
+import {ImageComponent} from '../../components/ImageComponent';
+import {VideoComponent} from '../../components/VideoComponent';
+import {AudioComponent} from '../../components/AudioComponent';
+import {FileComponent} from '../../components/FileComponent';
 
 export const ChatPluginRender = (props: RenderPropsUnion) => {
   return render(mapContent(props.message), props);
@@ -36,6 +40,14 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
           suggestions={content.suggestions}
         />
       );
+    case 'richText':
+      return (
+        <RichText
+          text={content.text}
+          fallback={content.fallback}
+          fromContact={props.message.fromContact || false}
+        />
+      );
     case 'richCardCarousel':
       return (
         <RichCardCarousel
@@ -53,11 +65,40 @@ function render(content: ContentUnion, props: RenderPropsUnion) {
           quickReplies={content.quickReplies}
         />
       );
+
+    case 'suggestionResponse':
+      return <TextComponent {...propsToUse} text={content.text} />;
+
+    case 'image':
+      return <ImageComponent imageUrl={content.imageUrl} />;
+
+    case 'images':
+      return <ImageComponent images={content.images} />;
+
+    case 'video':
+      return <VideoComponent videoUrl={content.videoUrl} />;
+
+    case 'audio':
+      return <AudioComponent audioUrl={content.audioUrl} />;
+
+    case 'file':
+      return <FileComponent fileUrl={content.fileUrl} />;
   }
 }
 
 function mapContent(message: any): ContentUnion {
-  const messageContent = message.content.message ?? message.content ?? message;
+  const messageContent = message.content?.message ?? message.content ?? message;
+
+  if (messageContent.attachment) {
+    return parseAttachment(messageContent.attachment);
+  }
+
+  if (messageContent.text) {
+    return {
+      type: 'text',
+      text: messageContent.text,
+    };
+  }
 
   if (messageContent.quickRepliesChatPlugin) {
     if (messageContent.quickRepliesChatPlugin.length > 13) {
@@ -79,6 +120,22 @@ function mapContent(message: any): ContentUnion {
       type: 'quickReplies',
       text: messageContent.text,
       quickReplies: messageContent.quickRepliesChatPlugin,
+    };
+  }
+
+  if (messageContent?.suggestionResponse) {
+    return {
+      type: 'suggestionResponse',
+      text: messageContent.suggestionResponse.text,
+      postbackData: messageContent.suggestionResponse.postbackData,
+    };
+  }
+
+  if (messageContent?.richText) {
+    return {
+      type: 'richText',
+      fallback: messageContent.richText?.fallback,
+      text: messageContent.richText?.text,
     };
   }
 
@@ -106,10 +163,10 @@ function mapContent(message: any): ContentUnion {
     };
   }
 
-  if (messageContent.text) {
+  if (messageContent.images) {
     return {
-      type: 'text',
-      text: messageContent.text,
+      type: 'images',
+      images: messageContent.images,
     };
   }
 
@@ -131,6 +188,20 @@ const parseAttachment = (attachment: SimpleAttachment): AttachmentUnion => {
     return {
       type: 'video',
       videoUrl: attachment.payload.url,
+    };
+  }
+
+  if (attachment?.type === 'audio') {
+    return {
+      type: 'audio',
+      audioUrl: attachment.payload.url,
+    };
+  }
+
+  if (attachment?.type === 'file') {
+    return {
+      type: 'file',
+      fileUrl: attachment.payload.url,
     };
   }
 

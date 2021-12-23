@@ -58,6 +58,9 @@ import {
   OAuthSchema,
   LiveAgentRequestSchema,
   FacebookPostbackSchema,
+  ImagesChatpluginSchema,
+  SuggestionResponseSchema,
+  RichTextSchema,
 } from '../model';
 
 export class RealmDB {
@@ -125,6 +128,9 @@ export class RealmDB {
           SuggestionsSchema,
           PaginationSchema,
           UserInfoSchema,
+          ImagesChatpluginSchema,
+          SuggestionResponseSchema,
+          RichTextSchema,
         ],
       });
     }

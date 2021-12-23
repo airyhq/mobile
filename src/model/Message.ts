@@ -37,6 +37,7 @@ export const ContentMessageSchema = {
     fallback: 'string?',
     image: 'GoogleImage?',
     suggestions: 'GoogleSuggestionsTypes[]',
+    richText: 'RichText?',
     richCard: 'RichCard?',
     richCardCarousel: 'RichCardCarousel?',
     attachment: 'Attachment?',
@@ -48,8 +49,9 @@ export const ContentMessageSchema = {
     quickRepliesFacebook: 'QuickRepliesFacebook?',
     storyReplies: 'InstagramStoryReplies?',
     surveyResponse: 'string?',
-    richText: 'string?',
     postback: 'FacebookPostback?',
+    suggestionResponse: 'SuggestionResponse?',
+    images: 'ImagesChatplugin[]',
   },
 };
 
@@ -145,6 +147,42 @@ export const parseToRealmMessage = (
       };
     }
 
+    //RichText
+    if (unformattedMessage.content?.containsRichText) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'richText',
+          richText: {
+            fallback: unformattedMessage.content?.fallback,
+            text: unformattedMessage.content?.text,
+          },
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    if (unformattedMessage.content?.suggestionResponse) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          type: 'suggestionResponse',
+          postbackData: {
+            text: unformattedMessage.content?.suggestionResponse?.text,
+            postbackData:
+              unformattedMessage.content?.suggestionResponse?.postbackData,
+          },
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
     //QuickReplies
     if (messageContent.quick_replies) {
       //QuickReplies with attachment
@@ -188,6 +226,88 @@ export const parseToRealmMessage = (
           type: 'QuickReplies',
           text: messageContent.text,
           quickRepliesChatPlugin: {...messageContent.quick_replies},
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    if (attachmentMessage?.type === 'image') {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          attachment: {
+            type: 'image',
+            payload: {
+              url: unformattedMessage.content.attachment.payload.url,
+            },
+          },
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+
+    if (messageContent?.images?.length > 0) {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          images: unformattedMessage.content.images,
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+    if (attachmentMessage?.type === 'video') {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          attachment: {
+            type: 'video',
+            payload: {
+              url: unformattedMessage.content.attachment.payload.url,
+            },
+          },
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+    if (attachmentMessage?.type === 'audio') {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          attachment: {
+            type: 'audio',
+            payload: {
+              url: unformattedMessage.content.attachment.payload.url,
+            },
+          },
+        },
+        deliveryState: unformattedMessage.deliveryState,
+        fromContact: unformattedMessage.fromContact,
+        sentAt: unformattedMessage.sentAt,
+        metadata: unformattedMessage.metadata,
+      };
+    }
+    if (attachmentMessage?.type === 'file') {
+      return {
+        id: unformattedMessage.id,
+        content: {
+          attachment: {
+            type: 'file',
+            payload: {
+              url: unformattedMessage.content.attachment.payload.url,
+            },
+          },
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,
