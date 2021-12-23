@@ -1,16 +1,20 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {
   StyleSheet,
-  TouchableHighlight,
-  Pressable,
+  TouchableOpacity,
   View,
   Text,
   Linking,
+  Animated,
 } from 'react-native';
 
 import {SuggestionsUnion} from '../../googleModel';
 import {TextComponent} from '../../../../components/Text';
 import {ImageComponent} from '../../../../components/ImageComponent';
+import {
+  Tooltip,
+  TooltipArrowPosition,
+} from '../../../../../componentsLib/general';
 
 import LinkIcon from '../../../../../assets/images/icons/link.svg';
 import PhoneIcon from '../../../../../assets/images/icons/phone.svg';
@@ -38,6 +42,24 @@ export const Suggestions = ({
   suggestions,
   fromContact,
 }: SuggestionsRendererProps) => {
+  const fadeAnimTooltip = useRef(new Animated.Value(0)).current;
+
+  const fadeIn = () => {
+    Animated.timing(fadeAnimTooltip, {
+      toValue: 1,
+      duration: 0,
+      useNativeDriver: false,
+    }).start();
+
+    setTimeout(() => {
+      Animated.timing(fadeAnimTooltip, {
+        toValue: 0,
+        duration: 1500,
+        useNativeDriver: false,
+      }).start();
+    }, 2000);
+  };
+
   return (
     <View
       style={[
@@ -60,22 +82,23 @@ export const Suggestions = ({
         {(suggestions as SuggestionsUnion[]).map(elem => {
           if ('reply' in elem && elem?.reply !== null) {
             return (
-              <TouchableHighlight
+              <TouchableOpacity
                 key={elem.reply.text}
-                style={styles.touchableHighlightSuggestion}>
+                style={styles.touchableSuggestion}
+                onPressIn={fadeIn}>
                 <Text key={elem.reply.text} style={styles.title}>
                   {elem.reply.text}
                 </Text>
-              </TouchableHighlight>
+              </TouchableOpacity>
             );
           }
 
           if ('action' in elem && elem?.action !== null) {
             return (
               <>
-                <TouchableHighlight
+                <TouchableOpacity
                   key={elem.action.text}
-                  style={styles.touchableHighlightSuggestion}>
+                  style={styles.touchableSuggestion}>
                   <View style={styles.actionContainer}>
                     {elem.action.openUrlAction ? (
                       <LinkIcon
@@ -102,7 +125,7 @@ export const Suggestions = ({
                       {elem.action.text}
                     </Text>
                   </View>
-                </TouchableHighlight>
+                </TouchableOpacity>
               </>
             );
           }
@@ -112,50 +135,41 @@ export const Suggestions = ({
             elem?.authenticationRequest !== null
           ) {
             return (
-              <TouchableHighlight
+              <TouchableOpacity
                 key={elem.authenticationRequest.oauth.clientId}
-                style={styles.touchableHighlightSuggestion}>
+                style={styles.touchableSuggestion}
+                onPressIn={fadeIn}>
                 <Text
                   key={elem.authenticationRequest.oauth.clientId}
                   style={styles.title}>
                   Authenticate with Google
                 </Text>
-              </TouchableHighlight>
+              </TouchableOpacity>
             );
           }
 
           if ('liveAgentRequest' in elem && elem?.liveAgentRequest !== null) {
             return (
-              <TouchableHighlight
+              <TouchableOpacity
                 key={Math.floor(Math.random() * 50)}
-                style={styles.touchableHighlightSuggestion}>
+                style={styles.touchableSuggestion}
+                onPressIn={fadeIn}>
                 <Text key={Math.floor(Math.random() * 50)} style={styles.title}>
                   Message a live agent on GBM
                 </Text>
-              </TouchableHighlight>
+              </TouchableOpacity>
             );
           }
         })}
       </View>
 
-      {suggestions &&
-        suggestions?.[0] &&
-        'action' in suggestions?.[0] &&
-        suggestions?.[0].action === null && (
-          <Pressable
-            style={({pressed}) => [
-              pressed
-                ? styles.actionWarningPressed
-                : styles.actionWarningDefault,
-            ]}>
-            {() => (
-              <Text style={styles.actionWarningText}>
-                {' '}
-                action cannot be triggered
-              </Text>
-            )}
-          </Pressable>
-        )}
+      <Animated.View
+        style={[styles.tooltipContainer, {opacity: fadeAnimTooltip}]}>
+        <Tooltip
+          text="this action can only be triggered on GBM"
+          arrowPosition={TooltipArrowPosition.bottom}
+        />
+      </Animated.View>
     </View>
   );
 };
@@ -183,7 +197,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
   },
-  touchableHighlightSuggestion: {
+  touchableSuggestion: {
     width: 'auto',
     height: 'auto',
     maxWidth: '100%',
@@ -231,20 +245,9 @@ const styles = StyleSheet.create({
     marginLeft: 0,
     padding: 0,
   },
-  actionWarningDefault: {
+  tooltipContainer: {
+    bottom: 50,
+    right: 0,
     position: 'absolute',
-    height: '100%',
-    width: '100%',
-    opacity: 0,
-  },
-  actionWarningPressed: {
-    opacity: 1,
-  },
-  actionWarningText: {
-    fontFamily: 'Lato',
-    fontSize: 14,
-    color: colorTextContrast,
-    fontStyle: 'italic',
-    textAlign: 'center',
   },
 });
