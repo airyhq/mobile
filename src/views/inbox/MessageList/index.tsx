@@ -10,7 +10,7 @@ import {
   NativeScrollEvent,
 } from 'react-native';
 import {RealmDB} from '../../../storage/realm';
-import {Message, MessageData, Conversation} from '../../../model';
+import {Message, Conversation} from '../../../model';
 import {MessageComponent} from './MessageComponent';
 import {throttle} from 'lodash-es';
 import {ChatInput} from '../../../components/chat/input/ChatInput';
@@ -52,25 +52,25 @@ export const MessageList = (props: MessageListProps) => {
   } = conversation;
 
   useEffect(() => {
-    const databaseMessages: (MessageData & Realm.Object) | undefined =
-      realm.objectForPrimaryKey<MessageData>(
-        'MessageData',
+    const conversation: (Conversation & Realm.Object) | undefined =
+      realm.objectForPrimaryKey<Conversation>(
+        'Conversation',
         route.params.conversationId,
       );
 
-    if (databaseMessages.messages.length === 0) {
+    if (conversation.messages.length === 0) {
       loadMessagesForConversation(route.params.conversationId);
     }
 
-    if (databaseMessages) {
-      databaseMessages.addListener(() => {
-        setMessages([...databaseMessages.messages]);
+    if (conversation.messages) {
+      conversation.addListener(() => {
+        setMessages([...conversation.messages]);
       });
     }
 
     return () => {
-      if (databaseMessages) {
-        databaseMessages.removeAllListeners();
+      if (conversation) {
+        conversation.removeAllListeners();
       }
     };
   }, [route.params.conversationId]);
