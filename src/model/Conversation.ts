@@ -48,6 +48,7 @@ export const FilteredConversationSchema = {
     createdAt: 'date?',
     lastMessage: 'Message',
     paginationData: 'Pagination',
+    messages: {type: 'list', objectType: 'Message'},
   },
 };
 
@@ -58,6 +59,7 @@ export interface FilteredConversation {
   createdAt: Date;
   lastMessage: Message;
   paginationData: Pagination;
+  messages: Message[];
 }
 
 export const parseToRealmConversation = (
