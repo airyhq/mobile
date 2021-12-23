@@ -2,7 +2,10 @@ export interface Content {
   type:
     | 'text'
     | 'image'
+    | 'images'
     | 'video'
+    | 'audio'
+    | 'file'
     | 'richText'
     | 'richCard'
     | 'richCardCarousel'
@@ -18,19 +21,37 @@ export interface TextContent extends Content {
 }
 export interface ImageContent extends Content {
   type: 'image';
+  text?: string;
   imageUrl: string;
+}
+
+export interface ImagesContent extends Content {
+  type: 'images';
+  images: ImageContent[];
 }
 
 export interface VideoContent extends Content {
   type: 'video';
+  text?: string;
   videoUrl: string;
+}
+
+export interface FileContent extends Content {
+  type: 'file';
+  fileType?: string;
+  fileName?: string;
+  fileUrl: string;
+}
+
+export interface AudioContent extends Content {
+  type: 'audio';
+  audioUrl: string;
 }
 
 export interface RichTextContent extends Content {
   type: 'richText';
-  text: string;
-  fallback: string;
-  containsRichtText: boolean;
+  text?: string;
+  fallback?: string;
 }
 
 export enum MediaHeight {
@@ -103,7 +124,7 @@ export interface QuickRepliesContent extends Content {
 }
 
 export interface SimpleAttachment {
-  type: 'image' | 'video' | 'audio' | 'file' | 'fallback';
+  type: 'image' | 'images' | 'video' | 'audio' | 'file' | 'fallback';
   payload: {
     title?: string;
     url?: string;
@@ -112,10 +133,22 @@ export interface SimpleAttachment {
 
 export type ContentUnion =
   | TextContent
+  | ImageContent
+  | ImagesContent
+  | VideoContent
+  | FileContent
+  | AudioContent
+  | RichTextContent
   | RichTextContent
   | RichCardContent
   | RichCardCarouselContent
   | SuggestionResponse
   | QuickRepliesContent;
 
-export type AttachmentUnion = TextContent | ImageContent | VideoContent;
+export type AttachmentUnion =
+  | TextContent
+  | ImageContent
+  | ImagesContent
+  | VideoContent
+  | FileContent
+  | AudioContent;
