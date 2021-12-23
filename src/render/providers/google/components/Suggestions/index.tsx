@@ -44,20 +44,20 @@ export const Suggestions = ({
 }: SuggestionsRendererProps) => {
   const fadeAnimTooltip = useRef(new Animated.Value(0)).current;
 
-  const fadeOut = () => {
-    Animated.timing(fadeAnimTooltip, {
-      toValue: 0,
-      duration: 1500,
-      useNativeDriver: false,
-    }).start();
-  };
-
   const fadeIn = () => {
     Animated.timing(fadeAnimTooltip, {
       toValue: 1,
       duration: 0,
       useNativeDriver: false,
     }).start();
+
+    setTimeout(() => {
+      Animated.timing(fadeAnimTooltip, {
+        toValue: 0,
+        duration: 1500,
+        useNativeDriver: false,
+      }).start();
+    }, 2000);
   };
 
   return (
@@ -85,8 +85,7 @@ export const Suggestions = ({
               <TouchableOpacity
                 key={elem.reply.text}
                 style={styles.touchableSuggestion}
-                onPressIn={fadeIn}
-                onPressOut={fadeOut}>
+                onPressIn={fadeIn}>
                 <Text key={elem.reply.text} style={styles.title}>
                   {elem.reply.text}
                 </Text>
@@ -139,8 +138,7 @@ export const Suggestions = ({
               <TouchableOpacity
                 key={elem.authenticationRequest.oauth.clientId}
                 style={styles.touchableSuggestion}
-                onPressIn={fadeIn}
-                onPressOut={fadeOut}>
+                onPressIn={fadeIn}>
                 <Text
                   key={elem.authenticationRequest.oauth.clientId}
                   style={styles.title}>
@@ -155,8 +153,7 @@ export const Suggestions = ({
               <TouchableOpacity
                 key={Math.floor(Math.random() * 50)}
                 style={styles.touchableSuggestion}
-                onPressIn={fadeIn}
-                onPressOut={fadeOut}>
+                onPressIn={fadeIn}>
                 <Text key={Math.floor(Math.random() * 50)} style={styles.title}>
                   Message a live agent on GBM
                 </Text>
