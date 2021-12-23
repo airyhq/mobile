@@ -93,6 +93,13 @@ function mapContent(message: any): ContentUnion {
     return parseAttachment(messageContent.attachment);
   }
 
+  if (messageContent.text) {
+    return {
+      type: 'text',
+      text: messageContent.text,
+    };
+  }
+
   if (messageContent.quickRepliesChatPlugin) {
     if (messageContent.quickRepliesChatPlugin.length > 13) {
       messageContent.quickRepliesChatPlugin =
@@ -160,13 +167,6 @@ function mapContent(message: any): ContentUnion {
     return {
       type: 'images',
       images: messageContent.images,
-    };
-  }
-
-  if (messageContent.text) {
-    return {
-      type: 'text',
-      text: messageContent.text,
     };
   }
 
