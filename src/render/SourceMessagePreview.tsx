@@ -125,6 +125,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     if (
       lastMessageContent.message?.attachments?.[0]?.type === 'template' ||
       lastMessageContent.genericAttachment?.type === 'template' ||
+      lastMessageContent.buttonAttachment?.type === 'template' ||
       lastMessageContent.attachments?.[0]?.type === 'template' ||
       lastMessageContent?.attachment?.type === 'template'
     ) {
