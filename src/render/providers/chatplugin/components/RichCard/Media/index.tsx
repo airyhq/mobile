@@ -27,6 +27,7 @@ export const Media = ({height, altText, fileUrl}: MediaRenderProps) => (
     src={fileUrl}
     alt={altText}
     imageStyle={{...styles.mediaImage, ...getHeight(height)}}
+    coverResizeMode
   />
 );
 

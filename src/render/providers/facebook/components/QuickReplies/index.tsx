@@ -52,6 +52,7 @@ export const QuickReplies = ({
               imageStyle={styles.quickReplyImage}
               alt={title}
               src={imageUrl}
+              coverResizeMode
             />
           )}
           <Text key={title} style={styles.title}>

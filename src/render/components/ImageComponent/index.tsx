@@ -52,6 +52,7 @@ export const ImageComponent = ({
                     ...styles.messageListItemImageBlock,
                     ...styles.image,
                   }}
+                  coverResizeMode
                 />
               </Pressable>
             );
@@ -62,9 +63,10 @@ export const ImageComponent = ({
           <ImageWithFallback
             imageStyle={styles.messageListItemImageBlock}
             setLoading={handleSetLoading}
-            key={imageUrl}
+            key={imageUrl + Math.random()}
             src={imageUrl}
             alt={altText ?? 'image in a conversation in Airy Inbox'}
+            coverResizeMode
           />
         </Pressable>
       )}
@@ -104,9 +106,10 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   messageListItemImageBlock: {
-    width: Dimensions.get('window').width / 2,
+    width: Dimensions.get('window').width / 3,
     height: 100,
     borderRadius: 8,
-    resizeMode: 'cover',
+    resizeMode: 'contain',
+    backgroundColor: 'yellow',
   },
 });

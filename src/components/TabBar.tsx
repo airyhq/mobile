@@ -4,7 +4,7 @@ import SettingsView from '../views/settings';
 import InboxIcon from '../assets/images/icons/bubble_icon.svg';
 import SettingsIcon from '../assets/images/icons/settings_icon.svg';
 import {createStackNavigator} from '@react-navigation/stack';
-import {MessageList} from '../views/inbox/MessageList';
+import MessageList from '../views/inbox/MessageList';
 import {colorAiryBlue, colorTextGray} from '../assets/colors';
 import {SafeAreaView} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
