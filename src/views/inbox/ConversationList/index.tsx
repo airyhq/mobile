@@ -164,19 +164,22 @@ export const ConversationList = (props: ConversationListProps) => {
     }
   }, 2000);
 
-  const memoizedRenderItem = React.useMemo(() => {
-    const renderItem = ({item}) => {
-      return (
-        <ConversationListItem
-          key={item.id}
-          conversation={item}
-          navigation={navigation}
-        />
-      );
-    };
+  const memoizedRenderItem = React.useCallback(
+    ({item}) => {
+      const renderItem = item => {
+        return (
+          <ConversationListItem
+            key={item.id}
+            conversation={item}
+            navigation={navigation}
+          />
+        );
+      };
 
-    return renderItem;
-  }, [navigation]);
+      return renderItem(item);
+    },
+    [navigation],
+  );
 
   const getItemLayout = (data, index) => ({
     length: 100,

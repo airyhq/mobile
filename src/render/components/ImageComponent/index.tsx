@@ -43,10 +43,10 @@ export const ImageComponent = ({
             return (
               <Pressable
                 onPress={() => handleOnPress(image.imageUrl)}
-                style={styles.wrapper}>
+                style={styles.wrapper}
+                key={index}>
                 <ImageWithFallback
                   src={image.imageUrl}
-                  key={index + image.imageUrl}
                   setLoading={handleSetLoading}
                   imageStyle={{
                     ...styles.messageListItemImageBlock,
@@ -63,7 +63,6 @@ export const ImageComponent = ({
           <ImageWithFallback
             imageStyle={styles.messageListItemImageBlock}
             setLoading={handleSetLoading}
-            key={imageUrl + Math.random()}
             src={imageUrl}
             alt={altText ?? 'image in a conversation in Airy Inbox'}
             coverResizeMode
@@ -109,7 +108,5 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width / 3,
     height: 100,
     borderRadius: 8,
-    resizeMode: 'contain',
-    backgroundColor: 'yellow',
   },
 });

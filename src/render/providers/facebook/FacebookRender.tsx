@@ -266,7 +266,7 @@ function facebookInbound(message): ContentUnion {
       messageJson?.attachments?.[0].type === 'fallback')
   ) {
     return {
-      text: messageJson.text ?? null,
+      text: messageJson?.attachments?.[0].title ?? messageJson.text,
       ...parseAttachment(messageJson.attachment || messageJson.attachments[0]),
     };
   }
@@ -386,13 +386,12 @@ function facebookOutbound(message): ContentUnion {
   if (
     (messageJson?.attachment && messageJson?.attachment?.type === 'fallback') ||
     (messageJson?.attachments &&
-      messageJson?.attachments?.length > 0 &&
       messageJson?.attachments?.[0] &&
       messageJson?.attachments?.[0].type &&
       messageJson.attachments[0].type === 'fallback')
   ) {
     return {
-      text: messageJson.text ?? null,
+      text: messageJson?.attachments?.[0]?.title ?? messageJson?.text,
       ...parseAttachment(messageJson.attachment || messageJson.attachments[0]),
     };
   }

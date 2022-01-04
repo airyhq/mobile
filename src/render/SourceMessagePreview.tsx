@@ -173,20 +173,25 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       !isImageFromGoogleSource(lastMessageContent.message?.text) &&
       !lastMessageContent.richText
     ) {
+      const textMessage =
+        lastMessageContent?.text || lastMessageContent.message?.text;
       return (
         <Text style={styles.text} numberOfLines={1}>
-          {lastMessageContent?.message?.text || lastMessageContent?.text}
+          {textMessage.trimStart()}
         </Text>
       );
     }
 
     if (lastMessageContent.suggestionResponse) {
+      const suggestionResponseText = lastMessageContent.suggestionResponse.text;
       return (
         <Text style={styles.text} numberOfLines={1}>
-          {lastMessageContent.suggestionResponse?.text}
+          {suggestionResponseText.trimStart()}
         </Text>
       );
     }
+
+    //Source-specific
 
     //google
     const googleLiveAgentRequest =
@@ -261,8 +266,8 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     const instagramStoryReplies = lastMessageContent?.storyReplies;
     const instagramDeletedMessage = lastMessageContent?.isDeleted;
     const instagramShare =
-      lastMessageContent?.attachment?.share ||
-      lastMessageContent?.attachments?.[0]?.share;
+      lastMessageContent?.attachment?.type === 'share' ||
+      lastMessageContent?.attachments?.[0]?.type === 'share';
 
     if (instagramStoryMention) {
       return (
@@ -307,12 +312,31 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       );
     }
 
+    //Facebook
+
     //Facebook Postback
     if (lastMessageContent?.postback) {
       return (
         <Text style={styles.text} numberOfLines={1}>
           {lastMessageContent?.postback?.title ??
             lastMessageContent?.postback?.payload}
+        </Text>
+      );
+    }
+
+    //Facebook fallback attachment not available
+    if (
+      (lastMessageContent.message?.attachments?.[0]?.type === 'fallback' ||
+        lastMessageContent.attachments?.[0]?.type === 'fallback') &&
+      (lastMessageContent.message?.attachments?.[0]?.title ||
+        lastMessageContent.attachments?.[0]?.title)
+    ) {
+      const title =
+        lastMessageContent.message?.attachments?.[0]?.title ||
+        lastMessageContent.attachments?.[0]?.title;
+      return (
+        <Text style={styles.text} numberOfLines={1}>
+          {title}
         </Text>
       );
     }

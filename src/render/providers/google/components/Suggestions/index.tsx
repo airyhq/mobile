@@ -151,12 +151,10 @@ export const Suggestions = ({
           if ('liveAgentRequest' in elem && elem?.liveAgentRequest !== null) {
             return (
               <TouchableOpacity
-                key={Math.floor(Math.random() * 50)}
+                key={'liveAgentRequest'}
                 style={styles.touchableSuggestion}
                 onPressIn={fadeIn}>
-                <Text key={Math.floor(Math.random() * 50)} style={styles.title}>
-                  Message a live agent on GBM
-                </Text>
+                <Text style={styles.title}>Message a live agent on GBM</Text>
               </TouchableOpacity>
             );
           }

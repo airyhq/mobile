@@ -12,7 +12,7 @@ import {
 import {RealmDB} from '../../../storage/realm';
 import {Message, Conversation} from '../../../model';
 import {MessageComponent} from './MessageComponent';
-import {throttle, isEqual} from 'lodash-es';
+import {throttle} from 'lodash-es';
 import {ChatInput} from '../../../components/chat/input/ChatInput';
 import {useHeaderHeight} from '@react-navigation/stack';
 import {loadMessagesForConversation} from '../../../api/Message';
@@ -31,7 +31,7 @@ type MessageListProps = {
 
 const realm = RealmDB.getInstance();
 
-const MessageList = (props: MessageListProps) => {
+export const MessageList = (props: MessageListProps) => {
   const {route} = props;
 
   const [messages, setMessages] = useState<Message[] | []>([]);
@@ -144,32 +144,6 @@ const MessageList = (props: MessageListProps) => {
     </SafeAreaView>
   );
 };
-
-// const memoizedRenderItem = React.useMemo(() => {
-//   const renderItem = ({item, index}) => {
-//     const prevMessage = messages[index - 1];
-//     const currentMessage = messages[index];
-//     return (
-//       <MessageComponent
-//         key={item.id}
-//         message={item}
-//         source={source}
-//         contact={contact}
-//         isLastInGroup={isLastInGroup(prevMessage, currentMessage)}
-//         dateChanged={hasDateChanged(prevMessage, currentMessage)}
-//       />
-//     );
-//   };
-
-//   return renderItem;
-// }, [contact, messages, source]);
-
-const arePropsEqual = (prevProps, nextProps) => {
-  console.log('isEqual(prevProps, nextProps)', isEqual(prevProps, nextProps));
-  return isEqual(prevProps, nextProps);
-};
-
-export default React.memo(MessageList, arePropsEqual);
 
 const styles = StyleSheet.create({
   container: {

@@ -3,6 +3,8 @@ export const AttachmentSchema = {
   properties: {
     type: 'string?',
     payload: 'AttachmentPayload',
+    title: 'string?',
+    url: 'string?',
   },
 };
 
