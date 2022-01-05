@@ -2,12 +2,12 @@ import React, {useEffect, useState} from 'react';
 import {StyleProp, Text} from 'react-native';
 import {SvgUri} from 'react-native-svg';
 import {colorTextGray} from '../../../assets/colors';
-import FastImage from 'react-native-fast-image';
+import FastImage, {ImageStyle} from 'react-native-fast-image';
 
 type ImageRenderProps = {
   src: string;
   alt?: string;
-  imageStyle?: StyleProp<any>;
+  imageStyle?: StyleProp<ImageStyle>;
   setLoading?: (loading: boolean) => void;
   coverResizeMode?: boolean;
 };
