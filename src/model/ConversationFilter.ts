@@ -33,13 +33,18 @@ export const filterToLuceneSyntax = (
     filterQuery.push('display_name:*' + filter.displayName + '*');
   }
   if (filter?.byChannels && filter.byChannels.length > 0) {
-    filterQuery.push('channel_id:(' + filter.byChannels.join(' OR ') + ')');
+    const channelIdArr = [];
+    filter.byChannels.forEach(channel => {
+      channelIdArr.push(channel.id);
+    });
+    filterQuery.push('channel_id:(' + channelIdArr.join(' OR ') + ')');
   }
   if (filter?.isStateOpen === true) {
     filterQuery.push('id:* AND NOT metadata.state:CLOSED');
   } else if (filter?.isStateOpen !== null) {
     filterQuery.push('metadata.state:CLOSED');
   }
+
   return !filterQuery.length ? undefined : filterQuery.join(' AND ');
 };
 
