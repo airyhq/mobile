@@ -25,7 +25,13 @@ export const Share = ({url, fromContact}: InstagramShareProps) => {
         <TouchableOpacity
           style={styles.container}
           onPress={() => Linking.openURL(url)}>
-          <Text style={styles.shareText}>Shared Post </Text>
+          <Text
+            style={[
+              styles.shareText,
+              {color: fromContact ? colorTextContrast : 'white'},
+            ]}>
+            Shared Post{' '}
+          </Text>
           <LinkIcon fill={fromContact ? colorTextContrast : 'white'} />
         </TouchableOpacity>
       </View>
@@ -66,7 +72,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   shareText: {
-    color: colorTextContrast,
     fontStyle: 'italic',
   },
   icon: {

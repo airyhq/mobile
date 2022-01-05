@@ -23,6 +23,7 @@ export const GenericTemplate = ({template}: GenericTemplateRendererProps) => {
                     <ImageWithFallback
                       imageStyle={styles.templateImage}
                       src={element.image_url}
+                      coverResizeMode
                     />
                   )}
                   <View style={styles.innerTemplate}>
@@ -44,6 +45,7 @@ export const GenericTemplate = ({template}: GenericTemplateRendererProps) => {
               <ImageWithFallback
                 imageStyle={styles.templateImage}
                 src={template.elements[0].image_url}
+                coverResizeMode
               />
             )}
             <View style={styles.innerTemplate}>

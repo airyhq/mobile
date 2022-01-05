@@ -101,24 +101,20 @@ export const MessageList = (props: MessageListProps) => {
     }
   };
 
-  const memoizedRenderItem = React.useMemo(() => {
-    const renderItem = ({item, index}) => {
-      const prevMessage = messages[index - 1];
-      const currentMessage = messages[index];
-      return (
-        <MessageComponent
-          key={item.id}
-          message={item}
-          source={source}
-          contact={contact}
-          isLastInGroup={isLastInGroup(prevMessage, currentMessage)}
-          dateChanged={hasDateChanged(prevMessage, currentMessage)}
-        />
-      );
-    };
-
-    return renderItem;
-  }, [contact, messages, source]);
+  const renderItem = ({item, index}) => {
+    const prevMessage = messages[index - 1];
+    const currentMessage = messages[index];
+    return (
+      <MessageComponent
+        key={item.id}
+        message={item}
+        source={source}
+        contact={contact}
+        isLastInGroup={isLastInGroup(prevMessage, currentMessage)}
+        dateChanged={hasDateChanged(prevMessage, currentMessage)}
+      />
+    );
+  };
 
   return (
     <SafeAreaView style={{backgroundColor: 'white'}}>
@@ -133,7 +129,8 @@ export const MessageList = (props: MessageListProps) => {
           style={styles.flatlist}
           ref={messageListRef}
           data={messages.reverse()}
-          renderItem={memoizedRenderItem}
+          initialNumToRender={50}
+          renderItem={renderItem}
           onScroll={onScroll}
         />
         <KeyboardAvoidingView

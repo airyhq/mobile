@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {Image, StyleProp, ImageStyle, Text} from 'react-native';
+import {StyleProp, Text} from 'react-native';
 import {SvgUri} from 'react-native-svg';
 import {colorTextGray} from '../../../assets/colors';
+import FastImage, {ImageStyle} from 'react-native-fast-image';
 
 type ImageRenderProps = {
   src: string;
   alt?: string;
   imageStyle?: StyleProp<ImageStyle>;
   setLoading?: (loading: boolean) => void;
+  coverResizeMode?: boolean;
 };
 
 const failedUrls = [];
@@ -16,6 +18,7 @@ export const ImageWithFallback = ({
   src,
   setLoading,
   imageStyle,
+  coverResizeMode,
 }: ImageRenderProps) => {
   const [imageFailed, setImageFailed] = useState(failedUrls.includes(src));
 
@@ -45,13 +48,18 @@ export const ImageWithFallback = ({
           <Text> media unavailable</Text>
         </>
       ) : (
-        <Image
+        <FastImage
           onLoad={handleOnLoad}
           style={imageStyle}
           source={{
             uri: src,
           }}
           onError={() => loadingFailed()}
+          resizeMode={
+            coverResizeMode
+              ? FastImage.resizeMode.cover
+              : FastImage.resizeMode.contain
+          }
         />
       )}
     </>

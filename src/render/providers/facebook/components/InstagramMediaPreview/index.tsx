@@ -3,12 +3,12 @@ import {
   StyleSheet,
   View,
   Dimensions,
-  Image,
   Text,
   ActivityIndicator,
 } from 'react-native';
 import {colorTextGray} from '../../../../../assets/colors';
 import Video from 'react-native-video';
+import FastImage from 'react-native-fast-image';
 
 type InstagramMediaPreviewProps = {
   mediaUrl: string;
@@ -61,7 +61,7 @@ export const InstagramMediaPreview = ({
       )}
 
       {isVideoFailed && !postUnavailable && (
-        <Image
+        <FastImage
           style={[
             styles.previewStyle,
             isInstagramStory ? styles.story : styles.post,

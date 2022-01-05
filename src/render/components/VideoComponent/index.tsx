@@ -12,12 +12,6 @@ type VideoRenderProps = {
   videoUrl: string;
 };
 
-/**
- * This is a global list of videos that failed to load.
- * Sadly the render component is not able to fix wrong payloads in the
- * redux store and this is the only way for it to remember failed states
- * and not start flickering on every redraw of the messages
- */
 const failedUrls = [];
 
 export const VideoComponent = ({videoUrl}: VideoRenderProps) => {

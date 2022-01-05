@@ -55,7 +55,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     maxWidth: '90%',
     alignItems: 'flex-end',
-    flexDirection: 'column',
     marginTop: 10,
   },
   time: {
