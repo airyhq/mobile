@@ -20,10 +20,10 @@ type WebSocketProps = {
 const realm = RealmDB.getInstance();
 
 const addMessage = (conversationId: string, message: Message) => {
-  const currentConversation: Conversation | undefined =
-    realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
-
   realm.write(() => {
+    const currentConversation: Conversation | undefined =
+      realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
+
     if (currentConversation) {
       currentConversation.lastMessage = parseToRealmMessage(
         message,
