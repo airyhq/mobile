@@ -14,13 +14,6 @@ export function mergeMessages(
   return sortBy(oldMessages, message => message.sentAt);
 }
 
-export const isLastInGroup = (
-  prevMessage: Message,
-  currentMessage: Message,
-) => {
-  return currentMessage.fromContact !== prevMessage?.fromContact;
-};
-
 export const decodeURIComponentMessage = (
   messageContent: string,
   contentStart: string,

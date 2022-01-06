@@ -171,7 +171,9 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     if (
       (lastMessageContent.text || lastMessageContent.message?.text) &&
       !isImageFromGoogleSource(lastMessageContent.message?.text) &&
-      !lastMessageContent.richText
+      !lastMessageContent.richText &&
+      !lastMessageContent?.text?.includes('&Body=' && '&To=whatsapp') &&
+      !lastMessageContent?.text?.includes('&Body=' && '&FromCountry=')
     ) {
       const textMessage =
         lastMessageContent?.text || lastMessageContent.message?.text;

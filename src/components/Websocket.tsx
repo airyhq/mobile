@@ -5,6 +5,7 @@ import {
   parseToRealmConversation,
   Message,
   parseToRealmMessage,
+  Channel,
 } from '../model';
 import {RealmDB} from '../storage/realm';
 import {WebSocketClient} from './WebsocketClient/WebsocketClient';
@@ -48,11 +49,27 @@ const getInfoNewConversation = (conversationId: string, retries: number) => {
   api
     .getConversationInfo(conversationId)
     .then((response: Conversation) => {
+      const newConversation: Conversation = parseToRealmConversation(response);
+      const channel: Channel =
+        RealmDB.getInstance().objectForPrimaryKey<Channel>(
+          'Channel',
+          response.channel.id,
+        );
+      const newConversationState = newConversation.metadata.state || 'OPEN';
+
       realm.write(() => {
-        realm.create('Conversation', parseToRealmConversation(response));
+        realm.create('Conversation', {
+          ...newConversation,
+          channel: channel || newConversation.channel,
+          metadata: {
+            ...newConversation.metadata,
+            state: newConversationState,
+          },
+        });
       });
     })
     .catch(() => {
+      console.log('catch');
       setTimeout(() => {
         getInfoNewConversation(conversationId, retries ? retries + 1 : 1);
       }, 1000);

@@ -20,6 +20,7 @@ type InputBarProps = {
   attachmentBarWidth: number;
   extendedInputBar: boolean;
   setExtendedAttachments: (extended: boolean) => void;
+  channelConnected: boolean;
 };
 
 const INITIAL_INPUT_HEIGHT = 33;
@@ -30,10 +31,10 @@ export const Input = ({
   attachmentBarWidth,
   extendedInputBar,
   setExtendedAttachments,
+  channelConnected,
 }: InputBarProps) => {
   const [input, setInput] = useState('');
   const [inputHeight, setInputHeight] = useState(INITIAL_INPUT_HEIGHT);
-
   const extendedInputBarRef = useRef<boolean>();
   const inputBarRef = useRef<TextInput>();
 
@@ -127,10 +128,19 @@ export const Input = ({
           onContentSizeChange={e =>
             setInputHeight(e.nativeEvent.contentSize.height)
           }
+          editable={channelConnected}
+          selectTextOnFocus={channelConnected}
         />
         <TouchableOpacity
           onPress={() => onSendMessage(input)}
-          style={styles.sendButton}
+          style={[
+            styles.sendButton,
+            {
+              backgroundColor: channelConnected
+                ? colorAiryBlue
+                : colorLightGray,
+            },
+          ]}
           disabled={input.length === 0}>
           <PaperPlane width={16} height={16} fill="white" />
         </TouchableOpacity>
@@ -162,7 +172,6 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     borderRadius: 50,
-    backgroundColor: colorAiryBlue,
     height: 24,
     width: 24,
     marginRight: 4,

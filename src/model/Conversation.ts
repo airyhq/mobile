@@ -81,7 +81,7 @@ export const parseToRealmConversation = (
       nextCursor: null,
       total: null,
     },
-    messages: unformattedConversation.messages,
+    messages: unformattedConversation?.messages || [],
   };
 
   return conversation;
