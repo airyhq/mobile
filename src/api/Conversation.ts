@@ -19,7 +19,7 @@ export const listConversations = (
 ) => {
   api
     .listConversations({
-      page_size: 50,
+      page_size: 10,
       filters: appliedFilters ? filterToLuceneSyntax(currentFilter) : null,
     })
     .then((response: any) => {
@@ -50,7 +50,7 @@ export const getNextConversationList = (
   api
     .listConversations({
       cursor: cursor,
-      page_size: 50,
+      page_size: 10,
       filters: appliedFilters ? filterToLuceneSyntax(currentFilter) : null,
     })
     .then((response: any) => {

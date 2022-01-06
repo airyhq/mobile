@@ -152,16 +152,16 @@ export const upsertConversations = (
         storedConversation.metadata = conversation.metadata;
       });
     } else {
-      realm.write(() => {
-        const newConversation: Conversation =
-          parseToRealmConversation(conversation);
-        const channel: Channel =
-          RealmDB.getInstance().objectForPrimaryKey<Channel>(
-            'Channel',
-            conversation.channel.id,
-          );
-        const newConversationState = newConversation.metadata.state || 'OPEN';
+      const newConversation: Conversation =
+        parseToRealmConversation(conversation);
+      const channel: Channel =
+        RealmDB.getInstance().objectForPrimaryKey<Channel>(
+          'Channel',
+          conversation.channel.id,
+        );
+      const newConversationState = newConversation.metadata.state || 'OPEN';
 
+      realm.write(() => {
         realm.create('Conversation', {
           ...newConversation,
           channel: channel || newConversation.channel,
