@@ -16,7 +16,6 @@ import {throttle} from 'lodash-es';
 import {ChatInput} from '../../../components/chat/input/ChatInput';
 import {useHeaderHeight} from '@react-navigation/stack';
 import {loadMessagesForConversation} from '../../../api/Message';
-import {isLastInGroup} from '../../../services/message';
 import {hasDateChanged} from '../../../services/dates';
 
 interface RouteProps {
@@ -102,15 +101,21 @@ export const MessageList = (props: MessageListProps) => {
   };
 
   const renderItem = ({item, index}) => {
-    const prevMessage = messages[index - 1];
     const currentMessage = messages[index];
+    const prevMessage = messages[index + 1];
+    const nextMessage = messages[index - 1];
+
+    const lastInGroup = nextMessage
+      ? item.fromContact !== nextMessage.fromContact
+      : true;
+
     return (
       <MessageComponent
         key={item.id}
         message={item}
         source={source}
         contact={contact}
-        isLastInGroup={isLastInGroup(prevMessage, currentMessage)}
+        isLastInGroup={lastInGroup}
         dateChanged={hasDateChanged(prevMessage, currentMessage)}
       />
     );
@@ -129,7 +134,6 @@ export const MessageList = (props: MessageListProps) => {
           style={styles.flatlist}
           ref={messageListRef}
           data={messages.reverse()}
-          initialNumToRender={50}
           renderItem={renderItem}
           onScroll={onScroll}
         />

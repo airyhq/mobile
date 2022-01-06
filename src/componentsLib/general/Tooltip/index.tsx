@@ -15,6 +15,7 @@ type TooltipProps = {
   backgroundColorContainer?: string;
   externalLinkUrl?: string;
   arrowPosition?: TooltipArrowPosition;
+  arrow?: boolean;
 };
 
 export const Tooltip = ({
@@ -23,6 +24,7 @@ export const Tooltip = ({
   backgroundColorContainer,
   externalLinkUrl,
   arrowPosition,
+  arrow,
 }: TooltipProps) => {
   const tooltipBackgroundColor = backgroundColorContainer ?? colorTextContrast;
   const arrowBorderStyle = (position: TooltipArrowPosition) => {
@@ -44,32 +46,43 @@ export const Tooltip = ({
   };
 
   return (
-    <View style={[styles.container, {backgroundColor: tooltipBackgroundColor}]}>
-      {externalLinkUrl ? (
-        <Text
-          style={[styles.text, styles.link, {color: textColor ?? 'white'}]}
-          onPress={() => Linking.openURL(externalLinkUrl)}>
-          {text}
-        </Text>
-      ) : (
-        <Text style={[styles.text, {color: textColor ?? 'white'}]}>{text}</Text>
-      )}
+    <View style={styles.wrapper}>
       <View
-        style={[
-          styles.arrow,
-          arrowPosition ? styles[arrowPosition] : styles.bottom,
-          arrowBorderStyle(arrowPosition),
-        ]}
-      />
+        style={[styles.container, {backgroundColor: tooltipBackgroundColor}]}>
+        {externalLinkUrl ? (
+          <Text
+            style={[styles.text, styles.link, {color: textColor ?? 'white'}]}
+            onPress={() => Linking.openURL(externalLinkUrl)}>
+            {text}
+          </Text>
+        ) : (
+          <Text style={[styles.text, {color: textColor ?? 'white'}]}>
+            {text}
+          </Text>
+        )}
+        {arrow && (
+          <View
+            style={[
+              styles.arrow,
+              arrowPosition ? styles[arrowPosition] : styles.bottom,
+              arrowBorderStyle(arrowPosition),
+            ]}
+          />
+        )}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  wrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   container: {
     height: 'auto',
     width: 'auto',
-    maxWidth: 400,
+    maxWidth: 350,
     maxHeight: 200,
     padding: 10,
     alignItems: 'center',

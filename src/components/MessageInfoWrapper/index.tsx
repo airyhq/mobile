@@ -13,7 +13,7 @@ type MessageInfoWrapperProps = {
 };
 
 export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
-  const {sentAt, fromContact, children, isChatPlugin, lastInGroup} = props;
+  const {sentAt, fromContact, children, isChatPlugin} = props;
 
   const isContact = isChatPlugin ? !fromContact : fromContact;
 
@@ -22,7 +22,7 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
       <Text style={styles.memberContent}>
         <View>{children}</View>
       </Text>
-      {lastInGroup && <Text style={styles.time}>{sentAt}</Text>}
+      {sentAt && <Text style={styles.time}>{sentAt}</Text>}
     </View>
   );
 
@@ -31,7 +31,7 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
       <Text style={styles.contactContent}>
         <View>{children}</View>
       </Text>
-      {lastInGroup && <Text style={styles.time}>{sentAt}</Text>}
+      {sentAt && <Text style={styles.time}>{sentAt}</Text>}
     </View>
   );
 
