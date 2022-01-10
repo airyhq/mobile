@@ -130,6 +130,13 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    packagingOptions {
+        pickFirst 'lib/x86/libc++_shared.so'
+        pickFirst 'lib/x86_64/libc++_shared.so'
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+    }
+
     defaultConfig {
         applicationId "com.airycloud.mobile"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -188,6 +195,8 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
+
+    implementation project(':react-native-haptic-feedback')
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
