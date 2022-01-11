@@ -51,7 +51,6 @@ export class WebSocketClient {
 
   onEvent = (body: string) => {
     const json = JSON.parse(body) as EventPayload;
-
     switch (json.type) {
       case 'channel.updated':
         this.callbackMap.onChannel?.(
