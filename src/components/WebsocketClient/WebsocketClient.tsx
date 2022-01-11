@@ -32,8 +32,6 @@ export class WebSocketClient {
     this.callbackMap = callbackMap;
     this.endpoint = `wss://${apiUrl.split('//')[1]}/ws.communication`;
 
-    console.log('endpoint', this.endpoint);
-
     this.stompWrapper = new StompWrapper(
       this.endpoint,
       accessToken,
@@ -44,7 +42,6 @@ export class WebSocketClient {
       },
       this.onError,
     );
-    console.log('this.stompWrapper', this.stompWrapper);
     this.stompWrapper.initConnection();
   }
 
@@ -54,7 +51,7 @@ export class WebSocketClient {
 
   onEvent = (body: string) => {
     const json = JSON.parse(body) as EventPayload;
-    console.log('onEvent', json);
+
     switch (json.type) {
       case 'channel.updated':
         this.callbackMap.onChannel?.(
@@ -65,7 +62,6 @@ export class WebSocketClient {
         );
         break;
       case 'message.created':
-        console.log('json.payload.message', json.payload.message);
         this.callbackMap.onMessage?.(
           json.payload.conversation_id,
           json.payload.channel_id,
@@ -90,7 +86,6 @@ export class WebSocketClient {
   };
 
   onError = () => {
-    console.log('onError')
     this.callbackMap.onError && this.callbackMap.onError();
   };
 }

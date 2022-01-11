@@ -108,7 +108,6 @@ export const MessageList = (props: MessageListProps) => {
     const lastInGroup = nextMessage
       ? item.fromContact !== nextMessage.fromContact
       : true;
- 
 
     return (
       <MessageComponent
@@ -126,7 +125,7 @@ export const MessageList = (props: MessageListProps) => {
     <SafeAreaView style={{backgroundColor: 'white'}}>
       <View style={styles.container}>
         <FlatList
-        inverted
+          inverted
           decelerationRate={0.1}
           contentContainerStyle={{
             flexGrow: 1,

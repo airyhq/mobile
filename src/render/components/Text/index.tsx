@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Dimensions} from 'react-native';
 import Hyperlink from 'react-native-hyperlink';
 import {
   colorBackgroundBlue,
@@ -29,9 +29,11 @@ export const TextComponent = ({text, fromContact}: TextRenderProps) => {
   );
 };
 
+const windowWidth = Dimensions.get('window').width;
+
 const styles = StyleSheet.create({
   bubble: {
-    borderRadius: 20,
+    borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: 8,
@@ -39,6 +41,7 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     paddingLeft: 10,
     marginTop: 5,
+    maxWidth: windowWidth / 1.5,
   },
   contactContent: {
     fontFamily: 'Lato',

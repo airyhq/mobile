@@ -77,7 +77,7 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
               alignItems: 'center',
               borderTopLeftRadius: 24,
               borderBottomLeftRadius: 24,
-              borderLeftColor: colorAiryBlue,
+              borderRightWidth: 0,
             },
           ]}
           onPress={() => {
@@ -107,8 +107,7 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
               height: 24,
               justifyContent: 'center',
               alignItems: 'center',
-              borderLeftColor: colorAiryBlue,
-              borderRightColor: colorAiryBlue,
+              borderRightWidth: 0,
             },
           ]}
           onPress={() => {
