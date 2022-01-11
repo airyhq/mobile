@@ -19,6 +19,7 @@ export class StompWrapper {
   ) {
     this.url = url;
     this.queueMapping = queueMapping;
+    //this.token = token;
     this.onError = onError;
   }
 
@@ -33,12 +34,15 @@ export class StompWrapper {
       onDisconnect: this.onWSError,
       onConnect: this.stompOnConnect,
       onStompError: this.stompOnError,
+      forceBinaryWSFrames: true,
       appendMissingNULLonIncoming: true,
     });
     this.stompClient.activate();
+    console.log('this.stompClient', this.stompClient);
   };
 
   destroyConnection = () => {
+    console.log('destroyConnection');
     this.stompClient?.deactivate();
     if (this.queues) {
       this.queues.filter(it => !!it).forEach(queue => queue.unsubscribe());
@@ -46,6 +50,7 @@ export class StompWrapper {
   };
 
   stompOnConnect = () => {
+    console.log('stompOnConnect');
     this.queues = Object.keys(this.queueMapping).reduce(
       (acc: any, queue: any) =>
         acc.concat([
@@ -56,12 +61,14 @@ export class StompWrapper {
   };
 
   stompOnError = (error: IFrame) => {
+    console.log('stomp on error', error);
     if (error.headers.message.includes('401')) {
       this.onError();
     }
   };
 
   onWSError = (error: IFrame) => {
+    console.log('on ws error', error);
     return error;
   };
 

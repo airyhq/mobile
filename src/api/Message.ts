@@ -16,6 +16,7 @@ export const sendMessage = (conversationId: string, message: any) => {
       message,
     })
     .then((response: Message) => {
+      console.log('sendMessage', response);
       realm.write(() => {
         realm.create('Message', {
           id: response.id,
@@ -28,7 +29,7 @@ export const sendMessage = (conversationId: string, message: any) => {
       });
     })
     .catch((error: Error) => {
-      console.error('Error: ', error);
+      console.error('Error send message ', error);
     });
 };
 

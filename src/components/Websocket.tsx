@@ -100,6 +100,7 @@ const onMetadata = (metadata: Metadata) => {
 };
 
 const onMessage = (conversationId: string, message: Message) => {
+  console.log('onMessage', message);
   const isStored = realm.objectForPrimaryKey<Conversation>(
     'Conversation',
     conversationId,
@@ -114,6 +115,12 @@ const onMessage = (conversationId: string, message: Message) => {
 const WebSocketComponent = ({children, user}: WebSocketProps) => {
   let [webSocketClient, setWebsocketClient] = useState(null);
 
+  useEffect(() => {
+    console.log('webSocketClient', webSocketClient);
+  }, [webSocketClient])
+
+  //useCallback will return a memoized version of the callback that only changes
+  // if one of the inputs has changed.
   const refreshSocket = useCallback(() => {
     if (webSocketClient) {
       webSocketClient.destroyConnection();

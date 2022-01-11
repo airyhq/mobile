@@ -30,6 +30,10 @@ export const AuthWrapper = ({children}) => {
   const [user, setUser] = useState<UserInfo>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
+  useEffect(() => {
+    console.log('user', user);
+  }, [user])
+
   const logout = useCallback(() => {
     setIsAuthenticated(false);
     const realm = RealmDB.getInstance();
