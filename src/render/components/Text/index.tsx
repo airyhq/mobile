@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View, Dimensions} from 'react-native';
+import {StyleSheet, Text, View, Dimensions, Platform} from 'react-native';
 import Hyperlink from 'react-native-hyperlink';
 import {
   colorBackgroundBlue,
@@ -33,7 +33,7 @@ const windowWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   bubble: {
-    borderRadius: 8,
+    borderRadius: Platform.OS === 'android' ? 18 : 20,
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: 8,
