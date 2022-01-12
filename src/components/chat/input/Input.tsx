@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Animated, Platform, TextInput, TouchableOpacity} from 'react-native';
+import {Animated, TextInput, TouchableOpacity} from 'react-native';
 import {View, StyleSheet} from 'react-native';
 import {sendMessage} from '../../../api/Message';
 import {
@@ -115,7 +115,7 @@ export const Input = ({
           ref={inputBarRef}
           style={[
             {
-              height: inputHeight < 20 ? 33 : inputHeight + 16,
+              height: 20,
               width: extendedInputBar ? '85%' : '80%',
             },
             styles.textInput,
@@ -157,17 +157,19 @@ const styles = StyleSheet.create({
     backgroundColor: colorBackgroundGray,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     borderRadius: 16,
     borderWidth: 1,
     borderColor: colorLightGray,
     paddingLeft: 10,
+    paddingTop: 0,
+    paddingBottom: 0,
   },
   textInput: {
     fontFamily: 'Lato',
-    alignSelf: 'flex-end',
+    alignItems: 'center',
     fontSize: 16,
-    paddingTop: Platform.OS === 'ios' ? 8 : 0,
+    paddingTop: 0,
     paddingBottom: 0,
   },
   sendButton: {
@@ -178,6 +180,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingLeft: 2,
-    marginBottom: 4,
   },
 });
