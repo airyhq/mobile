@@ -52,6 +52,10 @@ export const Input = ({
   const outboundMapper: OutboundMapper = getOutboundMapper(source);
 
   useEffect(() => {
+    console.log('inputHeight', inputHeight);
+  }, [inputHeight]);
+
+  useEffect(() => {
     if (
       !extendedInputBar &&
       extendedInputBarRef.current &&
@@ -113,7 +117,7 @@ export const Input = ({
                   ? 33
                   : inputHeight + 16
                 : 'auto',
-            alignItems: extendedInputBar ? 'flex-end' : 'center',
+            alignItems: 'flex-end',
           },
           styles.inputBar,
         ]}>
@@ -150,11 +154,7 @@ export const Input = ({
               backgroundColor: channelConnected
                 ? colorAiryBlue
                 : colorLightGray,
-              marginBottom: extendedInputBar
-                ? Platform.OS === 'ios'
-                  ? 4
-                  : 5
-                : 0,
+              marginBottom: Platform.OS === 'ios' ? 4 : 6,
             },
           ]}
           disabled={input.length === 0}>
