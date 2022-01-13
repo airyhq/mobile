@@ -69,7 +69,6 @@ const getInfoNewConversation = (conversationId: string, retries: number) => {
       });
     })
     .catch(() => {
-      console.log('catch');
       setTimeout(() => {
         getInfoNewConversation(conversationId, retries ? retries + 1 : 1);
       }, 1000);

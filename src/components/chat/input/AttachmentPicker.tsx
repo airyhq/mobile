@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {Platform, View, StyleSheet, TouchableOpacity} from 'react-native';
 import {colorAiryBlue, colorTextGray} from '../../../assets/colors';
 import AttachmentImageIcon from '../../../assets/images/icons/attachmentImage.svg';
 import AttachmentTemplateIcon from '../../../assets/images/icons/attachmentTemplate.svg';
@@ -87,10 +87,10 @@ export const AttachmentPicker = (props: AttachmentBarProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     flexDirection: 'row',
     alignItems: 'center',
-    height: 33,
+    height: Platform.OS === 'android' ? 42 : 33,
     marginRight: 6,
     marginLeft: 12,
   },
@@ -104,5 +104,8 @@ const styles = StyleSheet.create({
   icons: {
     marginLeft: 6,
     marginRight: 6,
+    padding: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

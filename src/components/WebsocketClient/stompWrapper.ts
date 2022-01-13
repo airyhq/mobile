@@ -19,6 +19,7 @@ export class StompWrapper {
   ) {
     this.url = url;
     this.queueMapping = queueMapping;
+    this.token = token;
     this.onError = onError;
   }
 
@@ -33,6 +34,7 @@ export class StompWrapper {
       onDisconnect: this.onWSError,
       onConnect: this.stompOnConnect,
       onStompError: this.stompOnError,
+      forceBinaryWSFrames: true,
       appendMissingNULLonIncoming: true,
     });
     this.stompClient.activate();

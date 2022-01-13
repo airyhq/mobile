@@ -1,7 +1,8 @@
 import {Source} from '../../../model';
+import {Platform} from 'react-native';
 
-export const ATTACHMENT_BAR_ITEM_WIDTH = 24;
-export const ATTACHMENT_BAR_ITEM_HEIGHT = 24;
+export const ATTACHMENT_BAR_ITEM_WIDTH = Platform.OS === 'ios' ? 24 : 28;
+export const ATTACHMENT_BAR_ITEM_HEIGHT = Platform.OS === 'ios' ? 24 : 28;
 export const ATTACHMENT_BAR_ITEM_PADDING = 12;
 
 export enum SupportedType {

@@ -61,6 +61,7 @@ export const StateButtonComponent = (props: StateButtonCompontentProps) => {
               alignItems: 'center',
               borderTopLeftRadius: 24,
               borderBottomLeftRadius: 24,
+              borderRightWidth: 0,
             },
           ]}
           onPress={() => setStateActiveOpen(null)}>
@@ -84,8 +85,7 @@ export const StateButtonComponent = (props: StateButtonCompontentProps) => {
               height: 24,
               justifyContent: 'center',
               alignItems: 'center',
-              borderLeftColor: 'transparent',
-              borderRightColor: 'transparent',
+              borderRightWidth: 0,
             },
           ]}
           onPress={() => setStateActiveOpen(true)}>
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   buttonActive: {
     backgroundColor: colorAiryBlue,
     borderWidth: 1,
-    borderColor: 'transparent',
+    borderColor: colorAiryBlue,
   },
   buttonInactive: {
     backgroundColor: 'transparent',

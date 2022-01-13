@@ -107,7 +107,13 @@ export const Input = ({
       <View
         style={[
           {
-            height: inputHeight < 20 ? 33 : inputHeight + 16,
+            height:
+              Platform.OS === 'ios'
+                ? inputHeight < 20
+                  ? 33
+                  : inputHeight + 16
+                : 'auto',
+            alignItems: 'flex-end',
           },
           styles.inputBar,
         ]}>
@@ -115,7 +121,12 @@ export const Input = ({
           ref={inputBarRef}
           style={[
             {
-              height: inputHeight < 20 ? 33 : inputHeight + 16,
+              height:
+                Platform.OS === 'ios'
+                  ? inputHeight < 20
+                    ? 33
+                    : inputHeight + 16
+                  : 'auto',
               width: extendedInputBar ? '85%' : '80%',
             },
             styles.textInput,
@@ -139,6 +150,7 @@ export const Input = ({
               backgroundColor: channelConnected
                 ? colorAiryBlue
                 : colorLightGray,
+              marginBottom: Platform.OS === 'ios' ? 4 : 6,
             },
           ]}
           disabled={input.length === 0}>
@@ -157,7 +169,6 @@ const styles = StyleSheet.create({
     backgroundColor: colorBackgroundGray,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
     borderRadius: 16,
     borderWidth: 1,
     borderColor: colorLightGray,
@@ -165,10 +176,11 @@ const styles = StyleSheet.create({
   },
   textInput: {
     fontFamily: 'Lato',
-    alignSelf: 'flex-end',
+    alignSelf: 'center',
+    alignItems: 'center',
     fontSize: 16,
-    paddingTop: Platform.OS === 'ios' ? 8 : 0,
-    paddingBottom: 0,
+    paddingTop: Platform.OS === 'ios' ? 8 : 4,
+    paddingBottom: Platform.OS === 'ios' ? 0 : 4,
   },
   sendButton: {
     borderRadius: 50,
@@ -178,6 +190,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingLeft: 2,
-    marginBottom: 4,
   },
 });

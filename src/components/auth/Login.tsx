@@ -202,7 +202,6 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginTop: 40,
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 40,
@@ -213,15 +212,16 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#aeaeae',
     fontSize: 20,
-    paddingBottom: 6,
+    paddingBottom: 2,
     marginRight: 0,
     flex: 2,
   },
   domainText: {
     fontSize: 20,
     height: '100%',
-    flex: 1,
     color: '#808080',
+    paddingTop: 10,
+    paddingBottom: 4,
   },
   loginButton: {
     marginTop: 40,

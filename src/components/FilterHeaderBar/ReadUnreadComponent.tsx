@@ -77,6 +77,7 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
               alignItems: 'center',
               borderTopLeftRadius: 24,
               borderBottomLeftRadius: 24,
+              borderRightWidth: 0,
             },
           ]}
           onPress={() => {
@@ -106,8 +107,7 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
               height: 24,
               justifyContent: 'center',
               alignItems: 'center',
-              borderLeftColor: 'transparent',
-              borderRightColor: 'transparent',
+              borderRightWidth: 0,
             },
           ]}
           onPress={() => {
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   buttonActive: {
     backgroundColor: colorAiryBlue,
     borderWidth: 1,
-    borderColor: 'transparent',
+    borderColor: colorAiryBlue,
   },
   buttonInactive: {
     backgroundColor: 'transparent',
