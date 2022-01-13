@@ -52,10 +52,6 @@ export const Input = ({
   const outboundMapper: OutboundMapper = getOutboundMapper(source);
 
   useEffect(() => {
-    console.log('inputHeight', inputHeight);
-  }, [inputHeight]);
-
-  useEffect(() => {
     if (
       !extendedInputBar &&
       extendedInputBarRef.current &&
