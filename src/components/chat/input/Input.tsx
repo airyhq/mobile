@@ -113,6 +113,7 @@ export const Input = ({
                   ? 33
                   : inputHeight + 16
                 : 'auto',
+            alignItems: extendedInputBar ? 'flex-end' : 'center',
           },
           styles.inputBar,
         ]}>
@@ -149,6 +150,11 @@ export const Input = ({
               backgroundColor: channelConnected
                 ? colorAiryBlue
                 : colorLightGray,
+              marginBottom: extendedInputBar
+                ? Platform.OS === 'ios'
+                  ? 4
+                  : 5
+                : 0,
             },
           ]}
           disabled={input.length === 0}>
@@ -167,7 +173,6 @@ const styles = StyleSheet.create({
     backgroundColor: colorBackgroundGray,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
     borderRadius: 16,
     borderWidth: 1,
     borderColor: colorLightGray,
@@ -186,7 +191,6 @@ const styles = StyleSheet.create({
     height: 24,
     width: 24,
     marginRight: 4,
-    marginBottom: Platform.OS === 'ios' ? 4 : 5,
     alignItems: 'center',
     justifyContent: 'center',
     paddingLeft: 2,

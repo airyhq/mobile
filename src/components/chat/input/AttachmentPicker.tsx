@@ -104,5 +104,8 @@ const styles = StyleSheet.create({
   icons: {
     marginLeft: 6,
     marginRight: 6,
+    padding: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
