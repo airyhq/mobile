@@ -61,6 +61,8 @@ import {
   ImagesChatpluginSchema,
   SuggestionResponseSchema,
   RichTextSchema,
+  FilteredConversationSchema,
+  FilterConversationPaginationSchema
 } from '../model';
 
 export class RealmDB {
@@ -131,6 +133,8 @@ export class RealmDB {
           ImagesChatpluginSchema,
           SuggestionResponseSchema,
           RichTextSchema,
+          FilteredConversationSchema,
+          FilterConversationPaginationSchema
         ],
       });
     }
@@ -145,6 +149,8 @@ export const upsertConversations = (
   conversations.forEach(conversation => {
     const storedConversation: Conversation | undefined =
       realm.objectForPrimaryKey('Conversation', conversation.id);
+
+     
 
     if (storedConversation) {
       realm.write(() => {

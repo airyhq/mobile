@@ -1,11 +1,41 @@
 import {Results} from 'realm';
-import {Pagination} from '../../model/Pagination';
+import {Pagination, FilteredConversation} from '../../model';
 import {RealmDB} from '../../storage/realm';
 
-export const getPagination = (): Pagination | undefined => {
-  const objects: Results<Pagination> =
-    RealmDB.getInstance()?.objects('Pagination');
-  if (objects) {
-    return objects[0];
+const realm = RealmDB.getInstance();
+
+
+
+export const getPagination = (currentFilter: any, appliedFilters: boolean): Pagination | undefined => {
+  console.log('getPagination currentFilter', currentFilter);
+
+  if(appliedFilters){
+    const pagination: Pagination | undefined =
+        realm.objects<Pagination>('FilterConversationPagination')[0];
+
+    if(!pagination){
+      realm.write(() => {
+        realm.create('FilterConversationPagination', {
+          loading: false,
+          previousCursor: null,
+          nextCursor: null,
+          total: null,
+        });
+      });
+
+      const pagination: Pagination | undefined =
+      realm.objects<Pagination>('FilterConversationPagination')[0];
+
+      return pagination
+    } else {
+      return pagination
+    }
+  }  else {
+    const objects: Results<Pagination> =
+      RealmDB.getInstance()?.objects('Pagination');
+    if (objects) {
+      console.log('no filter getPagi', objects[0])
+      return objects[0];
+    }
   }
 };
