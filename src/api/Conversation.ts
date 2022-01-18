@@ -40,12 +40,9 @@ export const listConversations = (
         realm.create('Pagination', response.paginationData);
       });
 
-      if (conversations.length === 0) {
-        setConversations([...response.data]);
+
         upsertConversations(response.data, realm);
-      } else {
-        upsertConversations(response.data, realm);
-      }
+      
     })
     .catch((error: Error) => {
       console.error(error);
@@ -74,16 +71,24 @@ export const getNextConversationList = (
       //   );
       // }
 
-      setConversations(prevConversations => {
-        // for (let i = 0; i < prevConversations.length; i++) {
-        //   console.log(
-        //     'listNextConversations - prevConversations',
-        //     prevConversations[i].metadata.contact.displayName,
-        //   );
-        // }
+      if(cursor === null){
+        console.log('setConversations(response.data)')
+        setConversations(response.data)
+      } else {
+        console.log('setConversations prevRes (response.data)')
+        setConversations(prevConversations => {
+          for (let i = 0; i < prevConversations.length; i++) {
+            console.log(
+              'listNextConversations - prevConversations',
+              prevConversations[i].metadata.contact.displayName,
+            );
+          }
+  
+          return [...prevConversations, ...response.data];
+        });
+      }
 
-        return [...prevConversations, ...response.data];
-      });
+     
 
       upsertConversations(response.data, realm);
 

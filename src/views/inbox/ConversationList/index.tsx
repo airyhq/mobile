@@ -84,6 +84,8 @@ export const ConversationList = (props: ConversationListProps) => {
       .sorted('lastMessage.sentAt', true);
 
     if (currentFilter) {
+      console.log('currentFilter useEffect')
+
       databaseConversations = databaseConversations.filtered(
         'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1',
         getDisplayNameForRealmFilter(currentFilter),
@@ -91,6 +93,8 @@ export const ConversationList = (props: ConversationListProps) => {
       );
 
       if (currentFilter.byChannels.length > 0) {
+        console.log('dbConv filter');
+        
         databaseConversations = databaseConversations.filtered(
           '$0 CONTAINS[c] channel.id',
           filteredChannels(),
@@ -114,15 +118,18 @@ export const ConversationList = (props: ConversationListProps) => {
 
     if (databaseConversations) {
       databaseConversations.addListener(() => {
+        console.log('listener');
         setConversations([...databaseConversations]);
-      });
-    }
+        });
+      }
 
     return () => {
       databaseConversations.removeAllListeners();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFilter]);
+
+
 
   const filteredChannels = (): string => {
     currentFilter?.byChannels.forEach((item: Channel) => {
