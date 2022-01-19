@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Dimensions, SafeAreaView, FlatList, NativeSyntheticEvent, NativeScrollEvent} from 'react-native';
+import {StyleSheet, Dimensions, SafeAreaView, FlatList} from 'react-native';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {Collection} from 'realm';
 import {debounce} from 'lodash-es';
@@ -16,7 +16,7 @@ import {
   getStateForRealmFilter,
   isFilterReadOnly,
   isFilterUnreadOnly,
-  Pagination
+  Pagination,
 } from '../../../model';
 import {AiryLoader} from '../../../componentsLib/loaders';
 import {
@@ -35,8 +35,9 @@ export const ConversationList = (props: ConversationListProps) => {
   const [conversations, setConversations] = useState([]);
   const [currentFilter, setCurrentFilter] = useState<ConversationFilter>();
   const [appliedFilters, setAppliedFilters] = useState<boolean>();
+  const [areConversationsFiltered, setAreConversationsFiltered] =
+    useState<boolean>();
   const [loading, setLoading] = useState(true);
-  const [paginationData, setPaginationData] = useState<Pagination | undefined>();
   let filteredChannelArray = [];
 
   const filterApplied = () => {
@@ -55,7 +56,23 @@ export const ConversationList = (props: ConversationListProps) => {
     setCurrentFilter(filters[0]);
   };
 
+  useEffect(() => {
+    console.log('conversations.length', conversations.length);
+  }, [conversations]);
 
+  useEffect(() => {
+    const pagination: Pagination | undefined = realm.objects<Pagination>(
+      'FilterConversationPagination',
+    )[0];
+
+    if (!appliedFilters && pagination) {
+      realm.write(() => {
+        pagination.previousCursor = null;
+        pagination.nextCursor = null;
+        pagination.total = null;
+      });
+    }
+  }, [appliedFilters]);
 
   useEffect(() => {
     const filterListener =
@@ -67,7 +84,6 @@ export const ConversationList = (props: ConversationListProps) => {
         appliedFilters,
         currentFilter,
         setLoading,
-        conversations,
         setConversations,
       );
     }, 200);
@@ -84,8 +100,6 @@ export const ConversationList = (props: ConversationListProps) => {
       .sorted('lastMessage.sentAt', true);
 
     if (currentFilter) {
-      console.log('currentFilter useEffect')
-
       databaseConversations = databaseConversations.filtered(
         'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1',
         getDisplayNameForRealmFilter(currentFilter),
@@ -93,8 +107,6 @@ export const ConversationList = (props: ConversationListProps) => {
       );
 
       if (currentFilter.byChannels.length > 0) {
-        console.log('dbConv filter');
-        
         databaseConversations = databaseConversations.filtered(
           '$0 CONTAINS[c] channel.id',
           filteredChannels(),
@@ -118,18 +130,15 @@ export const ConversationList = (props: ConversationListProps) => {
 
     if (databaseConversations) {
       databaseConversations.addListener(() => {
-        console.log('listener');
         setConversations([...databaseConversations]);
-        });
-      }
+      });
+    }
 
     return () => {
       databaseConversations.removeAllListeners();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFilter]);
-
-
 
   const filteredChannels = (): string => {
     currentFilter?.byChannels.forEach((item: Channel) => {
@@ -162,26 +171,17 @@ export const ConversationList = (props: ConversationListProps) => {
     return newArray;
   };
 
-  /*
-  const debouncedListPreviousConversations = debounce(() => {
-    !hasFilter ? fetchNext() : fetchNextFiltered();
-  }, 200);
-  */
-
-
   const debouncedListPreviousConversations = debounce(() => {
     const pagination = getPagination(currentFilter, appliedFilters);
     const nextCursor = pagination.nextCursor;
     console.log('debounceListPrevious nextCursor', nextCursor);
 
-    
-      getNextConversationList(
-        nextCursor,
-        appliedFilters,
-        currentFilter,
-        setConversations,
-      );
-    
+    getNextConversationList(
+      nextCursor,
+      appliedFilters,
+      currentFilter,
+      setConversations,
+    );
   }, 2000);
 
   const memoizedRenderItem = React.useCallback(
@@ -207,25 +207,6 @@ export const ConversationList = (props: ConversationListProps) => {
     index,
   });
 
-  // const hasPreviousConversations = () =>
-  // !!(paginationData && paginationData.nextCursor);
-
-  // const handleConversationListScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-  //   console.log('handleScroll Conv');
-  //   console.log('event.nativeEvent.contentSize.height', event.nativeEvent.contentSize.height);
-  //   console.log('event.nativeEvent.contentOffset.y', event.nativeEvent.contentOffset.y);
-  //   console.log('event.nativeEvent.contentOffset', event.nativeEvent.contentOffset);
-  //   // if (
-  //   //   hasPreviousConversations() &&
-  //   //   (event.nativeEvent.contentSize.height -
-  //   //     event.nativeEvent.layoutMeasurement.height) *
-  //   //     0.5 <
-  //   //     event.nativeEvent.contentOffset.y
-  //   // ) {
-  //   //   debouncedListPreviousConversations();
-  //   // }
-  // };
-
   return (
     <SafeAreaView style={styles.container}>
       {loading ? (
@@ -235,13 +216,10 @@ export const ConversationList = (props: ConversationListProps) => {
       ) : conversations && conversations.length > 0 ? (
         <FlatList
           data={conversations}
-          //onScroll={handleConversationListScroll}
           renderItem={memoizedRenderItem}
           getItemLayout={getItemLayout}
-          //onEndReached={() => console.log('ON END REACHED')}
           onEndReachedThreshold={0.1}
           onEndReached={debouncedListPreviousConversations}
-          //onEndReachedThreshold={0.5}
         />
       ) : (
         <EmptyFilterResults />
