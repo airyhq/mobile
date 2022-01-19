@@ -189,7 +189,7 @@ export const ConversationList = (props: ConversationListProps) => {
       const renderItem = item => {
         return (
           <ConversationListItem
-            key={item.id + Math.random() + Math.random()}
+            key={item.id}
             conversation={item}
             navigation={navigation}
           />
