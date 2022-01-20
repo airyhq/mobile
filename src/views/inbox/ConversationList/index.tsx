@@ -23,6 +23,7 @@ import {
   listConversations,
   getNextConversationList,
 } from '../../../api/Conversation';
+import {listChannels} from '../../../api/Channel';
 
 type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
@@ -81,6 +82,7 @@ export const ConversationList = (props: ConversationListProps) => {
 
   useEffect(() => {
     countFilters(currentFilter);
+    console.log('currentFilter', currentFilter);
   }, [appliedFilters, currentFilter]);
 
   const onFilterUpdated = (
@@ -117,6 +119,8 @@ export const ConversationList = (props: ConversationListProps) => {
         setConversations,
         setAllConversations,
       );
+
+      listChannels();
     }, 200);
 
     return () => {
@@ -125,43 +129,58 @@ export const ConversationList = (props: ConversationListProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // useEffect(() => {
+  //   let databaseConversations = realm
+  //   .objects<Conversation[]>('Conversation')
+  //   .sorted('lastMessage.sentAt', true);
+
+  //   let databaseNonFilteredConversations = realm
+  //   .objects<Conversation[]>('Conversation')
+  //   .sorted('lastMessage.sentAt', true)
+  //   .filtered('filtered == false');
+
+  //   if(appliedFilters){
+  //     setConversations([...databaseConversations]);
+  //   } else if(!appliedFilters){
+  //     setConversations([...databaseNonFilteredConversations]);
+  //   }
+
+  // }, [currentFilter, appliedFilters])
+
   useEffect(() => {
     let databaseConversations = realm
       .objects<Conversation[]>('Conversation')
       .sorted('lastMessage.sentAt', true);
 
-    if (currentFilter && !appliedFilters) {
-      console.log('FILTER RESET');
-      databaseConversations = databaseConversations.filtered(
-        'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1 && filtered == false',
-        getDisplayNameForRealmFilter(currentFilter),
-        getStateForRealmFilter(currentFilter),
-      );
+    if (!appliedFilters) {
+      databaseConversations =
+        databaseConversations.filtered('filtered == false');
     }
 
     if (currentFilter && appliedFilters) {
       databaseConversations = databaseConversations.filtered(
-        'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1 && filtered == false',
+        'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1',
         getDisplayNameForRealmFilter(currentFilter),
         getStateForRealmFilter(currentFilter),
       );
 
       if (currentFilter.byChannels.length > 0) {
+        console.log('currentFilter.byChannels', currentFilter.byChannels);
         databaseConversations = databaseConversations.filtered(
-          '$0 CONTAINS[c] channel.id && filtered == false',
+          '$0 CONTAINS[c] channel.id',
           filteredChannels(),
         );
       }
 
       if (isFilterReadOnly(currentFilter)) {
         databaseConversations = databaseConversations.filtered(
-          'metadata.unreadCount = 0 && filtered == false',
+          'metadata.unreadCount = 0',
         );
       }
 
       if (isFilterUnreadOnly(currentFilter)) {
         databaseConversations = databaseConversations.filtered(
-          'metadata.unreadCount != 0 && filtered == false',
+          'metadata.unreadCount != 0',
         );
       }
     }

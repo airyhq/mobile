@@ -9,22 +9,25 @@ export const listChannels = () => {
     .listChannels()
     .then((response: any) => {
       realm.write(() => {
+        console.log('response CHANNEL', response);
+
+        const allStored: any = realm.objects<Channel>('Channel');
+
+        console.log('allStored', allStored);
+
         for (const channel of response) {
           const isStored: Channel | undefined =
-            realm.objectForPrimaryKey<Channel>(
-              'Channel',
-              channel.sourceChannelId,
-            );
+            realm.objectForPrimaryKey<Channel>('Channel', channel.id);
 
-          if (isStored) {
-            realm.delete(isStored);
+          console.log('isStored', isStored);
+
+          if (!isStored) {
+            realm.create('Channel', channel);
           }
-
-          realm.create('Channel', channel);
         }
       });
     })
     .catch((error: Error) => {
-      console.error(error);
+      console.error('LIST CHANNELS', error);
     });
 };
