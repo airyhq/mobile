@@ -19,6 +19,7 @@ export const listConversations = (
   currentFilter: ConversationFilter,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   setConversations: React.Dispatch<React.SetStateAction<Conversation[]>>,
+  setAllConversations: React.Dispatch<React.SetStateAction<Conversation[]>>,
 ) => {
   api
     .listConversations({
@@ -31,6 +32,7 @@ export const listConversations = (
       console.log('LIST CONVERSATIONS');
 
       setConversations([...response.data]);
+      setAllConversations([...response.data]);
 
       realm.write(() => {
         realm.create('Pagination', response.paginationData);
@@ -48,11 +50,13 @@ export const getNextConversationList = (
   appliedFilters: boolean,
   currentFilter: ConversationFilter,
   setConversations: React.Dispatch<React.SetStateAction<Conversation[]>>,
+  setAllConversations: React.Dispatch<React.SetStateAction<Conversation[]>>,
+  allConversations: Conversation[],
 ) => {
   api
     .listConversations({
       cursor: cursor,
-      page_size: 20,
+      page_size: 10,
       filters: appliedFilters ? filterToLuceneSyntax(currentFilter) : null,
     })
     .then((response: any) => {
@@ -67,8 +71,19 @@ export const getNextConversationList = (
         ]);
       }
 
+      if (!appliedFilters) {
+        if (cursor === null) {
+          setAllConversations(response.data);
+        } else if (cursor !== null) {
+          setAllConversations(prevConversations => [
+            ...prevConversations,
+            ...response.data,
+          ]);
+        }
+      }
+
       if (appliedFilters) {
-        upsertFilteredConversations(response.data, realm);
+        upsertFilteredConversations(response.data, realm, allConversations);
       } else {
         upsertConversations(response.data, realm);
       }

@@ -33,10 +33,11 @@ const realm = RealmDB.getInstance();
 export const ConversationList = (props: ConversationListProps) => {
   const {navigation} = props;
   const [conversations, setConversations] = useState([]);
+  const [allConversations, setAllConversations] = useState([]);
   const [currentFilter, setCurrentFilter] = useState<ConversationFilter>();
   const [appliedFilters, setAppliedFilters] = useState<boolean>();
-  const [areConversationsFiltered, setAreConversationsFiltered] =
-    useState<boolean>();
+  const [numOfFilters, setNumOfFilters] = useState(0);
+
   const [loading, setLoading] = useState(true);
   let filteredChannelArray = [];
 
@@ -50,6 +51,38 @@ export const ConversationList = (props: ConversationListProps) => {
       : setAppliedFilters(false);
   };
 
+  const countFilters = (currentFilter: ConversationFilter): void => {
+    let num = 0;
+
+    if (currentFilter) {
+      if (currentFilter.displayName !== '') {
+        num++;
+      }
+
+      if (currentFilter.byChannels.length > 0) {
+        num++;
+      }
+
+      if (currentFilter.isStateOpen !== null) {
+        num++;
+      }
+
+      if (currentFilter.readOnly !== null) {
+        num++;
+      }
+
+      if (currentFilter.unreadOnly !== null) {
+        num++;
+      }
+
+      setNumOfFilters(num);
+    }
+  };
+
+  useEffect(() => {
+    countFilters(currentFilter);
+  }, [appliedFilters, currentFilter]);
+
   const onFilterUpdated = (
     filters: Collection<ConversationFilter & Object>,
   ) => {
@@ -57,22 +90,19 @@ export const ConversationList = (props: ConversationListProps) => {
   };
 
   useEffect(() => {
-    console.log('conversations.length', conversations.length);
-  }, [conversations]);
-
-  useEffect(() => {
     const pagination: Pagination | undefined = realm.objects<Pagination>(
       'FilterConversationPagination',
     )[0];
 
-    if (!appliedFilters && pagination) {
+    if (appliedFilters && numOfFilters > 1 && pagination) {
+      console.log('PAGINATION RESET');
       realm.write(() => {
         pagination.previousCursor = null;
         pagination.nextCursor = null;
         pagination.total = null;
       });
     }
-  }, [appliedFilters]);
+  }, [appliedFilters, numOfFilters, currentFilter]);
 
   useEffect(() => {
     const filterListener =
@@ -85,6 +115,7 @@ export const ConversationList = (props: ConversationListProps) => {
         currentFilter,
         setLoading,
         setConversations,
+        setAllConversations,
       );
     }, 200);
 
@@ -99,29 +130,38 @@ export const ConversationList = (props: ConversationListProps) => {
       .objects<Conversation[]>('Conversation')
       .sorted('lastMessage.sentAt', true);
 
-    if (currentFilter) {
+    if (currentFilter && !appliedFilters) {
+      console.log('FILTER RESET');
       databaseConversations = databaseConversations.filtered(
-        'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1',
+        'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1 && filtered == false',
+        getDisplayNameForRealmFilter(currentFilter),
+        getStateForRealmFilter(currentFilter),
+      );
+    }
+
+    if (currentFilter && appliedFilters) {
+      databaseConversations = databaseConversations.filtered(
+        'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1 && filtered == false',
         getDisplayNameForRealmFilter(currentFilter),
         getStateForRealmFilter(currentFilter),
       );
 
       if (currentFilter.byChannels.length > 0) {
         databaseConversations = databaseConversations.filtered(
-          '$0 CONTAINS[c] channel.id',
+          '$0 CONTAINS[c] channel.id && filtered == false',
           filteredChannels(),
         );
       }
 
       if (isFilterReadOnly(currentFilter)) {
         databaseConversations = databaseConversations.filtered(
-          'metadata.unreadCount = 0',
+          'metadata.unreadCount = 0 && filtered == false',
         );
       }
 
       if (isFilterUnreadOnly(currentFilter)) {
         databaseConversations = databaseConversations.filtered(
-          'metadata.unreadCount != 0',
+          'metadata.unreadCount != 0 && filtered == false',
         );
       }
     }
@@ -138,7 +178,7 @@ export const ConversationList = (props: ConversationListProps) => {
       databaseConversations.removeAllListeners();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFilter]);
+  }, [currentFilter, appliedFilters]);
 
   const filteredChannels = (): string => {
     currentFilter?.byChannels.forEach((item: Channel) => {
@@ -172,15 +212,18 @@ export const ConversationList = (props: ConversationListProps) => {
   };
 
   const debouncedListPreviousConversations = debounce(() => {
-    const pagination = getPagination(currentFilter, appliedFilters);
+    const pagination = getPagination(appliedFilters);
     const nextCursor = pagination.nextCursor;
-    console.log('debounceListPrevious nextCursor', nextCursor);
+
+    console.log('DEBOUNCE LISTPREV - nextCursor', nextCursor);
 
     getNextConversationList(
       nextCursor,
       appliedFilters,
       currentFilter,
       setConversations,
+      setAllConversations,
+      allConversations,
     );
   }, 2000);
 
