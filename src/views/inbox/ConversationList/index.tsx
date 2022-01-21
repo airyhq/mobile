@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {StyleSheet, Dimensions, SafeAreaView, FlatList} from 'react-native';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {Collection} from 'realm';
@@ -24,6 +24,7 @@ import {
   getNextConversationList,
 } from '../../../api/Conversation';
 import {listChannels} from '../../../api/Channel';
+import {isEqual} from 'lodash-es';
 
 type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
@@ -31,13 +32,27 @@ type ConversationListProps = {
 
 const realm = RealmDB.getInstance();
 
+function usePrevious<T>(value: T): T {
+  // The ref object is a generic container whose current property is mutable ...
+  // ... and can hold any value, similar to an instance property on a class
+  const ref: any = useRef<T>();
+  // Store current value in ref
+  useEffect(() => {
+    ref.current = value;
+  }, [value]); // Only re-run if value changes
+  // Return previous value (happens before update in useEffect above)
+  return ref.current;
+}
+
 export const ConversationList = (props: ConversationListProps) => {
   const {navigation} = props;
   const [conversations, setConversations] = useState([]);
   const [allConversations, setAllConversations] = useState([]);
   const [currentFilter, setCurrentFilter] = useState<ConversationFilter>();
+  const prevCurrentFilter = usePrevious(currentFilter);
   const [appliedFilters, setAppliedFilters] = useState<boolean>();
   const [numOfFilters, setNumOfFilters] = useState(0);
+  const [convFetched, setConvFetched] = useState(true)
 
   const [loading, setLoading] = useState(true);
   let filteredChannelArray = [];
@@ -85,6 +100,7 @@ export const ConversationList = (props: ConversationListProps) => {
     console.log('currentFilter', currentFilter);
   }, [appliedFilters, currentFilter]);
 
+
   const onFilterUpdated = (
     filters: Collection<ConversationFilter & Object>,
   ) => {
@@ -121,6 +137,8 @@ export const ConversationList = (props: ConversationListProps) => {
       );
 
       listChannels();
+
+      setConvFetched(false);
     }, 200);
 
     return () => {
@@ -129,23 +147,11 @@ export const ConversationList = (props: ConversationListProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // useEffect(() => {
-  //   let databaseConversations = realm
-  //   .objects<Conversation[]>('Conversation')
-  //   .sorted('lastMessage.sentAt', true);
 
-  //   let databaseNonFilteredConversations = realm
-  //   .objects<Conversation[]>('Conversation')
-  //   .sorted('lastMessage.sentAt', true)
-  //   .filtered('filtered == false');
+  useEffect(() => {
+    console.log('CONVFETCHED', convFetched)
 
-  //   if(appliedFilters){
-  //     setConversations([...databaseConversations]);
-  //   } else if(!appliedFilters){
-  //     setConversations([...databaseNonFilteredConversations]);
-  //   }
-
-  // }, [currentFilter, appliedFilters])
+  }, [convFetched])
 
   useEffect(() => {
     let databaseConversations = realm
@@ -158,26 +164,41 @@ export const ConversationList = (props: ConversationListProps) => {
     }
 
     if (currentFilter && appliedFilters) {
+
+
+      //STATE 
+      if (currentFilter.isStateOpen !== null) {
+        console.log('filtered all ')
+        console.log('getStateForRealmFilter(currentFilter)', getStateForRealmFilter(currentFilter));
       databaseConversations = databaseConversations.filtered(
-        'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1',
-        getDisplayNameForRealmFilter(currentFilter),
+        'metadata.state LIKE $0',
         getStateForRealmFilter(currentFilter),
       );
+      }
 
+      //DISPLAY NAME
+
+      //CHANNEL
       if (currentFilter.byChannels.length > 0) {
-        console.log('currentFilter.byChannels', currentFilter.byChannels);
+        console.log('CURRENTFILTER BY CHANNELS', currentFilter.byChannels);
+        console.log('filteredChannels()', filteredChannels());
+
         databaseConversations = databaseConversations.filtered(
           '$0 CONTAINS[c] channel.id',
           filteredChannels(),
         );
+
+
       }
 
+      //READ 
       if (isFilterReadOnly(currentFilter)) {
         databaseConversations = databaseConversations.filtered(
           'metadata.unreadCount = 0',
         );
       }
 
+      //UNREAD 
       if (isFilterUnreadOnly(currentFilter)) {
         databaseConversations = databaseConversations.filtered(
           'metadata.unreadCount != 0',
@@ -187,8 +208,20 @@ export const ConversationList = (props: ConversationListProps) => {
 
     filterApplied();
 
+ 
+
     if (databaseConversations) {
+
+      console.log('DATABASESCONV LENGTH', databaseConversations.length);
+
+      if(databaseConversations && databaseConversations.length <= 1){
+        console.log('DATABASES FETCH NEXT');
+        debouncedListPreviousConversations()
+        setConvFetched(true)
+      }
+
       databaseConversations.addListener(() => {
+        //databaseConversations.forEach((conv:any) => console.log('listener conv', conv.metadata.contact.displayName))
         setConversations([...databaseConversations]);
       });
     }

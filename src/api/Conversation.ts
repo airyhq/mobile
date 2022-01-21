@@ -56,20 +56,24 @@ export const getNextConversationList = (
   api
     .listConversations({
       cursor: cursor,
-      page_size: 10,
+      page_size: 50,
       filters: appliedFilters ? filterToLuceneSyntax(currentFilter) : null,
     })
     .then((response: any) => {
       console.log('LIST NEXT CONVERSATIONS');
 
-      if (cursor === null) {
-        setConversations(response.data);
-      } else {
-        setConversations(prevConversations => [
-          ...prevConversations,
-          ...response.data,
-        ]);
-      }
+      // if(currentFilter && currentFilter.byChannels.length > 0){
+      //   response.data.forEach((conv:any) => console.log('RESPONSE DATA conv', conv, conv.metadata.contact.displayName));
+      // }
+
+      // if (cursor === null) {
+      //   setConversations(response.data);
+      // } else {
+      //   setConversations(prevConversations => [
+      //     ...prevConversations,
+      //     ...response.data,
+      //   ]);
+      // }
 
       if (!appliedFilters) {
         if (cursor === null) {
@@ -106,6 +110,8 @@ export const getNextConversationList = (
             pagination.nextCursor = response.paginationData.nextCursor;
             pagination.total = response.paginationData.total;
           });
+
+          console.log('pagination update NEXT CURSOR', response.paginationData.nextCursor);
         }
       } else {
         realm.write(() => {
