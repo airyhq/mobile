@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Dimensions, SafeAreaView, FlatList} from 'react-native';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {Collection} from 'realm';
@@ -6,7 +6,7 @@ import {debounce} from 'lodash-es';
 import {ConversationListItem} from '../ConversationListItem';
 import {NoConversations} from '../NoConversations';
 import {RealmDB} from '../../../storage/realm';
-import {getPagination} from '../../../services/Pagination';
+import {getPagination, filterApplied} from '../../../services';
 import {EmptyFilterResults} from '../../../components/EmptyFilterResults';
 import {
   Channel,
@@ -24,7 +24,6 @@ import {
   getNextConversationList,
 } from '../../../api/Conversation';
 import {listChannels} from '../../../api/Channel';
-import {isEqual} from 'lodash-es';
 
 type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
@@ -32,74 +31,20 @@ type ConversationListProps = {
 
 const realm = RealmDB.getInstance();
 
-function usePrevious<T>(value: T): T {
-  // The ref object is a generic container whose current property is mutable ...
-  // ... and can hold any value, similar to an instance property on a class
-  const ref: any = useRef<T>();
-  // Store current value in ref
-  useEffect(() => {
-    ref.current = value;
-  }, [value]); // Only re-run if value changes
-  // Return previous value (happens before update in useEffect above)
-  return ref.current;
-}
-
 export const ConversationList = (props: ConversationListProps) => {
   const {navigation} = props;
   const [conversations, setConversations] = useState([]);
   const [allConversations, setAllConversations] = useState([]);
   const [currentFilter, setCurrentFilter] = useState<ConversationFilter>();
-  const prevCurrentFilter = usePrevious(currentFilter);
   const [appliedFilters, setAppliedFilters] = useState<boolean>();
-  const [numOfFilters, setNumOfFilters] = useState(0);
-  const [convFetched, setConvFetched] = useState(true)
-
+  const [convFetched, setConvFetched] = useState(true);
   const [loading, setLoading] = useState(true);
   let filteredChannelArray = [];
 
-  const filterApplied = () => {
-    currentFilter?.displayName !== '' ||
-    currentFilter?.byChannels.length > 0 ||
-    currentFilter?.isStateOpen !== null ||
-    currentFilter?.readOnly !== null ||
-    currentFilter?.unreadOnly !== null
-      ? setAppliedFilters(true)
-      : setAppliedFilters(false);
-  };
-
-  const countFilters = (currentFilter: ConversationFilter): void => {
-    let num = 0;
-
-    if (currentFilter) {
-      if (currentFilter.displayName !== '') {
-        num++;
-      }
-
-      if (currentFilter.byChannels.length > 0) {
-        num++;
-      }
-
-      if (currentFilter.isStateOpen !== null) {
-        num++;
-      }
-
-      if (currentFilter.readOnly !== null) {
-        num++;
-      }
-
-      if (currentFilter.unreadOnly !== null) {
-        num++;
-      }
-
-      setNumOfFilters(num);
-    }
-  };
-
   useEffect(() => {
-    countFilters(currentFilter);
-    console.log('currentFilter', currentFilter);
+    console.log('APPLIED FILTER', appliedFilters);
+    console.log('CURRENT FILTER', currentFilter);
   }, [appliedFilters, currentFilter]);
-
 
   const onFilterUpdated = (
     filters: Collection<ConversationFilter & Object>,
@@ -108,33 +53,12 @@ export const ConversationList = (props: ConversationListProps) => {
   };
 
   useEffect(() => {
-    const pagination: Pagination | undefined = realm.objects<Pagination>(
-      'FilterConversationPagination',
-    )[0];
-
-    if (appliedFilters && numOfFilters > 1 && pagination) {
-      console.log('PAGINATION RESET');
-      realm.write(() => {
-        pagination.previousCursor = null;
-        pagination.nextCursor = null;
-        pagination.total = null;
-      });
-    }
-  }, [appliedFilters, numOfFilters, currentFilter]);
-
-  useEffect(() => {
     const filterListener =
       realm.objects<ConversationFilter>('ConversationFilter');
     filterListener.addListener(onFilterUpdated);
 
     setTimeout(() => {
-      listConversations(
-        appliedFilters,
-        currentFilter,
-        setLoading,
-        setConversations,
-        setAllConversations,
-      );
+      listConversations(setLoading, setAllConversations);
 
       listChannels();
 
@@ -147,12 +71,6 @@ export const ConversationList = (props: ConversationListProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
-  useEffect(() => {
-    console.log('CONVFETCHED', convFetched)
-
-  }, [convFetched])
-
   useEffect(() => {
     let databaseConversations = realm
       .objects<Conversation[]>('Conversation')
@@ -164,19 +82,21 @@ export const ConversationList = (props: ConversationListProps) => {
     }
 
     if (currentFilter && appliedFilters) {
-
-
-      //STATE 
+      //STATE
       if (currentFilter.isStateOpen !== null) {
-        console.log('filtered all ')
-        console.log('getStateForRealmFilter(currentFilter)', getStateForRealmFilter(currentFilter));
-      databaseConversations = databaseConversations.filtered(
-        'metadata.state LIKE $0',
-        getStateForRealmFilter(currentFilter),
-      );
+        databaseConversations = databaseConversations.filtered(
+          'metadata.state LIKE $0',
+          getStateForRealmFilter(currentFilter),
+        );
       }
 
-      //DISPLAY NAME
+      //DISPLAY NAME SEARCH
+      if (currentFilter.displayName !== '') {
+        databaseConversations = databaseConversations.filtered(
+          'metadata.contact.displayName CONTAINS[c] $0 ',
+          getDisplayNameForRealmFilter(currentFilter),
+        );
+      }
 
       //CHANNEL
       if (currentFilter.byChannels.length > 0) {
@@ -187,18 +107,16 @@ export const ConversationList = (props: ConversationListProps) => {
           '$0 CONTAINS[c] channel.id',
           filteredChannels(),
         );
-
-
       }
 
-      //READ 
+      //READ
       if (isFilterReadOnly(currentFilter)) {
         databaseConversations = databaseConversations.filtered(
           'metadata.unreadCount = 0',
         );
       }
 
-      //UNREAD 
+      //UNREAD
       if (isFilterUnreadOnly(currentFilter)) {
         databaseConversations = databaseConversations.filtered(
           'metadata.unreadCount != 0',
@@ -206,22 +124,55 @@ export const ConversationList = (props: ConversationListProps) => {
       }
     }
 
-    filterApplied();
-
- 
+    filterApplied(currentFilter, setAppliedFilters);
 
     if (databaseConversations) {
-
       console.log('DATABASESCONV LENGTH', databaseConversations.length);
 
-      if(databaseConversations && databaseConversations.length <= 1){
-        console.log('DATABASES FETCH NEXT');
-        debouncedListPreviousConversations()
-        setConvFetched(true)
+      if (currentFilter && appliedFilters) {
+        const pagination: Pagination | undefined = realm.objects<Pagination>(
+          'FilterConversationPagination',
+        )[0];
+
+        console.log('DYNAMIC DB.LENGTH', databaseConversations.length);
+
+        const updatedFilteredNextCursor: string =
+          databaseConversations.length.toString();
+
+        console.log('DYNAMIC newFilteredNextCursor', updatedFilteredNextCursor);
+
+        if (!pagination) {
+          realm.write(() => {
+            realm.create('FilterConversationPagination', {
+              loading: false,
+              previousCursor: null,
+              nextCursor: updatedFilteredNextCursor,
+              total: null,
+            });
+          });
+        } else {
+          realm.write(() => {
+            pagination.previousCursor = null;
+            pagination.nextCursor = updatedFilteredNextCursor;
+            pagination.total = null;
+          });
+        }
+      }
+
+      if (
+        databaseConversations &&
+        databaseConversations.length <= 1 &&
+        !convFetched
+      ) {
+        console.log('DATABASE.LENGTH <=1 - FETCH NEXT');
+        debouncedListPreviousConversations();
       }
 
       databaseConversations.addListener(() => {
-        //databaseConversations.forEach((conv:any) => console.log('listener conv', conv.metadata.contact.displayName))
+        console.log(
+          'LISTENER databaseConversations.length',
+          databaseConversations.length,
+        );
         setConversations([...databaseConversations]);
       });
     }
@@ -267,13 +218,20 @@ export const ConversationList = (props: ConversationListProps) => {
     const pagination = getPagination(appliedFilters);
     const nextCursor = pagination.nextCursor;
 
+    console.log('conversations.length', conversations.length);
+    console.log('pagination.total', pagination.total);
+
+    if (nextCursor === null && conversations.length === pagination.total) {
+      console.log('DEBOUNCE RETURN');
+      return;
+    }
+
     console.log('DEBOUNCE LISTPREV - nextCursor', nextCursor);
 
     getNextConversationList(
       nextCursor,
       appliedFilters,
       currentFilter,
-      setConversations,
       setAllConversations,
       allConversations,
     );
@@ -296,11 +254,17 @@ export const ConversationList = (props: ConversationListProps) => {
     [navigation],
   );
 
-  const getItemLayout = (data, index) => ({
+  const getItemLayout = (data, index: number) => ({
     length: 100,
     offset: 100 * index,
     index,
   });
+
+  const onEndReached = () => {
+    console.log('%cON END REACHED', 'color: green; background: yellow; font-size: 12px');
+    
+    debouncedListPreviousConversations();
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -313,8 +277,8 @@ export const ConversationList = (props: ConversationListProps) => {
           data={conversations}
           renderItem={memoizedRenderItem}
           getItemLayout={getItemLayout}
-          onEndReachedThreshold={0.1}
-          onEndReached={debouncedListPreviousConversations}
+          onEndReachedThreshold={10}
+          onEndReached={onEndReached}
         />
       ) : (
         <EmptyFilterResults />

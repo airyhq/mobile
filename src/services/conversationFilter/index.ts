@@ -1,5 +1,18 @@
 import {ConversationFilter} from '../../model';
 
+export const filterApplied = (
+  currentFilter: ConversationFilter,
+  setAppliedFilters: React.Dispatch<React.SetStateAction<boolean>>,
+) => {
+  currentFilter?.displayName !== '' ||
+  currentFilter?.byChannels.length > 0 ||
+  currentFilter?.isStateOpen !== null ||
+  currentFilter?.readOnly !== null ||
+  currentFilter?.unreadOnly !== null
+    ? setAppliedFilters(true)
+    : setAppliedFilters(false);
+};
+
 export const displayNameFilterActive = (currentFilter: ConversationFilter) => {
   if (currentFilter !== undefined) {
     if (currentFilter.displayName !== '') {

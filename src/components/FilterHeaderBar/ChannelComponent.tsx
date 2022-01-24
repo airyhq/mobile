@@ -55,8 +55,6 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
   };
 
   useEffect(() => {
-    console.log('selectedChannels', selectedChannels);
-    console.log('currentFilter', currentFilter);
     if (currentFilter) {
       realm.write(() => {
         currentFilter.byChannels = selectedChannels;

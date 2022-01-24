@@ -49,12 +49,18 @@ const getInfoNewConversation = (conversationId: string, retries: number) => {
   api
     .getConversationInfo(conversationId)
     .then((response: Conversation) => {
-      const newConversation: Conversation = parseToRealmConversation(response);
+      const isFiltered = false;
+      const newConversation: Conversation = parseToRealmConversation(
+        response,
+        isFiltered,
+      );
       const channel: Channel =
         RealmDB.getInstance().objectForPrimaryKey<Channel>(
           'Channel',
           response.channel.id,
         );
+      //getFilter from realm
+      //figure out if the conversation belongs to the filteredOnes
       const newConversationState = newConversation.metadata.state || 'OPEN';
 
       realm.write(() => {

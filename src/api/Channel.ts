@@ -9,17 +9,11 @@ export const listChannels = () => {
     .listChannels()
     .then((response: any) => {
       realm.write(() => {
-        console.log('response CHANNEL', response);
-
-        const allStored: any = realm.objects<Channel>('Channel');
-
-        console.log('allStored', allStored);
+        //const allStored: Channel | undefined = realm.objects<Channel>('Channel');
 
         for (const channel of response) {
           const isStored: Channel | undefined =
             realm.objectForPrimaryKey<Channel>('Channel', channel.id);
-
-          console.log('isStored', isStored);
 
           if (!isStored) {
             realm.create('Channel', channel);

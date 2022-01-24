@@ -147,11 +147,6 @@ export const upsertConversations = (
   realm: Realm,
 ) => {
   conversations.forEach(conversation => {
-    // console.log(
-    //   'upsert Conversation',
-    //   conversation.metadata.contact.displayName,
-    // );
-
     const storedConversation: Conversation | undefined =
       realm.objectForPrimaryKey('Conversation', conversation.id);
 
@@ -195,7 +190,7 @@ export const upsertFilteredConversations = (
   console.log('UPSERT FILTERED');
   conversations.forEach(conversation => {
     let isFiltered = true;
-   
+
     allConversations.filter(conv => {
       if (conv.id === conversation.id) {
         isFiltered = false;
@@ -224,7 +219,7 @@ export const upsertFilteredConversations = (
             'Channel',
             conversation.channel.id,
           );
-          console.log('channel FILTERED', channel);
+
         const newConversationState = newConversation.metadata.state || 'OPEN';
 
         realm.create('Conversation', {

@@ -15,23 +15,17 @@ import {api} from '../api';
 const realm = RealmDB.getInstance();
 
 export const listConversations = (
-  appliedFilters: boolean,
-  currentFilter: ConversationFilter,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-  setConversations: React.Dispatch<React.SetStateAction<Conversation[]>>,
   setAllConversations: React.Dispatch<React.SetStateAction<Conversation[]>>,
 ) => {
   api
     .listConversations({
       page_size: 100,
-      filters: appliedFilters ? filterToLuceneSyntax(currentFilter) : null,
+      filters: null,
     })
     .then((response: any) => {
       setLoading(false);
 
-      console.log('LIST CONVERSATIONS');
-
-      setConversations([...response.data]);
       setAllConversations([...response.data]);
 
       realm.write(() => {
@@ -49,41 +43,23 @@ export const getNextConversationList = (
   cursor: string,
   appliedFilters: boolean,
   currentFilter: ConversationFilter,
-  setConversations: React.Dispatch<React.SetStateAction<Conversation[]>>,
   setAllConversations: React.Dispatch<React.SetStateAction<Conversation[]>>,
   allConversations: Conversation[],
 ) => {
   api
     .listConversations({
       cursor: cursor,
-      page_size: 50,
+      page_size: 10,
       filters: appliedFilters ? filterToLuceneSyntax(currentFilter) : null,
     })
     .then((response: any) => {
-      console.log('LIST NEXT CONVERSATIONS');
-
-      // if(currentFilter && currentFilter.byChannels.length > 0){
-      //   response.data.forEach((conv:any) => console.log('RESPONSE DATA conv', conv, conv.metadata.contact.displayName));
-      // }
-
-      // if (cursor === null) {
-      //   setConversations(response.data);
-      // } else {
-      //   setConversations(prevConversations => [
-      //     ...prevConversations,
-      //     ...response.data,
-      //   ]);
-      // }
+      console.log('FETCHNEXT response.paginationData', response.paginationData);
 
       if (!appliedFilters) {
-        if (cursor === null) {
-          setAllConversations(response.data);
-        } else if (cursor !== null) {
-          setAllConversations(prevConversations => [
-            ...prevConversations,
-            ...response.data,
-          ]);
-        }
+        setAllConversations(prevConversations => [
+          ...prevConversations,
+          ...response.data,
+        ]);
       }
 
       if (appliedFilters) {
@@ -111,7 +87,10 @@ export const getNextConversationList = (
             pagination.total = response.paginationData.total;
           });
 
-          console.log('pagination update NEXT CURSOR', response.paginationData.nextCursor);
+          console.log(
+            'FETCH NEXT, pagination update NEXT CURSOR',
+            response.paginationData.nextCursor,
+          );
         }
       } else {
         realm.write(() => {
