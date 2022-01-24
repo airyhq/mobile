@@ -63,6 +63,7 @@ import {
   RichTextSchema,
   FilteredConversationSchema,
   FilterConversationPaginationSchema,
+  parseToRealmMessage,
 } from '../model';
 
 export class RealmDB {
@@ -152,7 +153,10 @@ export const upsertConversations = (
 
     if (storedConversation) {
       realm.write(() => {
-        storedConversation.lastMessage = conversation.lastMessage;
+        storedConversation.lastMessage = parseToRealmMessage(
+          conversation.lastMessage,
+          conversation.channel.source,
+        );
         storedConversation.metadata = conversation.metadata;
         storedConversation.filtered = false;
       });
@@ -187,14 +191,12 @@ export const upsertFilteredConversations = (
   realm: Realm,
   allConversations: Conversation[],
 ) => {
-  console.log('UPSERT FILTERED');
   conversations.forEach(conversation => {
     let isFiltered = true;
 
     allConversations.filter(conv => {
       if (conv.id === conversation.id) {
         isFiltered = false;
-        console.log('FILTER BOOL FALSE', conv.id);
         return;
       }
     });
@@ -203,9 +205,11 @@ export const upsertFilteredConversations = (
       realm.objectForPrimaryKey('Conversation', conversation.id);
 
     if (storedConversation) {
-      console.log('STOREDCONV ID', storedConversation.id);
       realm.write(() => {
-        storedConversation.lastMessage = conversation.lastMessage;
+        storedConversation.lastMessage = parseToRealmMessage(
+          conversation.lastMessage,
+          conversation.channel.source,
+        );
         storedConversation.metadata = conversation.metadata;
       });
     } else {

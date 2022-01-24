@@ -6,7 +6,11 @@ import {debounce} from 'lodash-es';
 import {ConversationListItem} from '../ConversationListItem';
 import {NoConversations} from '../NoConversations';
 import {RealmDB} from '../../../storage/realm';
-import {getPagination, filterApplied} from '../../../services';
+import {
+  getConversationPagination,
+  getFilteredConversationPagination,
+  filterApplied,
+} from '../../../services';
 import {EmptyFilterResults} from '../../../components/EmptyFilterResults';
 import {
   Channel,
@@ -37,14 +41,10 @@ export const ConversationList = (props: ConversationListProps) => {
   const [allConversations, setAllConversations] = useState([]);
   const [currentFilter, setCurrentFilter] = useState<ConversationFilter>();
   const [appliedFilters, setAppliedFilters] = useState<boolean>();
-  const [convFetched, setConvFetched] = useState(true);
+  const [initialConversationsFetched, setInitialConversationsFetched] =
+    useState(false);
   const [loading, setLoading] = useState(true);
   let filteredChannelArray = [];
-
-  useEffect(() => {
-    console.log('APPLIED FILTER', appliedFilters);
-    console.log('CURRENT FILTER', currentFilter);
-  }, [appliedFilters, currentFilter]);
 
   const onFilterUpdated = (
     filters: Collection<ConversationFilter & Object>,
@@ -62,7 +62,7 @@ export const ConversationList = (props: ConversationListProps) => {
 
       listChannels();
 
-      setConvFetched(false);
+      setInitialConversationsFetched(true);
     }, 200);
 
     return () => {
@@ -77,6 +77,7 @@ export const ConversationList = (props: ConversationListProps) => {
       .sorted('lastMessage.sentAt', true);
 
     if (!appliedFilters) {
+      //RESET
       databaseConversations =
         databaseConversations.filtered('filtered == false');
     }
@@ -100,9 +101,6 @@ export const ConversationList = (props: ConversationListProps) => {
 
       //CHANNEL
       if (currentFilter.byChannels.length > 0) {
-        console.log('CURRENTFILTER BY CHANNELS', currentFilter.byChannels);
-        console.log('filteredChannels()', filteredChannels());
-
         databaseConversations = databaseConversations.filtered(
           '$0 CONTAINS[c] channel.id',
           filteredChannels(),
@@ -127,19 +125,26 @@ export const ConversationList = (props: ConversationListProps) => {
     filterApplied(currentFilter, setAppliedFilters);
 
     if (databaseConversations) {
-      console.log('DATABASESCONV LENGTH', databaseConversations.length);
+      if (
+        databaseConversations &&
+        databaseConversations.length <= 1 &&
+        initialConversationsFetched
+      ) {
+        setLoading(true);
+        debouncedListPreviousConversations();
+      }
 
       if (currentFilter && appliedFilters) {
+        if (realm.isInTransaction) {
+          realm.cancelTransaction();
+        }
+
         const pagination: Pagination | undefined = realm.objects<Pagination>(
           'FilterConversationPagination',
         )[0];
 
-        console.log('DYNAMIC DB.LENGTH', databaseConversations.length);
-
         const updatedFilteredNextCursor: string =
           databaseConversations.length.toString();
-
-        console.log('DYNAMIC newFilteredNextCursor', updatedFilteredNextCursor);
 
         if (!pagination) {
           realm.write(() => {
@@ -159,20 +164,7 @@ export const ConversationList = (props: ConversationListProps) => {
         }
       }
 
-      if (
-        databaseConversations &&
-        databaseConversations.length <= 1 &&
-        !convFetched
-      ) {
-        console.log('DATABASE.LENGTH <=1 - FETCH NEXT');
-        debouncedListPreviousConversations();
-      }
-
       databaseConversations.addListener(() => {
-        console.log(
-          'LISTENER databaseConversations.length',
-          databaseConversations.length,
-        );
         setConversations([...databaseConversations]);
       });
     }
@@ -181,7 +173,7 @@ export const ConversationList = (props: ConversationListProps) => {
       databaseConversations.removeAllListeners();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFilter, appliedFilters]);
+  }, [currentFilter, appliedFilters, initialConversationsFetched]);
 
   const filteredChannels = (): string => {
     currentFilter?.byChannels.forEach((item: Channel) => {
@@ -215,25 +207,26 @@ export const ConversationList = (props: ConversationListProps) => {
   };
 
   const debouncedListPreviousConversations = debounce(() => {
-    const pagination = getPagination(appliedFilters);
-    const nextCursor = pagination.nextCursor;
+    let pagination;
 
-    console.log('conversations.length', conversations.length);
-    console.log('pagination.total', pagination.total);
+    appliedFilters
+      ? (pagination = getFilteredConversationPagination())
+      : (pagination = getConversationPagination());
 
-    if (nextCursor === null && conversations.length === pagination.total) {
-      console.log('DEBOUNCE RETURN');
+    if (
+      pagination.nextCursor === null &&
+      conversations.length === pagination.total
+    ) {
       return;
     }
 
-    console.log('DEBOUNCE LISTPREV - nextCursor', nextCursor);
-
     getNextConversationList(
-      nextCursor,
+      pagination.nextCursor,
       appliedFilters,
       currentFilter,
       setAllConversations,
       allConversations,
+      setLoading,
     );
   }, 2000);
 
@@ -260,12 +253,6 @@ export const ConversationList = (props: ConversationListProps) => {
     index,
   });
 
-  const onEndReached = () => {
-    console.log('%cON END REACHED', 'color: green; background: yellow; font-size: 12px');
-    
-    debouncedListPreviousConversations();
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       {loading ? (
@@ -277,8 +264,8 @@ export const ConversationList = (props: ConversationListProps) => {
           data={conversations}
           renderItem={memoizedRenderItem}
           getItemLayout={getItemLayout}
-          onEndReachedThreshold={10}
-          onEndReached={onEndReached}
+          onEndReachedThreshold={5}
+          onEndReached={debouncedListPreviousConversations}
         />
       ) : (
         <EmptyFilterResults />

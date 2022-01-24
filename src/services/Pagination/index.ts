@@ -1,39 +1,37 @@
-import {Results} from 'realm';
 import {Pagination} from '../../model';
 import {RealmDB} from '../../storage/realm';
 
 const realm = RealmDB.getInstance();
 
-export const getPagination = (
-  appliedFilters: boolean,
-): Pagination | undefined => {
-  if (appliedFilters) {
+export const getFilteredConversationPagination = (): Pagination | undefined => {
+  const pagination: Pagination | undefined = realm.objects<Pagination>(
+    'FilterConversationPagination',
+  )[0];
+
+  if (!pagination) {
+    realm.write(() => {
+      realm.create('FilterConversationPagination', {
+        loading: false,
+        previousCursor: null,
+        nextCursor: null,
+        total: null,
+      });
+    });
+
     const pagination: Pagination | undefined = realm.objects<Pagination>(
       'FilterConversationPagination',
     )[0];
 
-    if (!pagination) {
-      realm.write(() => {
-        realm.create('FilterConversationPagination', {
-          loading: false,
-          previousCursor: null,
-          nextCursor: null,
-          total: null,
-        });
-      });
-
-      const pagination: Pagination | undefined = realm.objects<Pagination>(
-        'FilterConversationPagination',
-      )[0];
-
-      return pagination;
-    }
     return pagination;
-  } else {
-    const objects: Results<Pagination> =
-      RealmDB.getInstance()?.objects('Pagination');
-    if (objects) {
-      return objects[0];
-    }
+  }
+
+  return pagination;
+};
+
+export const getConversationPagination = (): Pagination | undefined => {
+  const pagination: Pagination | undefined =
+    realm.objects<Pagination>('Pagination')[0];
+  if (pagination) {
+    return pagination;
   }
 };

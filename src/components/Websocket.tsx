@@ -59,8 +59,7 @@ const getInfoNewConversation = (conversationId: string, retries: number) => {
           'Channel',
           response.channel.id,
         );
-      //getFilter from realm
-      //figure out if the conversation belongs to the filteredOnes
+
       const newConversationState = newConversation.metadata.state || 'OPEN';
 
       realm.write(() => {

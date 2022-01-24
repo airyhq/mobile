@@ -18,7 +18,7 @@ export const MediaAttachmentPayloadSchema = {
 export const MediaTemplateSchema = {
   name: 'MediaTemplate',
   properties: {
-    type: 'string',
+    type: 'string?',
     media_type: 'string',
     url: 'string?',
     attachment_id: 'string?',

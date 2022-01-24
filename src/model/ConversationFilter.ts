@@ -36,7 +36,6 @@ export const filterToLuceneSyntax = (
     const channelIdArr = [];
     filter.byChannels.forEach(channel => {
       channelIdArr.push(channel.id);
-      console.log('LUCENE channel', channel);
     });
     filterQuery.push('channel_id:(' + channelIdArr.join(' OR ') + ')');
   }

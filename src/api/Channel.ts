@@ -7,10 +7,8 @@ const realm = RealmDB.getInstance();
 export const listChannels = () => {
   api
     .listChannels()
-    .then((response: any) => {
+    .then((response: Channel[]) => {
       realm.write(() => {
-        //const allStored: Channel | undefined = realm.objects<Channel>('Channel');
-
         for (const channel of response) {
           const isStored: Channel | undefined =
             realm.objectForPrimaryKey<Channel>('Channel', channel.id);

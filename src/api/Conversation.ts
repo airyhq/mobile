@@ -11,6 +11,9 @@ import {
   upsertFilteredConversations,
 } from '../storage/realm';
 import {api} from '../api';
+import {PaginatedResponse} from '@airyhq/http-client';
+
+declare type PaginatedResponse<T> = typeof import('@airyhq/http-client');
 
 const realm = RealmDB.getInstance();
 
@@ -21,9 +24,8 @@ export const listConversations = (
   api
     .listConversations({
       page_size: 100,
-      filters: null,
     })
-    .then((response: any) => {
+    .then((response: PaginatedResponse<Conversation>) => {
       setLoading(false);
 
       setAllConversations([...response.data]);
@@ -45,6 +47,7 @@ export const getNextConversationList = (
   currentFilter: ConversationFilter,
   setAllConversations: React.Dispatch<React.SetStateAction<Conversation[]>>,
   allConversations: Conversation[],
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
   api
     .listConversations({
@@ -52,14 +55,18 @@ export const getNextConversationList = (
       page_size: 10,
       filters: appliedFilters ? filterToLuceneSyntax(currentFilter) : null,
     })
-    .then((response: any) => {
-      console.log('FETCHNEXT response.paginationData', response.paginationData);
+    .then((response: PaginatedResponse<Conversation>) => {
+      setLoading(false);
 
       if (!appliedFilters) {
         setAllConversations(prevConversations => [
           ...prevConversations,
           ...response.data,
         ]);
+      }
+
+      if (realm.isInTransaction) {
+        realm.cancelTransaction();
       }
 
       if (appliedFilters) {
@@ -86,11 +93,6 @@ export const getNextConversationList = (
             pagination.nextCursor = response.paginationData.nextCursor;
             pagination.total = response.paginationData.total;
           });
-
-          console.log(
-            'FETCH NEXT, pagination update NEXT CURSOR',
-            response.paginationData.nextCursor,
-          );
         }
       } else {
         realm.write(() => {
