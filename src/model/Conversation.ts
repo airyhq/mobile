@@ -40,30 +40,6 @@ export interface Conversation {
   filtered: boolean;
 }
 
-export const FilteredConversationSchema = {
-  name: 'FilteredConversation',
-  primaryKey: 'id',
-  properties: {
-    id: 'string',
-    channel: 'Channel',
-    metadata: 'Metadata',
-    createdAt: 'date?',
-    lastMessage: 'Message',
-    paginationData: 'Pagination',
-    messages: {type: 'list', objectType: 'Message'},
-  },
-};
-
-export interface FilteredConversation {
-  id: string;
-  channel: Channel;
-  metadata: Metadata;
-  createdAt: Date;
-  lastMessage: Message;
-  paginationData: Pagination;
-  messages: Message[];
-}
-
 export const parseToRealmConversation = (
   unformattedConversation: Conversation,
   isFiltered: boolean,

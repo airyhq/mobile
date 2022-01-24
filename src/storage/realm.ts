@@ -61,7 +61,6 @@ import {
   ImagesChatpluginSchema,
   SuggestionResponseSchema,
   RichTextSchema,
-  FilteredConversationSchema,
   FilterConversationPaginationSchema,
   parseToRealmMessage,
 } from '../model';
@@ -134,7 +133,6 @@ export class RealmDB {
           ImagesChatpluginSchema,
           SuggestionResponseSchema,
           RichTextSchema,
-          FilteredConversationSchema,
           FilterConversationPaginationSchema,
         ],
       });
