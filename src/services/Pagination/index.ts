@@ -26,7 +26,5 @@ export const getFilteredConversationPagination = (): Pagination | undefined => {
     });
   }
 
-  console.log('GET FILTEREDCONVPAGINATION', filteredConversationPagination);
-
   return filteredConversationPagination;
 };

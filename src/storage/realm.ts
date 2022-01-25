@@ -196,7 +196,6 @@ export const upsertFilteredConversations = (
     allConversations.filter(conv => {
       if (conv.id === conversation.id) {
         isFiltered = false;
-        console.log('IS FILTERED BOOL conversation.id', conversation.id);
         return;
       }
     });
@@ -205,7 +204,6 @@ export const upsertFilteredConversations = (
       realm.objectForPrimaryKey('Conversation', conversation.id);
 
     if (storedConversation) {
-      console.log('STOREDCONVERSATION.ID', storedConversation.id);
       realm.write(() => {
         storedConversation.lastMessage = parseToRealmMessage(
           conversation.lastMessage,

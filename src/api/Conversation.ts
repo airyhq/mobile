@@ -26,8 +26,6 @@ export const listConversations = (
       page_size: 100,
     })
     .then((response: PaginatedResponse<Conversation>) => {
-      console.log('LIST CONV', response.paginationData);
-
       setLoading(false);
 
       setAllConversations([...response.data]);
@@ -56,8 +54,6 @@ export const listPreviousConversations = (
     })
     .then((response: PaginatedResponse<Conversation>) => {
       setLoading(false);
-
-      console.log('LIST PREV CONV', response.paginationData);
 
       setAllConversations(prevConversations => [
         ...prevConversations,
@@ -98,8 +94,6 @@ export const listPreviousFilteredConversations = (
     })
     .then((response: PaginatedResponse<Conversation>) => {
       setLoading(false);
-
-      console.log('LIST PREV FILTERED CONV', response.paginationData);
 
       if (realm.isInTransaction) {
         realm.cancelTransaction();
