@@ -53,6 +53,7 @@ export const listPreviousConversations = (
       filters: null,
     })
     .then((response: PaginatedResponse<Conversation>) => {
+      console.log('LIST PREVIOUS CONV', response.paginationData);
       setLoading(false);
 
       setAllConversations(prevConversations => [
@@ -93,6 +94,7 @@ export const listPreviousFilteredConversations = (
       filters: filterToLuceneSyntax(currentFilter),
     })
     .then((response: PaginatedResponse<Conversation>) => {
+      console.log('LIST PREVIOUS FILTERED', response.paginationData);
       setLoading(false);
 
       if (realm.isInTransaction) {

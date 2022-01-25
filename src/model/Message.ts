@@ -112,6 +112,11 @@ export const parseToRealmMessage = (
     unformattedMessage.content?.message ??
     unformattedMessage.content;
 
+    if(source === 'instagram'){
+      console.log('isTextMessageOrStoryReplies(unformattedMessage)', isTextMessageOrStoryReplies(unformattedMessage));
+      console.log('unformattedMessage.content', unformattedMessage.content);
+    }
+
   const attachmentMessage =
     messageContent?.attachment || messageContent?.attachments;
 
