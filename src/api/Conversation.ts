@@ -5,69 +5,118 @@ import {
   ConversationFilter,
   Pagination,
 } from '../model';
-import {RealmDB, upsertConversations} from '../storage/realm';
+import {
+  RealmDB,
+  upsertConversations,
+  upsertFilteredConversations,
+} from '../storage/realm';
 import {api} from '../api';
+import {PaginatedResponse} from '@airyhq/http-client';
+
+declare type PaginatedResponse<T> = typeof import('@airyhq/http-client');
 
 const realm = RealmDB.getInstance();
 
 export const listConversations = (
-  appliedFilters: boolean,
-  currentFilter: ConversationFilter,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-  conversations: Conversation[],
-  setConversations: React.Dispatch<React.SetStateAction<Conversation[]>>,
+  setAllConversations: React.Dispatch<React.SetStateAction<Conversation[]>>,
 ) => {
   api
     .listConversations({
-      page_size: 10,
-      filters: appliedFilters ? filterToLuceneSyntax(currentFilter) : null,
+      page_size: 100,
     })
-    .then((response: any) => {
+    .then((response: PaginatedResponse<Conversation>) => {
       setLoading(false);
+
+      setAllConversations([...response.data]);
 
       realm.write(() => {
         realm.create('Pagination', response.paginationData);
       });
 
-      if (conversations.length === 0) {
-        setConversations([...response.data]);
-        upsertConversations(response.data, realm);
-      } else {
-        upsertConversations(response.data, realm);
-      }
+      upsertConversations(response.data, realm);
     })
     .catch((error: Error) => {
       console.error(error);
     });
 };
 
-export const getNextConversationList = (
+export const listPreviousConversations = (
   cursor: string,
-  appliedFilters: boolean,
-  currentFilter: ConversationFilter,
-  setConversations: React.Dispatch<React.SetStateAction<Conversation[]>>,
+  setAllConversations: React.Dispatch<React.SetStateAction<Conversation[]>>,
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
   api
     .listConversations({
       cursor: cursor,
       page_size: 10,
-      filters: appliedFilters ? filterToLuceneSyntax(currentFilter) : null,
+      filters: null,
     })
-    .then((response: any) => {
-      upsertConversations(response.data, realm);
+    .then((response: PaginatedResponse<Conversation>) => {
+      setLoading(false);
 
-      setConversations(prevConversations => [
+      setAllConversations(prevConversations => [
         ...prevConversations,
         ...response.data,
       ]);
 
+      if (realm.isInTransaction) {
+        realm.cancelTransaction();
+      }
+
+      upsertConversations(response.data, realm);
+
+      const pagination: Pagination | undefined =
+        realm.objects<Pagination>('Pagination')[0];
+
       realm.write(() => {
-        const pagination: Pagination | undefined =
-          realm.objects<Pagination>('Pagination')[0];
         pagination.previousCursor = response.paginationData.previousCursor;
         pagination.nextCursor = response.paginationData.nextCursor;
         pagination.total = response.paginationData.total;
       });
+    })
+    .catch((error: Error) => {
+      console.error(error);
+    });
+};
+
+export const listPreviousFilteredConversations = (
+  cursor: string,
+  currentFilter: ConversationFilter,
+  allConversations: Conversation[],
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+) => {
+  api
+    .listConversations({
+      cursor: cursor,
+      page_size: 10,
+      filters: filterToLuceneSyntax(currentFilter),
+    })
+    .then((response: PaginatedResponse<Conversation>) => {
+      setLoading(false);
+
+      if (realm.isInTransaction) {
+        realm.cancelTransaction();
+      }
+
+      upsertFilteredConversations(response.data, realm, allConversations);
+
+      const filteredConversationPagination: Pagination | undefined =
+        realm.objects<Pagination>('FilterConversationPagination')[0];
+
+      if (!filteredConversationPagination) {
+        realm.write(() => {
+          realm.create('FilterConversationPagination', response.paginationData);
+        });
+      } else {
+        realm.write(() => {
+          filteredConversationPagination.previousCursor =
+            response.paginationData.previousCursor;
+          filteredConversationPagination.nextCursor =
+            response.paginationData.nextCursor;
+          filteredConversationPagination.total = response.paginationData.total;
+        });
+      }
     })
     .catch((error: Error) => {
       console.error(error);

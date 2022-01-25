@@ -6,7 +6,11 @@ import {debounce} from 'lodash-es';
 import {ConversationListItem} from '../ConversationListItem';
 import {NoConversations} from '../NoConversations';
 import {RealmDB} from '../../../storage/realm';
-import {getPagination} from '../../../services/Pagination';
+import {
+  getConversationPagination,
+  getFilteredConversationPagination,
+  filterApplied,
+} from '../../../services';
 import {EmptyFilterResults} from '../../../components/EmptyFilterResults';
 import {
   Channel,
@@ -16,12 +20,15 @@ import {
   getStateForRealmFilter,
   isFilterReadOnly,
   isFilterUnreadOnly,
+  Pagination,
 } from '../../../model';
 import {AiryLoader} from '../../../componentsLib/loaders';
 import {
   listConversations,
-  getNextConversationList,
+  listPreviousConversations,
+  listPreviousFilteredConversations,
 } from '../../../api/Conversation';
+import {listChannels} from '../../../api/Channel';
 
 type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
@@ -31,22 +38,14 @@ const realm = RealmDB.getInstance();
 
 export const ConversationList = (props: ConversationListProps) => {
   const {navigation} = props;
-  const paginationData = getPagination();
   const [conversations, setConversations] = useState([]);
+  const [allConversations, setAllConversations] = useState([]);
   const [currentFilter, setCurrentFilter] = useState<ConversationFilter>();
   const [appliedFilters, setAppliedFilters] = useState<boolean>();
+  const [initialConversationsFetched, setInitialConversationsFetched] =
+    useState(false);
   const [loading, setLoading] = useState(true);
   let filteredChannelArray = [];
-
-  const filterApplied = () => {
-    currentFilter?.displayName !== '' ||
-    currentFilter?.byChannels.length > 0 ||
-    currentFilter?.isStateOpen !== null ||
-    currentFilter?.readOnly !== null ||
-    currentFilter?.unreadOnly !== null
-      ? setAppliedFilters(true)
-      : setAppliedFilters(false);
-  };
 
   const onFilterUpdated = (
     filters: Collection<ConversationFilter & Object>,
@@ -60,13 +59,11 @@ export const ConversationList = (props: ConversationListProps) => {
     filterListener.addListener(onFilterUpdated);
 
     setTimeout(() => {
-      listConversations(
-        appliedFilters,
-        currentFilter,
-        setLoading,
-        conversations,
-        setConversations,
-      );
+      listConversations(setLoading, setAllConversations);
+
+      listChannels();
+
+      setInitialConversationsFetched(true);
     }, 200);
 
     return () => {
@@ -80,13 +77,30 @@ export const ConversationList = (props: ConversationListProps) => {
       .objects<Conversation[]>('Conversation')
       .sorted('lastMessage.sentAt', true);
 
-    if (currentFilter) {
-      databaseConversations = databaseConversations.filtered(
-        'metadata.contact.displayName CONTAINS[c] $0 && metadata.state LIKE $1',
-        getDisplayNameForRealmFilter(currentFilter),
-        getStateForRealmFilter(currentFilter),
-      );
+    if (!appliedFilters) {
+      //RESET
+      databaseConversations =
+        databaseConversations.filtered('filtered == false');
+    }
 
+    if (currentFilter && appliedFilters) {
+      //STATE
+      if (currentFilter.isStateOpen !== null) {
+        databaseConversations = databaseConversations.filtered(
+          'metadata.state LIKE $0',
+          getStateForRealmFilter(currentFilter),
+        );
+      }
+
+      //DISPLAY NAME SEARCH
+      if (currentFilter.displayName !== '') {
+        databaseConversations = databaseConversations.filtered(
+          'metadata.contact.displayName CONTAINS[c] $0 ',
+          getDisplayNameForRealmFilter(currentFilter),
+        );
+      }
+
+      //CHANNEL
       if (currentFilter.byChannels.length > 0) {
         databaseConversations = databaseConversations.filtered(
           '$0 CONTAINS[c] channel.id',
@@ -94,12 +108,14 @@ export const ConversationList = (props: ConversationListProps) => {
         );
       }
 
+      //READ
       if (isFilterReadOnly(currentFilter)) {
         databaseConversations = databaseConversations.filtered(
           'metadata.unreadCount = 0',
         );
       }
 
+      //UNREAD
       if (isFilterUnreadOnly(currentFilter)) {
         databaseConversations = databaseConversations.filtered(
           'metadata.unreadCount != 0',
@@ -107,7 +123,24 @@ export const ConversationList = (props: ConversationListProps) => {
       }
     }
 
-    filterApplied();
+    filterApplied(currentFilter, setAppliedFilters);
+
+    if (databaseConversations && currentFilter && appliedFilters) {
+      if (
+        databaseConversations &&
+        databaseConversations.length <= 1 &&
+        initialConversationsFetched
+      ) {
+        setLoading(true);
+        debouncedListPreviousFilteredConversations();
+      }
+
+      if (realm.isInTransaction) {
+        realm.cancelTransaction();
+      }
+
+      updateFilteredPaginationData(databaseConversations.length);
+    }
 
     if (databaseConversations) {
       databaseConversations.addListener(() => {
@@ -119,7 +152,33 @@ export const ConversationList = (props: ConversationListProps) => {
       databaseConversations.removeAllListeners();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFilter]);
+  }, [currentFilter, appliedFilters, initialConversationsFetched]);
+
+  const updateFilteredPaginationData = (
+    databasesConversationsLength: number,
+  ): void => {
+    const filteredConversationPagination: Pagination | undefined =
+      realm.objects<Pagination>('FilterConversationPagination')[0];
+
+    const updatedNextCursor: string = databasesConversationsLength.toString();
+
+    if (!filteredConversationPagination) {
+      realm.write(() => {
+        realm.create('FilterConversationPagination', {
+          loading: false,
+          previousCursor: null,
+          nextCursor: updatedNextCursor,
+          total: null,
+        });
+      });
+    } else {
+      realm.write(() => {
+        filteredConversationPagination.previousCursor = null;
+        filteredConversationPagination.nextCursor = updatedNextCursor;
+        filteredConversationPagination.total = null;
+      });
+    }
+  };
 
   const filteredChannels = (): string => {
     currentFilter?.byChannels.forEach((item: Channel) => {
@@ -153,15 +212,38 @@ export const ConversationList = (props: ConversationListProps) => {
   };
 
   const debouncedListPreviousConversations = debounce(() => {
-    const nextCursor = paginationData && paginationData.nextCursor;
-    if (nextCursor) {
-      getNextConversationList(
-        nextCursor,
-        appliedFilters,
-        currentFilter,
-        setConversations,
-      );
+    const pagination = getConversationPagination();
+
+    if (
+      pagination.nextCursor === null &&
+      conversations.length === pagination.total
+    ) {
+      return;
     }
+
+    listPreviousConversations(
+      pagination.nextCursor,
+      setAllConversations,
+      setLoading,
+    );
+  }, 2000);
+
+  const debouncedListPreviousFilteredConversations = debounce(() => {
+    const pagination = getFilteredConversationPagination();
+
+    if (
+      pagination.nextCursor === null &&
+      conversations.length === pagination.total
+    ) {
+      return;
+    }
+
+    listPreviousFilteredConversations(
+      pagination.nextCursor,
+      currentFilter,
+      allConversations,
+      setLoading,
+    );
   }, 2000);
 
   const memoizedRenderItem = React.useCallback(
@@ -181,7 +263,7 @@ export const ConversationList = (props: ConversationListProps) => {
     [navigation],
   );
 
-  const getItemLayout = (data, index) => ({
+  const getItemLayout = (data, index: number) => ({
     length: 100,
     offset: 100 * index,
     index,
@@ -196,10 +278,14 @@ export const ConversationList = (props: ConversationListProps) => {
       ) : conversations && conversations.length > 0 ? (
         <FlatList
           data={conversations}
-          onEndReached={debouncedListPreviousConversations}
           renderItem={memoizedRenderItem}
-          onEndReachedThreshold={0.5}
           getItemLayout={getItemLayout}
+          onEndReachedThreshold={5}
+          onEndReached={
+            appliedFilters
+              ? debouncedListPreviousFilteredConversations
+              : debouncedListPreviousConversations
+          }
         />
       ) : (
         <EmptyFilterResults />

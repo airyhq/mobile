@@ -14,3 +14,13 @@ export const PaginationSchema = {
     total: 'int?',
   },
 };
+
+export const FilterConversationPaginationSchema = {
+  name: 'FilterConversationPagination',
+  properties: {
+    loading: 'bool?',
+    previousCursor: 'string?',
+    nextCursor: 'string?',
+    total: 'int?',
+  },
+};

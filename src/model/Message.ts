@@ -669,7 +669,8 @@ export const parseToRealmMessage = (
           type: 'surveyResponse',
           surveyResponse:
             messageContent?.surveyResponse?.questionResponsePostbackData ??
-            messageContent?.surveyResponse?.questionResponseText,
+            messageContent?.surveyResponse?.questionResponseText ??
+            messageContent?.surveyResponse?.feedback,
         },
         deliveryState: unformattedMessage.deliveryState,
         fromContact: unformattedMessage.fromContact,

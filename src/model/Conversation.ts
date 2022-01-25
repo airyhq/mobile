@@ -25,6 +25,7 @@ export const ConversationSchema = {
     lastMessage: 'Message',
     paginationData: 'Pagination',
     messages: {type: 'list', objectType: 'Message'},
+    filtered: 'bool?',
   },
 };
 
@@ -36,34 +37,12 @@ export interface Conversation {
   lastMessage: Message;
   paginationData: Pagination;
   messages: Message[];
-}
-
-export const FilteredConversationSchema = {
-  name: 'FilteredConversation',
-  primaryKey: 'id',
-  properties: {
-    id: 'string',
-    channel: 'Channel',
-    metadata: 'Metadata',
-    createdAt: 'date?',
-    lastMessage: 'Message',
-    paginationData: 'Pagination',
-    messages: {type: 'list', objectType: 'Message'},
-  },
-};
-
-export interface FilteredConversation {
-  id: string;
-  channel: Channel;
-  metadata: Metadata;
-  createdAt: Date;
-  lastMessage: Message;
-  paginationData: Pagination;
-  messages: Message[];
+  filtered: boolean;
 }
 
 export const parseToRealmConversation = (
   unformattedConversation: Conversation,
+  isFiltered: boolean,
 ): Conversation => {
   let conversation: Conversation;
   conversation = {
@@ -82,6 +61,7 @@ export const parseToRealmConversation = (
       total: null,
     },
     messages: unformattedConversation?.messages || [],
+    filtered: isFiltered,
   };
 
   return conversation;

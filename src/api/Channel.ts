@@ -7,24 +7,19 @@ const realm = RealmDB.getInstance();
 export const listChannels = () => {
   api
     .listChannels()
-    .then((response: any) => {
+    .then((response: Channel[]) => {
       realm.write(() => {
         for (const channel of response) {
           const isStored: Channel | undefined =
-            realm.objectForPrimaryKey<Channel>(
-              'Channel',
-              channel.sourceChannelId,
-            );
+            realm.objectForPrimaryKey<Channel>('Channel', channel.id);
 
-          if (isStored) {
-            realm.delete(isStored);
+          if (!isStored) {
+            realm.create('Channel', channel);
           }
-
-          realm.create('Channel', channel);
         }
       });
     })
     .catch((error: Error) => {
-      console.error(error);
+      console.error('LIST CHANNELS', error);
     });
 };
