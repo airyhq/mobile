@@ -26,6 +26,8 @@ export const listConversations = (
       page_size: 100,
     })
     .then((response: PaginatedResponse<Conversation>) => {
+      console.log('LIST CONV', response.paginationData);
+
       setLoading(false);
 
       setAllConversations([...response.data]);
@@ -41,11 +43,50 @@ export const listConversations = (
     });
 };
 
-export const getNextConversationList = (
+export const listPreviousConversations = (
   cursor: string,
-  appliedFilters: boolean,
-  currentFilter: ConversationFilter,
   setAllConversations: React.Dispatch<React.SetStateAction<Conversation[]>>,
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+) => {
+  api
+    .listConversations({
+      cursor: cursor,
+      page_size: 10,
+      filters: null,
+    })
+    .then((response: PaginatedResponse<Conversation>) => {
+      setLoading(false);
+
+      console.log('LIST PREV CONV', response.paginationData);
+
+      setAllConversations(prevConversations => [
+        ...prevConversations,
+        ...response.data,
+      ]);
+
+      if (realm.isInTransaction) {
+        realm.cancelTransaction();
+      }
+
+      upsertConversations(response.data, realm);
+
+      const pagination: Pagination | undefined =
+        realm.objects<Pagination>('Pagination')[0];
+
+      realm.write(() => {
+        pagination.previousCursor = response.paginationData.previousCursor;
+        pagination.nextCursor = response.paginationData.nextCursor;
+        pagination.total = response.paginationData.total;
+      });
+    })
+    .catch((error: Error) => {
+      console.error(error);
+    });
+};
+
+export const listPreviousFilteredConversations = (
+  cursor: string,
+  currentFilter: ConversationFilter,
   allConversations: Conversation[],
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
@@ -53,54 +94,33 @@ export const getNextConversationList = (
     .listConversations({
       cursor: cursor,
       page_size: 10,
-      filters: appliedFilters ? filterToLuceneSyntax(currentFilter) : null,
+      filters: filterToLuceneSyntax(currentFilter),
     })
     .then((response: PaginatedResponse<Conversation>) => {
       setLoading(false);
 
-      if (!appliedFilters) {
-        setAllConversations(prevConversations => [
-          ...prevConversations,
-          ...response.data,
-        ]);
-      }
+      console.log('LIST PREV FILTERED CONV', response.paginationData);
 
       if (realm.isInTransaction) {
         realm.cancelTransaction();
       }
 
-      if (appliedFilters) {
-        upsertFilteredConversations(response.data, realm, allConversations);
-      } else {
-        upsertConversations(response.data, realm);
-      }
+      upsertFilteredConversations(response.data, realm, allConversations);
 
-      if (appliedFilters) {
-        const pagination: Pagination | undefined = realm.objects<Pagination>(
-          'FilterConversationPagination',
-        )[0];
+      const filteredConversationPagination: Pagination | undefined =
+        realm.objects<Pagination>('FilterConversationPagination')[0];
 
-        if (!pagination) {
-          realm.write(() => {
-            realm.create(
-              'FilterConversationPagination',
-              response.paginationData,
-            );
-          });
-        } else {
-          realm.write(() => {
-            pagination.previousCursor = response.paginationData.previousCursor;
-            pagination.nextCursor = response.paginationData.nextCursor;
-            pagination.total = response.paginationData.total;
-          });
-        }
+      if (!filteredConversationPagination) {
+        realm.write(() => {
+          realm.create('FilterConversationPagination', response.paginationData);
+        });
       } else {
         realm.write(() => {
-          const pagination: Pagination | undefined =
-            realm.objects<Pagination>('Pagination')[0];
-          pagination.previousCursor = response.paginationData.previousCursor;
-          pagination.nextCursor = response.paginationData.nextCursor;
-          pagination.total = response.paginationData.total;
+          filteredConversationPagination.previousCursor =
+            response.paginationData.previousCursor;
+          filteredConversationPagination.nextCursor =
+            response.paginationData.nextCursor;
+          filteredConversationPagination.total = response.paginationData.total;
         });
       }
     })

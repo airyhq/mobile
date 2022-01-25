@@ -25,7 +25,8 @@ import {
 import {AiryLoader} from '../../../componentsLib/loaders';
 import {
   listConversations,
-  getNextConversationList,
+  listPreviousConversations,
+  listPreviousFilteredConversations,
 } from '../../../api/Conversation';
 import {listChannels} from '../../../api/Channel';
 
@@ -124,46 +125,24 @@ export const ConversationList = (props: ConversationListProps) => {
 
     filterApplied(currentFilter, setAppliedFilters);
 
-    if (databaseConversations) {
+    if (databaseConversations && currentFilter && appliedFilters) {
       if (
         databaseConversations &&
         databaseConversations.length <= 1 &&
         initialConversationsFetched
       ) {
         setLoading(true);
-        debouncedListPreviousConversations();
+        debouncedListPreviousFilteredConversations();
       }
 
-      if (currentFilter && appliedFilters) {
-        if (realm.isInTransaction) {
-          realm.cancelTransaction();
-        }
-
-        const pagination: Pagination | undefined = realm.objects<Pagination>(
-          'FilterConversationPagination',
-        )[0];
-
-        const updatedFilteredNextCursor: string =
-          databaseConversations.length.toString();
-
-        if (!pagination) {
-          realm.write(() => {
-            realm.create('FilterConversationPagination', {
-              loading: false,
-              previousCursor: null,
-              nextCursor: updatedFilteredNextCursor,
-              total: null,
-            });
-          });
-        } else {
-          realm.write(() => {
-            pagination.previousCursor = null;
-            pagination.nextCursor = updatedFilteredNextCursor;
-            pagination.total = null;
-          });
-        }
+      if (realm.isInTransaction) {
+        realm.cancelTransaction();
       }
 
+      updateFilteredPaginationData(databaseConversations.length);
+    }
+
+    if (databaseConversations) {
       databaseConversations.addListener(() => {
         setConversations([...databaseConversations]);
       });
@@ -174,6 +153,34 @@ export const ConversationList = (props: ConversationListProps) => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFilter, appliedFilters, initialConversationsFetched]);
+
+  const updateFilteredPaginationData = (
+    databasesConversationsLength: number,
+  ): void => {
+    const filteredConversationPagination: Pagination | undefined =
+      realm.objects<Pagination>('FilterConversationPagination')[0];
+
+    const updatedNextCursor: string = databasesConversationsLength.toString();
+
+    console.log('UPDATED FILTERED PAGINATION', updatedNextCursor);
+
+    if (!filteredConversationPagination) {
+      realm.write(() => {
+        realm.create('FilterConversationPagination', {
+          loading: false,
+          previousCursor: null,
+          nextCursor: updatedNextCursor,
+          total: null,
+        });
+      });
+    } else {
+      realm.write(() => {
+        filteredConversationPagination.previousCursor = null;
+        filteredConversationPagination.nextCursor = updatedNextCursor;
+        filteredConversationPagination.total = null;
+      });
+    }
+  };
 
   const filteredChannels = (): string => {
     currentFilter?.byChannels.forEach((item: Channel) => {
@@ -207,11 +214,9 @@ export const ConversationList = (props: ConversationListProps) => {
   };
 
   const debouncedListPreviousConversations = debounce(() => {
-    let pagination;
+    const pagination = getConversationPagination();
 
-    appliedFilters
-      ? (pagination = getFilteredConversationPagination())
-      : (pagination = getConversationPagination());
+    console.log('DEBOUNCE PREV CONV', pagination.nextCursor);
 
     if (
       pagination.nextCursor === null &&
@@ -220,11 +225,29 @@ export const ConversationList = (props: ConversationListProps) => {
       return;
     }
 
-    getNextConversationList(
+    listPreviousConversations(
       pagination.nextCursor,
-      appliedFilters,
-      currentFilter,
       setAllConversations,
+      setLoading,
+    );
+  }, 2000);
+
+  const debouncedListPreviousFilteredConversations = debounce(() => {
+    const pagination = getFilteredConversationPagination();
+
+    console.log('DEBOUNCE FILTERED', pagination.nextCursor);
+
+    if (
+      pagination.nextCursor === null &&
+      conversations.length === pagination.total
+    ) {
+      console.log('DEBOUNCE FILTERED RETURNNNN');
+      return;
+    }
+
+    listPreviousFilteredConversations(
+      pagination.nextCursor,
+      currentFilter,
       allConversations,
       setLoading,
     );
@@ -265,7 +288,11 @@ export const ConversationList = (props: ConversationListProps) => {
           renderItem={memoizedRenderItem}
           getItemLayout={getItemLayout}
           onEndReachedThreshold={5}
-          onEndReached={debouncedListPreviousConversations}
+          onEndReached={
+            appliedFilters
+              ? debouncedListPreviousFilteredConversations
+              : debouncedListPreviousConversations
+          }
         />
       ) : (
         <EmptyFilterResults />

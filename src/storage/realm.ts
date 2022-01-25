@@ -145,6 +145,7 @@ export const upsertConversations = (
   conversations: Conversation[],
   realm: Realm,
 ) => {
+  const isFiltered = false;
   conversations.forEach(conversation => {
     const storedConversation: Conversation | undefined =
       realm.objectForPrimaryKey('Conversation', conversation.id);
@@ -156,13 +157,13 @@ export const upsertConversations = (
           conversation.channel.source,
         );
         storedConversation.metadata = conversation.metadata;
-        storedConversation.filtered = false;
+        storedConversation.filtered = isFiltered;
       });
     } else {
       realm.write(() => {
         const newConversation: Conversation = parseToRealmConversation(
           conversation,
-          false,
+          isFiltered,
         );
         const channel: Channel =
           RealmDB.getInstance().objectForPrimaryKey<Channel>(
@@ -195,6 +196,7 @@ export const upsertFilteredConversations = (
     allConversations.filter(conv => {
       if (conv.id === conversation.id) {
         isFiltered = false;
+        console.log('IS FILTERED BOOL conversation.id', conversation.id);
         return;
       }
     });
@@ -203,12 +205,14 @@ export const upsertFilteredConversations = (
       realm.objectForPrimaryKey('Conversation', conversation.id);
 
     if (storedConversation) {
+      console.log('STOREDCONVERSATION.ID', storedConversation.id);
       realm.write(() => {
         storedConversation.lastMessage = parseToRealmMessage(
           conversation.lastMessage,
           conversation.channel.source,
         );
         storedConversation.metadata = conversation.metadata;
+        storedConversation.filtered = isFiltered;
       });
     } else {
       realm.write(() => {
