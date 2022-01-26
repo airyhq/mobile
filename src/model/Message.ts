@@ -85,14 +85,6 @@ export const MessageMetadataSchema = {
   },
 };
 
-const isTextMessageOrStoryReplies = (unformattedMessage: any) => {
-  return unformattedMessage.content?.message?.text &&
-    (!unformattedMessage.content?.message?.reply_to ||
-      !unformattedMessage.content?.reply_to)
-    ? unformattedMessage.content?.message?.text
-    : unformattedMessage.content?.message;
-};
-
 const isTextOrGoogleSuggestions = (unformattedMessage: any) => {
   return unformattedMessage.content?.suggestions
     ? unformattedMessage?.content
@@ -103,17 +95,22 @@ export const parseToRealmMessage = (
   unformattedMessage: any,
   source: string,
 ): Message => {
-  let messageContent =
+  let messageContent;
+
+  if(unformattedMessage.content?.message?.reply_to || unformattedMessage.content?.reply_to){
+    messageContent = unformattedMessage.content?.message
+  } else {
+    messageContent =
     unformattedMessage.content?.Body ??
     isTextOrGoogleSuggestions(unformattedMessage) ??
     unformattedMessage.content?.text ??
-    isTextMessageOrStoryReplies(unformattedMessage) ??
+    unformattedMessage.content?.message?.text ??
     unformattedMessage.content?.postback?.title ??
     unformattedMessage.content?.message ??
     unformattedMessage.content;
+  }
 
     if(source === 'instagram'){
-      console.log('isTextMessageOrStoryReplies(unformattedMessage)', isTextMessageOrStoryReplies(unformattedMessage));
       console.log('unformattedMessage.content', unformattedMessage.content);
     }
 
