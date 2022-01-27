@@ -266,7 +266,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     const instagramStoryMention =
       lastMessageContent?.attachments?.[0]?.type === 'story_mention';
     const instagramStoryReplies = lastMessageContent?.storyReplies;
-    const instagramDeletedMessage = lastMessageContent?.isDeleted;
+    const instagramDeletedMessage = lastMessageContent?.type === 'isDeleted';
     const instagramShare =
       lastMessageContent?.attachment?.type === 'share' ||
       lastMessageContent?.attachments?.[0]?.type === 'share';

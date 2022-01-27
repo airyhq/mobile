@@ -280,7 +280,7 @@ export const ConversationList = (props: ConversationListProps) => {
           data={conversations}
           renderItem={memoizedRenderItem}
           getItemLayout={getItemLayout}
-          onEndReachedThreshold={5}
+          onEndReachedThreshold={8}
           onEndReached={
             appliedFilters
               ? debouncedListPreviousFilteredConversations

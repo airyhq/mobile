@@ -85,14 +85,6 @@ export const MessageMetadataSchema = {
   },
 };
 
-const isTextMessageOrStoryReplies = (unformattedMessage: any) => {
-  return unformattedMessage.content?.message?.text &&
-    (!unformattedMessage.content?.message?.reply_to ||
-      !unformattedMessage.content?.reply_to)
-    ? unformattedMessage.content?.message?.text
-    : unformattedMessage.content?.message;
-};
-
 const isTextOrGoogleSuggestions = (unformattedMessage: any) => {
   return unformattedMessage.content?.suggestions
     ? unformattedMessage?.content
@@ -103,14 +95,23 @@ export const parseToRealmMessage = (
   unformattedMessage: any,
   source: string,
 ): Message => {
-  let messageContent =
-    unformattedMessage.content?.Body ??
-    isTextOrGoogleSuggestions(unformattedMessage) ??
-    unformattedMessage.content?.text ??
-    isTextMessageOrStoryReplies(unformattedMessage) ??
-    unformattedMessage.content?.postback?.title ??
-    unformattedMessage.content?.message ??
-    unformattedMessage.content;
+  let messageContent;
+
+  if (
+    unformattedMessage.content?.message?.reply_to ||
+    unformattedMessage.content?.reply_to
+  ) {
+    messageContent = unformattedMessage.content?.message;
+  } else {
+    messageContent =
+      unformattedMessage.content?.Body ??
+      isTextOrGoogleSuggestions(unformattedMessage) ??
+      unformattedMessage.content?.text ??
+      unformattedMessage.content?.message?.text ??
+      unformattedMessage.content?.postback?.title ??
+      unformattedMessage.content?.message ??
+      unformattedMessage.content;
+  }
 
   const attachmentMessage =
     messageContent?.attachment || messageContent?.attachments;
