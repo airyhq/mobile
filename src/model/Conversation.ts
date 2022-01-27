@@ -25,7 +25,7 @@ export const ConversationSchema = {
     lastMessage: 'Message',
     paginationData: 'Pagination',
     messages: {type: 'list', objectType: 'Message'},
-    filtered: 'bool?',
+    filtered: 'bool',
   },
 };
 

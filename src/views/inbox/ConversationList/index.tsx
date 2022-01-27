@@ -162,8 +162,6 @@ export const ConversationList = (props: ConversationListProps) => {
 
     const updatedNextCursor: string = databasesConversationsLength.toString();
 
-    console.log('UPDATED', updatedNextCursor);
-
     if (!filteredConversationPagination) {
       realm.write(() => {
         realm.create('FilterConversationPagination', {
@@ -216,13 +214,10 @@ export const ConversationList = (props: ConversationListProps) => {
   const debouncedListPreviousConversations = debounce(() => {
     const pagination = getConversationPagination();
 
-    console.log('DEBOUNCE LIST PREV NEXT', pagination.nextCursor);
-
     if (
       pagination.nextCursor === null &&
       conversations.length === pagination.total
     ) {
-      console.log('RETURNNNN');
       return;
     }
 
@@ -236,13 +231,10 @@ export const ConversationList = (props: ConversationListProps) => {
   const debouncedListPreviousFilteredConversations = debounce(() => {
     const pagination = getFilteredConversationPagination();
 
-    console.log('DEBOUNCE LIST FILTERED PREV NEXT', pagination.nextCursor);
-
     if (
       pagination.nextCursor === null &&
       conversations.length === pagination.total
     ) {
-      console.log('RETURNNNN');
       return;
     }
 
@@ -288,7 +280,7 @@ export const ConversationList = (props: ConversationListProps) => {
           data={conversations}
           renderItem={memoizedRenderItem}
           getItemLayout={getItemLayout}
-          onEndReachedThreshold={5}
+          onEndReachedThreshold={8}
           onEndReached={
             appliedFilters
               ? debouncedListPreviousFilteredConversations

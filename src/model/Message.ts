@@ -97,22 +97,21 @@ export const parseToRealmMessage = (
 ): Message => {
   let messageContent;
 
-  if(unformattedMessage.content?.message?.reply_to || unformattedMessage.content?.reply_to){
-    messageContent = unformattedMessage.content?.message
+  if (
+    unformattedMessage.content?.message?.reply_to ||
+    unformattedMessage.content?.reply_to
+  ) {
+    messageContent = unformattedMessage.content?.message;
   } else {
     messageContent =
-    unformattedMessage.content?.Body ??
-    isTextOrGoogleSuggestions(unformattedMessage) ??
-    unformattedMessage.content?.text ??
-    unformattedMessage.content?.message?.text ??
-    unformattedMessage.content?.postback?.title ??
-    unformattedMessage.content?.message ??
-    unformattedMessage.content;
+      unformattedMessage.content?.Body ??
+      isTextOrGoogleSuggestions(unformattedMessage) ??
+      unformattedMessage.content?.text ??
+      unformattedMessage.content?.message?.text ??
+      unformattedMessage.content?.postback?.title ??
+      unformattedMessage.content?.message ??
+      unformattedMessage.content;
   }
-
-    if(source === 'instagram'){
-      console.log('unformattedMessage.content', unformattedMessage.content);
-    }
 
   const attachmentMessage =
     messageContent?.attachment || messageContent?.attachments;

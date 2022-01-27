@@ -48,11 +48,6 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
   const lastMessage = (conversation: Conversation) => {
     const lastMessageContent = conversation.lastMessage.content;
 
-    if(conversation.channel.source === 'instagram'){
-      console.log('lastMessageContent', lastMessageContent)
-    }
-
-
     //Icons
 
     //Image
@@ -271,11 +266,10 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     const instagramStoryMention =
       lastMessageContent?.attachments?.[0]?.type === 'story_mention';
     const instagramStoryReplies = lastMessageContent?.storyReplies;
-    const instagramDeletedMessage = lastMessageContent?.isDeleted;
+    const instagramDeletedMessage = lastMessageContent?.type === 'isDeleted';
     const instagramShare =
       lastMessageContent?.attachment?.type === 'share' ||
       lastMessageContent?.attachments?.[0]?.type === 'share';
-
 
     if (instagramStoryMention) {
       return (
