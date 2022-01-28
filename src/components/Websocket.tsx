@@ -80,25 +80,36 @@ const getInfoNewConversation = (conversationId: string, retries: number) => {
     });
 };
 
-const onMetadata = (metadata: Metadata) => {
+const onMetadata = (metadataObj: Metadata) => {
   const currentConversation: Conversation | undefined =
     realm.objectForPrimaryKey<Conversation>(
       'Conversation',
-      metadata.identifier,
+      metadataObj.identifier,
     );
 
-  if (
-    currentConversation &&
-    typeof metadata.metadata.unread_count === 'number'
-  ) {
+  const {metadata} = metadataObj;
+
+  if (currentConversation && metadata?.state) {
     realm.write(() => {
-      currentConversation.metadata.unreadCount = metadata.metadata.unread_count;
+      currentConversation.metadata.state = metadata.state;
     });
   }
-  if (currentConversation && metadata?.metadata?.contact?.display_name) {
+
+  if (currentConversation && typeof metadata.unread_count === 'number') {
+    realm.write(() => {
+      currentConversation.metadata.unreadCount = metadata.unread_count;
+    });
+  }
+
+  if (currentConversation && typeof metadata.unread_count === 'number') {
+    realm.write(() => {
+      currentConversation.metadata.unreadCount = metadata.unread_count;
+    });
+  }
+  if (currentConversation && metadata?.contact?.display_name) {
     realm.write(() => {
       currentConversation.metadata.contact.displayName =
-        metadata?.metadata?.contact?.display_name;
+        metadata.contact.display_name;
     });
   }
 };
