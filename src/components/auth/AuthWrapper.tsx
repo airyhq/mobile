@@ -8,6 +8,7 @@ import {HttpClient} from '@airyhq/http-client';
 import {Login} from './Login';
 import CookieManager from '@react-native-cookies/cookies';
 import {View} from 'react-native';
+import OneSignal from 'react-native-onesignal';
 
 export let api = new HttpClient();
 
@@ -71,6 +72,12 @@ export const AuthWrapper = ({children}) => {
           realm.write(() => {
             realm.create('UserInfo', nextUser, UpdateMode.Modified);
           });
+
+          if (host) {            
+            const instanceName = host.split('//')[1].split('.')[0];
+            console.log(instanceName)
+            OneSignal.setExternalUserId(instanceName);
+          }
           setUser(nextUser);
           setIsAuthenticated(true);
           setLoading(false);
@@ -82,7 +89,7 @@ export const AuthWrapper = ({children}) => {
 
   const onUserChange = useCallback(
     (users: any) => {
-      if (users.length > 0) {
+      if (users.length > 0) {        
         const userChanged = users[users.length - 1];
         const host = userChanged.host;
         const token = userChanged.token;

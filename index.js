@@ -28,7 +28,8 @@ OneSignal.setNotificationWillShowInForegroundHandler(
     const data = notification.additionalData;
     console.log('additionalData: ', data);
     // Complete with null means don't show a notification.
-    notificationReceivedEvent.complete(notification);
+    notificationReceivedEvent.complete(null);
+    //notificationReceivedEvent.complete(notification);
   },
 );
 
