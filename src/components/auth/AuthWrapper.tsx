@@ -75,7 +75,6 @@ export const AuthWrapper = ({children}) => {
 
           if (host) {
             const instanceName = host.split('//')[1].split('.')[0];
-            console.log(instanceName);
             OneSignal.setExternalUserId(instanceName);
           }
           setUser(nextUser);
