@@ -1,8 +1,10 @@
 export const UserInfoSchema = {
   name: 'UserInfo',
   properties: {
+    id: 'string',
     token: 'string',
     host: 'string',
+    orgName: 'string',
     name: 'string?',
     avatarUrl: 'string?',
   },
@@ -10,8 +12,10 @@ export const UserInfoSchema = {
 };
 
 export type UserInfo = {
+  id: string;
   token: string;
   host: string;
+  orgName: string;
   name?: string;
   avatarUrl?: string;
 };

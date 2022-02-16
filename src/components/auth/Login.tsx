@@ -30,6 +30,8 @@ const exchangeToken = (host, accessToken) =>
     .then(response => response.json())
     .then(({token}) => token);
 
+const getUserId = userInfo => `auth0:${userInfo.sub}`;
+
 export const Login = () => {
   let [loginErr, setLoginErr] = useState<string>('');
 
@@ -48,8 +50,10 @@ export const Login = () => {
         realm.create(
           'UserInfo',
           {
+            id: getUserId(userInfo),
             token: airyToken,
-            host: host,
+            orgName,
+            host,
           },
           UpdateMode.Modified,
         );

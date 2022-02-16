@@ -40,9 +40,14 @@ export const AuthWrapper = ({children}) => {
   }, []);
 
   const refreshUser = useCallback(
-    async (host, token) => {
+    async (id, orgName, host, token) => {
       // Only refresh if the instance connection changed
-      if (user?.host === host || user?.token === token) {
+      if (
+        user?.id === id &&
+        user?.orgName === orgName &&
+        user?.host === host &&
+        user?.token === token
+      ) {
         return;
       }
 
@@ -63,8 +68,10 @@ export const AuthWrapper = ({children}) => {
         .getConfig()
         .then(({userProfile}) => {
           const nextUser = {
+            id,
             token,
             host,
+            orgName,
             name: userProfile.name,
             avatarUrl: userProfile.avatarUrl,
           };
@@ -73,9 +80,8 @@ export const AuthWrapper = ({children}) => {
             realm.create('UserInfo', nextUser, UpdateMode.Modified);
           });
 
-          if (host) {
-            const instanceName = host.split('//')[1].split('.')[0];
-            OneSignal.setExternalUserId(instanceName);
+          if (orgName) {
+            OneSignal.setExternalUserId(orgName);
           }
           setUser(nextUser);
           setIsAuthenticated(true);
@@ -94,10 +100,9 @@ export const AuthWrapper = ({children}) => {
     (users: any) => {
       if (users.length > 0) {
         const userChanged = users[users.length - 1];
-        const host = userChanged.host;
-        const token = userChanged.token;
-        if (host && token) {
-          refreshUser(host, token);
+        const {id, orgName, host, token} = userChanged;
+        if (id && host && orgName && token) {
+          refreshUser(id, orgName, host, token);
         }
       } else {
         setLoading(false);
