@@ -73,23 +73,27 @@ export const AuthWrapper = ({children}) => {
             realm.create('UserInfo', nextUser, UpdateMode.Modified);
           });
 
-          if (host) {            
+          if (host) {
             const instanceName = host.split('//')[1].split('.')[0];
-            console.log(instanceName)
+            console.log(instanceName);
             OneSignal.setExternalUserId(instanceName);
           }
           setUser(nextUser);
           setIsAuthenticated(true);
           setLoading(false);
         })
-        .catch(error => error);
+        .catch(error => {
+          logout();
+          // TODO The instance is likely not available and this should be displayed
+          console.error(error);
+        });
     },
     [user, logout],
   );
 
   const onUserChange = useCallback(
     (users: any) => {
-      if (users.length > 0) {        
+      if (users.length > 0) {
         const userChanged = users[users.length - 1];
         const host = userChanged.host;
         const token = userChanged.token;
@@ -112,19 +116,23 @@ export const AuthWrapper = ({children}) => {
     onUserChange(users);
   }, [onUserChange]);
 
-  return loading ? (
-    <View
-      style={{
-        height: '100%',
-        width: '100%',
-      }}>
-      <LottieView
-        source={require('../../assets/animations/loading.json')}
-        autoPlay
-        loop
-      />
-    </View>
-  ) : isAuthenticated ? (
+  if (loading) {
+    return (
+      <View
+        style={{
+          height: '100%',
+          width: '100%',
+        }}>
+        <LottieView
+          source={require('../../assets/animations/loading.json')}
+          autoPlay
+          loop
+        />
+      </View>
+    );
+  }
+
+  return isAuthenticated ? (
     <AuthContext.Provider
       value={{
         isAuthenticated,

@@ -19,15 +19,17 @@
     "@stomp/stompjs": "^6.1.0",
     "@types/lodash-es": "^4.17.4",
     "camelcase-keys": "^7.0.0",
+    "caniuse-lite": "^1.0.30001310",
     "fbjs": "^0.8.18",
-    "global": "^4.4.0",
     "ios-deploy": "^1.11.4",
+    "jwt-decode": "^3.1.2",
     "linkifyjs": "^3.0.0-beta.3",
     "lodash-es": "^4.17.21",
     "lottie-ios": "3.1.8",
     "lottie-react-native": "4.0.2",
     "react": "17.0.1",
     "react-native": "0.64.1",
+    "react-native-auth0": "^2.13.0",
     "react-native-blob-util": "^0.13.17",
     "react-native-fast-image": "^8.5.11",
     "react-native-gesture-handler": "^1.10.3",
@@ -44,8 +46,7 @@
     "react-navigation-stack": "^2.10.4",
     "realm": "^10.6.0",
     "text-encoding": "^0.7.0",
-    "typesafe-actions": "^5.1.0",
-    "yarn": "^1.22.11"
+    "typesafe-actions": "^5.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

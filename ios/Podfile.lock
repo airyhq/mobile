@@ -1,4 +1,6 @@
 PODS:
+  - A0Auth0 (2.13.0):
+    - React
   - boost-for-react-native (1.63.0)
   - CocoaAsyncSocket (7.6.5)
   - DoubleConversion (1.1.6)
@@ -380,6 +382,7 @@ PODS:
     - Yoga (~> 1.14)
 
 DEPENDENCIES:
+  - A0Auth0 (from `../node_modules/react-native-auth0/ios`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
@@ -468,6 +471,8 @@ SPEC REPOS:
     - YogaKit
 
 EXTERNAL SOURCES:
+  A0Auth0:
+    :path: "../node_modules/react-native-auth0/ios"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   FBLazyVector:
@@ -558,11 +563,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
+  A0Auth0: 964f704797b63e15ca7233be0e23650144ebb863
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
   FBLazyVector: 7b423f9e248eae65987838148c36eec1dbfe0b53
-  FBReactNativeSpec: 40f0fd27ba68910d2e9b9718feb372ee35ed162e
+  FBReactNativeSpec: a26f46ad56de10d9c940f76ab7b4daec0da3ac20
   Flipper: d3da1aa199aad94455ae725e9f3aa43f3ec17021
   Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
   Flipper-Folly: 755929a4f851b2fb2c347d533a23f191b008554c
@@ -622,4 +628,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 09e71a72d67ea9435b19e59bde8d40ff07b8b920
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.0
