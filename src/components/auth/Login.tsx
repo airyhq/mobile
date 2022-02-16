@@ -1,184 +1,69 @@
-import React, {createRef, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  NativeSyntheticEvent,
-  TextInput,
-  Modal,
-} from 'react-native';
-
+import React, {useState} from 'react';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import jwtDecode from 'jwt-decode';
 import AiryLogo from '../../assets/images/logo/airy_primary_rgb.svg';
 import {
   colorAiryBlue,
   colorBackgroundBlue,
   colorStateRed,
 } from '../../assets/colors';
-import WebView from 'react-native-webview';
-import {
-  WebViewMessage,
-  WebViewNavigation,
-} from 'react-native-webview/lib/WebViewTypes';
 import {RealmDB} from '../../storage/realm';
 import {UpdateMode} from 'realm';
+import Auth0 from 'react-native-auth0';
+import {Auth0Config} from '../../auth0-configuration';
 
-const getAuthUrl = domain => `${getHost(domain)}/oauth2/authorization/auth0`;
-const getHost = domain => `https://${domain}`;
+const getHost = orgName => `https://${orgName}.airy.co`;
 
-const tokenCookie = 'airy_auth_token';
-const getAuthToken = cookieString => {
-  const value = `; ${cookieString}`;
-  const parts = value.split(`; ${tokenCookie}=`);
-  if (parts.length === 2) {
-    return parts.pop().split(';').shift();
-  }
-};
+const auth0 = new Auth0(Auth0Config);
 
-const sendCookieScript = `(function(){
-  if(window.ReactNativeWebView) {
-    window.ReactNativeWebView.postMessage("Cookie:" + document.cookie);
-  }
-  return true;
-})()`;
-
-const logoutHtml = `
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Successful login</title>
-</head>
-<body>
-You are being redirected.
-</body>
-</html>
-`;
+const exchangeToken = (host, accessToken) =>
+  fetch(`${host}/auth.exchange-token`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      access_token: accessToken,
+    }),
+  })
+    .then(response => response.json())
+    .then(({token}) => token);
 
 export const Login = () => {
-  let webViewRef = createRef<WebView>();
-  let [domain, setDomain] = useState('');
-  let [domainInput, setDomainInput] = useState('');
-  let [showLogoutView, setShowLogoutView] = useState(false);
-  let [showWebView, setShowWebView] = useState(true);
   let [loginErr, setLoginErr] = useState<string>('');
-  let [webviewUrl, setWebviewUrl] = useState('');
-  const isLogoutSuccessUrl = url => url.indexOf(`${domain}/ui`) !== -1;
 
-  const onNavigationStateChange = (navigationState: WebViewNavigation) => {
-    webViewRef.current?.injectJavaScript(sendCookieScript);
-    setWebviewUrl(navigationState.url);
-  };
-
-  const closeWebview = () => {
-    setDomain('');
-  };
-
-  const onError = (err: string) => {
-    closeWebview();
-    setLoginErr(err);
-  };
-
-  const onMessage = async (event: NativeSyntheticEvent<WebViewMessage>) => {
-    const {data} = event.nativeEvent;
-    const parts = data.split('Cookie:');
-    if (parts[1]) {
-      let authToken = getAuthToken(parts[1]);
-      if (!authToken) {
-        return;
-      }
-      if (isLogoutSuccessUrl(webviewUrl)) {
-        setShowLogoutView(true);
-      }
-
-      try {
-        await getAndStoreUser(authToken);
-      } catch (e) {
-        onError(e?.toString());
-      } finally {
-        setShowLogoutView(false);
-      }
+  const loginUsingAuth0 = async () => {
+    try {
+      const {accessToken, idToken} = await auth0.webAuth.authorize({
+        scope: 'openid profile email',
+      });
+      const userInfo = jwtDecode(idToken);
+      const orgName = userInfo['https://airy.co/org_name'];
+      const host = getHost(orgName);
+      // Exchange the auth0 access token for a JWT token for this organization's instance
+      const airyToken = await exchangeToken(host, accessToken);
+      const realm = RealmDB.getInstance();
+      realm.write(() => {
+        realm.create(
+          'UserInfo',
+          {
+            token: airyToken,
+            host: host,
+          },
+          UpdateMode.Modified,
+        );
+      });
+    } catch (error) {
+      console.log('error', error);
+      setLoginErr(error.message);
     }
   };
 
-  const getAndStoreUser = async token => {
-    setShowWebView(false);
-    const host = getHost(domain);
-    const realm = RealmDB.getInstance();
-    realm.write(() => {
-      realm.create(
-        'UserInfo',
-        {
-          token: token,
-          host: host,
-        },
-        UpdateMode.Modified,
-      );
-    });
-  };
-
-  return domain ? (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible
-      onRequestClose={() => {
-        closeWebview();
-      }}>
-      <View style={styles.webviewHeader}>
-        <AiryLogo height={200} width={200} />
-      </View>
-      <WebView
-        ref={webViewRef}
-        source={
-          showLogoutView
-            ? {
-                html: logoutHtml,
-              }
-            : {
-                uri: getAuthUrl(domain),
-              }
-        }
-        onError={error => {
-          onError(error.nativeEvent.description);
-        }}
-        sharedCookiesEnabled
-        onNavigationStateChange={onNavigationStateChange}
-        onMessage={onMessage}
-        scalesPageToFit
-        userAgent="Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko" //needs to be removed
-        originWhitelist={['https://*', 'http://*']}
-        style={[styles.webview, !showWebView && {opacity: 0}]}
-      />
-      <TouchableOpacity onPress={closeWebview} style={styles.closeButton}>
-        <Text style={styles.closeButtonText}>Close</Text>
-      </TouchableOpacity>
-    </Modal>
-  ) : (
+  return (
     <View style={styles.container}>
       <AiryLogo height={200} width={200} />
-      <Text style={styles.infoText}>
-        Please provide the domain of the Airy installation you want to access.
-      </Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          value={domainInput}
-          autoCapitalize={'none'}
-          placeholder={'my-organization'}
-          placeholderTextColor="lightgray"
-          onChangeText={text => setDomainInput(text.toLowerCase())}
-        />
-        <Text style={styles.domainText}>.airy.co</Text>
-      </View>
-      <TouchableOpacity
-        style={styles.loginButton}
-        onPress={() => {
-          setDomain(`${domainInput}.airy.co`);
-        }}>
+      <TouchableOpacity style={styles.loginButton} onPress={loginUsingAuth0}>
         <Text style={styles.loginButtonText}>Login</Text>
       </TouchableOpacity>
       {!!loginErr && <Text style={styles.loginErr}>{loginErr}</Text>}
