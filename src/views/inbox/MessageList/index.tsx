@@ -56,10 +56,8 @@ export const MessageList = (props: MessageListProps) => {
         'Conversation',
         route.params.conversationId,
       );
-
-    if (conversation.messages.length === 0) {
-      loadMessagesForConversation(route.params.conversationId);
-    }
+    
+    loadMessagesForConversation(route.params.conversationId);   
 
     if (conversation.messages) {
       !realm.isInTransaction && conversation.addListener(() => {
