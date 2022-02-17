@@ -62,7 +62,7 @@ export const MessageList = (props: MessageListProps) => {
     }
 
     if (conversation.messages) {
-      conversation.addListener(() => {
+      !realm.isInTransaction && conversation.addListener(() => {
         setMessages([...conversation.messages]);
       });
     }

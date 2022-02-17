@@ -82,6 +82,7 @@ export const AuthWrapper = ({children}) => {
 
           if (orgName) {
             OneSignal.setExternalUserId(orgName);
+            OneSignal.disablePush(false);
           }
           setUser(nextUser);
           setIsAuthenticated(true);

@@ -27,7 +27,9 @@ const exchangeToken = (host, accessToken) =>
       access_token: accessToken,
     }),
   })
-    .then(response => response.json())
+    .then(response => {
+      return response.json()
+    })
     .then(({token}) => token);
 
 const getUserId = userInfo => `auth0:${userInfo.sub}`;
@@ -42,9 +44,9 @@ export const Login = () => {
       });
       const userInfo = jwtDecode(idToken);
       const orgName = userInfo['https://airy.co/org_name'];
-      const host = getHost(orgName);
+      const host = getHost(orgName);      
       // Exchange the auth0 access token for a JWT token for this organization's instance
-      const airyToken = await exchangeToken(host, accessToken);
+      const airyToken = await exchangeToken(host, accessToken);            
       const realm = RealmDB.getInstance();
       realm.write(() => {
         realm.create(
