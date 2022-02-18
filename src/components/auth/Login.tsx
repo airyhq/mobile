@@ -11,6 +11,7 @@ import {RealmDB} from '../../storage/realm';
 import {UpdateMode} from 'realm';
 import Auth0 from 'react-native-auth0';
 import {Auth0Config} from '../../auth0-configuration';
+import { AiryLoader } from '../../componentsLib';
 
 const getHost = orgName => `https://${orgName}.airy.co`;
 
@@ -28,6 +29,7 @@ const exchangeToken = (host, accessToken) =>
     }),
   })
     .then(response => {
+      console.log('response', response);
       return response.json()
     })
     .then(({token}) => token);
@@ -35,16 +37,21 @@ const exchangeToken = (host, accessToken) =>
 const getUserId = userInfo => `auth0:${userInfo.sub}`;
 
 export const Login = () => {
-  let [loginErr, setLoginErr] = useState<string>('');
+  const [loginErr, setLoginErr] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const loginUsingAuth0 = async () => {
+    setLoading(true);
     try {
       const {accessToken, idToken} = await auth0.webAuth.authorize({
         scope: 'openid profile email',
       });
       const userInfo = jwtDecode(idToken);
+      console.log('userInfo', userInfo);
       const orgName = userInfo['https://airy.co/org_name'];
-      const host = getHost(orgName);      
+      console.log('orgName', orgName);
+      const host = getHost(orgName);  
+      console.log('host', host);    
       // Exchange the auth0 access token for a JWT token for this organization's instance
       const airyToken = await exchangeToken(host, accessToken);            
       const realm = RealmDB.getInstance();
@@ -61,18 +68,24 @@ export const Login = () => {
         );
       });
     } catch (error) {
-      console.log('error', error);
       setLoginErr(error.message);
+      setLoading(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <AiryLogo height={200} width={200} />
-      <TouchableOpacity style={styles.loginButton} onPress={loginUsingAuth0}>
-        <Text style={styles.loginButtonText}>Login</Text>
-      </TouchableOpacity>
-      {!!loginErr && <Text style={styles.loginErr}>{loginErr}</Text>}
+    <View style={styles.container}>      
+    { loading ? 
+      (<AiryLoader />)
+    : 
+      <>
+        <AiryLogo height={200} width={200} />
+        <TouchableOpacity style={styles.loginButton} onPress={loginUsingAuth0}>
+          <Text style={styles.loginButtonText}>Login</Text>
+        </TouchableOpacity>
+        {!!loginErr && <Text style={styles.loginErr}>{loginErr}</Text>}
+      </>
+    }
     </View>
   );
 };
