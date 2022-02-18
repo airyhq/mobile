@@ -26,10 +26,10 @@ export class SettingsItem extends React.Component<SettingsItemProps> {
         {
           text: 'Log Out',
           style: 'destructive',
-          onPress: () => {            
-            OneSignal.removeExternalUserId()
-            OneSignal.disablePush(true);            
-            this.context.logout()
+          onPress: () => {
+            OneSignal.removeExternalUserId();
+            OneSignal.disablePush(true);
+            this.context.logout();
           },
         },
       ]);

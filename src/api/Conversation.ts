@@ -127,43 +127,58 @@ export const listPreviousFilteredConversations = (
     });
 };
 
-export const getInfoNewConversation = (conversationId: string, retries: number): Promise<Conversation> => {
-  return new Promise((resolve, reject) => {    
-    const getConversation = (conversationId: string, retries: number) => {
-      if (retries > 10) {      
+export const getInfoNewConversation = (
+  conversationId: string,
+  retries: number,
+): Promise<Conversation> => {
+  return new Promise((resolve, reject) => {
+    const getConversation = (_conversationId: string, _retries: number) => {
+      if (_retries > 10) {
         reject('Getting new conversation exceeded maximum of 10 retries.');
-      } else {      
-        api.getConversationInfo(conversationId).then((response: Conversation) => {          
-          const currentConversationData: (Conversation & Realm.Object) | undefined = RealmDB.getInstance().objectForPrimaryKey<Conversation>('Conversation', conversationId);      
-          if (currentConversationData) {
-            resolve(currentConversationData);
-          } else {
-            const isFiltered = false;
-            const newConversation: Conversation = parseToRealmConversation(
-              response,
-              isFiltered,
+      } else {
+        api
+          .getConversationInfo(_conversationId)
+          .then((response: Conversation) => {
+            const currentConversationData:
+              | (Conversation & Realm.Object)
+              | undefined = RealmDB.getInstance().objectForPrimaryKey<Conversation>(
+              'Conversation',
+              _conversationId,
             );
-            const channel: Channel = RealmDB.getInstance().objectForPrimaryKey<Channel>(
-              'Channel',
-              response.channel.id,
-            );        
-            realm.write(() => {
-              const conversation: Conversation = realm.create('Conversation', {
-                ...newConversation,
-                channel: channel || newConversation.channel,
-                metadata: {
-                  ...newConversation.metadata,
-                  state: newConversation.metadata.state || 'OPEN',
-                },
+            if (currentConversationData) {
+              resolve(currentConversationData);
+            } else {
+              const isFiltered = false;
+              const newConversation: Conversation = parseToRealmConversation(
+                response,
+                isFiltered,
+              );
+              const channel: Channel =
+                RealmDB.getInstance().objectForPrimaryKey<Channel>(
+                  'Channel',
+                  response.channel.id,
+                );
+              realm.write(() => {
+                const conversation: Conversation = realm.create(
+                  'Conversation',
+                  {
+                    ...newConversation,
+                    channel: channel || newConversation.channel,
+                    metadata: {
+                      ...newConversation.metadata,
+                      state: newConversation.metadata.state || 'OPEN',
+                    },
+                  },
+                );
+                resolve(conversation);
               });
-              resolve(conversation);               
-            });            
-          } 
-        }).catch(() => {
-          setTimeout(() => {
-            getConversation(conversationId, retries + 1);
-          }, 1000);        
-        });
+            }
+          })
+          .catch(() => {
+            setTimeout(() => {
+              getConversation(_conversationId, _retries + 1);
+            }, 1000);
+          });
       }
     };
     getConversation(conversationId, retries);
@@ -194,4 +209,3 @@ export const changeConversationState = (
   setState && setState(newState);
   ReactNativeHapticFeedback.trigger('impactHeavy', hapticFeedbackOptions);
 };
-

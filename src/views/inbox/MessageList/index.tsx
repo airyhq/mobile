@@ -51,23 +51,24 @@ export const MessageList = (props: MessageListProps) => {
   } = conversation;
 
   useEffect(() => {
-    const conversation: (Conversation & Realm.Object) | undefined =
+    const _conversation: (Conversation & Realm.Object) | undefined =
       realm.objectForPrimaryKey<Conversation>(
         'Conversation',
         route.params.conversationId,
       );
-    
-    loadMessagesForConversation(route.params.conversationId);   
 
-    if (conversation.messages) {
-      !realm.isInTransaction && conversation.addListener(() => {
-        setMessages([...conversation.messages]);
-      });
+    loadMessagesForConversation(route.params.conversationId);
+
+    if (_conversation.messages) {
+      !realm.isInTransaction &&
+        _conversation.addListener(() => {
+          setMessages([..._conversation.messages]);
+        });
     }
 
     return () => {
-      if (conversation) {
-        conversation.removeAllListeners();
+      if (_conversation) {
+        _conversation.removeAllListeners();
       }
     };
   }, [route.params.conversationId]);

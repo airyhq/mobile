@@ -4,7 +4,6 @@ import App, {navigationRef} from './src/App';
 import {name as appName} from './app.json';
 import {getAndOrFetchConversationById} from './src/services/conversation';
 
-
 // /!/ removing this import causes errors
 import * as encoding from 'text-encoding';
 
@@ -20,7 +19,7 @@ OneSignal.promptForPushNotificationsWithUserResponse(response => {
 
 //Method for handling notifications received while app in foreground
 OneSignal.setNotificationWillShowInForegroundHandler(
-  notificationReceivedEvent => {        
+  notificationReceivedEvent => {
     notificationReceivedEvent.complete(null);
     //notificationReceivedEvent.complete(notification);
   },
@@ -28,24 +27,26 @@ OneSignal.setNotificationWillShowInForegroundHandler(
 
 //Method for handling notifications opened
 OneSignal.setNotificationOpenedHandler(notification => {
-  const data = notification.notification.additionalData;    
+  const data = notification.notification.additionalData;
   // Get information about the conversationId
   if (data) {
     const conversationId = data.conversation_id;
     navigationRef.current.navigate('Inbox');
-    getAndOrFetchConversationById(conversationId).then(conversation => {
-      navigationRef.current.navigate('MessageList', {
-        conversationId,              
-        avatarUrl: conversation.metadata.contact.avatarUrl,
-        displayName: conversation.metadata.contact.displayName,
-        state: conversation.metadata.state,
-        source: conversation.channel.source,
-        sourceChannelId: conversation.channel.sourceChannelId,
-        metadataName: conversation.channel.metadata.name,
+    getAndOrFetchConversationById(conversationId)
+      .then(conversation => {
+        navigationRef.current.navigate('MessageList', {
+          conversationId,
+          avatarUrl: conversation.metadata.contact.avatarUrl,
+          displayName: conversation.metadata.contact.displayName,
+          state: conversation.metadata.state,
+          source: conversation.channel.source,
+          sourceChannelId: conversation.channel.sourceChannelId,
+          metadataName: conversation.channel.metadata.name,
+        });
+      })
+      .catch(error => {
+        console.error(error);
       });
-    }).catch(error => {
-      console.error(error);
-    });    
   }
 });
 

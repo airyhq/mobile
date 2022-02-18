@@ -84,11 +84,11 @@ const IconChannel: React.FC<IconChannelProps> = ({
   const isFromTwilioSource =
     source === Source.twilioSms || source === Source.twilioWhatsapp;
 
-  const formatTwilioSource = (source: string) => {
-    if (source.includes('whatsapp:')) {
-      return source.split('whatsapp:').pop();
+  const formatTwilioSource = (_source: string) => {
+    if (_source.includes('whatsapp:')) {
+      return _source.split('whatsapp:').pop();
     }
-    return source;
+    return _source;
   };
 
   const ChannelName = () => {

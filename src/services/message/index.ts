@@ -1,11 +1,14 @@
 import {sortBy} from 'lodash-es';
-import { Conversation } from '../../model/Conversation';
+import {Conversation} from '../../model/Conversation';
 import {Message, parseToRealmMessage} from '../../model/Message';
-import { RealmDB } from '../../storage/realm';
+import {RealmDB} from '../../storage/realm';
 
 const realm = RealmDB.getInstance();
 
-export const addMessageToConversation = (conversationId: string, message: Message) => {
+export const addMessageToConversation = (
+  conversationId: string,
+  message: Message,
+) => {
   realm.write(() => {
     const currentConversation: Conversation | undefined =
       realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);

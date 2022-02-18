@@ -11,7 +11,7 @@ import {RealmDB} from '../../storage/realm';
 import {UpdateMode} from 'realm';
 import Auth0 from 'react-native-auth0';
 import {Auth0Config} from '../../auth0-configuration';
-import { AiryLoader } from '../../componentsLib';
+import {AiryLoader} from '../../componentsLib';
 
 const getHost = orgName => `https://${orgName}.airy.co`;
 
@@ -30,7 +30,7 @@ const exchangeToken = (host, accessToken) =>
   })
     .then(response => {
       console.log('response', response);
-      return response.json()
+      return response.json();
     })
     .then(({token}) => token);
 
@@ -50,10 +50,10 @@ export const Login = () => {
       console.log('userInfo', userInfo);
       const orgName = userInfo['https://airy.co/org_name'];
       console.log('orgName', orgName);
-      const host = getHost(orgName);  
-      console.log('host', host);    
+      const host = getHost(orgName);
+      console.log('host', host);
       // Exchange the auth0 access token for a JWT token for this organization's instance
-      const airyToken = await exchangeToken(host, accessToken);            
+      const airyToken = await exchangeToken(host, accessToken);
       const realm = RealmDB.getInstance();
       realm.write(() => {
         realm.create(
@@ -74,18 +74,20 @@ export const Login = () => {
   };
 
   return (
-    <View style={styles.container}>      
-    { loading ? 
-      (<AiryLoader />)
-    : 
-      <>
-        <AiryLogo height={200} width={200} />
-        <TouchableOpacity style={styles.loginButton} onPress={loginUsingAuth0}>
-          <Text style={styles.loginButtonText}>Login</Text>
-        </TouchableOpacity>
-        {!!loginErr && <Text style={styles.loginErr}>{loginErr}</Text>}
-      </>
-    }
+    <View style={styles.container}>
+      {loading ? (
+        <AiryLoader />
+      ) : (
+        <>
+          <AiryLogo height={200} width={200} />
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={loginUsingAuth0}>
+            <Text style={styles.loginButtonText}>Login</Text>
+          </TouchableOpacity>
+          {!!loginErr && <Text style={styles.loginErr}>{loginErr}</Text>}
+        </>
+      )}
     </View>
   );
 };

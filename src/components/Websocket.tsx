@@ -1,15 +1,11 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {
-  Metadata,
-  Conversation,
-  Message
-} from '../model';
+import {Metadata, Conversation, Message} from '../model';
 import {RealmDB} from '../storage/realm';
 import {WebSocketClient} from './WebsocketClient/WebsocketClient';
 import {AuthContext} from './auth/AuthWrapper';
 import {UserInfo} from '../model/userInfo';
-import { addMessageToConversation } from '../services';
-import { getInfoNewConversation } from '../api/Conversation';
+import {addMessageToConversation} from '../services';
+import {getInfoNewConversation} from '../api/Conversation';
 
 type WebSocketProps = {
   children: React.ReactNode;
