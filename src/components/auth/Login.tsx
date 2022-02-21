@@ -17,7 +17,7 @@ const getHost = (orgName: string) => `https://${orgName}.airy.co`;
 
 const auth0 = new Auth0(Auth0Config);
 
-const exchangeToken = (host, accessToken) =>  
+const exchangeToken = (host, accessToken) =>
   fetch(`${host}/auth.exchange-token`, {
     method: 'POST',
     headers: {
@@ -29,8 +29,6 @@ const exchangeToken = (host, accessToken) =>
     }),
   })
     .then(response => {
-      console.log('accessToken', accessToken);
-      console.log('response', response);
       return response.json();
     })
     .then(({token}) => token);
@@ -48,11 +46,9 @@ export const Login = () => {
         scope: 'openid profile email',
       });
       const userInfo = jwtDecode(idToken);
-      console.log('userInfo', userInfo);
       const orgName = userInfo['https://airy.co/org_name'];
-      const host = getHost(orgName);      
+      const host = getHost(orgName);
       // Exchange the auth0 access token for a JWT token for this organization's instance
-      console.log('host', host);
       const airyToken = await exchangeToken(host, accessToken);
       const realm = RealmDB.getInstance();
       realm.write(() => {
@@ -68,7 +64,6 @@ export const Login = () => {
         );
       });
     } catch (error) {
-      console.log('error', error);
       setLoginErr(error.message);
       setLoading(false);
     }
