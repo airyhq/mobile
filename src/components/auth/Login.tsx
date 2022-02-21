@@ -11,8 +11,9 @@ import {RealmDB} from '../../storage/realm';
 import {UpdateMode} from 'realm';
 import Auth0 from 'react-native-auth0';
 import {Auth0Config} from '../../auth0-configuration';
+import {AiryLoader} from '../../componentsLib';
 
-const getHost = orgName => `https://${orgName}.airy.co`;
+const getHost = (orgName: string) => `https://${orgName}.airy.co`;
 
 const auth0 = new Auth0(Auth0Config);
 
@@ -27,15 +28,19 @@ const exchangeToken = (host, accessToken) =>
       access_token: accessToken,
     }),
   })
-    .then(response => response.json())
+    .then(response => {
+      return response.json();
+    })
     .then(({token}) => token);
 
 const getUserId = userInfo => `auth0:${userInfo.sub}`;
 
 export const Login = () => {
-  let [loginErr, setLoginErr] = useState<string>('');
+  const [loginErr, setLoginErr] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const loginUsingAuth0 = async () => {
+    setLoading(true);
     try {
       const {accessToken, idToken} = await auth0.webAuth.authorize({
         scope: 'openid profile email',
@@ -59,18 +64,26 @@ export const Login = () => {
         );
       });
     } catch (error) {
-      console.log('error', error);
       setLoginErr(error.message);
+      setLoading(false);
     }
   };
 
   return (
     <View style={styles.container}>
-      <AiryLogo height={200} width={200} />
-      <TouchableOpacity style={styles.loginButton} onPress={loginUsingAuth0}>
-        <Text style={styles.loginButtonText}>Login</Text>
-      </TouchableOpacity>
-      {!!loginErr && <Text style={styles.loginErr}>{loginErr}</Text>}
+      {loading ? (
+        <AiryLoader />
+      ) : (
+        <>
+          <AiryLogo height={200} width={200} />
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={loginUsingAuth0}>
+            <Text style={styles.loginButtonText}>Login</Text>
+          </TouchableOpacity>
+          {!!loginErr && <Text style={styles.loginErr}>{loginErr}</Text>}
+        </>
+      )}
     </View>
   );
 };

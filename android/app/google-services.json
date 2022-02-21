@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "48607708032",
+    "firebase_url": "https://airy-messenger.firebaseio.com",
+    "project_id": "airy-messenger",
+    "storage_bucket": "airy-messenger.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:48607708032:android:92e02392db786c93ca7765",
+        "android_client_info": {
+          "package_name": "com.airycloud.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "48607708032-rd4fo0s1hhg3pn9bne0jvoi5v6b467k3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAraOp5YNAvtrysSryuAzHNb8hRmvnC2Ew"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "48607708032-rd4fo0s1hhg3pn9bne0jvoi5v6b467k3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

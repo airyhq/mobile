@@ -1,5 +1,33 @@
 import {sortBy} from 'lodash-es';
+import {Conversation} from '../../model/Conversation';
 import {Message, parseToRealmMessage} from '../../model/Message';
+import {RealmDB} from '../../storage/realm';
+
+const realm = RealmDB.getInstance();
+
+export const addMessageToConversation = (
+  conversationId: string,
+  message: Message,
+) => {
+  realm.write(() => {
+    const currentConversation: Conversation | undefined =
+      realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
+
+    if (currentConversation) {
+      currentConversation.lastMessage = parseToRealmMessage(
+        message,
+        currentConversation.channel.source,
+      );
+
+      if (currentConversation && currentConversation.messages) {
+        currentConversation.messages = mergeMessages(
+          currentConversation.messages,
+          [message],
+        );
+      }
+    }
+  });
+};
 
 export function mergeMessages(
   oldMessages: Message[],

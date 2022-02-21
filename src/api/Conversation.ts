@@ -4,6 +4,8 @@ import {
   Conversation,
   ConversationFilter,
   Pagination,
+  Channel,
+  parseToRealmConversation,
 } from '../model';
 import {
   RealmDB,
@@ -12,6 +14,8 @@ import {
 } from '../storage/realm';
 import {api} from '../api';
 import {PaginatedResponse} from '@airyhq/http-client';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import {hapticFeedbackOptions} from '../services/hapticFeedback';
 
 declare type PaginatedResponse<T> = typeof import('@airyhq/http-client');
 
@@ -123,6 +127,64 @@ export const listPreviousFilteredConversations = (
     });
 };
 
+export const getInfoNewConversation = (
+  conversationId: string,
+  retries: number,
+): Promise<Conversation> => {
+  return new Promise((resolve, reject) => {
+    const getConversation = (_conversationId: string, _retries: number) => {
+      if (_retries > 10) {
+        reject('Getting new conversation exceeded maximum of 10 retries.');
+      } else {
+        api
+          .getConversationInfo(_conversationId)
+          .then((response: Conversation) => {
+            const currentConversationData:
+              | (Conversation & Realm.Object)
+              | undefined = RealmDB.getInstance().objectForPrimaryKey<Conversation>(
+              'Conversation',
+              _conversationId,
+            );
+            if (currentConversationData) {
+              resolve(currentConversationData);
+            } else {
+              const isFiltered = false;
+              const newConversation: Conversation = parseToRealmConversation(
+                response,
+                isFiltered,
+              );
+              const channel: Channel =
+                RealmDB.getInstance().objectForPrimaryKey<Channel>(
+                  'Channel',
+                  response.channel.id,
+                );
+              realm.write(() => {
+                const conversation: Conversation = realm.create(
+                  'Conversation',
+                  {
+                    ...newConversation,
+                    channel: channel || newConversation.channel,
+                    metadata: {
+                      ...newConversation.metadata,
+                      state: newConversation.metadata.state || 'OPEN',
+                    },
+                  },
+                );
+                resolve(conversation);
+              });
+            }
+          })
+          .catch(() => {
+            setTimeout(() => {
+              getConversation(_conversationId, _retries + 1);
+            }, 1000);
+          });
+      }
+    };
+    getConversation(conversationId, retries);
+  });
+};
+
 export const changeConversationState = (
   currentConversationState: string,
   conversationId: string,
@@ -145,4 +207,5 @@ export const changeConversationState = (
       });
     });
   setState && setState(newState);
+  ReactNativeHapticFeedback.trigger('impactHeavy', hapticFeedbackOptions);
 };

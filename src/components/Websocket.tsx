@@ -1,17 +1,11 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {
-  Metadata,
-  Conversation,
-  parseToRealmConversation,
-  Message,
-  parseToRealmMessage,
-  Channel,
-} from '../model';
+import {Metadata, Conversation, Message} from '../model';
 import {RealmDB} from '../storage/realm';
 import {WebSocketClient} from './WebsocketClient/WebsocketClient';
-import {mergeMessages} from '../services/message';
-import {api, AuthContext} from './auth/AuthWrapper';
+import {AuthContext} from './auth/AuthWrapper';
 import {UserInfo} from '../model/userInfo';
+import {addMessageToConversation} from '../services';
+import {getInfoNewConversation} from '../api/Conversation';
 
 type WebSocketProps = {
   children: React.ReactNode;
@@ -19,66 +13,6 @@ type WebSocketProps = {
 };
 
 const realm = RealmDB.getInstance();
-
-const addMessage = (conversationId: string, message: Message) => {
-  realm.write(() => {
-    const currentConversation: Conversation | undefined =
-      realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
-
-    if (currentConversation) {
-      currentConversation.lastMessage = parseToRealmMessage(
-        message,
-        currentConversation.channel.source,
-      );
-
-      if (currentConversation && currentConversation.messages) {
-        currentConversation.messages = mergeMessages(
-          currentConversation.messages,
-          [message],
-        );
-      }
-    }
-  });
-};
-
-const getInfoNewConversation = (conversationId: string, retries: number) => {
-  if (retries > 10) {
-    console.error('Getting new conversation exceeded maximum of 10 retries.');
-    return;
-  }
-  api
-    .getConversationInfo(conversationId)
-    .then((response: Conversation) => {
-      const isFiltered = false;
-      const newConversation: Conversation = parseToRealmConversation(
-        response,
-        isFiltered,
-      );
-      const channel: Channel =
-        RealmDB.getInstance().objectForPrimaryKey<Channel>(
-          'Channel',
-          response.channel.id,
-        );
-
-      const newConversationState = newConversation.metadata.state || 'OPEN';
-
-      realm.write(() => {
-        realm.create('Conversation', {
-          ...newConversation,
-          channel: channel || newConversation.channel,
-          metadata: {
-            ...newConversation.metadata,
-            state: newConversationState,
-          },
-        });
-      });
-    })
-    .catch(() => {
-      setTimeout(() => {
-        getInfoNewConversation(conversationId, retries ? retries + 1 : 1);
-      }, 1000);
-    });
-};
 
 const onMetadata = (metadataObj: Metadata) => {
   const currentConversation: Conversation | undefined =
@@ -120,7 +54,7 @@ const onMessage = (conversationId: string, message: Message) => {
     conversationId,
   );
   if (isStored) {
-    addMessage(conversationId, message);
+    addMessageToConversation(conversationId, message);
   } else {
     getInfoNewConversation(conversationId, 0);
   }

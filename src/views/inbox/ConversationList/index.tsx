@@ -248,11 +248,11 @@ export const ConversationList = (props: ConversationListProps) => {
 
   const memoizedRenderItem = React.useCallback(
     ({item}) => {
-      const renderItem = item => {
+      const renderItem = (conversation: Conversation) => {
         return (
           <ConversationListItem
-            key={item.id}
-            conversation={item}
+            key={conversation.id}
+            conversation={conversation}
             navigation={navigation}
           />
         );

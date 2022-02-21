@@ -7,6 +7,7 @@ import Heart from '../../../assets/images/icons/heartIcon.svg';
 import Mail from '../../../assets/images/icons/mailIcon.svg';
 import {colorContrast, colorRedAlert} from '../../../assets/colors';
 import {AuthContext} from '../../../components/auth/AuthWrapper';
+import OneSignal from 'react-native-onesignal';
 
 type SettingsItemProps = {
   title: string;
@@ -25,7 +26,11 @@ export class SettingsItem extends React.Component<SettingsItemProps> {
         {
           text: 'Log Out',
           style: 'destructive',
-          onPress: () => this.context.logout(),
+          onPress: () => {
+            OneSignal.removeExternalUserId();
+            OneSignal.disablePush(true);
+            this.context.logout();
+          },
         },
       ]);
     };
