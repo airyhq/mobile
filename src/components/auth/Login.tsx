@@ -13,11 +13,11 @@ import Auth0 from 'react-native-auth0';
 import {Auth0Config} from '../../auth0-configuration';
 import {AiryLoader} from '../../componentsLib';
 
-const getHost = orgName => `https://${orgName}.airy.co`;
+const getHost = (orgName: string) => `https://${orgName}.airy.co`;
 
 const auth0 = new Auth0(Auth0Config);
 
-const exchangeToken = (host, accessToken) =>
+const exchangeToken = (host, accessToken) =>  
   fetch(`${host}/auth.exchange-token`, {
     method: 'POST',
     headers: {
@@ -29,6 +29,7 @@ const exchangeToken = (host, accessToken) =>
     }),
   })
     .then(response => {
+      console.log('accessToken', accessToken);
       console.log('response', response);
       return response.json();
     })
@@ -49,10 +50,9 @@ export const Login = () => {
       const userInfo = jwtDecode(idToken);
       console.log('userInfo', userInfo);
       const orgName = userInfo['https://airy.co/org_name'];
-      console.log('orgName', orgName);
-      const host = getHost(orgName);
-      console.log('host', host);
+      const host = getHost(orgName);      
       // Exchange the auth0 access token for a JWT token for this organization's instance
+      console.log('host', host);
       const airyToken = await exchangeToken(host, accessToken);
       const realm = RealmDB.getInstance();
       realm.write(() => {
@@ -68,6 +68,7 @@ export const Login = () => {
         );
       });
     } catch (error) {
+      console.log('error', error);
       setLoginErr(error.message);
       setLoading(false);
     }

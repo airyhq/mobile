@@ -1,4 +1,15 @@
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.12.10, 0.99.99]'
+    }
+}
+
+apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 apply plugin: "com.android.application"
+apply plugin: 'com.google.gms.google-services'
 
 import com.android.build.OutputFile
 
@@ -143,7 +154,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 11
         versionName "0.2.3"
-        manifestPlaceholders = [auth0Domain: "airyhq.us.auth0.com", auth0Scheme: "com.airy.mobile"]
+        manifestPlaceholders = [auth0Domain: "airyhq.us.auth0.com", auth0Scheme: "${applicationId}"]
     }
     splits {
         abi {
@@ -199,6 +210,10 @@ dependencies {
     implementation project(':react-native-haptic-feedback')
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+
+    implementation platform('com.google.firebase:firebase-bom:29.1.0')
+
+    implementation 'com.google.firebase:firebase-analytics'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
