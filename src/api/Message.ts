@@ -118,16 +118,8 @@ export const uploadMedia = (file: any) => {
   const host = RealmDB.getInstance().objects<UserInfo>('UserInfo')[0].host;
 
   const formData = new FormData();
-  formData.append('file', file)
 
-  const newFile = {
-    uri: 'file://' + file.path,
-    name: file.name,
-    type: 'audio/aac'
-  }
-
-  formData.append('file', JSON.stringify(newFile))
-  
+  formData.append('file', file);
 
   return fetch(`${host}/media.upload`, {
     method: 'POST',

@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Dimensions, StyleSheet, View} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {Animated, Dimensions, StyleSheet, View} from 'react-native';
 import {Source} from '../../../model';
 import {Conversation} from '../../../model';
 import {RealmDB} from '../../../storage/realm';
@@ -26,6 +26,7 @@ export const ChatInput = (props: ChatInputProps) => {
   const [isRecordingAudio, setIsRecordingAudio] = useState(false);
   const [recordVisible, setRecordVisible] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const slideInAnim = useRef(new Animated.Value(0)).current;
 
   const realm = RealmDB.getInstance();
   const source = realm.objectForPrimaryKey<Conversation>(
@@ -48,7 +49,32 @@ export const ChatInput = (props: ChatInputProps) => {
     setIsRecordingAudio(recording);
   };
   const handleIsVisible = (visible: boolean) => {
-    setRecordVisible(visible);
+    visible
+      ? slideOut().then(() => setRecordVisible(true))
+      : slideIn().then(() => setRecordVisible(false));
+  };
+
+  const slideIn = () => {
+    return new Promise(resolve => {
+      Animated.timing(slideInAnim, {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: false,
+      }).start(() => {
+        resolve('resolve');
+      });
+    });
+  };
+
+  const slideOut = () => {
+    return new Promise(resolve => {
+      Animated.timing(slideInAnim, {
+        toValue: 300,
+        duration: 400,
+        useNativeDriver: false,
+      }).start();
+      resolve('resolve');
+    });
   };
 
   return (
@@ -80,12 +106,17 @@ export const ChatInput = (props: ChatInputProps) => {
         />
       </View>
       {recordVisible && (
-        <RecordAudio
-          setRecording={handleIsRecording}
-          setRecordVisible={handleIsVisible}
-          conversationId={conversationId}
-          source={source}
-        />
+        <Animated.View
+          style={{
+            height: slideInAnim,
+          }}>
+          <RecordAudio
+            setRecording={handleIsRecording}
+            setRecordVisible={handleIsVisible}
+            conversationId={conversationId}
+            source={source}
+          />
+        </Animated.View>
       )}
     </>
   );

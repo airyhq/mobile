@@ -189,9 +189,10 @@ export const Input = (props: InputBarProps) => {
             style={[
               styles.sendButton,
               {
-                backgroundColor: channelConnected
-                  ? colorAiryBlue
-                  : colorLightGray,
+                backgroundColor:
+                  channelConnected && input.length !== 0
+                    ? colorAiryBlue
+                    : colorLightGray,
                 marginBottom: Platform.OS === 'ios' ? 4 : 6,
               },
             ]}
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     fontSize: 16,
-    paddingTop: Platform.OS === 'ios' ? 8 : 4,
+    paddingTop: Platform.OS === 'ios' ? 7 : 4,
     paddingBottom: Platform.OS === 'ios' ? 0 : 4,
   },
   sendButton: {

@@ -18,7 +18,8 @@ import {sendMessage, uploadMedia} from '../api/Message';
 import RNFS, {ReadDirItem} from 'react-native-fs';
 import {OutboundMapper} from '../render/outbound/mapper';
 import {getOutboundMapper} from '../render/outbound';
-import {Buffer} from 'buffer';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import {hapticFeedbackOptions} from '../services/HapticFeedback';
 
 type RecordAudioProps = {
   setRecording: (recording: boolean) => void;
@@ -41,6 +42,7 @@ export const RecordAudio = (props: RecordAudioProps) => {
   const [isPaused, setIsPaused] = useState(false);
   const countRef = useRef(null);
   let currentTranslationX = useRef(0).current;
+  let translateXColor = useRef(new Animated.Value(0)).current;
   let hasPermissions = useRef(false).current;
   const outboundMapper: OutboundMapper = getOutboundMapper(props.source);
   const filePath = RNFS.DocumentDirectoryPath + '/newFile.aac';
@@ -165,26 +167,26 @@ export const RecordAudio = (props: RecordAudioProps) => {
       },
       onPanResponderMove: (evt, gestureState) => {
         currentTranslationX = gestureState.dx;
-        currentTranslationX <= -80 &&
+        translateXColor.setValue(gestureState.dx);
+        currentTranslationX <= -100 &&
           setRecordText(
             'Tap and hold to record and send voice messages Swip to the left side to cancel your message',
           );
 
-        currentTranslationX <= -80
-          ? (setRecordButtonBackground(colorRedAlert),
-            setCancelAudioRecord(true))
-          : (setRecordButtonBackground(colorAiryAccent),
-            setCancelAudioRecord(false));
+        currentTranslationX <= -100
+          ? setCancelAudioRecord(true)
+          : setCancelAudioRecord(false);
       },
       onPanResponderTerminationRequest: (evt, gestureState) => true,
       onPanResponderRelease: (evt, gestureState) => {
-        currentTranslationX <= -80
+        currentTranslationX <= -100
           ? (stopRecord(true),
             deleteRecord(),
             setRecordButtonBackground(colorAiryAccent),
             setCancelAudioRecord(false))
           : stopRecord();
         currentTranslationX = 0;
+        translateXColor.setValue(0);
         handleResetTimer();
       },
       onPanResponderTerminate: (evt, gestureState) => {},
@@ -221,16 +223,21 @@ export const RecordAudio = (props: RecordAudioProps) => {
     setTimer(0);
   };
 
+  const dynamicColor = translateXColor.interpolate({
+    inputRange: [-160, 0, 200],
+    outputRange: [colorRedAlert, colorAiryAccent, colorAiryAccent],
+  });
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{recordText}</Text>
       {cancelAudioRecord ? (
         <Text style={[styles.timer, {color: colorRedAlert}]}>Cancel</Text>
       ) : (
-        <Text style={styles.timer}>{timer}</Text>
+        <Text style={styles.timer}>{formatSecondsAsTime(timer)}</Text>
       )}
       <Animated.View
-        style={[styles.circle, {backgroundColor: recordButtonBackground}]}
+        style={[styles.circle, {backgroundColor: dynamicColor}]}
         {...panResponder.panHandlers}>
         {isRecording ? (
           <MicrophoneFilled height={58} width={35} color="white" />
@@ -246,7 +253,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     height: 270,
-    marginTop: 46,
+    marginTop: 26,
   },
   text: {
     fontFamily: 'Lato',
