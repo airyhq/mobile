@@ -11,6 +11,7 @@ import {
   getAttachments,
 } from './config';
 import {Tooltip} from '../../../componentsLib';
+import {RecordAudio} from '../../RecordAudio';
 
 type ChatInputProps = {
   conversationId: string;
@@ -22,6 +23,9 @@ const windowWidth = Dimensions.get('window').width;
 
 export const ChatInput = (props: ChatInputProps) => {
   const {conversationId} = props;
+  const [isRecordingAudio, setIsRecordingAudio] = useState(false);
+  const [recordVisible, setRecordVisible] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
 
   const realm = RealmDB.getInstance();
   const source = realm.objectForPrimaryKey<Conversation>(
@@ -39,6 +43,13 @@ export const ChatInput = (props: ChatInputProps) => {
   const attachmentBarWidth =
     getAttachments(Source[source]).length *
     (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING);
+
+  const handleIsRecording = (recording: boolean) => {
+    setIsRecordingAudio(recording);
+  };
+  const handleIsVisible = (visible: boolean) => {
+    setRecordVisible(visible);
+  };
 
   return (
     <>
@@ -64,8 +75,18 @@ export const ChatInput = (props: ChatInputProps) => {
           extendedInputBar={!extendedAttachments}
           setExtendedAttachments={setExtendedAttachments}
           channelConnected={channelConnected}
+          isRecordingAudio={isRecordingAudio}
+          setIsRecordScreenVisible={handleIsVisible}
         />
       </View>
+      {recordVisible && (
+        <RecordAudio
+          setRecording={handleIsRecording}
+          setRecordVisible={handleIsVisible}
+          conversationId={conversationId}
+          source={source}
+        />
+      )}
     </>
   );
 };

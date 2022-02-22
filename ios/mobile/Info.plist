@@ -71,6 +71,8 @@
 		<string>Lato-Thin.ttf</string>
 		<string>Lato-ThinItalic.ttf</string>
 	</array>
+	<key>NSMicrophoneUsageDescription</key>
+  	<string>Airy wants to use your microphone</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

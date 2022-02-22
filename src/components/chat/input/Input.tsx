@@ -1,13 +1,22 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Animated, Platform, TextInput, TouchableOpacity} from 'react-native';
+import {
+  Animated,
+  Keyboard,
+  Platform,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 import {View, StyleSheet} from 'react-native';
 import {sendMessage} from '../../../api/Message';
 import {
+  colorAiryAccent,
   colorAiryBlue,
   colorBackgroundGray,
   colorLightGray,
 } from '../../../assets/colors';
 import PaperPlane from '../../../assets/images/icons/paperplane.svg';
+import Microphone from '../../../assets/images/icons/microphone.svg';
+import MicrophoneFilled from '../../../assets/images/icons/microphone_filled.svg';
 import {Conversation} from '../../../model';
 import {getOutboundMapper} from '../../../render/outbound';
 import {OutboundMapper} from '../../../render/outbound/mapper';
@@ -21,20 +30,25 @@ type InputBarProps = {
   extendedInputBar: boolean;
   setExtendedAttachments: (extended: boolean) => void;
   channelConnected: boolean;
+  isRecordingAudio: boolean;
+  setIsRecordScreenVisible: (visible: boolean) => void;
 };
 
 const INITIAL_INPUT_HEIGHT = 33;
 
-export const Input = ({
-  conversationId,
-  width,
-  attachmentBarWidth,
-  extendedInputBar,
-  setExtendedAttachments,
-  channelConnected,
-}: InputBarProps) => {
+export const Input = (props: InputBarProps) => {
+  const {
+    conversationId,
+    width,
+    attachmentBarWidth,
+    extendedInputBar,
+    setExtendedAttachments,
+    channelConnected,
+    isRecordingAudio,
+  } = props;
   const [input, setInput] = useState('');
   const [inputHeight, setInputHeight] = useState(INITIAL_INPUT_HEIGHT);
+  const [recordScreenVisible, setRecordScreenVisible] = useState(false);
   const extendedInputBarRef = useRef<boolean>();
   const inputBarRef = useRef<TextInput>();
 
@@ -102,6 +116,12 @@ export const Input = ({
     }).start();
   };
 
+  const handleMicrophonePress = () => {
+    setRecordScreenVisible(!recordScreenVisible);
+    props.setIsRecordScreenVisible(!recordScreenVisible);
+    inputBarRef?.current?.isFocused() && Keyboard.dismiss();
+  };
+
   return (
     <Animated.View style={[styles.container, {width: expandAnimation}]}>
       <View
@@ -127,7 +147,7 @@ export const Input = ({
                     ? 33
                     : inputHeight + 16
                   : 'auto',
-              width: extendedInputBar ? '85%' : '80%',
+              width: '80%',
             },
             styles.textInput,
           ]}
@@ -142,20 +162,43 @@ export const Input = ({
           editable={channelConnected}
           selectTextOnFocus={channelConnected}
         />
-        <TouchableOpacity
-          onPress={() => onSendMessage(input)}
-          style={[
-            styles.sendButton,
-            {
-              backgroundColor: channelConnected
-                ? colorAiryBlue
-                : colorLightGray,
-              marginBottom: Platform.OS === 'ios' ? 4 : 6,
-            },
-          ]}
-          disabled={input.length === 0}>
-          <PaperPlane width={16} height={16} fill="white" />
-        </TouchableOpacity>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'absolute',
+            right: 0,
+            bottom: 0,
+          }}>
+          <TouchableOpacity
+            style={{marginBottom: 4, marginRight: 6}}
+            onPress={handleMicrophonePress}>
+            {isRecordingAudio ? (
+              <MicrophoneFilled
+                height={23}
+                width={14}
+                color={colorAiryAccent}
+              />
+            ) : (
+              <Microphone height={23} width={14} color={colorAiryAccent} />
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => onSendMessage(input)}
+            style={[
+              styles.sendButton,
+              {
+                backgroundColor: channelConnected
+                  ? colorAiryBlue
+                  : colorLightGray,
+                marginBottom: Platform.OS === 'ios' ? 4 : 6,
+              },
+            ]}
+            disabled={input.length === 0}>
+            <PaperPlane width={16} height={16} fill="white" />
+          </TouchableOpacity>
+        </View>
       </View>
     </Animated.View>
   );
