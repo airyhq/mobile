@@ -32,6 +32,7 @@ type InputBarProps = {
   channelConnected: boolean;
   isRecordingAudio: boolean;
   setIsRecordScreenVisible: (visible: boolean) => void;
+  setCloseRecord: (close: boolean) => void;
 };
 
 const INITIAL_INPUT_HEIGHT = 33;
@@ -45,6 +46,7 @@ export const Input = (props: InputBarProps) => {
     setExtendedAttachments,
     channelConnected,
     isRecordingAudio,
+    setCloseRecord,
   } = props;
   const [input, setInput] = useState('');
   const [inputHeight, setInputHeight] = useState(INITIAL_INPUT_HEIGHT);
@@ -152,6 +154,8 @@ export const Input = (props: InputBarProps) => {
             styles.textInput,
           ]}
           placeholder="Message"
+          onFocus={() => setCloseRecord(true)}
+          onBlur={() => setCloseRecord(false)}
           value={input}
           onChangeText={(text: string) => setInput(text)}
           multiline={true}

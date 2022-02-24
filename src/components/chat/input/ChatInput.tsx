@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Animated, Dimensions, StyleSheet, View} from 'react-native';
 import {Source} from '../../../model';
 import {Conversation} from '../../../model';
@@ -25,7 +25,7 @@ export const ChatInput = (props: ChatInputProps) => {
   const {conversationId} = props;
   const [isRecordingAudio, setIsRecordingAudio] = useState(false);
   const [recordVisible, setRecordVisible] = useState(false);
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [closeRecordContainer, setCloseRecordContainer] = useState(false);
   const slideInAnim = useRef(new Animated.Value(0)).current;
 
   const realm = RealmDB.getInstance();
@@ -45,13 +45,29 @@ export const ChatInput = (props: ChatInputProps) => {
     getAttachments(Source[source]).length *
     (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING);
 
+  useEffect(() => {
+    closeRecordContainer && slideIn().then(() => setRecordVisible(false));
+  }, [closeRecordContainer]);
+
   const handleIsRecording = (recording: boolean) => {
     setIsRecordingAudio(recording);
   };
   const handleIsVisible = (visible: boolean) => {
     visible
-      ? slideOut().then(() => setRecordVisible(true))
-      : slideIn().then(() => setRecordVisible(false));
+      ? slideOut()
+          .then(() => setRecordVisible(true))
+          .catch((error: Error) => {
+            console.error(error);
+          })
+      : slideIn()
+          .then(() => setRecordVisible(false))
+          .catch((error: Error) => {
+            console.error(error);
+          });
+  };
+
+  const handleCloseRecord = (closed: boolean) => {
+    setCloseRecordContainer(closed);
   };
 
   const slideIn = () => {
@@ -103,6 +119,7 @@ export const ChatInput = (props: ChatInputProps) => {
           channelConnected={channelConnected}
           isRecordingAudio={isRecordingAudio}
           setIsRecordScreenVisible={handleIsVisible}
+          setCloseRecord={handleCloseRecord}
         />
       </View>
       {recordVisible && (
