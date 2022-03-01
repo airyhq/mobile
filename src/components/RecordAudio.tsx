@@ -1,13 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   Alert,
   Linking,
   Animated,
   PanResponder,
   Dimensions,
+  Vibration,
+  Platform,
 } from 'react-native';
 import Microphone from '../assets/images/icons/microphone.svg';
 import MicrophoneFilled from '../assets/images/icons/microphone_filled.svg';
@@ -15,12 +16,13 @@ import {colorAiryAccent, colorRedAlert, colorTextGray} from '../assets/colors';
 import {request, check, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import SoundRecorder from 'react-native-sound-recorder';
 import {formatSecondsAsTime} from '../services/dates/format';
-import {sendMessage, uploadMedia, uploadMediaBlob} from '../api/Message';
+import {sendMessage, uploadMedia} from '../api/Message';
 import RNFS, {ReadDirItem} from 'react-native-fs';
 import {OutboundMapper} from '../render/outbound/mapper';
 import {getOutboundMapper} from '../render/outbound';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import {hapticFeedbackOptions} from '../services/HapticFeedback';
+import {debounce} from 'lodash-es';
 
 type RecordAudioProps = {
   setRecording: (recording: boolean) => void;
@@ -31,26 +33,29 @@ type RecordAudioProps = {
 
 export const RecordAudio = (props: RecordAudioProps) => {
   const [recordText, setRecordText] = useState(
-    'Tap and hold to record and send voice messages Swip to the left side to cancel your message',
+    'Hold to record and send a voice message \n Swipe left to cancel your message',
   );
   const [isRecording, setIsRecording] = useState(false);
   const [timer, setTimer] = useState(0);
-  const [isActive, setIsActive] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
   const countRef = useRef(null);
   let currentTranslationX = useRef(0).current;
-  let translateXColor = useRef(new Animated.Value(0)).current;
+  let translateX = useRef(new Animated.Value(0)).current;
   let hasPermissions = useRef(false).current;
+  let recording = useRef(false).current;
   const outboundMapper: OutboundMapper = getOutboundMapper(props.source);
   const filePath = RNFS.DocumentDirectoryPath + '/newFile.aac';
 
   const requestMicrophonePermission = () => {
-    request(PERMISSIONS.IOS.MICROPHONE).then(result => {
+    request(
+      Platform.OS === 'ios'
+        ? PERMISSIONS.IOS.MICROPHONE
+        : PERMISSIONS.ANDROID.RECORD_AUDIO,
+    ).then(result => {
       result === 'granted' && (hasPermissions = true);
       result === 'blocked' &&
         Alert.alert(
-          'To record a Voice Message, Airy needs access to your microphone. Tap Settings and turn on Microphone',
           '',
+          'To record a voice message, Airy needs access to your microphone. Tap settings and turn on microphone',
           [
             {text: 'Cancel', style: 'cancel'},
             {text: 'Settings', onPress: () => Linking.openSettings()},
@@ -61,9 +66,9 @@ export const RecordAudio = (props: RecordAudioProps) => {
 
   useEffect(() => {
     isRecording
-      ? setRecordText('Stop to hold the button to send the vocal message')
+      ? setRecordText('Stop holding the button to send your voice message')
       : setRecordText(
-          'Tap and hold to record and send voice messages Swip to the left side to cancel your message',
+          'Hold to record and send a voice message \n Swipe left to cancel your message',
         );
   }, [isRecording]);
 
@@ -72,7 +77,11 @@ export const RecordAudio = (props: RecordAudioProps) => {
   }, []);
 
   const checkMicrophonePermission = () => {
-    check(PERMISSIONS.IOS.MICROPHONE)
+    check(
+      Platform.OS === 'ios'
+        ? PERMISSIONS.IOS.MICROPHONE
+        : PERMISSIONS.ANDROID.RECORD_AUDIO,
+    )
       .then(result => {
         switch (result) {
           case RESULTS.UNAVAILABLE:
@@ -98,31 +107,44 @@ export const RecordAudio = (props: RecordAudioProps) => {
     quality: 'QUALITY_MAX',
   };
 
-  const startRecord = () => {
-    hasPermissions === false
-      ? requestMicrophonePermission()
-      : (setIsRecording(true),
-        props.setRecording(true),
-        props.setRecordVisible(true),
-        SoundRecorder.start(filePath, {
-          audioRecordOptions,
-        }))
-          .then(() => {
-            console.log('started recording');
-            handleStartTimer();
-          })
-          .catch((error: Error) => {
-            console.error(error);
-          });
+  const vibrate = () => {
+    ReactNativeHapticFeedback.trigger('impactHeavy', hapticFeedbackOptions);
   };
 
+  const startRecord = debounce(
+    () => {
+      hasPermissions === false
+        ? requestMicrophonePermission()
+        : (vibrate(),
+          (recording = true),
+          (setIsRecording(true),
+          props.setRecording(true),
+          props.setRecordVisible(true),
+          SoundRecorder.start(filePath, {
+            audioRecordOptions,
+          }))
+            .then(() => {
+              handleStartTimer();
+            })
+            .catch((error: Error) => {
+              console.error(error);
+            }));
+    },
+    1500,
+    {leading: true, trailing: false},
+  );
+
   const stopRecord = (deleted?: boolean) => {
-    console.log('stopped recording'),
-      setIsRecording(false),
-      props.setRecording(false),
-      deleted
-        ? SoundRecorder.stop()
+    recording &&
+      (deleted
+        ? (SoundRecorder.stop(),
+          (recording = false),
+          setIsRecording(false),
+          props.setRecording(false))
         : SoundRecorder.stop().then(() => {
+            recording = false;
+            setIsRecording(false);
+            props.setRecording(false);
             return RNFS.readDir(RNFS.DocumentDirectoryPath)
               .then((res: ReadDirItem[]) => {
                 let newFile: ReadDirItem;
@@ -139,91 +161,73 @@ export const RecordAudio = (props: RecordAudioProps) => {
                         outboundMapper.getAttachmentPayload(res),
                       )
                         .then(() => {
-                          // deleteRecord();
+                          deleteRecord();
                         })
                         .catch((error: Error) => {
-                          console.error(error);
+                          console.error('A', error);
                         });
                     })
                     .catch((error: Error) => {
-                      console.error(error);
+                      console.error('B', error);
                     });
               })
               .catch((error: Error) => {
-                console.error(error);
+                console.error('C', error);
               });
-          });
+          }));
   };
 
   const deleteRecord = () => {
-    console.log('DELETED recording');
     return RNFS.unlink(filePath);
   };
 
   const panResponder = React.useRef(
     PanResponder.create({
       // Ask to be the responder:
-      onStartShouldSetPanResponder: (evt, gestureState) => true,
-      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
-      onMoveShouldSetPanResponder: (evt, gestureState) => true,
-      onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+      onStartShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponderCapture: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponderCapture: () => true,
 
-      onPanResponderGrant: (evt, gestureState) => {
+      onPanResponderGrant: () => {
         startRecord();
       },
       onPanResponderMove: (evt, gestureState) => {
         currentTranslationX = gestureState.dx;
-        translateXColor.setValue(gestureState.dx);
+        translateX.setValue(gestureState.dx);
 
         currentTranslationX <= -80 &&
           setRecordText(
-            'Tap and hold to record and send voice messages Swip to the left side to cancel your message',
+            'Hold to record and send a voice message Swipe left to cancel your message',
           );
       },
-      onPanResponderTerminationRequest: (evt, gestureState) => true,
-      onPanResponderRelease: (evt, gestureState) => {
+      onPanResponderTerminationRequest: () => true,
+      onPanResponderRelease: () => {
         currentTranslationX <= -80
-          ? (stopRecord(true), deleteRecord())
+          ? (stopRecord(true), deleteRecord(), Vibration.vibrate())
           : stopRecord();
         currentTranslationX = 0;
-        translateXColor.setValue(0);
+        translateX.setValue(0);
         handleResetTimer();
       },
-      onPanResponderTerminate: (evt, gestureState) => {},
-      onShouldBlockNativeResponder: (evt, gestureState) => {
+      onShouldBlockNativeResponder: () => {
         return true;
       },
     }),
   ).current;
 
   const handleStartTimer = () => {
-    setIsActive(true);
-    setIsPaused(true);
     countRef.current = setInterval(() => {
       setTimer(timer => timer + 1);
     }, 1000);
   };
 
-  const handlePauseTimer = () => {
-    clearInterval(countRef.current);
-    setIsPaused(false);
-  };
-
-  // const handleResumeTimer = () => {
-  //   setIsPaused(true);
-  //   countRef.current = setInterval(() => {
-  //     setTimer(timer => timer + 1);
-  //   }, 1000);
-  // };
-
   const handleResetTimer = () => {
     clearInterval(countRef.current);
-    setIsActive(false);
-    setIsPaused(false);
     setTimer(0);
   };
 
-  const transitionColor = translateXColor.interpolate({
+  const transitionColor = translateX.interpolate({
     inputRange: [-200, -130, 0, 200],
     outputRange: [
       colorRedAlert,
@@ -233,12 +237,12 @@ export const RecordAudio = (props: RecordAudioProps) => {
     ],
   });
 
-  const opacityTransitionTime = translateXColor.interpolate({
+  const opacityTransitionTime = translateX.interpolate({
     inputRange: [-80, 0],
     outputRange: [0, 1],
   });
 
-  const opacityTransitionCancel = translateXColor.interpolate({
+  const opacityTransitionCancel = translateX.interpolate({
     inputRange: [-140, -80, 0],
     outputRange: [1, 0, 0],
   });

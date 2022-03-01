@@ -74,7 +74,7 @@ export const ChatInput = (props: ChatInputProps) => {
     return new Promise(resolve => {
       Animated.timing(slideInAnim, {
         toValue: 0,
-        duration: 400,
+        duration: 200,
         useNativeDriver: false,
       }).start(() => {
         resolve('resolve');
@@ -86,7 +86,7 @@ export const ChatInput = (props: ChatInputProps) => {
     return new Promise(resolve => {
       Animated.timing(slideInAnim, {
         toValue: 300,
-        duration: 400,
+        duration: 200,
         useNativeDriver: false,
       }).start();
       resolve('resolve');

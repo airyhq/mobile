@@ -47,7 +47,11 @@ export const AudioComponent = (props: AudioComponentProps) => {
   return (
     <TouchableOpacity onPress={handleOnPress} style={styles.container}>
       <AttachmentAudio height={24} width={24} color={colorAiryBlue} />
-      {isPaused ? <PlayButton /> : <StopButton />}
+      {isPaused ? (
+        <PlayButton width={24} height={24} color={colorAiryBlue} />
+      ) : (
+        <StopButton width={24} height={24} color={colorAiryBlue} />
+      )}
       <View style={styles.durationContainer}>
         <Text>{duration}</Text>
       </View>

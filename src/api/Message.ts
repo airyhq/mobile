@@ -5,8 +5,7 @@ import {mergeMessages} from '../services/message';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import {hapticFeedbackOptions} from '../services/HapticFeedback';
 import {UserInfo} from '../model/userInfo';
-import RNFS, {ReadDirItem, UploadFileItem} from 'react-native-fs';
-import ReactNativeBlobUtil from 'react-native-blob-util';
+import {Platform} from 'react-native';
 
 declare type PaginatedResponse<T> = typeof import('@airyhq/http-client');
 
@@ -116,39 +115,14 @@ export const changeConversationState = (
   ReactNativeHapticFeedback.trigger('impactHeavy', hapticFeedbackOptions);
 };
 
-export const uploadMediaBlob = (file: any) => {
-  const host = RealmDB.getInstance().objects<UserInfo>('UserInfo')[0].host;
-  console.log('CUSTOM FILE: ', file);
-  return ReactNativeBlobUtil.fetch(
-    'POST',
-    `${host}/media.upload`,
-    {'Content-Type': 'multipart/form-data'},
-    [
-      {
-        name: 'newFile',
-        filename: file.name,
-        type: 'audio/aac',
-        length: file.size,
-        data: ReactNativeBlobUtil.wrap(file.path),
-      },
-    ],
-  )
-    .then(resp => {
-      console.log('log reponse: ', resp.data);
-    })
-    .catch(err => {
-      console.error('ERROR', err);
-      // ...
-    });
-};
-
 export const uploadMedia = (file: any) => {
   const host = RealmDB.getInstance().objects<UserInfo>('UserInfo')[0].host;
   const formData = new FormData();
-
-  console.log('FILEFILEFILE: ', file);
-
-  formData.append('file', file, file.name);
+  formData.append('file', {
+    ...file,
+    uri: Platform.OS === 'ios' ? file.path : 'file://' + file.path,
+    type: 'audio/aac',
+  });
 
   return fetch(`${host}/media.upload`, {
     method: 'POST',
@@ -159,8 +133,6 @@ export const uploadMedia = (file: any) => {
   })
     .then(res => res.json())
     .then(response => {
-      console.log('log reponse: ', response);
-
       return response.media_url;
     })
     .catch((err: Error) => {

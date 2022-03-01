@@ -154,7 +154,9 @@ export const Input = (props: InputBarProps) => {
             styles.textInput,
           ]}
           placeholder="Message"
-          onFocus={() => setCloseRecord(true)}
+          onFocus={() => {
+            setCloseRecord(true), setRecordScreenVisible(false);
+          }}
           onBlur={() => setCloseRecord(false)}
           value={input}
           onChangeText={(text: string) => setInput(text)}
