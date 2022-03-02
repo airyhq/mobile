@@ -1,3 +1,4 @@
+import {Source} from '../../model';
 import {getAttachmentType} from '../../services/types/mediaAttachments';
 import {OutboundMapper} from './mapper';
 
@@ -13,7 +14,7 @@ export class FacebookMapper extends OutboundMapper {
   }
 
   getAttachmentPayload(mediaUrl: string): any {
-    const mediaType = getAttachmentType(mediaUrl, 'facebook');
+    const mediaType = getAttachmentType(mediaUrl, Source.facebook);
 
     return {
       attachment: {

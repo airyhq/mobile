@@ -1,6 +1,5 @@
 import React from 'react';
 import {decodeURIComponentMessage} from '../../../services/types/decodeURIComponentMessage';
-import {getAttachmentType} from '../../../services/types/mediaAttachments';
 import {AudioComponent} from '../../components/AudioComponent';
 import {FileComponent} from '../../components/FileComponent';
 import {ImageComponent} from '../../components/ImageComponent';
@@ -232,39 +231,18 @@ const inboundContent = (message): ContentUnion => {
 const outboundContent = (message): ContentUnion => {
   const messageContent =
     message?.content?.message ?? message?.content ?? message;
+  const messageContentMedia =
+    messageContent.text.includes('MediaUrl') &&
+    JSON.parse(messageContent?.text);
 
   //media
-  if (messageContent?.MediaUrl) {
-    const mediaUrl = messageContent.MediaUrl;
-    const mediaAttachmenttype = getAttachmentType(mediaUrl, 'twilio.whatsapp');
+  if (messageContentMedia?.MediaUrl) {
+    const mediaUrl = messageContentMedia?.MediaUrl;
 
-    if (mediaAttachmenttype === 'image') {
-      return {
-        type: 'image',
-        imageUrl: mediaUrl,
-      };
-    }
-
-    if (mediaAttachmenttype === 'video') {
-      return {
-        type: 'video',
-        videoUrl: mediaUrl,
-      };
-    }
-
-    if (mediaAttachmenttype === 'file') {
-      return {
-        type: 'file',
-        fileUrl: mediaUrl,
-      };
-    }
-
-    if (mediaAttachmenttype === 'audio') {
-      return {
-        type: 'audio',
-        audioUrl: mediaUrl,
-      };
-    }
+    return {
+      type: 'audio',
+      audioUrl: mediaUrl,
+    };
   }
 
   //text

@@ -164,15 +164,15 @@ export const RecordAudio = (props: RecordAudioProps) => {
                           deleteRecord();
                         })
                         .catch((error: Error) => {
-                          console.error('A', error);
+                          console.error(error);
                         });
                     })
                     .catch((error: Error) => {
-                      console.error('B', error);
+                      console.error(error);
                     });
               })
               .catch((error: Error) => {
-                console.error('C', error);
+                console.error(error);
               });
           }));
   };

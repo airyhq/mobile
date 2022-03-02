@@ -24,7 +24,7 @@ import {
   resetConversationFilters,
 } from '../../services/conversationFilter';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import {hapticFeedbackOptions} from '../../services/hapticFeedback';
+import {hapticFeedbackOptions} from '../../services/HapticFeedback';
 
 const defaultHeaderHeight = Platform.OS === 'ios' ? 44 : 62;
 const defaultHeaderHeightExpanded = 290;
