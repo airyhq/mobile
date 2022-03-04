@@ -3,7 +3,7 @@ import {api} from '../api';
 import {Conversation, Message} from '../Model';
 import {mergeMessages} from '../services/message';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import {hapticFeedbackOptions} from '../services/HapticFeedback';
+import {hapticFeedbackOptions} from '../services/hapticFeedback';
 import {UserInfo} from '../model/userInfo';
 import {Platform} from 'react-native';
 

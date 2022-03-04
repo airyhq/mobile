@@ -21,7 +21,7 @@ import RNFS, {ReadDirItem} from 'react-native-fs';
 import {OutboundMapper} from '../render/outbound/mapper';
 import {getOutboundMapper} from '../render/outbound';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import {hapticFeedbackOptions} from '../services/HapticFeedback';
+import {hapticFeedbackOptions} from '../services/hapticFeedback';
 import {debounce} from 'lodash-es';
 
 type RecordAudioProps = {
@@ -254,7 +254,7 @@ export const RecordAudio = (props: RecordAudioProps) => {
       </Animated.Text>
       <Animated.Text
         style={[
-          styles.timer,
+          styles.cancel,
           {
             color: colorRedAlert,
             opacity: opacityTransitionCancel,
@@ -299,9 +299,16 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   timer: {
-    position: 'absolute',
-    bottom: 180,
-    left: Dimensions.get('screen').width / 2 - 21,
+    position: 'relative',
+    bottom: 40,
+    fontFamily: 'Lato',
+    fontSize: 16,
+    marginTop: 15,
+    color: colorTextGray,
+  },
+  cancel: {
+    position: 'relative',
+    bottom: 6,
     fontFamily: 'Lato',
     fontSize: 16,
     marginTop: 15,
