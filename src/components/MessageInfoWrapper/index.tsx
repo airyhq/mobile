@@ -67,11 +67,10 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
 
   const ContactMessage = () => (
     <View style={styles.contact}>
-      <View style={styles.contactContent}>
-        <Text>
-          <View>{children}</View>
-        </Text>
-      </View>
+      <Text style={styles.contactContent}>
+        <View>{children}</View>
+      </Text>
+      {sentAt && <Text style={styles.time}>{sentAt}</Text>}
     </View>
   );
 
@@ -83,6 +82,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   contactContent: {
+    overflow: 'hidden',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
