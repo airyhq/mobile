@@ -1,7 +1,11 @@
 import React, {ReactNode} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {Contact} from '../../model';
-import {colorTextGray} from '../../assets/colors';
+import {Contact, Message, Source} from '../../model';
+import {sendMessage} from '../../api/Message';
+import {getOutboundMapper} from '../../render/outbound';
+import {OutboundMapper} from '../../render/outbound/mapper';
+import ErrorIcon from '../../assets/images/icons/error.svg';
+import {colorTextGray, colorAiryBlue} from '../../assets/colors';
 
 type MessageInfoWrapperProps = {
   children: ReactNode;
@@ -10,28 +14,64 @@ type MessageInfoWrapperProps = {
   fromContact?: boolean;
   contact?: Contact;
   sentAt?: string;
+  conversationId: string;
+  message: Message;
+  source: Source;
 };
 
 export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
-  const {sentAt, fromContact, children, isChatPlugin} = props;
+  const {
+    sentAt,
+    fromContact,
+    children,
+    isChatPlugin,
+    conversationId,
+    message,
+    source,
+  } = props;
 
   const isContact = isChatPlugin ? !fromContact : fromContact;
+  const failedMessage = message.deliveryState === 'FAILED';
+  const outboundMapper: OutboundMapper = getOutboundMapper(source);
+
+  const retrySendingFailedMessage = () => {
+    sendMessage(
+      conversationId,
+      outboundMapper.getTextPayload(message.content.text),
+    );
+  };
+
+  const FailedMessageText = () => {
+    return (
+      <Text style={styles.failedMessageText}>
+        Failed to send!{' '}
+        <Text style={styles.retrySend} onPress={retrySendingFailedMessage}>
+          Retry
+        </Text>
+      </Text>
+    );
+  };
 
   const MemberMessage = () => (
     <View style={styles.member}>
-      <Text style={styles.memberContent}>
-        <View>{children}</View>
-      </Text>
-      {sentAt && <Text style={styles.time}>{sentAt}</Text>}
+      <View style={styles.memberContent}>
+        <Text>
+          <View>{children}</View>
+        </Text>
+        {failedMessage && <ErrorIcon style={styles.failedMessage} />}
+      </View>
+      {sentAt && !failedMessage && <Text style={styles.time}>{sentAt}</Text>}
+      {failedMessage && <FailedMessageText />}
     </View>
   );
 
   const ContactMessage = () => (
     <View style={styles.contact}>
-      <Text style={styles.contactContent}>
-        <View>{children}</View>
-      </Text>
-      {sentAt && <Text style={styles.time}>{sentAt}</Text>}
+      <View style={styles.contactContent}>
+        <Text>
+          <View>{children}</View>
+        </Text>
+      </View>
     </View>
   );
 
@@ -43,10 +83,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   contactContent: {
-    overflow: 'hidden',
-    maxWidth: '100%',
-    alignItems: 'flex-start',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
     marginTop: 10,
+  },
+  memberMessage: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   member: {
     alignItems: 'flex-end',
@@ -54,7 +99,9 @@ const styles = StyleSheet.create({
   memberContent: {
     overflow: 'hidden',
     maxWidth: '100%',
-    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    flexDirection: 'row',
     marginTop: 10,
   },
   time: {
@@ -63,5 +110,16 @@ const styles = StyleSheet.create({
     color: colorTextGray,
     marginLeft: 5,
     marginRight: 5,
+  },
+  failedMessage: {
+    marginLeft: 6,
+  },
+  failedMessageText: {
+    color: colorTextGray,
+    fontFamily: 'Lato',
+    fontSize: 13,
+  },
+  retrySend: {
+    color: colorAiryBlue,
   },
 });
