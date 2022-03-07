@@ -13,6 +13,7 @@ type MessageProps = {
   contact: Contact;
   isLastInGroup: boolean;
   dateChanged: boolean;
+  conversationId: string;
 };
 
 export const MessageComponent = ({
@@ -21,6 +22,7 @@ export const MessageComponent = ({
   contact,
   isLastInGroup,
   dateChanged,
+  conversationId,
 }: MessageProps) => {
   const sentAt: string | undefined = isLastInGroup
     ? formatTime(message.sentAt)
@@ -42,7 +44,13 @@ export const MessageComponent = ({
         contact={contact}
         sentAt={sentAt}
         isChatPlugin={false}
+<<<<<<< HEAD
         message={message}>
+=======
+        conversationId={conversationId}
+        message={message}
+        source={source}>
+>>>>>>> e6f875b (implemented failed messages)
         <SourceMessage
           source={source}
           message={message}

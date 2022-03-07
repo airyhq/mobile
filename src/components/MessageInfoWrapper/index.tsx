@@ -1,7 +1,10 @@
 import React, {ReactNode} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {Contact, Message, DeliveryState} from '../../model';
+import {Contact, Message, DeliveryState, Source} from '../../model';
 import {resendFailedStateMessage} from '../../api/Message';
+import {sendMessage} from '../../api/Message';
+import {getOutboundMapper} from '../../render/outbound';
+import {OutboundMapper} from '../../render/outbound/mapper';
 import ErrorIcon from '../../assets/images/icons/error.svg';
 import {colorTextGray, colorAiryBlue} from '../../assets/colors';
 
@@ -12,14 +15,32 @@ type MessageInfoWrapperProps = {
   fromContact?: boolean;
   contact?: Contact;
   sentAt?: string;
+  conversationId: string;
   message: Message;
+  source: Source;
 };
 
 export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
-  const {sentAt, fromContact, children, isChatPlugin, message} = props;
+  const {
+    sentAt,
+    fromContact,
+    children,
+    isChatPlugin,
+    conversationId,
+    message,
+    source,
+  } = props;
 
   const isContact = isChatPlugin ? !fromContact : fromContact;
-  const failedMessage = message.deliveryState === DeliveryState.failed;
+  const failedMessage = message.deliveryState === 'FAILED';
+  const outboundMapper: OutboundMapper = getOutboundMapper(source);
+
+  const retrySendingFailedMessage = () => {
+    sendMessage(
+      conversationId,
+      outboundMapper.getTextPayload(message.content.text),
+    );
+  };
 
   const FailedMessageText = () => {
     return (
@@ -28,6 +49,7 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
         <Text
           style={styles.retrySend}
           onPress={() => resendFailedStateMessage(message.id)}>
+        <Text style={styles.retrySend} onPress={retrySendingFailedMessage}>
           Retry
         </Text>
       </Text>
@@ -49,10 +71,11 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
 
   const ContactMessage = () => (
     <View style={styles.contact}>
-      <Text style={styles.contactContent}>
-        <View>{children}</View>
-      </Text>
-      {sentAt && <Text style={styles.time}>{sentAt}</Text>}
+      <View style={styles.contactContent}>
+        <Text>
+          <View>{children}</View>
+        </Text>
+      </View>
     </View>
   );
 
