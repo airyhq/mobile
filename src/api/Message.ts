@@ -12,6 +12,7 @@ declare type PaginatedResponse<T> = typeof import('@airyhq/http-client');
 const realm = RealmDB.getInstance();
 
 export const sendMessage = (conversationId: string, message: any) => {
+<<<<<<< HEAD
   return new Promise((resolve, reject) => {
     api
       .sendMessages({
@@ -29,6 +30,23 @@ export const sendMessage = (conversationId: string, message: any) => {
             metadata: response.metadata,
           });
           resolve('resolve');
+=======
+  api
+    .sendMessages({
+      conversationId,
+      message,
+    })
+    .then((response: Message) => {
+      console.log('response', response);
+      realm.write(() => {
+        realm.create('Message', {
+          id: response.id,
+          content: {text: response.content.text},
+          deliveryState: response.deliveryState,
+          fromContact: response.fromContact,
+          sentAt: response.sentAt,
+          metadata: response.metadata,
+>>>>>>> af2069b (failed message wip)
         });
       })
       .catch((error: Error) => {

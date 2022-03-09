@@ -10,6 +10,10 @@ import AttachmentAudio from '../assets/images/icons/attachmentAudio.svg';
 import AttachmentFile from '../assets/images/icons/attachmentFile.svg';
 import {Emoji} from '../componentsLib/general/Emoji';
 import {colorTextGray} from '../assets/colors';
+<<<<<<< HEAD
+=======
+import {decodeURIComponentMessage} from '../services/message';
+>>>>>>> af2069b (failed message wip)
 import ErrorIcon from '../assets/images/icons/error.svg';
 
 interface SourceMessagePreviewProps {
@@ -48,10 +52,24 @@ const isImageFromGoogleSource = (messageText?: string) => {
 export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
   const lastMessage = (conversation: Conversation) => {
     const lastMessageContent = conversation.lastMessage.content;
+<<<<<<< HEAD
     const failedLastMessage =
       conversation.lastMessage.deliveryState === DeliveryState.failed;
 
+=======
+    const failedLastMessage = conversation.lastMessage.deliveryState === 'failed';
+  
+>>>>>>> af2069b (failed message wip)
     //Icons
+    
+    //failed 
+    if(failedLastMessage){
+      return(
+        <View style={styles.icon}>
+            <ErrorIcon height={20} width={20}/>
+        </View>
+      )
+    }
 
     //failed
     if (failedLastMessage) {

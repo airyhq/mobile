@@ -22,7 +22,7 @@ export interface MessageMetadata {
 export interface Message {
   id: string;
   content: Content;
-  deliveryState: DeliveryState;
+  deliveryState: string;
   fromContact: boolean;
   sentAt: Date;
   metadata?: MessageMetadata;

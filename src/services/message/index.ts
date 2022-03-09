@@ -13,16 +13,20 @@ export const addMessageToConversation = (
     const currentConversation: Conversation | undefined =
       realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
 
+      const editmessage = {...message, deliveryState: 'failed'}
+
+      //console.log('editMessage', editmessage);
+
     if (currentConversation) {
       currentConversation.lastMessage = parseToRealmMessage(
-        message,
+        editmessage,
         currentConversation.channel.source,
       );
 
       if (currentConversation && currentConversation.messages) {
         currentConversation.messages = mergeMessages(
           currentConversation.messages,
-          [message],
+          [editmessage],
         );
       }
     }
