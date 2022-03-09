@@ -85,10 +85,10 @@ export const Input = (props: InputBarProps) => {
   useEffect(() => {
     if (input.length >= 20 && !extendedInputBar) {
       setExtendedAttachments(false);
-      collapseInputBar();
+      // collapseInputBar();
     } else if (input.length < 10 && extendedInputBar) {
       setExtendedAttachments(true);
-      expandInputBar();
+      // expandInputBar();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input, setInput]);
