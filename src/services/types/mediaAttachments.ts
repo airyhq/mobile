@@ -2,7 +2,7 @@ export const attachmentsExtensions = {
   //facebook
   facebookImageExtensions: ['jpeg', 'jpg', 'gif', 'png', 'webp'],
   facebookVideoExtensions: ['mp4', 'mov', 'wmv'],
-  facebookAudioExtensions: ['mp3', 'ogg', 'wav'],
+  facebookAudioExtensions: ['mp3', 'ogg', 'wav', 'aac'],
   facebookFileExtensions: [
     'pdf',
     'cvc',
@@ -36,7 +36,7 @@ export const attachmentsExtensions = {
   //twilio.whatsapp
   twilioWhatsappImageExtensions: ['jpeg', 'jpg', 'png'],
   twilioWhatsappVideoExtensions: ['mp4'],
-  twilioWhatsappAudioExtensions: ['mp3', 'ogg', 'amr'],
+  twilioWhatsappAudioExtensions: ['mp3', 'ogg', 'amr', 'aac'],
   twilioWhatsappFileExtensions: ['pdf', 'vcf'],
 
   //google
@@ -45,7 +45,7 @@ export const attachmentsExtensions = {
   //chatplugin
   chatpluginImageExtensions: ['jpeg', 'jpg', 'gif', 'png', 'webp', 'heic'],
   chatpluginVideoExtensions: ['mp4', 'mov', 'wmv'],
-  chatpluginAudioExtensions: ['mp3', 'ogg', 'wav'],
+  chatpluginAudioExtensions: ['mp3', 'ogg', 'wav', 'aac'],
   chatpluginFileExtensions: [
     'pdf',
     'cvc',

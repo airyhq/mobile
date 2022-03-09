@@ -209,6 +209,10 @@ dependencies {
 
     implementation project(':react-native-haptic-feedback')
 
+    implementation project(':react-native-sound-recorder')
+
+    implementation project(':react-native-fs')
+
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
     implementation platform('com.google.firebase:firebase-bom:29.1.0')

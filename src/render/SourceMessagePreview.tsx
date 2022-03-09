@@ -92,7 +92,9 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       lastMessageContent.message?.attachments?.[0].type === 'audio' ||
       lastMessageContent?.attachments?.[0]?.type === 'audio' ||
       lastMessageContent?.attachment?.type === 'audio' ||
-      lastMessageContent?.text?.includes('MediaContentType0=audio')
+      lastMessageContent?.text?.includes('MediaContentType0=audio') ||
+      (lastMessageContent?.text?.includes('MediaUrl') &&
+        lastMessageContent?.text?.includes('.aac'))
     ) {
       return (
         <View style={styles.icon}>
