@@ -10,6 +10,7 @@ import AttachmentFile from '../assets/images/icons/attachmentFile.svg';
 import {Emoji} from '../componentsLib/general/Emoji';
 import {colorTextGray} from '../assets/colors';
 import {decodeURIComponentMessage} from '../services/message';
+import ErrorIcon from '../assets/images/icons/error.svg';
 
 interface SourceMessagePreviewProps {
   conversation: Conversation;
@@ -47,8 +48,18 @@ const isImageFromGoogleSource = (messageText?: string) => {
 export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
   const lastMessage = (conversation: Conversation) => {
     const lastMessageContent = conversation.lastMessage.content;
-
+    const failedLastMessage = conversation.lastMessage.deliveryState === 'failed';
+  
     //Icons
+    
+    //failed 
+    if(failedLastMessage){
+      return(
+        <View style={styles.icon}>
+            <ErrorIcon height={20} width={20}/>
+        </View>
+      )
+    }
 
     //Image
     if (

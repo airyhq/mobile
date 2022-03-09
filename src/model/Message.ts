@@ -11,9 +11,9 @@ export enum MessageType {
 }
 
 export enum DeliveryState {
-  pending = 'PENDING',
-  failed = 'FAILED',
-  delivered = 'DELIVERED',
+  pending = 'pending',
+  failed = 'failed',
+  delivered = 'delivered',
 }
 
 export interface MessageMetadata {
@@ -22,7 +22,7 @@ export interface MessageMetadata {
 export interface Message {
   id: string;
   content: Content;
-  deliveryState: DeliveryState;
+  deliveryState: string;
   fromContact: boolean;
   sentAt: Date;
   metadata?: MessageMetadata;
