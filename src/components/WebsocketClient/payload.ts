@@ -36,6 +36,12 @@ export interface MessageUpdatedPayload extends Event {
       from_contact: boolean;
       sent_at: string;
       source: Source;
+      metadata: {
+        source: {
+          id: string;
+          delivery_state: string;
+        };
+      };
       sender?: {
         id: string;
       };
