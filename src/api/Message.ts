@@ -65,7 +65,7 @@ export const resendFailedStateMessage = async (messageId: string) => {
 
 export const resendFailedStateMessage = async (messageId: string) => {
   try {
-    await api.resend({messageId});
+    await api.resendMessages({messageId});
   } catch (error) {
     console.error('Error: ', error);
   }
