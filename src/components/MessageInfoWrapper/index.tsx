@@ -1,15 +1,12 @@
 import React, {ReactNode} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {Contact, Message, DeliveryState, Source} from '../../model';
+import {Contact, Message, DeliveryState, Source, Conversation} from '../../model';
 import {resendFailedStateMessage} from '../../api/Message';
-import {Contact, Message, Source, Conversation} from '../../model';
 import {sendMessage} from '../../api/Message';
 import {getOutboundMapper} from '../../render/outbound';
 import {OutboundMapper} from '../../render/outbound/mapper';
 import ErrorIcon from '../../assets/images/icons/error.svg';
 import {colorTextGray, colorAiryBlue} from '../../assets/colors';
-import {RealmDB} from '../../storage/realm';
-import {api} from '../../api';
 
 type MessageInfoWrapperProps = {
   children: ReactNode;
@@ -18,87 +15,14 @@ type MessageInfoWrapperProps = {
   fromContact?: boolean;
   contact?: Contact;
   sentAt?: string;
-  conversationId: string;
   message: Message;
-  source: Source;
 };
 
-const realm = RealmDB.getInstance();
-
 export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
-  const {
-    sentAt,
-    fromContact,
-    children,
-    isChatPlugin,
-    conversationId,
-    message,
-    source,
-  } = props;
+  const {sentAt, fromContact, children, isChatPlugin, message} = props;
 
   const isContact = isChatPlugin ? !fromContact : fromContact;
   const failedMessage = message.deliveryState === 'failed';
-  const outboundMapper: OutboundMapper = getOutboundMapper(source);
-
-  const retrySendingFailedMessage = () => {
-    // const prevMessage:any = realm.objectForPrimaryKey<Message>(
-    //   'Message',
-    //   message.id,
-    // );
-
-    const messageToSend = outboundMapper.getTextPayload(message.content.text);
-
-    const conversationMsgs = realm.objectForPrimaryKey<Conversation>(
-      'Conversation',
-      conversationId,
-    ).messages;
-
-    let prevMessage;
-
-    conversationMsgs.forEach(msg => {
-      if (msg.id === message.id) {
-        prevMessage = msg;
-      }
-    });
-
-    // console.log('prevMessage', prevMessage);
-
-    api
-      .sendMessages({
-        conversationId,
-        message: {
-          text: 'Welcome!',
-        },
-      })
-      .then((response: Message) => {
-        console.log('response', response);
-        realm.write(() => prevMessage.deliveryState = response.deliveryState);
-      })
-      .catch((error: Error) => {
-        console.error('Error: ', error);
-      });
-
-    // const messageToSend = outboundMapper.getTextPayload(message.content.text);
-
-    // const conversation = realm.objectForPrimaryKey<Conversation>(
-    //   'Conversation',
-    //   conversationId,
-    // );
-
-    // const prevMessage = conversation.messages.filter(
-    //   msg => msg.id === message.id,
-    // );
-    // console.log('prevMessage', prevMessage);
-
-    // realm.write(() => {
-    //   realm.delete(prevMessage);
-    // });
-
-    // sendMessage(
-    //   conversationId,
-    //   messageToSend,
-    // );
-  };
 
   const FailedMessageText = () => {
     return (

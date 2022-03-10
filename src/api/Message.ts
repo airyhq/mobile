@@ -37,7 +37,6 @@ export const sendMessage = (conversationId: string, message: any) => {
       message,
     })
     .then((response: Message) => {
-      console.log('response', response);
       realm.write(() => {
         realm.create('Message', {
           id: response.id,
@@ -59,6 +58,14 @@ export const sendMessage = (conversationId: string, message: any) => {
 export const resendFailedStateMessage = async (messageId: string) => {
   try {
     await api.resendMessages({messageId});
+  } catch (error) {
+    console.error('Error: ', error);
+  }
+};
+
+export const resendFailedStateMessage = async (messageId: string) => {
+  try {
+    await api.resend({messageId});
   } catch (error) {
     console.error('Error: ', error);
   }

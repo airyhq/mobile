@@ -53,6 +53,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
   const lastMessage = (conversation: Conversation) => {
     const lastMessageContent = conversation.lastMessage.content;
 <<<<<<< HEAD
+<<<<<<< HEAD
     const failedLastMessage =
       conversation.lastMessage.deliveryState === DeliveryState.failed;
 
@@ -60,15 +61,20 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     const failedLastMessage = conversation.lastMessage.deliveryState === 'failed';
   
 >>>>>>> af2069b (failed message wip)
+=======
+    const failedLastMessage =
+      conversation.lastMessage.deliveryState === 'failed';
+
+>>>>>>> 8acd44a (added resend message request)
     //Icons
-    
-    //failed 
-    if(failedLastMessage){
-      return(
+
+    //failed
+    if (failedLastMessage) {
+      return (
         <View style={styles.icon}>
-            <ErrorIcon height={20} width={20}/>
+          <ErrorIcon height={20} width={20} />
         </View>
-      )
+      );
     }
 
     //failed
