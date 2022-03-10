@@ -48,17 +48,18 @@ const isImageFromGoogleSource = (messageText?: string) => {
 export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
   const lastMessage = (conversation: Conversation) => {
     const lastMessageContent = conversation.lastMessage.content;
-    const failedLastMessage = conversation.lastMessage.deliveryState === 'failed';
-  
+    const failedLastMessage =
+      conversation.lastMessage.deliveryState === 'failed';
+
     //Icons
-    
-    //failed 
-    if(failedLastMessage){
-      return(
+
+    //failed
+    if (failedLastMessage) {
+      return (
         <View style={styles.icon}>
-            <ErrorIcon height={20} width={20}/>
+          <ErrorIcon height={20} width={20} />
         </View>
-      )
+      );
     }
 
     //Image

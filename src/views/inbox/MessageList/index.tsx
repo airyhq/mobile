@@ -130,7 +130,6 @@ export const MessageList = (props: MessageListProps) => {
         contact={contact}
         isLastInGroup={lastInGroup}
         dateChanged={hasDateChanged(prevMessage, currentMessage)}
-        conversationId={route.params.conversationId}
       />
     );
   };
