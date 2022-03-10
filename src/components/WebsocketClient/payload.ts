@@ -34,7 +34,7 @@ export interface MessageUpdatedPayload extends Event {
       content: any;
       delivery_state: DeliveryState;
       from_contact: boolean;
-      sent_at: string;
+      sent_at: Date;
       source: Source;
       metadata: {
         source: {
@@ -42,7 +42,7 @@ export interface MessageUpdatedPayload extends Event {
           delivery_state: string;
         };
       };
-      sender?: {
+      sender: {
         id: string;
       };
     };
