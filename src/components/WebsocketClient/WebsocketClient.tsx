@@ -73,6 +73,19 @@ export class WebSocketClient {
           },
         );
         break;
+      case 'message.updated':
+        this.callbackMap.onMessage?.(
+          json.payload.conversation_id,
+          json.payload.channel_id,
+          {
+            ...camelcaseKeys(json.payload.message, {
+              deep: true,
+              stopPaths: ['content'],
+            }),
+            sentAt: new Date(json.payload.message.sent_at),
+          },
+        );
+        break;
       case 'metadata.updated':
         this.callbackMap.onMetadata?.(json.payload);
         break;

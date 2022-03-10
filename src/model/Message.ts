@@ -26,7 +26,14 @@ export interface Message {
   fromContact: boolean;
   sentAt: Date;
   metadata?: MessageMetadata;
-  source?: string;
+  source?: Source;
+  sender: MessageSender;
+}
+
+interface MessageSender {
+  id: string;
+  name?: string;
+  avatarUrl?: string;
 }
 
 export const ContentMessageSchema = {
