@@ -22,7 +22,7 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
   const {sentAt, fromContact, children, isChatPlugin, message} = props;
 
   const isContact = isChatPlugin ? !fromContact : fromContact;
-  const failedMessage = message.deliveryState === 'failed';
+  const failedMessage = message.deliveryState === DeliveryState.failed;
 
   const FailedMessageText = () => {
     return (
