@@ -1,6 +1,6 @@
 import React, {ReactNode} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {Contact, Message} from '../../model';
+import {Contact, Message, DeliveryState} from '../../model';
 import {resendFailedStateMessage} from '../../api/Message';
 import ErrorIcon from '../../assets/images/icons/error.svg';
 import {colorTextGray, colorAiryBlue} from '../../assets/colors';
@@ -19,7 +19,7 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
   const {sentAt, fromContact, children, isChatPlugin, message} = props;
 
   const isContact = isChatPlugin ? !fromContact : fromContact;
-  const failedMessage = message.deliveryState === 'failed';
+  const failedMessage = message.deliveryState === DeliveryState.failed;
 
   const FailedMessageText = () => {
     return (
