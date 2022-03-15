@@ -31,6 +31,10 @@ export const ImageWithFallback = ({
     setImageFailed(true);
   };
 
+  const handleLoadStart = () => {
+    setLoading && setLoading(true);
+  };
+
   const handleOnLoad = () => {
     setLoading && setLoading(false);
   };
@@ -49,6 +53,7 @@ export const ImageWithFallback = ({
         </>
       ) : (
         <FastImage
+          onLoadStart={handleLoadStart}
           onLoad={handleOnLoad}
           style={imageStyle}
           source={{
