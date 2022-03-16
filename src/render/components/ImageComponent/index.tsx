@@ -22,7 +22,7 @@ export const ImageComponent = ({
   altText,
   images,
 }: ImageRenderProps) => {
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const navigation = useNavigation();
 
   const handleOnPress = (url?: string) => {
@@ -78,6 +78,7 @@ export const ImageComponent = ({
               left: 70,
               right: 70,
               height: 50,
+              zIndex: -1,
             }}
           />
         )}

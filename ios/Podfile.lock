@@ -78,7 +78,7 @@ PODS:
     - React-Core
   - OneSignalXCFramework (3.9.1)
   - OpenSSL-Universal (1.1.180)
-  - Permission-Microphone (3.2.0):
+  - Permission-Microphone (3.3.0):
     - RNPermissions
   - RCT-Folly (2020.01.13.00):
     - boost-for-react-native
@@ -366,7 +366,7 @@ PODS:
     - React-Core
   - RNGestureHandler (1.10.3):
     - React-Core
-  - RNPermissions (3.2.0):
+  - RNPermissions (3.3.0):
     - React-Core
   - RNReactNativeHapticFeedback (1.13.0):
     - React-Core
@@ -599,7 +599,7 @@ SPEC CHECKSUMS:
   lottie-react-native: 4dff8fe8d10ddef9e7880e770080f4a56121397e
   OneSignalXCFramework: 27159b0a150cdfe528c85325215c9d78b2f973c7
   OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
-  Permission-Microphone: db557c64f7e9ad41bff6b3f6d93df3b67311855b
+  Permission-Microphone: 964f87c350f8bc7aa163700a9736dd33c028817a
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
   RCTRequired: ec2ebc96b7bfba3ca5c32740f5a0c6a014a274d2
   RCTTypeSafety: 22567f31e67c3e088c7ac23ea46ab6d4779c0ea5
@@ -634,7 +634,7 @@ SPEC CHECKSUMS:
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
   RNFS: fc610f78fdf8bfc89a9e5cc2f898519f4dba1002
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
-  RNPermissions: f7ebe52db07c00901127966ca080b4ec6a6ceb0a
+  RNPermissions: bcd846e8f5a7f39e921cc7ca7172e2de0e698b6f
   RNReactNativeHapticFeedback: b83bfb4b537bdd78eb4f6ffe63c6884f7b049ead
   RNScreens: 21b73c94c9117e1110a79ee0ee80c93ccefed8ce
   RNSoundRecorder: a753a2f5f3744c0e13922537222c6e0b926e5227
@@ -646,4 +646,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: c9960f0fabe5c73169ac25c7883e53051b11621d
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.2

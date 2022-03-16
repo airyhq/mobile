@@ -8,6 +8,7 @@ import {
   Platform,
   NativeSyntheticEvent,
   NativeScrollEvent,
+  ActivityIndicator,
 } from 'react-native';
 import {RealmDB} from '../../../storage/realm';
 import {Message, Conversation} from '../../../model';
@@ -17,6 +18,7 @@ import {ChatInput} from '../../../components/chat/input/ChatInput';
 import {useHeaderHeight} from '@react-navigation/stack';
 import {loadMessagesForConversation} from '../../../api/Message';
 import {hasDateChanged} from '../../../services/dates';
+import {colorAiryBlue} from '../../../assets/colors';
 
 interface RouteProps {
   key: string;
@@ -32,7 +34,6 @@ const realm = RealmDB.getInstance();
 
 export const MessageList = (props: MessageListProps) => {
   const {route} = props;
-
   const [messages, setMessages] = useState<Message[] | []>([]);
   const messageListRef = useRef<FlatList>(null);
   const headerHeight = useHeaderHeight();
@@ -43,6 +44,9 @@ export const MessageList = (props: MessageListProps) => {
       'Conversation',
       route.params.conversationId,
     );
+  const [isLoading, setIsLoading] = useState(
+    conversation.messages.length === 0,
+  );
 
   const {
     metadata: {contact},
@@ -51,13 +55,22 @@ export const MessageList = (props: MessageListProps) => {
   } = conversation;
 
   useEffect(() => {
+    if (conversation.messages.length === 0) {
+      conversation &&
+        loadMessagesForConversation(route.params.conversationId)
+          .then(() => setIsLoading(false))
+          .catch(() => {
+            setIsLoading(true);
+          });
+    }
+  }, [route.params.conversationId]);
+
+  useEffect(() => {
     const _conversation: (Conversation & Realm.Object) | undefined =
       realm.objectForPrimaryKey<Conversation>(
         'Conversation',
         route.params.conversationId,
       );
-
-    loadMessagesForConversation(route.params.conversationId);
 
     if (_conversation.messages) {
       !realm.isInTransaction &&
@@ -123,19 +136,27 @@ export const MessageList = (props: MessageListProps) => {
   return (
     <SafeAreaView style={{backgroundColor: 'white'}}>
       <View style={styles.container}>
-        <FlatList
-          inverted
-          decelerationRate={0.1}
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: 'flex-end',
-          }}
-          style={styles.flatlist}
-          ref={messageListRef}
-          data={messages.reverse()}
-          renderItem={renderItem}
-          onScroll={onScroll}
-        />
+        {isLoading ? (
+          <ActivityIndicator
+            size="large"
+            style={{flex: 1}}
+            color={colorAiryBlue}
+          />
+        ) : (
+          <FlatList
+            inverted
+            decelerationRate={0.1}
+            contentContainerStyle={{
+              flexGrow: 1,
+              justifyContent: 'flex-end',
+            }}
+            style={styles.flatlist}
+            ref={messageListRef}
+            data={messages.reverse()}
+            renderItem={renderItem}
+            onScroll={onScroll}
+          />
+        )}
         <KeyboardAvoidingView
           behavior={behavior}
           keyboardVerticalOffset={keyboardVerticalOffset}>
