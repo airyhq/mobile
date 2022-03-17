@@ -49,45 +49,52 @@ export const loadMessagesForConversation = (
   const currentConversation: Conversation | undefined =
     realm.objectForPrimaryKey<Conversation>('Conversation', conversationId);
 
-  api
-    .listMessages({
-      conversationId,
-      pageSize: 50,
-      ...(cursor && {cursor: cursor}),
-    })
-    .then((response: PaginatedResponse<Message>) => {
-      if (currentConversationData) {
-        realm.write(() => {
-          currentConversationData.messages = [
-            ...mergeMessages(currentConversationData.messages, [
-              ...response.data,
-            ]),
-          ];
-        });
-      } else {
-        realm.write(() => {
-          realm.create('Conversation', {
-            messages: mergeMessages([], [...response.data]),
+  return new Promise((resolve, reject) => {
+    api
+      .listMessages({
+        conversationId,
+        pageSize: 50,
+        ...(cursor && {cursor: cursor}),
+      })
+      .then((response: PaginatedResponse<Message>) => {
+        if (currentConversationData) {
+          realm.write(() => {
+            currentConversationData.messages = [
+              ...mergeMessages(currentConversationData.messages, [
+                ...response.data,
+              ]),
+            ];
           });
-        });
-      }
+        } else {
+          realm.write(() => {
+            realm.create('Conversation', {
+              messages: mergeMessages([], [...response.data]),
+            });
+          });
+        }
 
-      if (response.paginationData) {
-        realm.write(() => {
-          currentConversation.paginationData.loading =
-            response.paginationData?.loading ?? null;
-          currentConversation.paginationData.nextCursor =
-            response.paginationData?.nextCursor ?? null;
-          currentConversation.paginationData.previousCursor =
-            response.paginationData?.previousCursor ?? null;
-          currentConversation.paginationData.total =
-            response.paginationData?.total ?? null;
-        });
-      }
-      if (onResponse) {
-        onResponse();
-      }
-    });
+        if (response.paginationData) {
+          realm.write(() => {
+            currentConversation.paginationData.loading =
+              response.paginationData?.loading ?? null;
+            currentConversation.paginationData.nextCursor =
+              response.paginationData?.nextCursor ?? null;
+            currentConversation.paginationData.previousCursor =
+              response.paginationData?.previousCursor ?? null;
+            currentConversation.paginationData.total =
+              response.paginationData?.total ?? null;
+          });
+        }
+        if (onResponse) {
+          onResponse();
+        }
+        resolve('resolve');
+      })
+      .catch((error: Error) => {
+        console.error(error);
+        reject('reject');
+      });
+  });
 };
 
 export const changeConversationState = (
