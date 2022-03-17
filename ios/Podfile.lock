@@ -76,9 +76,9 @@ PODS:
   - lottie-react-native (4.0.2):
     - lottie-ios (~> 3.1.8)
     - React-Core
-  - OneSignalXCFramework (3.9.1)
+  - OneSignalXCFramework (3.10.1)
   - OpenSSL-Universal (1.1.180)
-  - Permission-Microphone (3.2.0):
+  - Permission-Microphone (3.3.1):
     - RNPermissions
   - RCT-Folly (2020.01.13.00):
     - boost-for-react-native
@@ -273,21 +273,21 @@ PODS:
     - React-jsi (= 0.64.1)
     - React-perflogger (= 0.64.1)
   - React-jsinspector (0.64.1)
-  - react-native-blob-util (0.13.17):
+  - react-native-blob-util (0.13.18):
     - React-Core
-  - react-native-cookies (6.0.10):
+  - react-native-cookies (6.1.0):
     - React-Core
-  - react-native-onesignal (4.3.3):
-    - OneSignalXCFramework (= 3.9.1)
+  - react-native-onesignal (4.3.7):
+    - OneSignalXCFramework (= 3.10.1)
     - React (< 1.0.0, >= 0.13.0)
   - react-native-pdf (6.4.0):
     - React-Core
-  - react-native-safe-area-context (3.3.0):
+  - react-native-safe-area-context (3.4.1):
     - React-Core
-  - react-native-video (5.1.1):
+  - react-native-video (5.2.0):
     - React-Core
-    - react-native-video/Video (= 5.1.1)
-  - react-native-video/Video (5.1.1):
+    - react-native-video/Video (= 5.2.0)
+  - react-native-video/Video (5.2.0):
     - React-Core
   - React-perflogger (0.64.1)
   - React-RCTActionSheet (0.64.1):
@@ -353,7 +353,7 @@ PODS:
     - React-cxxreact (= 0.64.1)
     - React-jsi (= 0.64.1)
     - React-perflogger (= 0.64.1)
-  - RealmJS (10.6.0):
+  - RealmJS (10.13.0):
     - GCDWebServer
     - React
   - RNCMaskedView (0.1.11):
@@ -366,17 +366,17 @@ PODS:
     - React-Core
   - RNGestureHandler (1.10.3):
     - React-Core
-  - RNPermissions (3.2.0):
+  - RNPermissions (3.3.1):
     - React-Core
-  - RNReactNativeHapticFeedback (1.13.0):
+  - RNReactNativeHapticFeedback (1.13.1):
     - React-Core
-  - RNScreens (3.4.0):
+  - RNScreens (3.13.1):
     - React-Core
     - React-RCTImage
   - RNSoundRecorder (1.5.0):
     - React
-  - RNSVG (12.1.1):
-    - React
+  - RNSVG (12.3.0):
+    - React-Core
   - SDWebImage (5.11.1):
     - SDWebImage/Core (= 5.11.1)
   - SDWebImage/Core (5.11.1)
@@ -583,7 +583,7 @@ SPEC CHECKSUMS:
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
   FBLazyVector: 7b423f9e248eae65987838148c36eec1dbfe0b53
-  FBReactNativeSpec: 4093807b8881522a6f1c2e7d021f248ef7ebcbdf
+  FBReactNativeSpec: 40f0fd27ba68910d2e9b9718feb372ee35ed162e
   Flipper: d3da1aa199aad94455ae725e9f3aa43f3ec17021
   Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
   Flipper-Folly: 755929a4f851b2fb2c347d533a23f191b008554c
@@ -597,9 +597,9 @@ SPEC CHECKSUMS:
   libwebp: 98a37e597e40bfdb4c911fc98f2c53d0b12d05fc
   lottie-ios: 48fac6be217c76937e36e340e2d09cf7b10b7f5f
   lottie-react-native: 4dff8fe8d10ddef9e7880e770080f4a56121397e
-  OneSignalXCFramework: 27159b0a150cdfe528c85325215c9d78b2f973c7
+  OneSignalXCFramework: fe027712118f2862ab193b72270487f11450ea63
   OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
-  Permission-Microphone: db557c64f7e9ad41bff6b3f6d93df3b67311855b
+  Permission-Microphone: 13922195a81b9d46d2df8050c225006eae126d49
   RCT-Folly: ec7a233ccc97cc556cf7237f0db1ff65b986f27c
   RCTRequired: ec2ebc96b7bfba3ca5c32740f5a0c6a014a274d2
   RCTTypeSafety: 22567f31e67c3e088c7ac23ea46ab6d4779c0ea5
@@ -611,12 +611,12 @@ SPEC CHECKSUMS:
   React-jsi: 5de8204706bd872b78ea646aee5d2561ca1214b6
   React-jsiexecutor: 124e8f99992490d0d13e0649d950d3e1aae06fe9
   React-jsinspector: 500a59626037be5b3b3d89c5151bc3baa9abf1a9
-  react-native-blob-util: d2919a2243cba497cd5713f72faeec283c69fde4
-  react-native-cookies: 47ef7ec7839e99f738f6ee64fbb2d4d224e36a65
-  react-native-onesignal: 9a543af01c2359b7567919cd3b1490051c553e21
+  react-native-blob-util: 600972b1782380a5a7d5db61a3817ea32349dae9
+  react-native-cookies: 7e14e823f32bd7c868134c7e207c89a46fa28f98
+  react-native-onesignal: 7643517fe655b94cfda8e697ec16f9b9135648b8
   react-native-pdf: a6a5a3f0bdf340eb2eed6c96034424d2cc3f84b0
-  react-native-safe-area-context: 61c8c484a3a9e7d1fda19f7b1794b35bbfd2262a
-  react-native-video: 0bb76b6d6b77da3009611586c7dbf817b947f30e
+  react-native-safe-area-context: 9e40fb181dac02619414ba1294d6c2a807056ab9
+  react-native-video: a4c2635d0802f983594b7057e1bce8f442f0ad28
   React-perflogger: aad6d4b4a267936b3667260d1f649b6f6069a675
   React-RCTActionSheet: fc376be462c9c8d6ad82c0905442fd77f82a9d2a
   React-RCTAnimation: ba0a1c3a2738be224a08092fa7f1b444ab77d309
@@ -629,16 +629,16 @@ SPEC CHECKSUMS:
   React-RCTVibration: 4b99a7f5c6c0abbc5256410cc5425fb8531986e1
   React-runtimeexecutor: ff951a0c241bfaefc4940a3f1f1a229e7cb32fa6
   ReactCommon: bedc99ed4dae329c4fcf128d0c31b9115e5365ca
-  RealmJS: c903034b0d767fcef11dc8207e91b6f07e60d7b8
+  RealmJS: 9ca55cce37eedc14f6f3db233ba3d3ad52838c6f
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNFastImage: 1f2cab428712a4baaf78d6169eaec7f622556dd7
   RNFS: fc610f78fdf8bfc89a9e5cc2f898519f4dba1002
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
-  RNPermissions: f7ebe52db07c00901127966ca080b4ec6a6ceb0a
-  RNReactNativeHapticFeedback: b83bfb4b537bdd78eb4f6ffe63c6884f7b049ead
-  RNScreens: 21b73c94c9117e1110a79ee0ee80c93ccefed8ce
+  RNPermissions: 34d678157c800b25b22a488e4d8babb57456e796
+  RNReactNativeHapticFeedback: 4085973f5a38b40d3c6793a3ee5724773eae045e
+  RNScreens: 40a2cb40a02a609938137a1e0acfbf8fc9eebf19
   RNSoundRecorder: a753a2f5f3744c0e13922537222c6e0b926e5227
-  RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
+  RNSVG: 302bfc9905bd8122f08966dc2ce2d07b7b52b9f8
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: f93010f3f6c031e2f8fb3081ca4ee6966c539815
   Yoga: a7de31c64fe738607e7a3803e3f591a4b1df7393
@@ -646,4 +646,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: c9960f0fabe5c73169ac25c7883e53051b11621d
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.2

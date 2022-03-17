@@ -55,7 +55,9 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>This app uses the location to send your current position to your contacts.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app uses the microphone to send voice messages to your conversations.</string>
 	<key>OneSignal_app_groups_key</key>
 	<string>group.com.airycloud.mobile.onesignal</string>
 	<key>UIAppFonts</key>
@@ -71,13 +73,13 @@
 		<string>Lato-Thin.ttf</string>
 		<string>Lato-ThinItalic.ttf</string>
 	</array>
-	<key>NSMicrophoneUsageDescription</key>
-  	<string>Airy wants to use your microphone</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
