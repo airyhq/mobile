@@ -1,15 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Animated, Dimensions, StyleSheet, View} from 'react-native';
-import {Source} from '../../../model';
 import {Conversation} from '../../../model';
 import {RealmDB} from '../../../storage/realm';
-import {AttachmentPicker} from './AttachmentPicker';
 import {Input} from './Input';
-import {
-  ATTACHMENT_BAR_ITEM_PADDING,
-  ATTACHMENT_BAR_ITEM_WIDTH,
-  getAttachments,
-} from './config';
 import {Tooltip} from '../../../componentsLib';
 import {RecordAudio} from '../../RecordAudio';
 
@@ -41,12 +34,13 @@ export const ChatInput = (props: ChatInputProps) => {
 
   const [extendedAttachments, setExtendedAttachments] = useState<boolean>(true);
 
-  const attachmentBarWidth =
-    getAttachments(Source[source]).length *
-    (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING);
+  // const attachmentBarWidth =
+  //   getAttachments(Source[source]).length *
+  //   (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING);
 
   useEffect(() => {
     closeRecordContainer && slideIn().then(() => setRecordVisible(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [closeRecordContainer]);
 
   const handleIsRecording = (recording: boolean) => {

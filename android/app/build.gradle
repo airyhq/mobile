@@ -152,8 +152,8 @@ android {
         applicationId "com.airycloud.mobile"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 18
-        versionName "0.2.10"
+        versionCode 19
+        versionName "0.2.11"
         manifestPlaceholders = [auth0Domain: "airyhq.us.auth0.com", auth0Scheme: "${applicationId}"]
     }
     splits {

@@ -6,7 +6,6 @@ import {
   Linking,
   Animated,
   PanResponder,
-  Dimensions,
   Vibration,
   Platform,
 } from 'react-native';
@@ -74,6 +73,7 @@ export const RecordAudio = (props: RecordAudioProps) => {
 
   useEffect(() => {
     checkMicrophonePermission();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkMicrophonePermission = () => {

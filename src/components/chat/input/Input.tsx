@@ -109,14 +109,14 @@ export const Input = (props: InputBarProps) => {
     }).start();
   };
 
-  const collapseInputBar = () => {
-    Animated.timing(expandAnimation, {
-      toValue:
-        width - (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING),
-      duration: 400,
-      useNativeDriver: false,
-    }).start();
-  };
+  // const collapseInputBar = () => {
+  //   Animated.timing(expandAnimation, {
+  //     toValue:
+  //       width - (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING),
+  //     duration: 400,
+  //     useNativeDriver: false,
+  //   }).start();
+  // };
 
   const handleMicrophonePress = () => {
     setRecordScreenVisible(!recordScreenVisible);

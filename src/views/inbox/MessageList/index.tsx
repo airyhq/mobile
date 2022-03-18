@@ -63,6 +63,7 @@ export const MessageList = (props: MessageListProps) => {
             setIsLoading(true);
           });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route.params.conversationId]);
 
   useEffect(() => {
