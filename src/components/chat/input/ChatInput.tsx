@@ -94,15 +94,8 @@ export const ChatInput = (props: ChatInputProps) => {
         </View>
       )}
       <View style={styles.contentBar}>
-        {/* <AttachmentPicker
-          attachmentTypes={getAttachments(Source[source])}
-          attachmentBarWidth={attachmentBarWidth}
-          extendedAttachments={extendedAttachments}
-          setExtendedAttachments={setExtendedAttachments}
-        /> */}
         <Input
           width={windowWidth - MESSAGE_BAR_STANDARD_PADDING}
-          // attachmentBarWidth={attachmentBarWidth}
           attachmentBarWidth={0}
           conversationId={conversationId}
           extendedInputBar={!extendedAttachments}
