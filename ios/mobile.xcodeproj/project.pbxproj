@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* mobileTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* mobileTests.m */; };
-		0774B15BD882FD990D9F97E2 /* libPods-mobile-OneSignalNotificationServiceExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EE9FCAA7F7F770D40D75795 /* libPods-mobile-OneSignalNotificationServiceExtension.a */; };
+		0BE07E371A302F73BF0BC5D6 /* libPods-mobile-mobileTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 401B13BF1C7304469A4C3B97 /* libPods-mobile-mobileTests.a */; };
 		126787889C714F8BAE56C45E /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 45CC453761CE4725881EC140 /* Lato-Regular.ttf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -19,16 +19,16 @@
 		5B29B92D2768C8D70076B54D /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B29B92C2768C8D70076B54D /* NotificationService.swift */; };
 		5B29B9312768C8D70076B54D /* OneSignalNotificationServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 5B29B92A2768C8D70076B54D /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		5BC818E427341E70007F7396 /* empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC818E327341E70007F7396 /* empty.swift */; };
+		7E7C6A896EB6FF6A78427D0A /* libPods-mobile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D90E557BD3291518C75C4B6 /* libPods-mobile.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		888C72F52A4F447E94145E4A /* Lato-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9C9F13C9BF3D4856BF8D9A40 /* Lato-BlackItalic.ttf */; };
 		8B33CB3BE44540E294EAF482 /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 542D442BEC2B470EB2ED7F41 /* Lato-Italic.ttf */; };
 		ADC12079318647C9B87255E5 /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8DA913A0429C49EABE1AE283 /* Lato-Bold.ttf */; };
 		C14FAD970EE6497D94BFCE4C /* Lato-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A563BAA4ABA84358B1742D7B /* Lato-LightItalic.ttf */; };
 		C7F434A5C42D4131A8C4DE2C /* Lato-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2CD30A8D0C2640DF9E96C712 /* Lato-BoldItalic.ttf */; };
-		CED9162A6CF10FD7B06B23D2 /* libPods-mobile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D9B9161E327A47753CA2F92 /* libPods-mobile.a */; };
+		CA0CA0E7F451588D9AE0BEAA /* libPods-mobile-OneSignalNotificationServiceExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E7390EBA475E1F8EBEAE84CC /* libPods-mobile-OneSignalNotificationServiceExtension.a */; };
 		E19442AEB5C946D49EED9510 /* Lato-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C193662B5D184896BF9B6DEF /* Lato-Black.ttf */; };
 		F3D545A4E9134B6497D3FF24 /* Lato-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0573571C3C3046EA8F5D35A9 /* Lato-Light.ttf */; };
-		F7755DCBADF5C87D8096417F /* libPods-mobile-mobileTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 338C4499054B6AD5E8F5EC28 /* libPods-mobile-mobileTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,11 +75,11 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = mobile/main.m; sourceTree = "<group>"; };
 		13C4DA4F26BD3C30004CCC8C /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		16CEB9E6E231410A88303C26 /* Lato-ThinItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-ThinItalic.ttf"; path = "../src/assets/fonts/Lato-ThinItalic.ttf"; sourceTree = "<group>"; };
-		1D9B9161E327A47753CA2F92 /* libPods-mobile.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mobile.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		24FD656440F5ECDD8BB217B6 /* Pods-mobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobile.release.xcconfig"; path = "Target Support Files/Pods-mobile/Pods-mobile.release.xcconfig"; sourceTree = "<group>"; };
 		2CD30A8D0C2640DF9E96C712 /* Lato-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-BoldItalic.ttf"; path = "../src/assets/fonts/Lato-BoldItalic.ttf"; sourceTree = "<group>"; };
-		338C4499054B6AD5E8F5EC28 /* libPods-mobile-mobileTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mobile-mobileTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		401B13BF1C7304469A4C3B97 /* libPods-mobile-mobileTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mobile-mobileTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		45CC453761CE4725881EC140 /* Lato-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Regular.ttf"; path = "../src/assets/fonts/Lato-Regular.ttf"; sourceTree = "<group>"; };
-		50243B41987FC48DF873D316 /* Pods-mobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobile.debug.xcconfig"; path = "Target Support Files/Pods-mobile/Pods-mobile.debug.xcconfig"; sourceTree = "<group>"; };
+		4922EBD55FDA0A5C3850B63B /* Pods-mobile-mobileTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobile-mobileTests.debug.xcconfig"; path = "Target Support Files/Pods-mobile-mobileTests/Pods-mobile-mobileTests.debug.xcconfig"; sourceTree = "<group>"; };
 		542D442BEC2B470EB2ED7F41 /* Lato-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Italic.ttf"; path = "../src/assets/fonts/Lato-Italic.ttf"; sourceTree = "<group>"; };
 		5B29B9252768C8820076B54D /* mobile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = mobile.entitlements; path = mobile/mobile.entitlements; sourceTree = "<group>"; };
 		5B29B92A2768C8D70076B54D /* OneSignalNotificationServiceExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OneSignalNotificationServiceExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -88,19 +88,19 @@
 		5B29B9362768CB700076B54D /* OneSignalNotificationServiceExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OneSignalNotificationServiceExtension.entitlements; sourceTree = "<group>"; };
 		5BC818E227341E70007F7396 /* mobile-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "mobile-Bridging-Header.h"; sourceTree = "<group>"; };
 		5BC818E327341E70007F7396 /* empty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = empty.swift; sourceTree = "<group>"; };
-		5EE9FCAA7F7F770D40D75795 /* libPods-mobile-OneSignalNotificationServiceExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mobile-OneSignalNotificationServiceExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7A840DDAD002CB5FA8881D53 /* Pods-mobile-OneSignalNotificationServiceExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobile-OneSignalNotificationServiceExtension.release.xcconfig"; path = "Target Support Files/Pods-mobile-OneSignalNotificationServiceExtension/Pods-mobile-OneSignalNotificationServiceExtension.release.xcconfig"; sourceTree = "<group>"; };
+		6D90E557BD3291518C75C4B6 /* libPods-mobile.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mobile.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		79CCDE815BA278F4D48F61ED /* Pods-mobile-OneSignalNotificationServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobile-OneSignalNotificationServiceExtension.debug.xcconfig"; path = "Target Support Files/Pods-mobile-OneSignalNotificationServiceExtension/Pods-mobile-OneSignalNotificationServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
+		7F1E39BB25A761D47A04F699 /* Pods-mobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobile.debug.xcconfig"; path = "Target Support Files/Pods-mobile/Pods-mobile.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = mobile/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8DA913A0429C49EABE1AE283 /* Lato-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Bold.ttf"; path = "../src/assets/fonts/Lato-Bold.ttf"; sourceTree = "<group>"; };
 		9C9F13C9BF3D4856BF8D9A40 /* Lato-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-BlackItalic.ttf"; path = "../src/assets/fonts/Lato-BlackItalic.ttf"; sourceTree = "<group>"; };
-		A560399B30E68BA96FCDFECB /* Pods-mobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobile.release.xcconfig"; path = "Target Support Files/Pods-mobile/Pods-mobile.release.xcconfig"; sourceTree = "<group>"; };
+		A045E0EDE505BA274BF62AB3 /* Pods-mobile-OneSignalNotificationServiceExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobile-OneSignalNotificationServiceExtension.release.xcconfig"; path = "Target Support Files/Pods-mobile-OneSignalNotificationServiceExtension/Pods-mobile-OneSignalNotificationServiceExtension.release.xcconfig"; sourceTree = "<group>"; };
 		A563BAA4ABA84358B1742D7B /* Lato-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-LightItalic.ttf"; path = "../src/assets/fonts/Lato-LightItalic.ttf"; sourceTree = "<group>"; };
 		C12C2CFCF8F544179B3EAAC9 /* Lato-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Thin.ttf"; path = "../src/assets/fonts/Lato-Thin.ttf"; sourceTree = "<group>"; };
 		C193662B5D184896BF9B6DEF /* Lato-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Lato-Black.ttf"; path = "../src/assets/fonts/Lato-Black.ttf"; sourceTree = "<group>"; };
-		C54072B7D208530F65350E04 /* Pods-mobile-OneSignalNotificationServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobile-OneSignalNotificationServiceExtension.debug.xcconfig"; path = "Target Support Files/Pods-mobile-OneSignalNotificationServiceExtension/Pods-mobile-OneSignalNotificationServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
-		D99A54A5B89949B4EFFEF363 /* Pods-mobile-mobileTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobile-mobileTests.release.xcconfig"; path = "Target Support Files/Pods-mobile-mobileTests/Pods-mobile-mobileTests.release.xcconfig"; sourceTree = "<group>"; };
-		D9FA1FBEF06010320F6D530F /* Pods-mobile-mobileTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobile-mobileTests.debug.xcconfig"; path = "Target Support Files/Pods-mobile-mobileTests/Pods-mobile-mobileTests.debug.xcconfig"; sourceTree = "<group>"; };
+		E7390EBA475E1F8EBEAE84CC /* libPods-mobile-OneSignalNotificationServiceExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mobile-OneSignalNotificationServiceExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F223C9057F93C1BFFD0BEAD3 /* Pods-mobile-mobileTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobile-mobileTests.release.xcconfig"; path = "Target Support Files/Pods-mobile-mobileTests/Pods-mobile-mobileTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,7 +108,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F7755DCBADF5C87D8096417F /* libPods-mobile-mobileTests.a in Frameworks */,
+				0BE07E371A302F73BF0BC5D6 /* libPods-mobile-mobileTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,7 +116,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CED9162A6CF10FD7B06B23D2 /* libPods-mobile.a in Frameworks */,
+				7E7C6A896EB6FF6A78427D0A /* libPods-mobile.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,7 +124,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0774B15BD882FD990D9F97E2 /* libPods-mobile-OneSignalNotificationServiceExtension.a in Frameworks */,
+				CA0CA0E7F451588D9AE0BEAA /* libPods-mobile-OneSignalNotificationServiceExtension.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -185,9 +185,9 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				1D9B9161E327A47753CA2F92 /* libPods-mobile.a */,
-				5EE9FCAA7F7F770D40D75795 /* libPods-mobile-OneSignalNotificationServiceExtension.a */,
-				338C4499054B6AD5E8F5EC28 /* libPods-mobile-mobileTests.a */,
+				6D90E557BD3291518C75C4B6 /* libPods-mobile.a */,
+				E7390EBA475E1F8EBEAE84CC /* libPods-mobile-OneSignalNotificationServiceExtension.a */,
+				401B13BF1C7304469A4C3B97 /* libPods-mobile-mobileTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -195,12 +195,12 @@
 		4912D4AB6D51095BDA8E420F /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				50243B41987FC48DF873D316 /* Pods-mobile.debug.xcconfig */,
-				A560399B30E68BA96FCDFECB /* Pods-mobile.release.xcconfig */,
-				C54072B7D208530F65350E04 /* Pods-mobile-OneSignalNotificationServiceExtension.debug.xcconfig */,
-				7A840DDAD002CB5FA8881D53 /* Pods-mobile-OneSignalNotificationServiceExtension.release.xcconfig */,
-				D9FA1FBEF06010320F6D530F /* Pods-mobile-mobileTests.debug.xcconfig */,
-				D99A54A5B89949B4EFFEF363 /* Pods-mobile-mobileTests.release.xcconfig */,
+				7F1E39BB25A761D47A04F699 /* Pods-mobile.debug.xcconfig */,
+				24FD656440F5ECDD8BB217B6 /* Pods-mobile.release.xcconfig */,
+				79CCDE815BA278F4D48F61ED /* Pods-mobile-OneSignalNotificationServiceExtension.debug.xcconfig */,
+				A045E0EDE505BA274BF62AB3 /* Pods-mobile-OneSignalNotificationServiceExtension.release.xcconfig */,
+				4922EBD55FDA0A5C3850B63B /* Pods-mobile-mobileTests.debug.xcconfig */,
+				F223C9057F93C1BFFD0BEAD3 /* Pods-mobile-mobileTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -257,12 +257,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "mobileTests" */;
 			buildPhases = (
-				D35BADB1A779B88241142B11 /* [CP] Check Pods Manifest.lock */,
+				6DB56646A5E01175D5D2766B /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				D0B8CE786E3F0949420FEFAE /* [CP] Embed Pods Frameworks */,
-				6611D551BD7625DD0BEA8D10 /* [CP] Copy Pods Resources */,
+				6DA16D598CCD4C02018B2342 /* [CP] Embed Pods Frameworks */,
+				F3718975706167A55F55843F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -278,15 +278,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "mobile" */;
 			buildPhases = (
-				6DC3F261CB2317E6F8B1D6EC /* [CP] Check Pods Manifest.lock */,
+				A80F8E4BDA1A006F7A96D6C6 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				5B29B9352768C8D70076B54D /* Embed App Extensions */,
-				1717123F6F6A2F435087205F /* [CP] Embed Pods Frameworks */,
-				197D7FE1092F7B026A2C07D5 /* [CP] Copy Pods Resources */,
+				C9A77E0ADE77A82FA35ADA30 /* [CP] Embed Pods Frameworks */,
+				467C15CFC22E564D095F1449 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -302,11 +302,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5B29B9322768C8D70076B54D /* Build configuration list for PBXNativeTarget "OneSignalNotificationServiceExtension" */;
 			buildPhases = (
-				40FCE7A709BC249E367DB67A /* [CP] Check Pods Manifest.lock */,
+				B839ED8DFEEEE5C571D329B6 /* [CP] Check Pods Manifest.lock */,
 				5B29B9262768C8D70076B54D /* Sources */,
 				5B29B9272768C8D70076B54D /* Frameworks */,
 				5B29B9282768C8D70076B54D /* Resources */,
-				0A250516A3E095FE2DD03031 /* [CP] Copy Pods Resources */,
+				188A15074CDC30020E19EAFF /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -410,7 +410,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		0A250516A3E095FE2DD03031 /* [CP] Copy Pods Resources */ = {
+		188A15074CDC30020E19EAFF /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -427,24 +427,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mobile-OneSignalNotificationServiceExtension/Pods-mobile-OneSignalNotificationServiceExtension-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		1717123F6F6A2F435087205F /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-mobile/Pods-mobile-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-mobile/Pods-mobile-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mobile/Pods-mobile-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		197D7FE1092F7B026A2C07D5 /* [CP] Copy Pods Resources */ = {
+		467C15CFC22E564D095F1449 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -461,7 +444,24 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mobile/Pods-mobile-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		40FCE7A709BC249E367DB67A /* [CP] Check Pods Manifest.lock */ = {
+		6DA16D598CCD4C02018B2342 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mobile-mobileTests/Pods-mobile-mobileTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mobile-mobileTests/Pods-mobile-mobileTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mobile-mobileTests/Pods-mobile-mobileTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6DB56646A5E01175D5D2766B /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -476,31 +476,14 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-mobile-OneSignalNotificationServiceExtension-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-mobile-mobileTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		6611D551BD7625DD0BEA8D10 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-mobile-mobileTests/Pods-mobile-mobileTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-mobile-mobileTests/Pods-mobile-mobileTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mobile-mobileTests/Pods-mobile-mobileTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		6DC3F261CB2317E6F8B1D6EC /* [CP] Check Pods Manifest.lock */ = {
+		A80F8E4BDA1A006F7A96D6C6 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -522,24 +505,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D0B8CE786E3F0949420FEFAE /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-mobile-mobileTests/Pods-mobile-mobileTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-mobile-mobileTests/Pods-mobile-mobileTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mobile-mobileTests/Pods-mobile-mobileTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D35BADB1A779B88241142B11 /* [CP] Check Pods Manifest.lock */ = {
+		B839ED8DFEEEE5C571D329B6 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -554,11 +520,45 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-mobile-mobileTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-mobile-OneSignalNotificationServiceExtension-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C9A77E0ADE77A82FA35ADA30 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mobile/Pods-mobile-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mobile/Pods-mobile-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mobile/Pods-mobile-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F3718975706167A55F55843F /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mobile-mobileTests/Pods-mobile-mobileTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mobile-mobileTests/Pods-mobile-mobileTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mobile-mobileTests/Pods-mobile-mobileTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -627,7 +627,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D9FA1FBEF06010320F6D530F /* Pods-mobile-mobileTests.debug.xcconfig */;
+			baseConfigurationReference = 4922EBD55FDA0A5C3850B63B /* Pods-mobile-mobileTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -656,7 +656,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D99A54A5B89949B4EFFEF363 /* Pods-mobile-mobileTests.release.xcconfig */;
+			baseConfigurationReference = F223C9057F93C1BFFD0BEAD3 /* Pods-mobile-mobileTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -682,7 +682,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 50243B41987FC48DF873D316 /* Pods-mobile.debug.xcconfig */;
+			baseConfigurationReference = 7F1E39BB25A761D47A04F699 /* Pods-mobile.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -717,7 +717,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A560399B30E68BA96FCDFECB /* Pods-mobile.release.xcconfig */;
+			baseConfigurationReference = 24FD656440F5ECDD8BB217B6 /* Pods-mobile.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -750,7 +750,7 @@
 		};
 		5B29B9332768C8D70076B54D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C54072B7D208530F65350E04 /* Pods-mobile-OneSignalNotificationServiceExtension.debug.xcconfig */;
+			baseConfigurationReference = 79CCDE815BA278F4D48F61ED /* Pods-mobile-OneSignalNotificationServiceExtension.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -792,7 +792,7 @@
 		};
 		5B29B9342768C8D70076B54D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7A840DDAD002CB5FA8881D53 /* Pods-mobile-OneSignalNotificationServiceExtension.release.xcconfig */;
+			baseConfigurationReference = A045E0EDE505BA274BF62AB3 /* Pods-mobile-OneSignalNotificationServiceExtension.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;

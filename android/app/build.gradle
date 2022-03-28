@@ -204,7 +204,11 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
+    implementation project(':lottie-react-native')
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:support-annotations:26.1.0'
     implementation "com.facebook.react:react-native:+"  // From node_modules
+
 
     implementation project(':react-native-haptic-feedback')
 
