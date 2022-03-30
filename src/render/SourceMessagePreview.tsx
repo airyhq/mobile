@@ -9,7 +9,7 @@ import AttachmentVideo from '../assets/images/icons/attachmentVideo.svg';
 import AttachmentAudio from '../assets/images/icons/attachmentAudio.svg';
 import AttachmentFile from '../assets/images/icons/attachmentFile.svg';
 import {Emoji} from '../componentsLib/general/Emoji';
-import {colorTextGray} from '../assets/colors';
+import {colorTextGray, colorRedAlert} from '../assets/colors';
 import ErrorIcon from '../assets/images/icons/error.svg';
 
 interface SourceMessagePreviewProps {
@@ -58,7 +58,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     if (failedLastMessage) {
       return (
         <View style={styles.icon}>
-          <ErrorIcon height={20} width={20} />
+          <ErrorIcon height={20} width={20} fill={colorRedAlert} />
         </View>
       );
     }

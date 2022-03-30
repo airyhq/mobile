@@ -3,7 +3,7 @@ import {View, Text, StyleSheet} from 'react-native';
 import {Contact, Message, DeliveryState} from '../../model';
 import {resendFailedStateMessage} from '../../api/Message';
 import ErrorIcon from '../../assets/images/icons/error.svg';
-import {colorTextGray, colorAiryBlue} from '../../assets/colors';
+import {colorTextGray, colorAiryBlue, colorRedAlert} from '../../assets/colors';
 
 type MessageInfoWrapperProps = {
   children: ReactNode;
@@ -40,7 +40,9 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
         <Text>
           <View>{children}</View>
         </Text>
-        {failedMessage && <ErrorIcon style={styles.failedMessage} />}
+        {failedMessage && (
+          <ErrorIcon style={styles.failedMessage} fill={colorRedAlert} />
+        )}
       </View>
       {sentAt && !failedMessage && <Text style={styles.time}>{sentAt}</Text>}
       {failedMessage && <FailedMessageText />}
