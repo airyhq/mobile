@@ -1,6 +1,6 @@
 import React, {ReactNode} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {Contact, Message, DeliveryState} from '../../model';
+import {Contact, DeliveryState} from '../../model';
 import {resendFailedStateMessage} from '../../api/Message';
 import ErrorIcon from '../../assets/images/icons/error.svg';
 import {colorTextGray, colorAiryBlue, colorRedAlert} from '../../assets/colors';
@@ -12,14 +12,22 @@ type MessageInfoWrapperProps = {
   fromContact?: boolean;
   contact?: Contact;
   sentAt?: string;
-  message: Message;
+  deliveryStateMessage: DeliveryState;
+  messageId: string;
 };
 
 export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
-  const {sentAt, fromContact, children, isChatPlugin, message} = props;
+  const {
+    sentAt,
+    fromContact,
+    children,
+    isChatPlugin,
+    deliveryStateMessage,
+    messageId,
+  } = props;
 
   const isContact = isChatPlugin ? !fromContact : fromContact;
-  const failedMessage = message.deliveryState === DeliveryState.failed;
+  const failedMessage = deliveryStateMessage === DeliveryState.failed;
 
   const FailedMessageText = () => {
     return (
@@ -27,7 +35,7 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
         Failed to send!{' '}
         <Text
           style={styles.retrySend}
-          onPress={() => resendFailedStateMessage(message.id)}>
+          onPress={() => resendFailedStateMessage(messageId)}>
           Retry
         </Text>
       </Text>
@@ -41,7 +49,7 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
           <View>{children}</View>
         </Text>
         {failedMessage && (
-          <ErrorIcon style={styles.failedMessage} fill={colorRedAlert} />
+          <ErrorIcon style={styles.failedMessageIcon} fill={colorRedAlert} />
         )}
       </View>
       {sentAt && !failedMessage && <Text style={styles.time}>{sentAt}</Text>}
@@ -95,7 +103,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginRight: 5,
   },
-  failedMessage: {
+  failedMessageIcon: {
     marginLeft: 6,
   },
   failedMessageText: {

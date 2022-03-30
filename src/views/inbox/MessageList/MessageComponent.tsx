@@ -42,7 +42,8 @@ export const MessageComponent = ({
         contact={contact}
         sentAt={sentAt}
         isChatPlugin={false}
-        message={message}>
+        messageId={message.id}
+        deliveryStateMessage={message.deliveryState}>
         <SourceMessage
           source={source}
           message={message}

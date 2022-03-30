@@ -54,20 +54,11 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
 
     //Icons
 
-    //failed
+    //Failed deliveryState
     if (failedLastMessage) {
       return (
         <View style={styles.icon}>
           <ErrorIcon height={20} width={20} fill={colorRedAlert} />
-        </View>
-      );
-    }
-
-    //failed
-    if (failedLastMessage) {
-      return (
-        <View style={styles.icon}>
-          <ErrorIcon height={20} width={20} />
         </View>
       );
     }
