@@ -42,17 +42,7 @@ export const MessageComponent = ({
         contact={contact}
         sentAt={sentAt}
         isChatPlugin={false}
-<<<<<<< HEAD
-<<<<<<< HEAD
         message={message}>
-=======
-        conversationId={conversationId}
-        message={message}
-        source={source}>
->>>>>>> e6f875b (implemented failed messages)
-=======
-        message={message}>
->>>>>>> 8acd44a (added resend message request)
         <SourceMessage
           source={source}
           message={message}

@@ -1,10 +1,7 @@
 import React, {ReactNode} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {Contact, Message, DeliveryState, Source, Conversation} from '../../model';
+import {Contact, Message, DeliveryState} from '../../model';
 import {resendFailedStateMessage} from '../../api/Message';
-import {sendMessage} from '../../api/Message';
-import {getOutboundMapper} from '../../render/outbound';
-import {OutboundMapper} from '../../render/outbound/mapper';
 import ErrorIcon from '../../assets/images/icons/error.svg';
 import {colorTextGray, colorAiryBlue} from '../../assets/colors';
 
@@ -31,7 +28,6 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
         <Text
           style={styles.retrySend}
           onPress={() => resendFailedStateMessage(message.id)}>
-        <Text style={styles.retrySend} onPress={retrySendingFailedMessage}>
           Retry
         </Text>
       </Text>
