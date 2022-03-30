@@ -1,63 +1,26 @@
-import React, {useState} from 'react';
-import {SafeAreaView, Button} from 'react-native';
-import {connect} from 'react-redux';
-import Auth0 from 'react-native-auth0';
+import 'react-native-gesture-handler';
+import React from 'react';
+import {TabBar} from './components/TabBar';
+import {
+  NavigationContainer,
+  NavigationContainerRef,
+} from '@react-navigation/native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {WebSocket} from './components/Websocket';
+import {AuthWrapper} from './components/auth/AuthWrapper';
 
-import {Login} from './components/Login';
-import {StateModel} from './reducers';
-import { Auth0Config } from './auth0-configuration';
+export const navigationRef = React.createRef<NavigationContainerRef>();
 
-const auth0 = new Auth0(Auth0Config);
-
-const mapStateToProps = (state: StateModel) => ({
-  state
-});
-
-const mapDispatchToProps = (dispatch:any) => ({
-  dispatch
-});
-
-const App = () => {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [userLoggedOut, setUserLoggedOut] = useState(false);
-
-  const logout = () => {
-    auth0.webAuth
-      .clearSession({federated: false})
-      .then(credentials => {
-        console.log("Logout!");
-        setAccessToken(null);
-        setUserLoggedOut(true);
-        console.log(credentials);
-      })
-      .catch(error => {
-        console.log('Log out cancelled');
-      });
-  };
-
-  const changeAccessToken = (token: string | null) => {
-    setAccessToken(token);
-  };
-
+export default function App() {
   return (
-      <SafeAreaView style={{flex: 1}}>
-        {accessToken && (
-          <Button
-            onPress={logout}
-            title="LOG OUT"
-            color="#841584"
-            accessibilityLabel="logout"
-          />
-        )}
-
-        {!accessToken && (
-          <Login
-            changeAccessToken={changeAccessToken}
-            userLoggedOut={userLoggedOut}
-          />
-        )}
-      </SafeAreaView>
+    <SafeAreaProvider>
+      <NavigationContainer ref={navigationRef}>
+        <AuthWrapper>
+          <WebSocket>
+            <TabBar />
+          </WebSocket>
+        </AuthWrapper>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+}
