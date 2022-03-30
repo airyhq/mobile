@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {RealmDB} from '../../../storage/realm';
-import {Message, Conversation} from '../../../model';
+import {Message, Conversation, Source} from '../../../model';
 import {MessageComponent} from './MessageComponent';
 import {throttle} from 'lodash-es';
 import {ChatInput} from '../../../components/chat/input/ChatInput';
@@ -126,7 +126,7 @@ export const MessageList = (props: MessageListProps) => {
       <MessageComponent
         key={item.id}
         message={item}
-        source={source}
+        source={source as Source}
         contact={contact}
         isLastInGroup={lastInGroup}
         dateChanged={hasDateChanged(prevMessage, currentMessage)}

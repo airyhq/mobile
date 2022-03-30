@@ -1,7 +1,9 @@
 import React, {ReactNode} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {Contact} from '../../model';
-import {colorTextGray} from '../../assets/colors';
+import {Contact, DeliveryState} from '../../model';
+import {resendFailedStateMessage} from '../../api/Message';
+import ErrorIcon from '../../assets/images/icons/error.svg';
+import {colorTextGray, colorAiryBlue, colorRedAlert} from '../../assets/colors';
 
 type MessageInfoWrapperProps = {
   children: ReactNode;
@@ -10,19 +12,48 @@ type MessageInfoWrapperProps = {
   fromContact?: boolean;
   contact?: Contact;
   sentAt?: string;
+  deliveryStateMessage: DeliveryState;
+  messageId: string;
 };
 
 export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
-  const {sentAt, fromContact, children, isChatPlugin} = props;
+  const {
+    sentAt,
+    fromContact,
+    children,
+    isChatPlugin,
+    deliveryStateMessage,
+    messageId,
+  } = props;
 
   const isContact = isChatPlugin ? !fromContact : fromContact;
+  const failedMessage = deliveryStateMessage === DeliveryState.failed;
+
+  const FailedMessageText = () => {
+    return (
+      <Text style={styles.failedMessageText}>
+        Failed to send!{' '}
+        <Text
+          style={styles.retrySend}
+          onPress={() => resendFailedStateMessage(messageId)}>
+          Retry
+        </Text>
+      </Text>
+    );
+  };
 
   const MemberMessage = () => (
     <View style={styles.member}>
-      <Text style={styles.memberContent}>
-        <View>{children}</View>
-      </Text>
-      {sentAt && <Text style={styles.time}>{sentAt}</Text>}
+      <View style={styles.memberContent}>
+        <Text>
+          <View>{children}</View>
+        </Text>
+        {failedMessage && (
+          <ErrorIcon style={styles.failedMessageIcon} fill={colorRedAlert} />
+        )}
+      </View>
+      {sentAt && !failedMessage && <Text style={styles.time}>{sentAt}</Text>}
+      {failedMessage && <FailedMessageText />}
     </View>
   );
 
@@ -44,9 +75,15 @@ const styles = StyleSheet.create({
   },
   contactContent: {
     overflow: 'hidden',
-    maxWidth: '100%',
-    alignItems: 'flex-start',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
     marginTop: 10,
+  },
+  memberMessage: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   member: {
     alignItems: 'flex-end',
@@ -54,7 +91,9 @@ const styles = StyleSheet.create({
   memberContent: {
     overflow: 'hidden',
     maxWidth: '100%',
-    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    flexDirection: 'row',
     marginTop: 10,
   },
   time: {
@@ -63,5 +102,16 @@ const styles = StyleSheet.create({
     color: colorTextGray,
     marginLeft: 5,
     marginRight: 5,
+  },
+  failedMessageIcon: {
+    marginLeft: 6,
+  },
+  failedMessageText: {
+    color: colorTextGray,
+    fontFamily: 'Lato',
+    fontSize: 13,
+  },
+  retrySend: {
+    color: colorAiryBlue,
   },
 });

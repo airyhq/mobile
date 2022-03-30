@@ -85,10 +85,8 @@ export const Input = (props: InputBarProps) => {
   useEffect(() => {
     if (input.length >= 20 && !extendedInputBar) {
       setExtendedAttachments(false);
-      // collapseInputBar();
     } else if (input.length < 10 && extendedInputBar) {
       setExtendedAttachments(true);
-      // expandInputBar();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [input, setInput]);
@@ -108,15 +106,6 @@ export const Input = (props: InputBarProps) => {
       useNativeDriver: false,
     }).start();
   };
-
-  // const collapseInputBar = () => {
-  //   Animated.timing(expandAnimation, {
-  //     toValue:
-  //       width - (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING),
-  //     duration: 400,
-  //     useNativeDriver: false,
-  //   }).start();
-  // };
 
   const handleMicrophonePress = () => {
     setRecordScreenVisible(!recordScreenVisible);

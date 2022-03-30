@@ -38,6 +38,14 @@ export const sendMessage = (conversationId: string, message: any) => {
   });
 };
 
+export const resendFailedStateMessage = async (messageId: string) => {
+  try {
+    await api.resendMessage({messageId});
+  } catch (error) {
+    console.error('Error: ', error);
+  }
+};
+
 export const loadMessagesForConversation = (
   conversationId: string,
   cursor?: string,

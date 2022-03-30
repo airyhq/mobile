@@ -1,6 +1,7 @@
 import React from 'react';
 import {Text, View, StyleSheet} from 'react-native';
-import {Conversation, Message} from '../model';
+import {Conversation, Message, DeliveryState} from '../model';
+import {decodeURIComponentMessage} from '../services/message';
 import AttachmentRichCardCarousel from '../assets/images/icons/attachmentRichCardCarousel.svg';
 import AttachmentTemplate from '../assets/images/icons/attachmentTemplate.svg';
 import AttachmentImage from '../assets/images/icons/attachmentImage.svg';
@@ -8,8 +9,8 @@ import AttachmentVideo from '../assets/images/icons/attachmentVideo.svg';
 import AttachmentAudio from '../assets/images/icons/attachmentAudio.svg';
 import AttachmentFile from '../assets/images/icons/attachmentFile.svg';
 import {Emoji} from '../componentsLib/general/Emoji';
-import {colorTextGray} from '../assets/colors';
-import {decodeURIComponentMessage} from '../services/message';
+import {colorTextGray, colorRedAlert} from '../assets/colors';
+import ErrorIcon from '../assets/images/icons/error.svg';
 
 interface SourceMessagePreviewProps {
   conversation: Conversation;
@@ -48,7 +49,19 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
   const lastMessage = (conversation: Conversation) => {
     const lastMessageContent = conversation.lastMessage.content;
 
+    const failedLastMessage =
+      conversation.lastMessage.deliveryState === DeliveryState.failed;
+
     //Icons
+
+    //Failed deliveryState
+    if (failedLastMessage) {
+      return (
+        <View style={styles.icon}>
+          <ErrorIcon height={20} width={20} fill={colorRedAlert} />
+        </View>
+      );
+    }
 
     //Image
     if (

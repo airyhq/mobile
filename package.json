@@ -10,9 +10,9 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
-    "@airyhq/http-client": "^0.31.1",
-    "@react-native-community/masked-view": "^0.1.11",
+    "@airyhq/http-client": "0.41.0",
     "@react-native-community/cli-platform-android": "7.0.1",
+    "@react-native-community/masked-view": "^0.1.11",
     "@react-native-cookies/cookies": "^6.0.10",
     "@react-navigation/bottom-tabs": "^5.11.11",
     "@react-navigation/native": "^5.9.4",

@@ -34,10 +34,6 @@ export const ChatInput = (props: ChatInputProps) => {
 
   const [extendedAttachments, setExtendedAttachments] = useState<boolean>(true);
 
-  // const attachmentBarWidth =
-  //   getAttachments(Source[source]).length *
-  //   (ATTACHMENT_BAR_ITEM_WIDTH + ATTACHMENT_BAR_ITEM_PADDING);
-
   useEffect(() => {
     closeRecordContainer && slideIn().then(() => setRecordVisible(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -98,15 +94,8 @@ export const ChatInput = (props: ChatInputProps) => {
         </View>
       )}
       <View style={styles.contentBar}>
-        {/* <AttachmentPicker
-          attachmentTypes={getAttachments(Source[source])}
-          attachmentBarWidth={attachmentBarWidth}
-          extendedAttachments={extendedAttachments}
-          setExtendedAttachments={setExtendedAttachments}
-        /> */}
         <Input
           width={windowWidth - MESSAGE_BAR_STANDARD_PADDING}
-          // attachmentBarWidth={attachmentBarWidth}
           attachmentBarWidth={0}
           conversationId={conversationId}
           extendedInputBar={!extendedAttachments}

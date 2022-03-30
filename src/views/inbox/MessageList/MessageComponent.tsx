@@ -5,11 +5,11 @@ import {formatDateOfMessage} from '../../../services/format/date';
 import {MessageInfoWrapper} from '../../../components/MessageInfoWrapper';
 import {SourceMessage} from '../../../render/SourceMessage';
 import {colorBackgroundGray, colorTextGray} from '../../../assets/colors';
-import {Message, Contact} from '../../../model';
+import {Message, Contact, Source} from '../../../model';
 
 type MessageProps = {
   message: Message;
-  source: string;
+  source: Source;
   contact: Contact;
   isLastInGroup: boolean;
   dateChanged: boolean;
@@ -41,7 +41,9 @@ export const MessageComponent = ({
         lastInGroup={isLastInGroup}
         contact={contact}
         sentAt={sentAt}
-        isChatPlugin={false}>
+        isChatPlugin={false}
+        messageId={message.id}
+        deliveryStateMessage={message.deliveryState}>
         <SourceMessage
           source={source}
           message={message}
