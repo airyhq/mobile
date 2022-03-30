@@ -40,4 +40,4 @@ jobs:
         run: yarn run react-native run-ios
 
       - name: Build Android
-        run: cd android && chmod +x gradlew && ./gradlew assembleRelease
+        run: cd android && chmod +x gradlew && ./gradlew build
