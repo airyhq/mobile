@@ -8,12 +8,14 @@ import {
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {WebSocket} from './components/Websocket';
 import {AuthWrapper} from './components/auth/AuthWrapper';
+import {StatusBar} from 'react-native';
 
 export const navigationRef = React.createRef<NavigationContainerRef>();
 
 export default function App() {
   return (
     <SafeAreaProvider>
+      <StatusBar barStyle="dark-content" />
       <NavigationContainer ref={navigationRef}>
         <AuthWrapper>
           <WebSocket>
