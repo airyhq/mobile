@@ -12,6 +12,7 @@ import {UpdateMode} from 'realm';
 import Auth0 from 'react-native-auth0';
 import {Auth0Config} from '../../auth0-configuration';
 import {AiryLoader} from '../../componentsLib';
+import {useTheme} from '@react-navigation/native';
 
 const getHost = (orgName: string) => `https://${orgName}.airy.co`;
 
@@ -38,6 +39,7 @@ const getUserId = userInfo => `auth0:${userInfo.sub}`;
 export const Login = () => {
   const [loginErr, setLoginErr] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const {colors} = useTheme();
 
   const loginUsingAuth0 = async () => {
     setLoading(true);
@@ -70,7 +72,7 @@ export const Login = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: colors.background}]}>
       {loading ? (
         <AiryLoader />
       ) : (

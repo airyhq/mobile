@@ -29,6 +29,7 @@ import {
   listPreviousFilteredConversations,
 } from '../../../api/Conversation';
 import {listChannels} from '../../../api/Channel';
+import {useTheme} from '@react-navigation/native';
 
 type ConversationListProps = {
   navigation?: NavigationStackProp<{conversationId: string}>;
@@ -46,6 +47,7 @@ export const ConversationList = (props: ConversationListProps) => {
     useState(false);
   const [loading, setLoading] = useState(true);
   let filteredChannelArray = [];
+  const {colors} = useTheme();
 
   const onFilterUpdated = (
     filters: Collection<ConversationFilter & Object>,
@@ -270,7 +272,7 @@ export const ConversationList = (props: ConversationListProps) => {
   });
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, {backgroundColor: colors.background}]}>
       {loading ? (
         <AiryLoader />
       ) : conversations && conversations.length === 0 && !appliedFilters ? (
@@ -301,7 +303,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: width,
     height: height,
-    backgroundColor: 'white',
     justifyContent: 'center',
   },
 });

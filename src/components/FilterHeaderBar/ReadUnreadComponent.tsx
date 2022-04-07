@@ -1,3 +1,4 @@
+import { useTheme } from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {TouchableOpacity, View, Text, StyleSheet} from 'react-native';
 import {
@@ -23,6 +24,7 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
   const [stateActiveUnRead, setStateActiveUnRead] = useState<boolean>(
     currentFilter?.unreadOnly,
   );
+  const {colors} = useTheme();
 
   useEffect(() => {
     if (currentFilter) {
@@ -61,7 +63,7 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
         marginTop: 12,
       }}>
       <Text
-        style={{color: colorTextGray, fontFamily: 'Lato', paddingBottom: 8}}>
+        style={{color: colors.text, fontFamily: 'Lato', paddingBottom: 8}}>
         Conversation Status
       </Text>
       <View style={{flexDirection: 'row', alignSelf: 'flex-start'}}>
@@ -91,7 +93,7 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
                 color:
                   (stateActiveRead || stateActiveUnRead) === null
                     ? 'white'
-                    : colorContrast,
+                    : colors.text,
               },
             ]}>
             All

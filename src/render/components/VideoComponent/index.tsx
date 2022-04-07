@@ -40,7 +40,7 @@ export const VideoComponent = ({videoUrl}: VideoRenderProps) => {
             <Text>Loading of video failed</Text>
           ) : (
             <Video
-              source={{uri: videoUrl}}
+              source={{uri: videoUrl, caches: true, Cache: true}}
               onError={loadingFailed}
               onLoad={handleOnLoadEnd}
               style={styles.video}

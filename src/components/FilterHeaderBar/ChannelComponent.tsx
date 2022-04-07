@@ -17,6 +17,7 @@ import IconChannel from '../IconChannel';
 import Checkmark from '../../assets/images/icons/checkmark-circle.svg';
 import {RealmDB} from '../../storage/realm';
 import {ConversationFilter} from '../../model/ConversationFilter';
+import {useTheme} from '@react-navigation/native';
 
 type ChannelComponentProps = {
   currentFilter: ConversationFilter;
@@ -31,6 +32,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
   const [selectedChannels, setSelectedChannels] = useState<Channel[]>(
     currentFilter?.byChannels || [],
   );
+  const {colors} = useTheme();
 
   const connectedChannels = realm
     .objects<Channel>('Channel')
@@ -91,7 +93,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
             },
             selectedChannels.find(channel => channel.id === item.id)
               ? {backgroundColor: colorBackgroundBlue}
-              : {backgroundColor: 'white'},
+              : {backgroundColor: colors.background},
           ]}>
           <View style={styles.iconChannelCheckmarkContainer}>
             <View style={styles.iconChannel}>
@@ -123,15 +125,18 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
         <Text
           style={{
             fontFamily: 'Lato',
-            color: colorTextGray,
+            color: colors.text,
             paddingBottom: 8,
-            backgroundColor: 'white',
+            backgroundColor: colors.background,
           }}>
           Channel
         </Text>
       }
       numColumns={2}
-      style={styles.connectedChannelList}
+      style={[
+        styles.connectedChannelList,
+        {backgroundColor: colors.background},
+      ]}
       data={connectedChannels}
       ref={channelListRef}
       keyExtractor={keyExtractor}
