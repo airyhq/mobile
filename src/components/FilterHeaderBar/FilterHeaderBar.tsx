@@ -240,7 +240,7 @@ const ExpandedFilterView = (props: ExpandedFilterViewProps) => {
         backgroundColor: colors.background,
         width: windowWidth,
         justifyContent: 'flex-end',
-        borderBottomColor: colorLightGray,
+        borderBottomColor: colors.border,
         borderBottomWidth: 0.5,
       }}>
       <View style={{marginLeft: 12, marginRight: 12}}>
