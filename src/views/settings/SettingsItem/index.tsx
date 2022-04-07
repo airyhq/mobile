@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   TouchableOpacity,
   Text,
@@ -6,18 +6,19 @@ import {
   Linking,
   Alert,
   Switch,
+  View,
 } from 'react-native';
 import LogoutIcon from '../../../assets/images/icons/logout.svg';
 import PrivacyPolicy from '../../../assets/images/icons/privacyPolicy.svg';
 import TermsAndService from '../../../assets/images/icons/termsAndServiceIcon.svg';
 import Heart from '../../../assets/images/icons/heartIcon.svg';
 import Mail from '../../../assets/images/icons/mailIcon.svg';
+import Moon from '../../../assets/images/icons/moon.svg';
 import {colorRedAlert} from '../../../assets/colors';
 import {AuthContext} from '../../../components/auth/AuthWrapper';
 import OneSignal from 'react-native-onesignal';
 import {useTheme} from '@react-navigation/native';
 import {useContext} from 'react';
-import {Platform} from 'react-native';
 
 type SettingsItemProps = {
   title: string;
@@ -26,6 +27,7 @@ type SettingsItemProps = {
 export const SettingsItem = (props: SettingsItemProps) => {
   const {title} = props;
   const {colors} = useTheme();
+  const [switcherOn, setSwitcherOn] = useState(false);
   const context = useContext(AuthContext);
 
   const logoutAlert = () => {
@@ -63,7 +65,7 @@ export const SettingsItem = (props: SettingsItemProps) => {
       case 'Privacy Policy':
         return Linking.openURL('https://airy.co/privacy-policy');
       case 'Dark Mode':
-        return <Switch />;
+        return 'abc';
       case 'Log Out':
         return logoutAlert();
     }
@@ -106,12 +108,7 @@ export const SettingsItem = (props: SettingsItemProps) => {
         );
       case 'Dark Mode':
         return (
-          <PrivacyPolicy
-            height={24}
-            width={24}
-            fill={colors.text}
-            style={styles.icon}
-          />
+          <Moon height={24} width={24} color="orange" style={styles.icon} />
         );
       case 'Log Out':
         return (
@@ -125,12 +122,22 @@ export const SettingsItem = (props: SettingsItemProps) => {
     }
   };
 
+  const switchAction = () => {
+    setSwitcherOn(!switcherOn);
+  };
+
   return (
     <TouchableOpacity
       onPress={() => selectedItem(title)}
+      disabled={title === 'Dark Mode'}
       style={[styles.itemContainer, {backgroundColor: colors.background}]}>
-      {ItemIcon(title)}
-      <Text style={[styles.text, {color: colors.text}]}>{title}</Text>
+      <View style={{flexDirection: 'row'}}>
+        {ItemIcon(title)}
+        <Text style={[styles.text, {color: colors.text}]}>{title}</Text>
+      </View>
+      {title === 'Dark Mode' && (
+        <Switch onChange={switchAction} value={switcherOn} />
+      )}
     </TouchableOpacity>
   );
 };
@@ -141,6 +148,8 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingRight: 16,
     marginBottom: 8,
     paddingLeft: 4,
   },

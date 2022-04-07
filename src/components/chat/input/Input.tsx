@@ -22,7 +22,7 @@ import {getOutboundMapper} from '../../../render/outbound';
 import {OutboundMapper} from '../../../render/outbound/mapper';
 import {RealmDB} from '../../../storage/realm';
 import {ATTACHMENT_BAR_ITEM_WIDTH, ATTACHMENT_BAR_ITEM_PADDING} from './config';
-import { useTheme } from '@react-navigation/native';
+import {useTheme} from '@react-navigation/native';
 
 type InputBarProps = {
   conversationId: string;
@@ -116,7 +116,11 @@ export const Input = (props: InputBarProps) => {
   };
 
   return (
-    <Animated.View style={[styles.container, {width: expandAnimation, backgroundColor: colors.background}]}>
+    <Animated.View
+      style={[
+        styles.container,
+        {width: expandAnimation, backgroundColor: colors.background},
+      ]}>
       <View
         style={[
           {
@@ -128,7 +132,7 @@ export const Input = (props: InputBarProps) => {
                 : 'auto',
             alignItems: 'flex-end',
             backgroundColor: colors.notification,
-            borderColor: colors.border
+            borderColor: colors.border,
           },
           styles.inputBar,
         ]}>
@@ -143,7 +147,7 @@ export const Input = (props: InputBarProps) => {
                     : inputHeight + 16
                   : 'auto',
               width: '80%',
-              color: colors.text
+              color: colors.text,
             },
             styles.textInput,
           ]}
@@ -173,7 +177,7 @@ export const Input = (props: InputBarProps) => {
             bottom: 0,
           }}>
           <TouchableOpacity
-            style={{marginBottom: 4, marginRight: 6}}
+            style={{marginBottom: 4, marginRight: 6, paddingLeft: 24}}
             onPress={handleMicrophonePress}>
             {isRecordingAudio ? (
               <MicrophoneFilled

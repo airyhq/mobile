@@ -15,8 +15,7 @@ const DATA = [
   },
   {
     title: 'Manage',
-    darkmode: ['Dark Mode'],
-    data: ['Log Out'],
+    data: ['Dark Mode', 'Log Out'],
   },
 ];
 
