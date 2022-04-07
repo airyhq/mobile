@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import Microphone from '../assets/images/icons/microphone.svg';
 import MicrophoneFilled from '../assets/images/icons/microphone_filled.svg';
-import {colorAiryAccent, colorRedAlert, colorTextGray} from '../assets/colors';
+import {colorAiryAccent, colorRedAlert} from '../assets/colors';
 import {request, check, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import SoundRecorder from 'react-native-sound-recorder';
 import {formatSecondsAsTime} from '../services/dates/format';

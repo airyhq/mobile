@@ -1,5 +1,12 @@
 import React from 'react';
-import {TouchableOpacity, Text, StyleSheet, Linking, Alert} from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  Linking,
+  Alert,
+  Switch,
+} from 'react-native';
 import LogoutIcon from '../../../assets/images/icons/logout.svg';
 import PrivacyPolicy from '../../../assets/images/icons/privacyPolicy.svg';
 import TermsAndService from '../../../assets/images/icons/termsAndServiceIcon.svg';
@@ -55,6 +62,8 @@ export const SettingsItem = (props: SettingsItemProps) => {
         return Linking.openURL('https://airy.co/terms-of-service');
       case 'Privacy Policy':
         return Linking.openURL('https://airy.co/privacy-policy');
+      case 'Dark Mode':
+        return <Switch />;
       case 'Log Out':
         return logoutAlert();
     }
@@ -95,6 +104,15 @@ export const SettingsItem = (props: SettingsItemProps) => {
             style={styles.icon}
           />
         );
+      case 'Dark Mode':
+        return (
+          <PrivacyPolicy
+            height={24}
+            width={24}
+            fill={colors.text}
+            style={styles.icon}
+          />
+        );
       case 'Log Out':
         return (
           <LogoutIcon
@@ -121,7 +139,6 @@ const styles = StyleSheet.create({
   itemContainer: {
     height: 35,
     width: '100%',
-    backgroundColor: 'white',
     alignItems: 'center',
     flexDirection: 'row',
     marginBottom: 8,

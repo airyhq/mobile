@@ -28,8 +28,8 @@ export const colorTagGreen = '#0e764f';
 export const colorTagPurple = '#730a80';
 export const colorStateRed = '#bf1a2f';
 export const colorDarkmodeBackground = '#18191a';
-export const colorLightGrayDarkMode = '#444444'
-export const colorTextContrastDarkMode = '#D6D6D6'
+export const colorLightGrayDarkMode = '#444444';
+export const colorTextContrastDarkMode = '#D6D6D6';
 
 export const LightTheme = {
   dark: false,
