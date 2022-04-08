@@ -1,6 +1,8 @@
+import {useTheme} from '@react-navigation/native';
 import React from 'react';
 import {SectionList, Text, StyleSheet, View} from 'react-native';
 import {SettingsItem} from './SettingsItem';
+import DeviceInfo from 'react-native-device-info';
 
 const DATA = [
   {
@@ -18,6 +20,9 @@ const DATA = [
 ];
 
 const SettingsView = () => {
+  const {colors} = useTheme();
+  const version = DeviceInfo.getVersion();
+
   return (
     <View style={styles.container}>
       <SectionList
@@ -29,6 +34,15 @@ const SettingsView = () => {
           <Text style={styles.header}>{title}</Text>
         )}
       />
+      <Text
+        style={[
+          styles.version,
+          {
+            color: colors.text,
+          },
+        ]}>
+        Version: {version}
+      </Text>
     </View>
   );
 };
@@ -46,5 +60,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     padding: 24,
     backgroundColor: 'white',
+  },
+  version: {
+    fontSize: 11,
+    alignSelf: 'center',
+    marginBottom: 8,
   },
 });
