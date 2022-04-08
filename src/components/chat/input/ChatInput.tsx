@@ -5,7 +5,7 @@ import {RealmDB} from '../../../storage/realm';
 import {Input} from './Input';
 import {Tooltip} from '../../../componentsLib';
 import {RecordAudio} from '../../RecordAudio';
-import { useTheme } from '@react-navigation/native';
+import {useTheme} from '@react-navigation/native';
 
 type ChatInputProps = {
   conversationId: string;

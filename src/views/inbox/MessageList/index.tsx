@@ -57,14 +57,14 @@ export const MessageList = (props: MessageListProps) => {
   } = conversation;
 
   useEffect(() => {
-    if (conversation.messages.length === 0) {
+    // if (conversation.messages.length === 0) {
       conversation &&
         loadMessagesForConversation(route.params.conversationId)
           .then(() => setIsLoading(false))
           .catch(() => {
             setIsLoading(true);
           });
-    }
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route.params.conversationId]);
 

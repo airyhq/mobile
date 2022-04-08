@@ -14,8 +14,9 @@ import InstagramIcon from '../assets/images/icons/instagram.svg';
 import InstagramAvatar from '../assets/images/icons/instagram_avatar.svg';
 import ViberAvatar from '../assets/images/icons/viber_avatar.svg';
 import BubbleIcon from '../assets/images/icons/bubble_icon.svg';
-import {colorAiryBlue, colorTextGray} from '../assets/colors';
+import {colorAiryBlue} from '../assets/colors';
 import {Source} from '../model/Channel';
+import {useTheme} from '@react-navigation/native';
 
 type IconChannelProps = {
   source: string;
@@ -83,6 +84,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
   const fbFallback = SOURCE_INFO[Source.facebook];
   const isFromTwilioSource =
     source === Source.twilioSms || source === Source.twilioWhatsapp;
+  const {colors} = useTheme();
 
   const formatTwilioSource = (_source: string) => {
     if (_source.includes('whatsapp:')) {
@@ -93,7 +95,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
 
   const ChannelName = () => {
     return (
-      <Text numberOfLines={1} style={styles.text}>
+      <Text numberOfLines={1} style={[styles.text, {color: colors.text}]}>
         {metadataName ||
           (isFromTwilioSource ? formatTwilioSource(sourceChannelId) : source)}
       </Text>
@@ -122,7 +124,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
     return (
       <View style={styles.iconText}>
         {channelInfo.icon()}
-        <Text numberOfLines={1} style={styles.text}>
+        <Text numberOfLines={1} style={[styles.text, {color: colors.text}]}>
           {channelInfo.text}
         </Text>
       </View>
@@ -133,7 +135,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
     return (
       <View style={styles.avatarText}>
         {channelInfo.avatar()}
-        <Text numberOfLines={1} style={styles.text}>
+        <Text numberOfLines={1} style={[styles.text, {color: colors.text}]}>
           {channelInfo.text}
         </Text>
       </View>
@@ -185,7 +187,6 @@ const styles = StyleSheet.create({
   text: {
     marginLeft: 3,
     fontSize: 13,
-    color: colorTextGray,
     fontFamily: 'Lato',
     marginRight: 20,
   },
