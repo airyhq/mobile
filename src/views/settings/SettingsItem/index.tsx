@@ -7,6 +7,7 @@ import {
   Alert,
   Switch,
   View,
+  Platform,
 } from 'react-native';
 import LogoutIcon from '../../../assets/images/icons/logout.svg';
 import PrivacyPolicy from '../../../assets/images/icons/privacyPolicy.svg';
@@ -19,6 +20,8 @@ import {AuthContext} from '../../../components/auth/AuthWrapper';
 import OneSignal from 'react-native-onesignal';
 import {useTheme} from '@react-navigation/native';
 import {useContext} from 'react';
+import {RealmDB} from '../../../storage/realm';
+import {DarkMode} from '../../../model/DarkMode';
 
 type SettingsItemProps = {
   title: string;
@@ -27,8 +30,10 @@ type SettingsItemProps = {
 export const SettingsItem = (props: SettingsItemProps) => {
   const {title} = props;
   const {colors} = useTheme();
-  const [switcherOn, setSwitcherOn] = useState(false);
-  const context = useContext(AuthContext);
+  const contextAuth = useContext(AuthContext);
+  const realm = RealmDB.getInstance();
+  const DarkMode = realm.objects<DarkMode>('DarkMode')[0];
+  const [switchOn, setSwitchOn] = useState(DarkMode.isDarkModeOn);
 
   const logoutAlert = () => {
     Alert.alert('Are you sure?', '', [
@@ -42,7 +47,7 @@ export const SettingsItem = (props: SettingsItemProps) => {
         onPress: () => {
           OneSignal.removeExternalUserId();
           OneSignal.disablePush(true);
-          context.logout();
+          contextAuth.logout();
         },
       },
     ]);
@@ -123,7 +128,12 @@ export const SettingsItem = (props: SettingsItemProps) => {
   };
 
   const switchAction = () => {
-    setSwitcherOn(!switcherOn);
+    realm.write(() => {
+      DarkMode.isDarkModeOn === true
+        ? (DarkMode.isDarkModeOn = false)
+        : (DarkMode.isDarkModeOn = true);
+    });
+    setSwitchOn(DarkMode.isDarkModeOn);
   };
 
   return (
@@ -136,7 +146,7 @@ export const SettingsItem = (props: SettingsItemProps) => {
         <Text style={[styles.text, {color: colors.text}]}>{title}</Text>
       </View>
       {title === 'Dark Mode' && (
-        <Switch onChange={switchAction} value={switcherOn} />
+        <Switch onChange={switchAction} value={switchOn} />
       )}
     </TouchableOpacity>
   );

@@ -31,7 +31,7 @@ export const MessageInfoWrapper = (props: MessageInfoWrapperProps) => {
 
   const FailedMessageText = () => {
     return (
-      <Text style={styles.failedMessageText}>
+      <Text style={[styles.failedMessageText]}>
         Failed to send!{' '}
         <Text
           style={styles.retrySend}
