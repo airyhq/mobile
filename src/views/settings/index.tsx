@@ -24,14 +24,21 @@ const SettingsView = () => {
   const version = DeviceInfo.getVersion();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: colors.background}]}>
       <SectionList
-        scrollEnabled={false}
+        scrollEnabled={true}
+        stickySectionHeadersEnabled={true}
         sections={DATA}
         keyExtractor={(item, index) => item + index}
         renderItem={({item}) => <SettingsItem title={item} />}
         renderSectionHeader={({section: {title}}) => (
-          <Text style={styles.header}>{title}</Text>
+          <Text
+            style={[
+              styles.header,
+              {color: colors.text, backgroundColor: colors.background},
+            ]}>
+            {title}
+          </Text>
         )}
       />
       <Text
@@ -52,14 +59,12 @@ export default SettingsView;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
   },
   header: {
     fontFamily: 'Lato',
     fontWeight: 'bold',
     fontSize: 20,
     padding: 24,
-    backgroundColor: 'white',
   },
   version: {
     fontSize: 11,

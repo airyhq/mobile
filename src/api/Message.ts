@@ -105,31 +105,6 @@ export const loadMessagesForConversation = (
   });
 };
 
-export const changeConversationState = (
-  currentConversationState: string,
-  conversationId: string,
-  setState?: (newState: string) => void,
-) => {
-  const newState = currentConversationState === 'OPEN' ? 'CLOSED' : 'OPEN';
-  api
-    .setStateConversation({
-      conversationId: conversationId,
-      state: newState,
-    })
-    .then(() => {
-      realm.write(() => {
-        const changedConversation: Conversation | undefined =
-          realm.objectForPrimaryKey('Conversation', conversationId);
-
-        if (changedConversation?.metadata?.state) {
-          changedConversation.metadata.state = newState;
-        }
-      });
-    });
-  setState && setState(newState);
-  ReactNativeHapticFeedback.trigger('impactHeavy', hapticFeedbackOptions);
-};
-
 export const uploadMedia = (file: any) => {
   const host = RealmDB.getInstance().objects<UserInfo>('UserInfo')[0].host;
   const formData = new FormData();

@@ -22,6 +22,7 @@ import {getOutboundMapper} from '../render/outbound';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import {hapticFeedbackOptions} from '../services/hapticFeedback';
 import {debounce} from 'lodash-es';
+import {useTheme} from '@react-navigation/native';
 
 type RecordAudioProps = {
   setRecording: (recording: boolean) => void;
@@ -43,6 +44,7 @@ export const RecordAudio = (props: RecordAudioProps) => {
   let recording = useRef(false).current;
   const outboundMapper: OutboundMapper = getOutboundMapper(props.source);
   const filePath = RNFS.DocumentDirectoryPath + '/newFile.aac';
+  const {colors} = useTheme();
 
   const requestMicrophonePermission = () => {
     request(
@@ -248,8 +250,12 @@ export const RecordAudio = (props: RecordAudioProps) => {
   });
 
   return (
-    <View style={styles.container}>
-      <Animated.Text style={[styles.text, {opacity: opacityTransitionTime}]}>
+    <View style={[styles.container, {backgroundColor: colors.background}]}>
+      <Animated.Text
+        style={[
+          styles.text,
+          {opacity: opacityTransitionTime, color: colors.text},
+        ]}>
         {recordText}
       </Animated.Text>
       <Animated.Text
@@ -267,6 +273,7 @@ export const RecordAudio = (props: RecordAudioProps) => {
           styles.timer,
           {
             opacity: opacityTransitionTime,
+            color: colors.text,
           },
         ]}>
         {formatSecondsAsTime(timer)}
@@ -288,13 +295,12 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     height: 270,
-    marginTop: 26,
+    paddingTop: 26,
   },
   text: {
     fontFamily: 'Lato',
     fontSize: 16,
     textAlign: 'center',
-    color: colorTextGray,
     minHeight: 60,
     marginHorizontal: 16,
   },
@@ -304,7 +310,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato',
     fontSize: 16,
     marginTop: 15,
-    color: colorTextGray,
   },
   cancel: {
     position: 'relative',
@@ -312,7 +317,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato',
     fontSize: 16,
     marginTop: 15,
-    color: colorTextGray,
   },
   circle: {
     position: 'absolute',
