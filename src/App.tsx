@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {TabBar} from './components/TabBar';
 import {
   NavigationContainer,
@@ -11,7 +11,7 @@ import {AuthWrapper} from './components/auth/AuthWrapper';
 import {StatusBar, useColorScheme} from 'react-native';
 import {DarkTheme, LightTheme} from './assets/colors';
 import {RealmDB} from './storage/realm';
-import {DarkMode} from './model/DarkMode';
+import {Settings} from './model/Settings';
 import {LogBox} from 'react-native';
 LogBox.ignoreLogs(['EventEmitter.removeListener']);
 
@@ -21,28 +21,38 @@ export default function App() {
   const colorScheme = useColorScheme();
   const systemDarkMode = colorScheme === 'dark' ? true : false;
   const realm = RealmDB.getInstance();
-  const darkMode = realm.objects<DarkMode>('DarkMode')[0];
+  const settingsObject = realm.objects<Settings>('Settings')[0];
   const [isDarkMode, setIsDarkMode] = useState(systemDarkMode);
 
-  !darkMode &&
-    realm.write(() => {
-      realm.create('DarkMode', {
-        isDarkModeOn: systemDarkMode,
+  const createSettings = () => {
+    !settingsObject &&
+      realm.write(() => {
+        realm.create('Settings', {
+          isDarkModeOn: systemDarkMode,
+        });
       });
-    });
+    return realm.objects<Settings>('Settings')[0];
+  };
 
-  useEffect(() => {
+  const addListenerSettings = async () => {
     const darkModeChange = changes => {
       setIsDarkMode(changes.isDarkModeOn);
     };
+
+    const settings = await createSettings();
+
     try {
-      darkMode.addListener(darkModeChange);
+      settings.addListener(darkModeChange);
     } catch (error) {
       console.error(error);
     }
     return () => {
-      darkMode && darkMode.removeListener(darkModeChange);
+      settings.removeListener(darkModeChange);
     };
+  };
+
+  useEffect(() => {
+    addListenerSettings();
   }, []);
 
   return (

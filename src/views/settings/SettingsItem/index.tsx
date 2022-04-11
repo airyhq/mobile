@@ -21,7 +21,7 @@ import OneSignal from 'react-native-onesignal';
 import {useTheme} from '@react-navigation/native';
 import {useContext} from 'react';
 import {RealmDB} from '../../../storage/realm';
-import {DarkMode} from '../../../model/DarkMode';
+import {Settings} from '../../../model/Settings';
 
 type SettingsItemProps = {
   title: string;
@@ -32,8 +32,8 @@ export const SettingsItem = (props: SettingsItemProps) => {
   const {colors} = useTheme();
   const contextAuth = useContext(AuthContext);
   const realm = RealmDB.getInstance();
-  const DarkMode = realm.objects<DarkMode>('DarkMode')[0];
-  const [switchOn, setSwitchOn] = useState(DarkMode.isDarkModeOn);
+  const Settings = realm.objects<Settings>('Settings')[0];
+  const [switchOn, setSwitchOn] = useState(Settings.isDarkModeOn);
 
   const logoutAlert = () => {
     Alert.alert('Are you sure?', '', [
@@ -129,11 +129,11 @@ export const SettingsItem = (props: SettingsItemProps) => {
 
   const switchAction = () => {
     realm.write(() => {
-      DarkMode.isDarkModeOn === true
-        ? (DarkMode.isDarkModeOn = false)
-        : (DarkMode.isDarkModeOn = true);
+      Settings.isDarkModeOn === true
+        ? (Settings.isDarkModeOn = false)
+        : (Settings.isDarkModeOn = true);
     });
-    setSwitchOn(DarkMode.isDarkModeOn);
+    setSwitchOn(Settings.isDarkModeOn);
   };
 
   return (

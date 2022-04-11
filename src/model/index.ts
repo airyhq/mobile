@@ -10,4 +10,4 @@ export * from './SuggestedReply';
 export * from './templates';
 export * from './Tag';
 export * from './sourcesMessages';
-export * from './DarkMode';
+export * from './Settings';
