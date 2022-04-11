@@ -11,6 +11,7 @@ import AttachmentFile from '../assets/images/icons/attachmentFile.svg';
 import {Emoji} from '../componentsLib/general/Emoji';
 import {colorTextGray, colorRedAlert} from '../assets/colors';
 import ErrorIcon from '../assets/images/icons/error.svg';
+import {useTheme} from '@react-navigation/native';
 
 interface SourceMessagePreviewProps {
   conversation: Conversation;
@@ -46,6 +47,7 @@ const isImageFromGoogleSource = (messageText?: string) => {
 };
 
 export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
+  const {colors} = useTheme();
   const lastMessage = (conversation: Conversation) => {
     const lastMessageContent = conversation.lastMessage.content;
 
@@ -76,7 +78,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       return (
         <View style={styles.icon}>
           <AttachmentImage height={20} width={20} color={colorTextGray} />
-          <Text style={[styles.text, {marginLeft: 4, color: colorTextGray}]}>
+          <Text style={[styles.text, {marginLeft: 4, color: colors.text}]}>
             Photo
           </Text>
         </View>
@@ -93,7 +95,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       return (
         <View style={styles.icon}>
           <AttachmentVideo height={24} width={24} color={colorTextGray} />
-          <Text style={[styles.text, {marginLeft: 4, color: colorTextGray}]}>
+          <Text style={[styles.text, {marginLeft: 4, color: colors.text}]}>
             Video
           </Text>
         </View>
@@ -112,7 +114,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       return (
         <View style={styles.icon}>
           <AttachmentAudio height={24} width={24} color={colorTextGray} />
-          <Text style={[styles.text, {marginLeft: 4, color: colorTextGray}]}>
+          <Text style={[styles.text, {marginLeft: 4, color: colors.text}]}>
             Audio
           </Text>
         </View>
@@ -129,7 +131,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       return (
         <View style={styles.icon}>
           <AttachmentFile height={24} width={24} color={colorTextGray} />
-          <Text style={[styles.text, {marginLeft: 2, color: colorTextGray}]}>
+          <Text style={[styles.text, {marginLeft: 2, color: colors.text}]}>
             File
           </Text>
         </View>
@@ -147,7 +149,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       return (
         <View style={styles.icon}>
           <AttachmentTemplate width={18} height={18} color={colorTextGray} />
-          <Text style={[styles.text, {marginLeft: 4, color: colorTextGray}]}>
+          <Text style={[styles.text, {marginLeft: 4, color: colors.text}]}>
             Template
           </Text>
         </View>
@@ -167,7 +169,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
             height={24}
             color={colorTextGray}
           />
-          <Text style={[styles.text, {marginLeft: 4, color: colorTextGray}]}>
+          <Text style={[styles.text, {marginLeft: 4, color: colors.text}]}>
             RichCard
           </Text>
         </View>
@@ -176,7 +178,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
 
     if (lastMessageContent.richText) {
       return (
-        <Text style={styles.text} numberOfLines={1}>
+        <Text style={[styles.text, {color: colors.text}]} numberOfLines={1}>
           {lastMessageContent?.richText?.text}
         </Text>
       );
@@ -193,7 +195,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       const textMessage =
         lastMessageContent?.text || lastMessageContent.message?.text;
       return (
-        <Text style={styles.text} numberOfLines={1}>
+        <Text style={[styles.text, {color: colors.text}]} numberOfLines={1}>
           {textMessage.trimStart()}
         </Text>
       );
@@ -202,7 +204,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     if (lastMessageContent.suggestionResponse) {
       const suggestionResponseText = lastMessageContent.suggestionResponse.text;
       return (
-        <Text style={styles.text} numberOfLines={1}>
+        <Text style={[styles.text, {color: colors.text}]} numberOfLines={1}>
           {suggestionResponseText.trimStart()}
         </Text>
       );
@@ -224,7 +226,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     if (googleLiveAgentRequest) {
       return (
         <>
-          <Text style={styles.text} numberOfLines={1}>
+          <Text style={[styles.text, {color: colors.text}]} numberOfLines={1}>
             <Emoji symbol={'👋'} /> Live Agent request
           </Text>
         </>
@@ -254,7 +256,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     if (googleSurveyResponse) {
       return (
         <>
-          <Text style={styles.text} numberOfLines={1}>
+          <Text style={[styles.text, {color: colors.text}]} numberOfLines={1}>
             <Emoji symbol={'📝'} /> Survey response
           </Text>
         </>
@@ -264,7 +266,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     if (googleRichText) {
       return (
         <>
-          <Text>Rich text</Text>
+          <Text style={{color: colors.text}}>Rich text</Text>
         </>
       );
     }
@@ -272,7 +274,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     if (googleSuggestion) {
       return (
         <>
-          <Text>Suggestion</Text>
+          <Text style={{color: colors.text}}>Suggestion</Text>
         </>
       );
     }
@@ -289,7 +291,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     if (instagramStoryMention) {
       return (
         <>
-          <Text style={styles.text} numberOfLines={1}>
+          <Text style={[styles.text, {color: colors.text}]} numberOfLines={1}>
             story mention
           </Text>
         </>
@@ -300,7 +302,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     if (instagramStoryReplies) {
       return (
         <>
-          <Text style={styles.text} numberOfLines={1}>
+          <Text style={[styles.text, {color: colors.text}]} numberOfLines={1}>
             story reply
           </Text>
         </>
@@ -311,7 +313,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     if (instagramDeletedMessage) {
       return (
         <>
-          <Text style={styles.text} numberOfLines={1}>
+          <Text style={[styles.text, {color: colors.text}]} numberOfLines={1}>
             deleted message
           </Text>
         </>
@@ -322,7 +324,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     if (instagramShare) {
       return (
         <>
-          <Text style={styles.text} numberOfLines={1}>
+          <Text style={[styles.text, {color: colors.text}]} numberOfLines={1}>
             shared post
           </Text>
         </>
@@ -334,7 +336,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     //Facebook Postback
     if (lastMessageContent?.postback) {
       return (
-        <Text style={styles.text} numberOfLines={1}>
+        <Text style={[styles.text, {color: colors.text}]} numberOfLines={1}>
           {lastMessageContent?.postback?.title ??
             lastMessageContent?.postback?.payload}
         </Text>
@@ -352,7 +354,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
         lastMessageContent.message?.attachments?.[0]?.title ||
         lastMessageContent.attachments?.[0]?.title;
       return (
-        <Text style={styles.text} numberOfLines={1}>
+        <Text style={[styles.text, {color: colors.text}]} numberOfLines={1}>
           {title}
         </Text>
       );
@@ -373,7 +375,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
       );
 
       return (
-        <Text style={styles.text} numberOfLines={1}>
+        <Text style={[styles.text, {color: colors.text}]} numberOfLines={1}>
           {text}
         </Text>
       );
@@ -389,7 +391,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
         contentEnd,
       );
       return (
-        <Text style={styles.text} numberOfLines={1}>
+        <Text style={[styles.text, {color: colors.text}]} numberOfLines={1}>
           {text}
         </Text>
       );
@@ -408,7 +410,7 @@ export const SourceMessagePreview = (props: SourceMessagePreviewProps) => {
     //SuggestionResponse
     if (lastMessageContent.suggestionResponse) {
       return (
-        <Text style={styles.text} numberOfLines={1}>
+        <Text style={[styles.text, {color: colors.text}]} numberOfLines={1}>
           {conversation.lastMessage.content.suggestionResponse.text}
         </Text>
       );

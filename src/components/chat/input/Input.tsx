@@ -22,6 +22,7 @@ import {getOutboundMapper} from '../../../render/outbound';
 import {OutboundMapper} from '../../../render/outbound/mapper';
 import {RealmDB} from '../../../storage/realm';
 import {ATTACHMENT_BAR_ITEM_WIDTH, ATTACHMENT_BAR_ITEM_PADDING} from './config';
+import {useTheme} from '@react-navigation/native';
 
 type InputBarProps = {
   conversationId: string;
@@ -53,6 +54,7 @@ export const Input = (props: InputBarProps) => {
   const [recordScreenVisible, setRecordScreenVisible] = useState(false);
   const extendedInputBarRef = useRef<boolean>();
   const inputBarRef = useRef<TextInput>();
+  const {colors} = useTheme();
 
   const realm = RealmDB.getInstance();
   const conversation: Conversation | undefined = realm.objectForPrimaryKey(
@@ -114,7 +116,11 @@ export const Input = (props: InputBarProps) => {
   };
 
   return (
-    <Animated.View style={[styles.container, {width: expandAnimation}]}>
+    <Animated.View
+      style={[
+        styles.container,
+        {width: expandAnimation, backgroundColor: colors.background},
+      ]}>
       <View
         style={[
           {
@@ -125,6 +131,8 @@ export const Input = (props: InputBarProps) => {
                   : inputHeight + 16
                 : 'auto',
             alignItems: 'flex-end',
+            backgroundColor: colors.notification,
+            borderColor: colors.border,
           },
           styles.inputBar,
         ]}>
@@ -139,10 +147,12 @@ export const Input = (props: InputBarProps) => {
                     : inputHeight + 16
                   : 'auto',
               width: '80%',
+              color: colors.text,
             },
             styles.textInput,
           ]}
           placeholder="Message"
+          placeholderTextColor={colors.border}
           onFocus={() => {
             setCloseRecord(true), setRecordScreenVisible(false);
           }}
@@ -167,7 +177,7 @@ export const Input = (props: InputBarProps) => {
             bottom: 0,
           }}>
           <TouchableOpacity
-            style={{marginBottom: 4, marginRight: 6}}
+            style={{marginBottom: 4, marginRight: 6, paddingLeft: 24}}
             onPress={handleMicrophonePress}>
             {isRecordingAudio ? (
               <MicrophoneFilled
@@ -187,7 +197,7 @@ export const Input = (props: InputBarProps) => {
                 backgroundColor:
                   channelConnected && input.length !== 0
                     ? colorAiryBlue
-                    : colorLightGray,
+                    : colors.border,
                 marginBottom: Platform.OS === 'ios' ? 4 : 6,
               },
             ]}
@@ -205,12 +215,10 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   inputBar: {
-    backgroundColor: colorBackgroundGray,
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: colorLightGray,
     paddingLeft: 10,
   },
   textInput: {

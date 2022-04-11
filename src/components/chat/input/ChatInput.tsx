@@ -5,6 +5,7 @@ import {RealmDB} from '../../../storage/realm';
 import {Input} from './Input';
 import {Tooltip} from '../../../componentsLib';
 import {RecordAudio} from '../../RecordAudio';
+import {useTheme} from '@react-navigation/native';
 
 type ChatInputProps = {
   conversationId: string;
@@ -20,6 +21,7 @@ export const ChatInput = (props: ChatInputProps) => {
   const [recordVisible, setRecordVisible] = useState(false);
   const [closeRecordContainer, setCloseRecordContainer] = useState(false);
   const slideInAnim = useRef(new Animated.Value(0)).current;
+  const {colors} = useTheme();
 
   const realm = RealmDB.getInstance();
   const source = realm.objectForPrimaryKey<Conversation>(
@@ -93,7 +95,7 @@ export const ChatInput = (props: ChatInputProps) => {
           />
         </View>
       )}
-      <View style={styles.contentBar}>
+      <View style={[styles.contentBar, {backgroundColor: colors.background}]}>
         <Input
           width={windowWidth - MESSAGE_BAR_STANDARD_PADDING}
           attachmentBarWidth={0}

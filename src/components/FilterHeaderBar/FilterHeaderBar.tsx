@@ -25,6 +25,7 @@ import {
 } from '../../services/conversationFilter';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import {hapticFeedbackOptions} from '../../services/hapticFeedback';
+import {useTheme} from '@react-navigation/native';
 
 const defaultHeaderHeight = Platform.OS === 'ios' ? 44 : 62;
 const defaultHeaderHeightExpanded = 290;
@@ -148,6 +149,7 @@ type CollapsedFilterViewProps = {
 
 const CollapsedFilterView = (props: CollapsedFilterViewProps) => {
   const {currentFilter, toggleFiltering, appliedFilters} = props;
+  const {colors} = useTheme();
 
   return (
     <Animated.View
@@ -157,9 +159,9 @@ const CollapsedFilterView = (props: CollapsedFilterViewProps) => {
         alignItems: 'center',
         width: windowWidth,
         height: defaultHeaderHeight,
-        backgroundColor: 'white',
+        backgroundColor: colors.background,
         borderBottomWidth: 0.5,
-        borderBottomColor: colorLightGray,
+        borderBottomColor: colors.border,
       }}>
       <View
         style={{
@@ -228,16 +230,17 @@ const ExpandedFilterView = (props: ExpandedFilterViewProps) => {
     resetButtonFadeAnimation,
     filterHeaderFadeAnimation,
   } = props;
+  const {colors} = useTheme();
 
   return (
     <Animated.View
       style={{
         height: expandedHeaderHeight,
         opacity: filterHeaderFadeAnimation,
-        backgroundColor: 'white',
+        backgroundColor: colors.background,
         width: windowWidth,
         justifyContent: 'flex-end',
-        borderBottomColor: colorLightGray,
+        borderBottomColor: colors.border,
         borderBottomWidth: 0.5,
       }}>
       <View style={{marginLeft: 12, marginRight: 12}}>
@@ -247,7 +250,9 @@ const ExpandedFilterView = (props: ExpandedFilterViewProps) => {
             alignItems: 'center',
             justifyContent: 'space-between',
           }}>
-          <Text style={styles.headerTitleExpanded}>Filter</Text>
+          <Text style={[styles.headerTitleExpanded, {color: colors.text}]}>
+            Filter
+          </Text>
           <TouchableOpacity onPress={resetFilters} disabled={!appliedFilters}>
             <Animated.Text
               style={{

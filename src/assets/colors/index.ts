@@ -27,3 +27,30 @@ export const colorSoftGreen = '#0da36b';
 export const colorTagGreen = '#0e764f';
 export const colorTagPurple = '#730a80';
 export const colorStateRed = '#bf1a2f';
+export const colorDarkmodeBackground = '#18191a';
+export const colorLightGrayDarkMode = '#444444';
+export const colorTextContrastDarkMode = '#D6D6D6';
+
+export const LightTheme = {
+  dark: false,
+  colors: {
+    primary: colorAiryBlue,
+    background: 'white',
+    card: 'white',
+    text: colorTextContrast,
+    border: colorLightGray,
+    notification: colorBackgroundGray,
+  },
+};
+
+export const DarkTheme = {
+  dark: true,
+  colors: {
+    primary: colorAiryBlue,
+    background: colorDarkmodeBackground,
+    card: colorDarkmodeBackground,
+    text: colorTextContrastDarkMode,
+    border: colorLightGrayDarkMode,
+    notification: colorDarkmodeBackground,
+  },
+};

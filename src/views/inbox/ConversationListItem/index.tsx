@@ -29,6 +29,7 @@ import {api} from '../../../api';
 import {changeConversationState} from '../../../api/Conversation';
 import {hapticFeedbackOptions} from '../../../services/hapticFeedback';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import {useTheme} from '@react-navigation/native';
 
 type ConversationListItemProps = {
   conversation: Conversation;
@@ -41,6 +42,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
   const unread = conversation.metadata.unreadCount > 0;
   const currentConversationState = conversation.metadata.state || 'OPEN';
   const swipeableRef = useRef<Swipeable | null>(null);
+  const {colors} = useTheme();
 
   const LeftSwipe = (dragX: Animated.AnimatedInterpolation) => {
     const scale = dragX.interpolate({
@@ -49,7 +51,10 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
       extrapolate: 'clamp',
     });
     return (
-      <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
+      <TouchableOpacity
+        style={{backgroundColor: colors.background}}
+        onPress={handlePress}
+        activeOpacity={0.6}>
         <View
           style={[
             styles.toggleStateBox,
@@ -104,7 +109,9 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
 
   return (
     <Swipeable ref={swipeableRef} renderRightActions={LeftSwipe}>
-      <Pressable style={styles.clickableListItem} onPress={onSelectItem}>
+      <Pressable
+        style={[styles.clickableListItem, {backgroundColor: colors.background}]}
+        onPress={onSelectItem}>
         <View style={styles.container}>
           <View style={styles.avatar}>
             {unread ? (
@@ -119,7 +126,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
               <Text
                 numberOfLines={1}
                 style={[
-                  {width: '80%'},
+                  {width: '80%', color: colors.text},
                   unread ? styles.unreadName : styles.name,
                 ]}>
                 {participant && participant.displayName}
@@ -137,7 +144,11 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
               ]}>
               <SourceMessagePreview conversation={conversation} />
             </View>
-            <View style={styles.channelTimeContainer}>
+            <View
+              style={[
+                styles.channelTimeContainer,
+                {borderColor: colors.border},
+              ]}>
               <View style={styles.iconChannel}>
                 <IconChannel
                   metadataName={conversation.channel.metadata.name}
@@ -148,10 +159,10 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
                 />
               </View>
               <View style={styles.timeIconContainer}>
-                <Text style={styles.time}>
+                <Text style={[styles.time, {color: colors.text}]}>
                   {formatTimeOfMessage(conversation.lastMessage)}
                 </Text>
-                <RightArrow height={12} width={12} fill="black" />
+                <RightArrow height={12} width={12} fill={colors.text} />
               </View>
             </View>
           </View>
@@ -188,7 +199,6 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: '400',
-    color: colorTextContrast,
     paddingTop: 10,
     fontFamily: 'Lato',
   },
@@ -227,7 +237,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingBottom: 4,
     borderBottomWidth: 1,
-    borderColor: colorLightGray,
     alignItems: 'center',
   },
   iconChannel: {
@@ -243,7 +252,6 @@ const styles = StyleSheet.create({
   },
   time: {
     fontSize: 13,
-    color: colorTextGray,
     alignSelf: 'center',
     marginLeft: 4,
     fontFamily: 'Lato',

@@ -63,6 +63,7 @@ import {
   RichTextSchema,
   FilterConversationPaginationSchema,
   parseToRealmMessage,
+  SettingsSchema,
 } from '../model';
 
 export class RealmDB {
@@ -134,6 +135,7 @@ export class RealmDB {
           SuggestionResponseSchema,
           RichTextSchema,
           FilterConversationPaginationSchema,
+          SettingsSchema,
         ],
       });
     }

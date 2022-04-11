@@ -9,6 +9,7 @@ import SearchIcon from '../../assets/images/icons/search.svg';
 import CloseIcon from '../../assets/images/icons/closeIcon.svg';
 import {RealmDB} from '../../storage/realm';
 import {ConversationFilter} from '../../model/ConversationFilter';
+import { useTheme } from '@react-navigation/native';
 
 type SearchBarComponentProps = {
   currentFilter: ConversationFilter;
@@ -16,6 +17,7 @@ type SearchBarComponentProps = {
 
 const SearchBarComponent = (props: SearchBarComponentProps) => {
   const {currentFilter} = props;
+  const {colors} = useTheme();
 
   const realm = RealmDB.getInstance();
   const [searchInput, setSearchInput] = useState(
@@ -42,12 +44,12 @@ const SearchBarComponent = (props: SearchBarComponentProps) => {
   }, [searchInput, setSearchInput]);
 
   return (
-    <View style={styles.searchBarContainer}>
+    <View style={[styles.searchBarContainer, {backgroundColor: colors.background}]}>
       <SearchIcon height={18} width={18} fill={colorDarkElementsGray} />
       <TextInput
         placeholderTextColor={colorTextGray}
         placeholder="Search Conversation..."
-        style={styles.searchBar}
+        style={[styles.searchBar, {color: colors.text}]}
         onChangeText={(text: string) => setSearchInput(text)}
         value={searchInput}
         autoFocus={false}

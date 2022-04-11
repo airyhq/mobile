@@ -1,3 +1,4 @@
+import { useTheme } from '@react-navigation/native';
 import React, {useState} from 'react';
 import {Dimensions, View, Text, StyleSheet, Platform} from 'react-native';
 import {NavigationStackProp} from 'react-navigation-stack';
@@ -7,13 +8,14 @@ import IconChannel from '../../../components/IconChannel';
 
 export const MessageListHeader = ({route}: NavigationStackProp) => {
   const [state, setState] = useState<string>(route.params.state || 'OPEN');
+  const {colors} = useTheme();
 
   const stateUpdate = (newState: string) => {
     setState(newState);
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: colors.background}]}>
       <Avatar
         avatarUrl={route.params.avatarUrl}
         small={true}
@@ -23,7 +25,7 @@ export const MessageListHeader = ({route}: NavigationStackProp) => {
         }}
       />
       <View style={styles.titleIconChannelContainer}>
-        <Text style={styles.title}>{route.params.displayName}</Text>
+        <Text style={[styles.title, {color: colors.text}]}>{route.params.displayName}</Text>
         <IconChannel
           metadataName={route.params.metadataName}
           source={route.params.source}

@@ -19,6 +19,7 @@ import {useHeaderHeight} from '@react-navigation/stack';
 import {loadMessagesForConversation} from '../../../api/Message';
 import {hasDateChanged} from '../../../services/dates';
 import {colorAiryBlue} from '../../../assets/colors';
+import {useTheme} from '@react-navigation/native';
 
 interface RouteProps {
   key: string;
@@ -37,6 +38,7 @@ export const MessageList = (props: MessageListProps) => {
   const [messages, setMessages] = useState<Message[] | []>([]);
   const messageListRef = useRef<FlatList>(null);
   const headerHeight = useHeaderHeight();
+  const {colors} = useTheme();
   const behavior = Platform.OS === 'ios' ? 'padding' : 'height';
   const keyboardVerticalOffset = Platform.OS === 'ios' ? headerHeight : 0;
   const conversation: Conversation | undefined =
@@ -56,12 +58,11 @@ export const MessageList = (props: MessageListProps) => {
 
   useEffect(() => {
     if (conversation.messages.length === 0) {
-      conversation &&
-        loadMessagesForConversation(route.params.conversationId)
-          .then(() => setIsLoading(false))
-          .catch(() => {
-            setIsLoading(true);
-          });
+      loadMessagesForConversation(route.params.conversationId)
+        .then(() => setIsLoading(false))
+        .catch(() => {
+          setIsLoading(true);
+        });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route.params.conversationId]);
@@ -135,8 +136,8 @@ export const MessageList = (props: MessageListProps) => {
   };
 
   return (
-    <SafeAreaView style={{backgroundColor: 'white'}}>
-      <View style={styles.container}>
+    <SafeAreaView style={{backgroundColor: colors.background}}>
+      <View style={[styles.container, {backgroundColor: colors.background}]}>
         {isLoading ? (
           <ActivityIndicator
             size="large"
@@ -151,7 +152,7 @@ export const MessageList = (props: MessageListProps) => {
               flexGrow: 1,
               justifyContent: 'flex-end',
             }}
-            style={styles.flatlist}
+            style={{backgroundColor: colors.background}}
             ref={messageListRef}
             data={messages.reverse()}
             renderItem={renderItem}
@@ -161,7 +162,8 @@ export const MessageList = (props: MessageListProps) => {
         <KeyboardAvoidingView
           behavior={behavior}
           keyboardVerticalOffset={keyboardVerticalOffset}>
-          <View style={styles.chatInput}>
+          <View
+            style={[styles.chatInput, {backgroundColor: colors.background}]}>
             <ChatInput conversationId={route.params.conversationId} />
           </View>
         </KeyboardAvoidingView>
@@ -175,10 +177,6 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'flex-start',
     alignContent: 'flex-start',
-    backgroundColor: 'white',
-  },
-  flatlist: {
-    backgroundColor: 'white',
   },
   loader: {
     marginTop: 16,
@@ -188,7 +186,6 @@ const styles = StyleSheet.create({
   },
   chatInput: {
     alignSelf: 'flex-start',
-    backgroundColor: 'white',
     marginBottom: 5,
     marginTop: 10,
   },

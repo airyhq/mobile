@@ -13,11 +13,13 @@ import {NavigationStackProp} from 'react-navigation-stack';
 import {MessageListHeader} from '../views/inbox/MessageList/MessageListHeader';
 import {FileContent} from '../views/inbox/MessageList/FileContent';
 import {FullScreenImage} from './FileComponents/FullScreenImage';
+import {useTheme} from '@react-navigation/native';
 
 export const TabBar = () => {
   const Tab = createBottomTabNavigator();
   const Stack = createStackNavigator();
   const SettingsStack = createStackNavigator();
+  const {colors} = useTheme();
 
   const InboxScreen = () => {
     return (
@@ -25,7 +27,7 @@ export const TabBar = () => {
         screenOptions={{
           header: () => {
             return (
-              <SafeAreaView style={{backgroundColor: 'white'}}>
+              <SafeAreaView style={{backgroundColor: colors.background}}>
                 <FilterHeaderBar />
               </SafeAreaView>
             );

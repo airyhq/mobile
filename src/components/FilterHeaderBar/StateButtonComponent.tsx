@@ -1,3 +1,4 @@
+import { useTheme } from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {TouchableOpacity, View, Text, StyleSheet} from 'react-native';
 import {
@@ -19,6 +20,7 @@ export const StateButtonComponent = (props: StateButtonCompontentProps) => {
   const [stateActiveOpen, setStateActiveOpen] = useState<boolean>(
     currentFilter?.isStateOpen,
   );
+  const {colors} = useTheme();
 
   useEffect(() => {
     if (currentFilter) {
@@ -69,7 +71,7 @@ export const StateButtonComponent = (props: StateButtonCompontentProps) => {
             style={[
               styles.text,
               {
-                color: stateActiveOpen === null ? 'white' : colorContrast,
+                color: stateActiveOpen === null ? 'white' : colors.text,
               },
             ]}>
             All
