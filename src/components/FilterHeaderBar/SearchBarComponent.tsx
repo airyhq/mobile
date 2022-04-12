@@ -9,7 +9,7 @@ import SearchIcon from '../../assets/images/icons/search.svg';
 import CloseIcon from '../../assets/images/icons/closeIcon.svg';
 import {RealmDB} from '../../storage/realm';
 import {ConversationFilter} from '../../model/ConversationFilter';
-import { useTheme } from '@react-navigation/native';
+import {useTheme} from '@react-navigation/native';
 
 type SearchBarComponentProps = {
   currentFilter: ConversationFilter;
@@ -44,7 +44,11 @@ const SearchBarComponent = (props: SearchBarComponentProps) => {
   }, [searchInput, setSearchInput]);
 
   return (
-    <View style={[styles.searchBarContainer, {backgroundColor: colors.background}]}>
+    <View
+      style={[
+        styles.searchBarContainer,
+        {backgroundColor: colors.notification},
+      ]}>
       <SearchIcon height={18} width={18} fill={colorDarkElementsGray} />
       <TextInput
         placeholderTextColor={colorTextGray}

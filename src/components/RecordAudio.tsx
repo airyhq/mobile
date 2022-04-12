@@ -295,14 +295,14 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     height: 270,
-    paddingTop: 26,
+    paddingTop: 20,
   },
   text: {
     fontFamily: 'Lato',
     fontSize: 16,
     textAlign: 'center',
-    minHeight: 60,
-    marginHorizontal: 16,
+    height: 60,
+    marginHorizontal: 20,
   },
   timer: {
     position: 'relative',
@@ -313,14 +313,14 @@ const styles = StyleSheet.create({
   },
   cancel: {
     position: 'relative',
-    bottom: 6,
+    bottom: 7,
     fontFamily: 'Lato',
     fontSize: 16,
     marginTop: 15,
   },
   circle: {
     position: 'absolute',
-    bottom: 17,
+    bottom: 0,
     height: 126,
     width: 126,
     borderRadius: 126,

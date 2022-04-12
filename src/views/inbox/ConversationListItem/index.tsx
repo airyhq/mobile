@@ -156,6 +156,7 @@ export const ConversationListItem = (props: ConversationListItemProps) => {
                   sourceChannelId={conversation.channel.sourceChannelId}
                   showAvatar
                   showName
+                  size={20}
                 />
               </View>
               <View style={styles.timeIconContainer}>
@@ -179,30 +180,26 @@ const sliderWidth = width * 0.2;
 
 const styles = StyleSheet.create({
   clickableListItem: {
-    height: 'auto',
     minHeight: 100,
     width: width,
     flex: 1,
-    backgroundColor: 'white',
   },
   contentContainer: {
     marginTop: 8,
-    marginBottom: 8,
     paddingLeft: 10,
     width: itemContentWidth,
   },
   avatar: {
     flexDirection: 'row',
-    height: 60,
     marginLeft: 8,
     marginTop: 8,
+    marginBottom: 16,
     alignItems: 'center',
   },
   name: {
     fontSize: 16,
     fontWeight: '400',
     paddingTop: 10,
-    color: colorTextContrast,
     fontFamily: 'Lato',
   },
   unreadName: {

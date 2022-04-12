@@ -8,7 +8,7 @@ import {
   Animated,
   Platform,
 } from 'react-native';
-import {colorAiryBlue, colorLightGray} from '../../assets/colors';
+import {colorAiryBlue} from '../../assets/colors';
 import FilterIcon from '../../assets/images/icons/filterIcon.svg';
 import ChevronUpIcon from '../../assets/images/icons/chevronUp.svg';
 import {RealmDB} from '../../storage/realm';

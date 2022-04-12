@@ -12,6 +12,7 @@ import Checkmark from '../assets/images/icons/checkmark-circle.svg';
 import {changeConversationState} from '../api/Conversation';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import {hapticFeedbackOptions} from '../services/hapticFeedback';
+import {useTheme} from '@react-navigation/native';
 
 type CurrentStateProps = {
   state: string;
@@ -24,12 +25,22 @@ type CurrentStateProps = {
 export const CurrentState = (props: CurrentStateProps) => {
   const {state, conversationId, pressable, style, setState} = props;
   const currentConversationState = state || 'OPEN';
+  const {colors} = useTheme();
 
   const OpenStateButton = () => {
     return (
       <>
         {pressable ? (
-          <View style={{backgroundColor: 'white', width: 44}}>
+          <View
+            style={[
+              Platform.OS === 'android' && {marginRight: 20},
+              {
+                backgroundColor: colors.background,
+                width: 44,
+                height: 44,
+                justifyContent: 'center',
+              },
+            ]}>
             <Pressable
               hitSlop={{top: 10, right: 48, bottom: 10}}
               onPress={() => {
@@ -48,7 +59,6 @@ export const CurrentState = (props: CurrentStateProps) => {
                 {
                   position: 'relative',
                   left: 3,
-                  bottom: 1,
                   height: 24,
                   width: 24,
                 },
@@ -64,10 +74,21 @@ export const CurrentState = (props: CurrentStateProps) => {
 
   const ClosedStateButton = () => {
     return (
+      // <View
+      //   style={[
+      //     pressable ? styles.closedStateButtonPress : styles.closedStateButton,
+      //     style,
+      //   ]}>
       <View
         style={[
-          pressable ? styles.closedStateButtonPress : styles.closedStateButton,
-          style,
+          Platform.OS === 'android' && {marginRight: 20},
+          pressable
+            ? {
+                width: 44,
+                height: 44,
+                justifyContent: 'center',
+              }
+            : styles.closedStateButton,
         ]}>
         {pressable ? (
           <Pressable
@@ -117,13 +138,15 @@ const styles = StyleSheet.create({
     height: 20,
     width: 20,
     borderRadius: 50,
-    marginRight: Platform.OS === 'ios' ? 10 : 20,
+    marginRight: Platform.OS === 'ios' ? 10 : 10,
+    // marginRight: Platform.OS === 'ios' ? 10 : 20,
   },
   closedStateButtonPress: {
     height: 20,
     width: 20,
     borderRadius: 50,
-    marginRight: Platform.OS === 'ios' ? 24 : 34,
+    // marginRight: Platform.OS === 'ios' ? 24 : 34,
+    marginRight: Platform.OS === 'ios' ? 24 : 24,
     paddingTop: 0,
     marginTop: -12,
   },

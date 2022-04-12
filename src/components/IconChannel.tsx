@@ -26,6 +26,7 @@ type IconChannelProps = {
   showAvatar?: boolean;
   showName?: boolean;
   text?: boolean;
+  size: number;
 };
 
 const SOURCE_INFO = {
@@ -79,6 +80,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
   showAvatar,
   showName,
   text,
+  size,
 }: IconChannelProps): JSX.Element => {
   const channelInfo = SOURCE_INFO[source] || SOURCE_INFO[Source.unknown];
   const fbFallback = SOURCE_INFO[Source.facebook];
@@ -114,7 +116,7 @@ const IconChannel: React.FC<IconChannelProps> = ({
   if (showAvatar && showName) {
     return (
       <View style={styles.avatarName}>
-        <View style={styles.avatar}>{channelInfo.avatar()}</View>
+        <View style={{height: size, width: size}}>{channelInfo.avatar()}</View>
         <ChannelName />
       </View>
     );
@@ -147,7 +149,9 @@ const IconChannel: React.FC<IconChannelProps> = ({
   }
 
   if (showAvatar) {
-    return <View style={styles.avatar}>{channelInfo.avatar()}</View>;
+    return (
+      <View style={{height: size, width: size}}>{channelInfo.avatar()}</View>
+    );
   }
 
   return (
@@ -185,16 +189,12 @@ const styles = StyleSheet.create({
   },
   text: {
     marginLeft: 3,
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: 'Lato',
     marginRight: 20,
   },
   icon: {
-    width: 20,
-    height: 20,
-  },
-  avatar: {
-    width: 20,
-    height: 20,
+    width: 16,
+    height: 16,
   },
 });
