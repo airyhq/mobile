@@ -29,24 +29,32 @@ export const CurrentState = (props: CurrentStateProps) => {
     return (
       <>
         {pressable ? (
-          <Pressable
-            hitSlop={{top: 10, right: 48, bottom: 10}}
-            onPress={() => {
-              ReactNativeHapticFeedback.trigger(
-                'impactHeavy',
-                hapticFeedbackOptions,
-              );
-              changeConversationState(
-                currentConversationState,
-                conversationId,
-                setState,
-              );
-            }}
-            style={[
-              styles.openStateButtonPress,
-              {position: 'absolute', right: 7, top: 9, height: 24, width: 24},
-            ]}
-          />
+          <View style={{backgroundColor: 'white', width: 44}}>
+            <Pressable
+              hitSlop={{top: 10, right: 48, bottom: 10}}
+              onPress={() => {
+                ReactNativeHapticFeedback.trigger(
+                  'impactHeavy',
+                  hapticFeedbackOptions,
+                );
+                changeConversationState(
+                  currentConversationState,
+                  conversationId,
+                  setState,
+                );
+              }}
+              style={[
+                styles.openStateButtonPress,
+                {
+                  position: 'relative',
+                  left: 3,
+                  bottom: 1,
+                  height: 24,
+                  width: 24,
+                },
+              ]}
+            />
+          </View>
         ) : (
           <View style={styles.openStateButton} />
         )}

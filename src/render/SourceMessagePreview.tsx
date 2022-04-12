@@ -424,12 +424,13 @@ const styles = StyleSheet.create({
   icon: {
     margin: 0,
     width: '100%',
-    height: '100%',
     flexDirection: 'row',
     alignItems: 'center',
   },
   text: {
     fontFamily: 'Lato',
-    lineHeight: 18,
+    textAlignVertical: 'center',
+    padding: 0,
+    margin: 0,
   },
 });

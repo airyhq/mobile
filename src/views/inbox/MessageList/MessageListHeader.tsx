@@ -1,17 +1,43 @@
-import { useTheme } from '@react-navigation/native';
+import {useTheme} from '@react-navigation/native';
 import React, {useState} from 'react';
-import {Dimensions, View, Text, StyleSheet, Platform} from 'react-native';
+import {
+  Dimensions,
+  View,
+  Text,
+  StyleSheet,
+  Platform,
+  Pressable,
+  TextInput,
+} from 'react-native';
 import {NavigationStackProp} from 'react-navigation-stack';
+import {colorTextGray} from '../../../assets/colors';
 import {Avatar} from '../../../components/Avatar';
 import {CurrentState} from '../../../components/CurrentState';
 import IconChannel from '../../../components/IconChannel';
+import CloseIcon from '../../../assets/images/icons/closeIcon.svg';
+import {changeContactDisplayName} from '../../../api/Contact';
 
 export const MessageListHeader = ({route}: NavigationStackProp) => {
   const [state, setState] = useState<string>(route.params.state || 'OPEN');
+  const [displayName, setDisplayName] = useState(route.params.displayName);
+  const [isEditing, setIsEditing] = useState(false);
   const {colors} = useTheme();
 
   const stateUpdate = (newState: string) => {
     setState(newState);
+  };
+
+  const startEditingDisplay = () => {
+    setIsEditing(true);
+  };
+  const acceptNewDisplayName = () => {
+    changeContactDisplayName(route.params.conversationId, displayName);
+    setIsEditing(false);
+  };
+
+  const cancelEditingDisplayName = () => {
+    setIsEditing(false);
+    setDisplayName(route.params.displayName);
   };
 
   return (
@@ -25,7 +51,23 @@ export const MessageListHeader = ({route}: NavigationStackProp) => {
         }}
       />
       <View style={styles.titleIconChannelContainer}>
-        <Text style={[styles.title, {color: colors.text}]}>{route.params.displayName}</Text>
+        {!isEditing ? (
+          <Pressable onPress={startEditingDisplay}>
+            <Text
+              style={[styles.title, {color: colors.text}]}
+              numberOfLines={1}>
+              {displayName || route.params.displayName}
+            </Text>
+          </Pressable>
+        ) : (
+          <TextInput
+            style={styles.title}
+            autoFocus={true}
+            onChangeText={(newName: string) => setDisplayName(newName)}
+            placeholder={displayName || route.params.displayName}
+            onSubmitEditing={acceptNewDisplayName}
+          />
+        )}
         <IconChannel
           metadataName={route.params.metadataName}
           source={route.params.source}
@@ -34,12 +76,30 @@ export const MessageListHeader = ({route}: NavigationStackProp) => {
           showName
         />
       </View>
-      <CurrentState
-        conversationId={route.params.conversationId}
-        state={state}
-        pressable={true}
-        setState={stateUpdate}
-      />
+      {isEditing ? (
+        <View
+          style={{
+            width: 44,
+            height: 44,
+            alignItems: 'flex-start',
+          }}>
+          <Pressable onPress={cancelEditingDisplayName}>
+            <CloseIcon
+              fill={colorTextGray}
+              height={32}
+              width={32}
+              style={{marginTop: 4}}
+            />
+          </Pressable>
+        </View>
+      ) : (
+        <CurrentState
+          conversationId={route.params.conversationId}
+          state={state}
+          pressable={true}
+          setState={stateUpdate}
+        />
+      )}
     </View>
   );
 };

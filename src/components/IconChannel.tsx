@@ -181,7 +181,6 @@ const styles = StyleSheet.create({
   },
   avatarName: {
     flexDirection: 'row',
-    height: 20,
     alignItems: 'center',
   },
   text: {
