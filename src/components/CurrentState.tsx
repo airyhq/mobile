@@ -12,6 +12,7 @@ import Checkmark from '../assets/images/icons/checkmark-circle.svg';
 import {changeConversationState} from '../api/Conversation';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import {hapticFeedbackOptions} from '../services/hapticFeedback';
+import {useTheme} from '@react-navigation/native';
 
 type CurrentStateProps = {
   state: string;
@@ -24,29 +25,46 @@ type CurrentStateProps = {
 export const CurrentState = (props: CurrentStateProps) => {
   const {state, conversationId, pressable, style, setState} = props;
   const currentConversationState = state || 'OPEN';
+  const {colors} = useTheme();
 
   const OpenStateButton = () => {
     return (
       <>
         {pressable ? (
-          <Pressable
-            hitSlop={{top: 10, right: 48, bottom: 10}}
-            onPress={() => {
-              ReactNativeHapticFeedback.trigger(
-                'impactHeavy',
-                hapticFeedbackOptions,
-              );
-              changeConversationState(
-                currentConversationState,
-                conversationId,
-                setState,
-              );
-            }}
+          <View
             style={[
-              styles.openStateButtonPress,
-              {position: 'absolute', right: 7, top: 9, height: 24, width: 24},
-            ]}
-          />
+              Platform.OS === 'android' && {marginRight: 20},
+              {
+                backgroundColor: colors.background,
+                width: 44,
+                height: 44,
+                justifyContent: 'center',
+              },
+            ]}>
+            <Pressable
+              hitSlop={{top: 10, right: 48, bottom: 10}}
+              onPress={() => {
+                ReactNativeHapticFeedback.trigger(
+                  'impactHeavy',
+                  hapticFeedbackOptions,
+                );
+                changeConversationState(
+                  currentConversationState,
+                  conversationId,
+                  setState,
+                );
+              }}
+              style={[
+                styles.openStateButtonPress,
+                {
+                  position: 'relative',
+                  left: 3,
+                  height: 24,
+                  width: 24,
+                },
+              ]}
+            />
+          </View>
         ) : (
           <View style={styles.openStateButton} />
         )}
@@ -58,8 +76,8 @@ export const CurrentState = (props: CurrentStateProps) => {
     return (
       <View
         style={[
+          Platform.OS === 'android' && {marginRight: 20},
           pressable ? styles.closedStateButtonPress : styles.closedStateButton,
-          style,
         ]}>
         {pressable ? (
           <Pressable
@@ -109,14 +127,10 @@ const styles = StyleSheet.create({
     height: 20,
     width: 20,
     borderRadius: 50,
-    marginRight: Platform.OS === 'ios' ? 10 : 20,
   },
   closedStateButtonPress: {
-    height: 20,
-    width: 20,
-    borderRadius: 50,
-    marginRight: Platform.OS === 'ios' ? 24 : 34,
-    paddingTop: 0,
-    marginTop: -12,
+    width: 44,
+    height: 44,
+    justifyContent: 'center',
   },
 });

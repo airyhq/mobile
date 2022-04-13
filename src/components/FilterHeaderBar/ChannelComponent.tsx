@@ -7,11 +7,7 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
-import {
-  colorBackgroundBlue,
-  colorSoftGreen,
-  colorTextGray,
-} from '../../assets/colors';
+import {colorBackgroundBlue, colorSoftGreen} from '../../assets/colors';
 import {Channel} from '../../model/Channel';
 import IconChannel from '../IconChannel';
 import Checkmark from '../../assets/images/icons/checkmark-circle.svg';
@@ -103,6 +99,7 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
                 metadataName={item.metadata?.name}
                 showAvatar
                 showName
+                size={20}
               />
             </View>
             {selectedChannels.find(channel => channel.id === item.id) && (
