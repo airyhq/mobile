@@ -74,21 +74,10 @@ export const CurrentState = (props: CurrentStateProps) => {
 
   const ClosedStateButton = () => {
     return (
-      // <View
-      //   style={[
-      //     pressable ? styles.closedStateButtonPress : styles.closedStateButton,
-      //     style,
-      //   ]}>
       <View
         style={[
           Platform.OS === 'android' && {marginRight: 20},
-          pressable
-            ? {
-                width: 44,
-                height: 44,
-                justifyContent: 'center',
-              }
-            : styles.closedStateButton,
+          pressable ? styles.closedStateButtonPress : styles.closedStateButton,
         ]}>
         {pressable ? (
           <Pressable
@@ -138,16 +127,10 @@ const styles = StyleSheet.create({
     height: 20,
     width: 20,
     borderRadius: 50,
-    marginRight: Platform.OS === 'ios' ? 10 : 10,
-    // marginRight: Platform.OS === 'ios' ? 10 : 20,
   },
   closedStateButtonPress: {
-    height: 20,
-    width: 20,
-    borderRadius: 50,
-    // marginRight: Platform.OS === 'ios' ? 24 : 34,
-    marginRight: Platform.OS === 'ios' ? 24 : 24,
-    paddingTop: 0,
-    marginTop: -12,
+    width: 44,
+    height: 44,
+    justifyContent: 'center',
   },
 });
