@@ -1,5 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, Dimensions, SafeAreaView, FlatList} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {
+  StyleSheet,
+  Dimensions,
+  SafeAreaView,
+  FlatList,
+  View,
+} from 'react-native';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {Collection} from 'realm';
 import {debounce} from 'lodash-es';
@@ -265,14 +271,20 @@ export const ConversationList = (props: ConversationListProps) => {
     [navigation],
   );
 
-  const getItemLayout = (data, index: number) => ({
-    length: 100,
-    offset: 100 * index,
-    index,
-  });
+  const getItemLayout = useCallback(
+    (data, index: number) => ({
+      length: 100,
+      offset: 100 * index,
+      index,
+    }),
+    [],
+  );
+
+  const keyExtractor = useCallback(item => item.id, []);
 
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor: colors.background}]}>
+    <SafeAreaView
+      style={[styles.container, {backgroundColor: colors.background}]}>
       {loading ? (
         <AiryLoader />
       ) : conversations && conversations.length === 0 && !appliedFilters ? (
@@ -283,6 +295,7 @@ export const ConversationList = (props: ConversationListProps) => {
           renderItem={memoizedRenderItem}
           getItemLayout={getItemLayout}
           onEndReachedThreshold={8}
+          keyExtractor={keyExtractor}
           onEndReached={
             appliedFilters
               ? debouncedListPreviousFilteredConversations
