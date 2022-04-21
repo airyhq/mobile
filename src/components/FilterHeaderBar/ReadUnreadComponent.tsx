@@ -1,12 +1,10 @@
-import { useTheme } from '@react-navigation/native';
+import {useTheme} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {TouchableOpacity, View, Text, StyleSheet} from 'react-native';
 import {
   colorAiryBlue,
-  colorContrast,
   colorRedAlert,
   colorSoftGreen,
-  colorTextGray,
 } from '../../assets/colors';
 import {ConversationFilter} from '../../model/ConversationFilter';
 import {RealmDB} from '../../storage/realm';
@@ -62,8 +60,7 @@ export const ReadUnreadComponent = (props: ReadUnreadComponentProps) => {
         marginBottom: 12,
         marginTop: 12,
       }}>
-      <Text
-        style={{color: colors.text, fontFamily: 'Lato', paddingBottom: 8}}>
+      <Text style={{color: colors.text, fontFamily: 'Lato', paddingBottom: 8}}>
         Conversation Status
       </Text>
       <View style={{flexDirection: 'row', alignSelf: 'flex-start'}}>

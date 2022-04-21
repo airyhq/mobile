@@ -33,6 +33,7 @@ export const AuthWrapper = ({children}) => {
 
   const logout = useCallback(() => {
     setIsAuthenticated(false);
+    OneSignal.disablePush(true);
     const realm = RealmDB.getInstance();
     realm.write(() => {
       realm.deleteAll();

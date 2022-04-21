@@ -11,9 +11,10 @@ import {colorBackgroundBlue, colorSoftGreen} from '../../assets/colors';
 import {Channel} from '../../model/Channel';
 import IconChannel from '../IconChannel';
 import Checkmark from '../../assets/images/icons/checkmark-circle.svg';
-import {RealmDB} from '../../storage/realm';
+import {RealmDB, RealmSettingsDB} from '../../storage/realm';
 import {ConversationFilter} from '../../model/ConversationFilter';
 import {useTheme} from '@react-navigation/native';
+import {Settings} from '../../model/Settings';
 
 type ChannelComponentProps = {
   currentFilter: ConversationFilter;
@@ -25,10 +26,13 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
   const CHANNEL_PADDING = 48;
   const windowWidth = Dimensions.get('window').width;
   const realm = RealmDB.getInstance();
+  const realmSettings = RealmSettingsDB.getInstance();
   const [selectedChannels, setSelectedChannels] = useState<Channel[]>(
     currentFilter?.byChannels || [],
   );
   const {colors} = useTheme();
+  const isDarkmode =
+    realmSettings.objects<Settings>('Settings')[0].isDarkModeOn;
 
   const connectedChannels = realm
     .objects<Channel>('Channel')
@@ -54,9 +58,10 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
 
   useEffect(() => {
     if (currentFilter) {
-      realm.write(() => {
-        currentFilter.byChannels = selectedChannels;
-      });
+      !realm.isInTransaction &&
+        realm.write(() => {
+          currentFilter.byChannels = selectedChannels;
+        });
     } else {
       realm.write(() => {
         realm.create<ConversationFilter>('ConversationFilter', {
@@ -87,9 +92,10 @@ export const ChannelComponent = (props: ChannelComponentProps) => {
               borderRadius: 24,
               maxWidth: (windowWidth - CHANNEL_PADDING) / 2,
             },
-            selectedChannels.find(channel => channel.id === item.id)
-              ? {backgroundColor: colorBackgroundBlue}
-              : {backgroundColor: colors.background},
+            selectedChannels.find(channel => channel.id === item.id) &&
+              (isDarkmode
+                ? {backgroundColor: colors.border}
+                : {backgroundColor: colorBackgroundBlue}),
           ]}>
           <View style={styles.iconChannelCheckmarkContainer}>
             <View style={styles.iconChannel}>

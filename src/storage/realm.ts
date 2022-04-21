@@ -135,11 +135,25 @@ export class RealmDB {
           SuggestionResponseSchema,
           RichTextSchema,
           FilterConversationPaginationSchema,
-          SettingsSchema,
         ],
       });
     }
     return RealmDB.instance;
+  }
+}
+export class RealmSettingsDB {
+  private static instance: Realm;
+
+  private constructor() {}
+
+  public static getInstance(): Realm {
+    if (!RealmSettingsDB.instance) {
+      RealmSettingsDB.instance = new Realm({
+        path: 'airySettingsRealm',
+        schema: [SettingsSchema],
+      });
+    }
+    return RealmSettingsDB.instance;
   }
 }
 

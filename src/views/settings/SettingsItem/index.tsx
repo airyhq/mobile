@@ -20,7 +20,7 @@ import {AuthContext} from '../../../components/auth/AuthWrapper';
 import OneSignal from 'react-native-onesignal';
 import {useTheme} from '@react-navigation/native';
 import {useContext} from 'react';
-import {RealmDB} from '../../../storage/realm';
+import {RealmSettingsDB} from '../../../storage/realm';
 import {Settings} from '../../../model/Settings';
 
 type SettingsItemProps = {
@@ -31,7 +31,7 @@ export const SettingsItem = (props: SettingsItemProps) => {
   const {title} = props;
   const {colors} = useTheme();
   const contextAuth = useContext(AuthContext);
-  const realm = RealmDB.getInstance();
+  const realm = RealmSettingsDB.getInstance();
   const Settings = realm.objects<Settings>('Settings')[0];
   const [switchOn, setSwitchOn] = useState(Settings.isDarkModeOn);
 
@@ -46,7 +46,6 @@ export const SettingsItem = (props: SettingsItemProps) => {
         style: 'destructive',
         onPress: () => {
           OneSignal.removeExternalUserId();
-          OneSignal.disablePush(true);
           contextAuth.logout();
         },
       },
