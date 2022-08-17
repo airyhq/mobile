@@ -86,8 +86,12 @@ export const RichCard = ({
           />
         </View>
         <View style={styles.textContainer}>
-          {title && <Text style={styles.title}>{title}</Text>}
-          {description && <Text style={styles.description}>{description}</Text>}
+          <Text>
+            {title && <Text style={styles.title}>{title}</Text>}
+            {description && (
+              <Text style={styles.description}>{description}</Text>
+            )}
+          </Text>
           <View style={styles.suggestionsContainer}>
             {suggestions.map((suggestion: RichCardSuggestion, idx: number) => (
               <TouchableOpacity

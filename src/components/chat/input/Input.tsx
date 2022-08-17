@@ -5,15 +5,11 @@ import {
   Platform,
   TextInput,
   TouchableOpacity,
+  View,
+  StyleSheet,
 } from 'react-native';
-import {View, StyleSheet} from 'react-native';
 import {sendMessage} from '../../../api/Message';
-import {
-  colorAiryAccent,
-  colorAiryBlue,
-  colorBackgroundGray,
-  colorLightGray,
-} from '../../../assets/colors';
+import {colorAiryAccent, colorAiryBlue} from '../../../assets/colors';
 import PaperPlane from '../../../assets/images/icons/paperplane.svg';
 import Microphone from '../../../assets/images/icons/microphone.svg';
 import MicrophoneFilled from '../../../assets/images/icons/microphone_filled.svg';

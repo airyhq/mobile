@@ -1,11 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {
-  StyleSheet,
-  Dimensions,
-  SafeAreaView,
-  FlatList,
-  View,
-} from 'react-native';
+import {StyleSheet, Dimensions, SafeAreaView, FlatList} from 'react-native';
 import {NavigationStackProp} from 'react-navigation-stack';
 import {Collection} from 'realm';
 import {debounce} from 'lodash-es';

@@ -1,9 +1,8 @@
-import { useTheme } from '@react-navigation/native';
+import {useTheme} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {TouchableOpacity, View, Text, StyleSheet} from 'react-native';
 import {
   colorAiryBlue,
-  colorContrast,
   colorRedAlert,
   colorSoftGreen,
 } from '../../assets/colors';
