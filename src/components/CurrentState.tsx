@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  StyleProp,
-  ViewStyle,
-  Platform,
-} from 'react-native';
+import {View, StyleSheet, Pressable, Platform} from 'react-native';
 import {colorSoftGreen, colorStateRed} from '../assets/colors';
 import Checkmark from '../assets/images/icons/checkmark-circle.svg';
 import {changeConversationState} from '../api/Conversation';
@@ -18,12 +11,11 @@ type CurrentStateProps = {
   state: string;
   conversationId: string;
   pressable: boolean;
-  style?: StyleProp<ViewStyle>;
   setState?: (newState: string) => void;
 };
 
 export const CurrentState = (props: CurrentStateProps) => {
-  const {state, conversationId, pressable, style, setState} = props;
+  const {state, conversationId, pressable, setState} = props;
   const currentConversationState = state || 'OPEN';
   const {colors} = useTheme();
 
