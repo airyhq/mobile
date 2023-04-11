@@ -3,7 +3,7 @@ export * from './conversation';
 export * from './conversationFilter';
 export * from './dates';
 export * from './format';
-export * from './hapticFeedback';
+export * from './hapticFeedbackOptions';
 export * from './image';
 export * from './message';
 export * from './pageTitle';

@@ -4,7 +4,7 @@ import {colorSoftGreen, colorStateRed} from '../assets/colors';
 import Checkmark from '../assets/images/icons/checkmark-circle.svg';
 import {changeConversationState} from '../api/Conversation';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import {hapticFeedbackOptions} from '../services/hapticFeedback';
+import {hapticFeedbackOptions} from '../services/hapticFeedbackOptions';
 import {useTheme} from '@react-navigation/native';
 
 type CurrentStateProps = {

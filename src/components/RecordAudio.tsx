@@ -20,7 +20,7 @@ import RNFS, {ReadDirItem} from 'react-native-fs';
 import {OutboundMapper} from '../render/outbound/mapper';
 import {getOutboundMapper} from '../render/outbound';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import {hapticFeedbackOptions} from '../services/hapticFeedback';
+import {hapticFeedbackOptions} from '../services/hapticFeedbackOptions';
 import {debounce} from 'lodash-es';
 import {useTheme} from '@react-navigation/native';
 

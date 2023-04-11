@@ -15,7 +15,7 @@ import {
 import {api} from '../api';
 import {PaginatedResponse} from '@airyhq/http-client';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import {hapticFeedbackOptions} from '../services/hapticFeedback';
+import { hapticFeedbackOptions } from '../services/hapticFeedbackOptions';
 
 declare type PaginatedResponse<T> = typeof import('@airyhq/http-client');
 
